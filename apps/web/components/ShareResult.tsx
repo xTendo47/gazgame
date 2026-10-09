@@ -12,13 +12,16 @@ export function ShareResult({
   card,
   fileName,
   shareText = "Мой результат в GAZ Game 🔥",
+  defaultOpen = false,
 }: {
   card: Omit<ShareCardProps, "ref">;
   fileName: string;
   /** Подпись к картинке при «Поделиться». */
   shareText?: string;
+  /** Сразу показать карточку, без кнопки «Карточка для сторис» (когда её выбрали в меню). */
+  defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [status, setStatus] = useState<Status>("idle");
   const cardRef = useRef<HTMLDivElement>(null);
 

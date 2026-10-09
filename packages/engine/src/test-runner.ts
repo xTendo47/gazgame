@@ -190,6 +190,51 @@ export function fillPlaceholders(text: string, values: Readonly<Record<string, s
     .join(" ");
 }
 
+/** Сколько баллов максимум может набрать каждый результат (для полосок «баллы / максимум»). */
+export function typeMaxima(test: Test): Record<string, number> {
+  const max: Record<string, number> = Object.fromEntries(test.results.map((r) => [r.id, 0]));
+  for (const question of test.questions) {
+    for (const id of Object.keys(max)) {
+      max[id] = (max[id] ?? 0) + Math.max(0, ...question.options.map((o) => optionScores(o)[id] ?? 0));
+    }
+  }
+  return max;
+}
+
+export interface RankedType {
+  result: TestResult;
+  score: number;
+  max: number;
+}
+
+/**
+ * Все типы от сильного к слабому (scoring.showRanking).
+ * При равных баллах впереди основной результат, затем второй (blend), затем порядок scoring.types.
+ * Возвращает null, если баллы не подходят: нет типа, не число, больше максимума или основной результат не на первом месте.
+ */
+export function typeRanking(
+  test: Test,
+  scores: Readonly<Record<string, number>>,
+  lead: { resultId?: string; blendId?: string } = {},
+): RankedType[] | null {
+  const config = scoringConfig(test);
+  if (config.type !== "types") return null;
+  const maxima = typeMaxima(test);
+  const ranked: RankedType[] = [];
+  for (const result of test.results) {
+    const score = scores[result.id];
+    const max = maxima[result.id] ?? 0;
+    if (score === undefined || !Number.isFinite(score) || score < 0 || score > max) return null;
+    ranked.push({ result, score, max });
+  }
+  const order = config.types ?? [];
+  const priority = (id: string) =>
+    id === lead.resultId ? -2 : id === lead.blendId ? -1 : order.includes(id) ? order.indexOf(id) : order.length + 1;
+  ranked.sort((a, b) => b.score - a.score || priority(a.result.id) - priority(b.result.id));
+  if (lead.resultId && ranked[0]?.result.id !== lead.resultId) return null;
+  return ranked;
+}
+
 export function findResult(test: Test, resultId: string): TestResult | undefined {
   return test.results.find((r) => r.id === resultId);
 }

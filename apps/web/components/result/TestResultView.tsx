@@ -1,21 +1,36 @@
 // Экран результата теста. Общий для обычного результата и смешанного («Холерик с нотками меланхолика»).
 // Показывает только те блоки, что есть в JSON: старые тесты (text + deepTeaser) выглядят как раньше.
-// У тестов по шкалам (scales) баллы шкал приходят в адресе страницы — их показывает ScalesPanel.
+// У тестов по шкалам (scales) и с полосками всех типов (showRanking) баллы приходят в адресе страницы —
+// их показывают ScalesPanel и RankingPanel.
+// Второй тип смешанного результата (blendNotes) всегда идёт отдельной строкой, к названию не приклеивается.
 import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
-import { scalesConfig, type TestBlend } from "@gazgame/engine";
+import { scalesConfig, scoringConfig, type TestBlend } from "@gazgame/engine";
 import { Badge, buttonVariants, cn, DeepTeaser } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
-import { ShareResult } from "@/components/ShareResult";
+import { getSection } from "@/lib/sections";
+import { CopyListButton } from "./CopyListButton";
+import { FlexMenu } from "./FlexMenu";
+import { RankingPanel } from "./RankingPanel";
 import { ScalesPanel } from "./ScalesPanel";
 
-/** Полное название результата: «Холерик» или «Холерик с нотками меланхолика 🌙». */
+/** Название для заголовка вкладки: «Холерик» или «Холерик (с нотками меланхолика 🌙)». */
 export function resultTitle(result: TestResult, blend?: Pick<TestBlend, "note">): string {
-  return blend ? `${result.title} ${blend.note.title}` : result.title;
+  return blend ? `${result.title} (${blend.note.title})` : result.title;
+}
+
+/** «с нотками холерика» → «С нотками холерика» — для заголовка отдельного блока. */
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** Текст, который копирует кнопка «Скопировать для своего человека». */
+function howToLoveMeText(heading: string, result: TestResult, items: readonly string[]): string {
+  return [`${heading} (${result.emoji} ${result.title}):`, ...items.map((item) => `• ${item}`)].join("\n");
 }
 
 export function resultDescription(result: TestResult): string | undefined {
@@ -25,6 +40,9 @@ export function resultDescription(result: TestResult): string | undefined {
 export function TestResultView({ test, result, blend }: { test: Test; result: TestResult; blend?: TestBlend }) {
   const paragraphs = result.paragraphs ?? [];
   const hasScales = scalesConfig(test) !== null;
+  const config = scoringConfig(test);
+  const showRanking = config.type === "types" && config.showRanking === true;
+  const loveHeading = test.resultBlocks?.howToLoveMe ?? "Как меня любить";
 
   return (
     <>
@@ -67,6 +85,13 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </section>
       )}
 
+      {showRanking && (
+        // Полоски всех типов читаются из адреса уже в браузере; страница при этом остаётся статической.
+        <Suspense fallback={null}>
+          <RankingPanel test={test} resultId={result.id} blendId={blend?.resultId} />
+        </Suspense>
+      )}
+
       {hasScales && (
         // Шкалы читаются из адреса уже в браузере; страница при этом остаётся статической.
         <Suspense fallback={null}>
@@ -75,7 +100,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       )}
 
       {blend && (
-        <InsightCard title={resultTitle(result, blend)} accent="border-cream">
+        <InsightCard title={capitalize(blend.note.title)} accent="border-cream">
           {blend.note.text}
         </InsightCard>
       )}
@@ -92,6 +117,32 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {result.howToLoveMe && (
+        <section
+          aria-labelledby="love-me-title"
+          className="flex flex-col gap-4 rounded-card border-2 border-orange/70 bg-surface p-5"
+          style={{ backgroundImage: "radial-gradient(circle at 100% 0%, rgba(255,90,31,0.16), transparent 55%)" }}
+        >
+          <div className="flex flex-col gap-1">
+            <h2 id="love-me-title" className="font-display text-xl font-bold">
+              {loveHeading} 💌
+            </h2>
+            {test.resultBlocks?.howToLoveMeHint && <p className="text-[15px] text-muted">{test.resultBlocks.howToLoveMeHint}</p>}
+          </div>
+          <ul className="flex flex-col gap-2.5">
+            {result.howToLoveMe.map((item) => (
+              <li key={item} className="flex gap-3 leading-relaxed">
+                <span aria-hidden="true" className="text-orange">
+                  ♥
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <CopyListButton text={howToLoveMeText(loveHeading, result, result.howToLoveMe)} label="Скопировать для своего человека" />
         </section>
       )}
 
@@ -140,17 +191,6 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         )
       )}
 
-      <ShareResult
-        fileName={`gazgame-${test.slug}-${result.id}${blend ? `-${blend.resultId}` : ""}`}
-        shareText={result.shareText}
-        card={{
-          label: test.title,
-          emoji: result.emoji,
-          title: resultTitle(result, blend),
-          text: result.subtitle ?? result.text,
-        }}
-      />
-
       <Link href={`/test/${test.slug}`} className={buttonVariants({ variant: "ghost" })}>
         Пройти ещё раз 🔄
       </Link>
@@ -158,7 +198,36 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       {test.disclaimer && <p className="px-1 text-center text-sm text-muted">{test.disclaimer}</p>}
 
       <RelatedBlock item={test} />
+
+      <nav aria-label="Что дальше" className="mt-4 flex flex-col gap-3">
+        <FlexMenu
+          testPath={`/test/${test.slug}`}
+          fileName={`gazgame-${test.slug}-${result.id}${blend ? `-${blend.resultId}` : ""}`}
+          shareText={result.shareText}
+          card={{
+            label: test.title,
+            emoji: result.emoji,
+            title: result.title,
+            text: blend ? blend.note.title : (result.subtitle ?? result.text),
+          }}
+        />
+        <BackToSection test={test} />
+        <Link href="/" className={buttonVariants({ variant: "ghost", size: "md", className: "text-muted hover:text-cream" })}>
+          В меню
+        </Link>
+      </nav>
     </>
+  );
+}
+
+/** «Вернуться в Соло». Если теста нет в Соло — в его первый раздел. */
+function BackToSection({ test }: { test: Test }) {
+  const section = getSection(test.sections.includes("solo") ? "solo" : (test.sections[0] ?? "solo"));
+  if (!section) return null;
+  return (
+    <Link href={`/${section.id}`} className={buttonVariants({ variant: "outline" })}>
+      {section.id === "solo" ? "Вернуться в Соло" : `Вернуться: ${section.title}`} {section.emoji}
+    </Link>
   );
 }
 

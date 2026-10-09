@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { testSchema } from "@gazgame/content";
+import loveLanguagesJson from "@gazgame/content/data/tests/love-languages.json";
 import {
   castVote,
   createDeckState,
@@ -20,6 +22,8 @@ import {
   scaleBreakdown,
   scoreTest,
   seededRandom,
+  typeMaxima,
+  typeRanking,
   voteReducer,
   voteSummary,
   type GuessPartnerState,
@@ -104,6 +108,89 @@ describe("scoreTest — новый формат (scores, ничья, смесь)
       { resultId: "c", blendId: "a" },
       { resultId: "c", blendId: "b" },
     ]);
+  });
+});
+
+describe("typeRanking — все типы от сильного к слабому", () => {
+  it("typeMaxima: максимум баллов каждого типа по вопросам", () => {
+    expect(typeMaxima(temperamentBlend)).toEqual({ a: 8, b: 8, c: 8 });
+  });
+
+  it("сортирует по баллам, при равенстве — основной, затем второй, затем порядок types", () => {
+    const ranking = typeRanking(temperamentBlend, { a: 4, b: 4, c: 2 }, { resultId: "b", blendId: "a" });
+    expect(ranking?.map((r) => [r.result.id, r.score, r.max])).toEqual([
+      ["b", 4, 8],
+      ["a", 4, 8],
+      ["c", 2, 8],
+    ]);
+    // без основного результата равенство решает порядок scoring.types: ["b", "a", "c"]
+    expect(typeRanking(temperamentBlend, { a: 3, b: 3, c: 3 })?.map((r) => r.result.id)).toEqual(["b", "a", "c"]);
+  });
+
+  it("не принимает неполные, невозможные или несогласованные с результатом баллы", () => {
+    expect(typeRanking(temperamentBlend, { a: 1, b: 2 })).toBeNull();
+    expect(typeRanking(temperamentBlend, { a: 9, b: 0, c: 0 })).toBeNull();
+    expect(typeRanking(temperamentBlend, { a: 5, b: 1, c: 0 }, { resultId: "b" })).toBeNull();
+    expect(typeRanking(selfEsteemLike, { a: 1, b: 1, c: 1 })).toBeNull();
+  });
+});
+
+describe("«Языки любви» — подсчёт на настоящем файле", () => {
+  // Настоящий файл из packages/content/data — через ту же схему, что и при загрузке приложения.
+  const test = testSchema.parse(loveLanguagesJson);
+  /** Для каждого вопроса — вариант, который даёт больше всего баллов языку lang. */
+  const answersFor = (lang: string) =>
+    test.questions.map((q) => {
+      const points = q.options.map((o) => o.scores?.[lang] ?? 0);
+      return points.indexOf(Math.max(...points));
+    });
+
+  it("13 вопросов, 5 языков, ранжирование включено", () => {
+    expect(test.questions).toHaveLength(13);
+    expect(test.results.map((r) => r.id)).toEqual(["words", "time", "gifts", "service", "touch"]);
+    expect(test.scoring).toMatchObject({ type: "types", showRanking: true });
+  });
+
+  it.each(["words", "time", "gifts", "service", "touch"])("если всегда выбирать «%s» — он и побеждает, с полным максимумом", (lang) => {
+    const score = scoreTest(test, answersFor(lang));
+    expect(score.resultId).toBe(lang);
+    expect(score.scores[lang]).toBe(typeMaxima(test)[lang]);
+    expect(score.blend).toBeUndefined();
+    const ranking = typeRanking(test, score.scores, { resultId: score.resultId });
+    expect(ranking?.[0]?.result.id).toBe(lang);
+    expect(ranking?.map((r) => r.score)).toEqual([...ranking!.map((r) => r.score)].sort((a, b) => b - a));
+  });
+
+  /** Первые k вопросов — за «слова», остальные — за «время». */
+  const split = (k: number) => {
+    const words = answersFor("words");
+    const time = answersFor("time");
+    return scoreTest(test, test.questions.map((_, i) => (i < k ? words[i]! : time[i]!)));
+  };
+
+  it("ничья 12:12 — побеждает «время», потому что последние вопросы были за него; «слова» — второй язык", () => {
+    const score = split(6);
+    expect(score.scores).toMatchObject({ words: 12, time: 12 });
+    expect(score.resultId).toBe("time");
+    expect(score.blend?.resultId).toBe("words");
+    expect(typeRanking(test, score.scores, { resultId: "time", blendId: "words" })?.map((r) => r.result.id).slice(0, 2)).toEqual([
+      "time",
+      "words",
+    ]);
+  });
+
+  it("разрыв 2 балла (не больше maxGap 3) — смешанный результат", () => {
+    const score = split(5);
+    expect(score.scores).toMatchObject({ words: 10, time: 12 });
+    expect(score.resultId).toBe("time");
+    expect(score.blend?.note.title).toContain("слова");
+  });
+
+  it("разрыв 8 баллов — чистый результат без второго языка", () => {
+    const score = split(8);
+    expect(score.scores).toMatchObject({ words: 16, time: 8 });
+    expect(score.resultId).toBe("words");
+    expect(score.blend).toBeUndefined();
   });
 });
 

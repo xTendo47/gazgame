@@ -2,12 +2,12 @@
 
 // Шкалы на экране результата: эмодзи, полоска, уровень и текст зоны,
 // затем «Твоя опора» и «Твоя зона роста» (или «ровный профиль»).
-// Баллы берутся из адреса страницы — см. lib/scale-query.ts.
+// Баллы берутся из адреса страницы — см. lib/result-query.ts.
 import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
 import type { ScaleScore } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
-import { scalesFromQuery } from "@/lib/scale-query";
+import { scalesFromQuery } from "@/lib/result-query";
 
 const LEVEL_LABELS: Record<string, string> = { low: "низкий", mid: "средний", high: "высокий" };
 const LEVEL_BARS: Record<string, string> = { low: "bg-orange", mid: "bg-gradient-to-r from-orange to-lime", high: "bg-lime" };

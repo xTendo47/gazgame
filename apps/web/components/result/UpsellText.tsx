@@ -5,7 +5,7 @@
 import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
 import { fillPlaceholders } from "@gazgame/engine";
-import { scalesFromQuery } from "@/lib/scale-query";
+import { scalesFromQuery } from "@/lib/result-query";
 
 export function UpsellText({ test, text, className }: { test: Test; text: string; className?: string }) {
   const scales = scalesFromQuery(test, useSearchParams());

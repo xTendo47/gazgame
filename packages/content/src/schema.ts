@@ -109,6 +109,8 @@ export const testResultSchema = z
     watchOut: text.optional(),
     /** Совет. */
     tip: text.optional(),
+    /** «Как меня любить»: список, который можно скопировать и отправить своему человеку. */
+    howToLoveMe: z.array(text).min(1).optional(),
     /** Мягкая забота под советом, например «поговори с близким или психологом». */
     care: text.optional(),
     /** Подсчёт "scales": при какой сумме баллов [от, до] показывается этот результат. */
@@ -141,6 +143,10 @@ export const typesScoringSchema = z.strictObject({
       maxGap: z.number().min(0),
     })
     .optional(),
+  /** Показать на экране результата все типы полосками от сильного к слабому. */
+  showRanking: z.boolean().optional(),
+  /** Описание для редактора. На подсчёт не влияет. */
+  rankingRule: z.string().optional(),
 });
 
 /**
@@ -200,6 +206,15 @@ export const testSchema = itemBase
     zones: z.record(z.string(), z.record(z.string(), text)).optional(),
     /** Подсчёт "scales": заголовки «Твоя опора» / «Твоя зона роста» и текст для ровного профиля. */
     profileBlocks: z.strictObject({ strongest: text, weakest: text, flatProfile: text }).optional(),
+    /** Заголовки дополнительных блоков результата. */
+    resultBlocks: z
+      .strictObject({
+        /** Заголовок блока howToLoveMe, например «Как меня любить». */
+        howToLoveMe: text.optional(),
+        /** Подсказка под заголовком, например «Скинь это своему человеку 😉». */
+        howToLoveMeHint: text.optional(),
+      })
+      .optional(),
     upsell: upsellSchema.optional(),
   })
   .superRefine((test, ctx) => {

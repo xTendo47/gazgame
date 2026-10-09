@@ -170,6 +170,12 @@
                     "maxGap"
                   ],
                   "additionalProperties": false
+                },
+                "showRanking": {
+                  "type": "boolean"
+                },
+                "rankingRule": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -379,6 +385,14 @@
             "type": "string",
             "minLength": 1
           },
+          "howToLoveMe": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
           "care": {
             "type": "string",
             "minLength": 1
@@ -494,6 +508,20 @@
         "weakest",
         "flatProfile"
       ],
+      "additionalProperties": false
+    },
+    "resultBlocks": {
+      "type": "object",
+      "properties": {
+        "howToLoveMe": {
+          "type": "string",
+          "minLength": 1
+        },
+        "howToLoveMeHint": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
       "additionalProperties": false
     },
     "upsell": {
