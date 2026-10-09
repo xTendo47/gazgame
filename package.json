@@ -1,0 +1,27 @@
+{
+  "name": "gazgame",
+  "private": true,
+  "packageManager": "npm@11.19.0",
+  "workspaces": [
+    "apps/web",
+    "apps/bot",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --filter=@gazgame/web",
+    "dev:bot": "turbo run dev --filter=@gazgame/bot",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "check": "turbo run lint typecheck test build",
+    "content:check": "npm run validate --workspace=@gazgame/content"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.7",
+    "typescript": "~6.0.3"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

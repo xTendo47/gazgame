@@ -1,0 +1,4 @@
+{
+  "extends": "@gazgame/config/tsconfig/base.json",
+  "include": ["src"]
+}

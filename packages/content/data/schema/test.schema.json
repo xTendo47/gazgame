@@ -1,0 +1,430 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "_note": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "emoji": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sections": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "pairs",
+          "company",
+          "solo"
+        ]
+      }
+    },
+    "tier": {
+      "default": "free",
+      "type": "string",
+      "enum": [
+        "free",
+        "premium",
+        "supreme"
+      ]
+    },
+    "ageRating": {
+      "default": "all",
+      "type": "string",
+      "enum": [
+        "all",
+        "16+",
+        "18+"
+      ]
+    },
+    "players": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "additionalProperties": false
+    },
+    "durationMin": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "tags": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "related": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "status": {
+      "default": "draft",
+      "type": "string",
+      "enum": [
+        "draft",
+        "published"
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "const": "test"
+    },
+    "scoring": {
+      "default": "types",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "types"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "types"
+              ]
+            },
+            "types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tieBreak": {
+              "type": "object",
+              "properties": {
+                "rule": {
+                  "type": "string"
+                },
+                "lastQuestions": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "lastQuestions"
+              ],
+              "additionalProperties": false
+            },
+            "blend": {
+              "type": "object",
+              "properties": {
+                "rule": {
+                  "type": "string"
+                },
+                "maxGap": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "maxGap"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "disclaimer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "questions": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "options": {
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "type": "string"
+                },
+                "scores": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "number"
+                  }
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "text",
+          "options"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "results": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subtitle": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "paragraphs": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "watchOut": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tip": {
+            "type": "string",
+            "minLength": 1
+          },
+          "shareText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "deepTeaser": {
+            "type": "object",
+            "properties": {
+              "tier": {
+                "default": "premium",
+                "type": "string",
+                "enum": [
+                  "premium",
+                  "supreme"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "emoji"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blendNotes": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "title",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "upsell": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "string",
+          "minLength": 1
+        },
+        "premium": {
+          "type": "object",
+          "properties": {
+            "tier": {
+              "type": "string",
+              "const": "premium"
+            },
+            "headline": {
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "primary": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "tier",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        "supreme": {
+          "type": "object",
+          "properties": {
+            "tier": {
+              "type": "string",
+              "const": "supreme"
+            },
+            "headline": {
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "primary": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "tier",
+            "text"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "button",
+        "premium"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "slug",
+    "title",
+    "description",
+    "emoji",
+    "sections",
+    "players",
+    "durationMin",
+    "kind",
+    "questions",
+    "results"
+  ],
+  "additionalProperties": false
+}

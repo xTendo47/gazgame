@@ -1,0 +1,749 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "_note": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pairs",
+              "company",
+              "solo"
+            ]
+          }
+        },
+        "tier": {
+          "default": "free",
+          "type": "string",
+          "enum": [
+            "free",
+            "premium",
+            "supreme"
+          ]
+        },
+        "ageRating": {
+          "default": "all",
+          "type": "string",
+          "enum": [
+            "all",
+            "16+",
+            "18+"
+          ]
+        },
+        "players": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        "durationMin": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tags": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "related": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "status": {
+          "default": "draft",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "const": "game"
+        },
+        "rules": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "decks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
+              "tier": {
+                "default": "free",
+                "type": "string",
+                "enum": [
+                  "free",
+                  "premium",
+                  "supreme"
+                ]
+              },
+              "ageRating": {
+                "default": "all",
+                "type": "string",
+                "enum": [
+                  "all",
+                  "16+",
+                  "18+"
+                ]
+              },
+              "cards": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "award": {
+                      "type": "string"
+                    },
+                    "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "source": {
+                      "default": "official",
+                      "type": "string",
+                      "enum": [
+                        "official",
+                        "community"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "emoji",
+              "cards"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mechanic": {
+          "type": "string",
+          "const": "deck"
+        },
+        "cardTypes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "emoji"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "slug",
+        "title",
+        "description",
+        "emoji",
+        "sections",
+        "players",
+        "durationMin",
+        "kind",
+        "decks",
+        "mechanic"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "_note": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pairs",
+              "company",
+              "solo"
+            ]
+          }
+        },
+        "tier": {
+          "default": "free",
+          "type": "string",
+          "enum": [
+            "free",
+            "premium",
+            "supreme"
+          ]
+        },
+        "ageRating": {
+          "default": "all",
+          "type": "string",
+          "enum": [
+            "all",
+            "16+",
+            "18+"
+          ]
+        },
+        "players": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        "durationMin": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tags": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "related": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "status": {
+          "default": "draft",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "const": "game"
+        },
+        "rules": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "decks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
+              "tier": {
+                "default": "free",
+                "type": "string",
+                "enum": [
+                  "free",
+                  "premium",
+                  "supreme"
+                ]
+              },
+              "ageRating": {
+                "default": "all",
+                "type": "string",
+                "enum": [
+                  "all",
+                  "16+",
+                  "18+"
+                ]
+              },
+              "cards": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "award": {
+                      "type": "string"
+                    },
+                    "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "source": {
+                      "default": "official",
+                      "type": "string",
+                      "enum": [
+                        "official",
+                        "community"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "emoji",
+              "cards"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mechanic": {
+          "type": "string",
+          "const": "vote"
+        }
+      },
+      "required": [
+        "id",
+        "slug",
+        "title",
+        "description",
+        "emoji",
+        "sections",
+        "players",
+        "durationMin",
+        "kind",
+        "decks",
+        "mechanic"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "_note": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pairs",
+              "company",
+              "solo"
+            ]
+          }
+        },
+        "tier": {
+          "default": "free",
+          "type": "string",
+          "enum": [
+            "free",
+            "premium",
+            "supreme"
+          ]
+        },
+        "ageRating": {
+          "default": "all",
+          "type": "string",
+          "enum": [
+            "all",
+            "16+",
+            "18+"
+          ]
+        },
+        "players": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        "durationMin": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tags": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "related": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "status": {
+          "default": "draft",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "const": "game"
+        },
+        "rules": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "decks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
+              "tier": {
+                "default": "free",
+                "type": "string",
+                "enum": [
+                  "free",
+                  "premium",
+                  "supreme"
+                ]
+              },
+              "ageRating": {
+                "default": "all",
+                "type": "string",
+                "enum": [
+                  "all",
+                  "16+",
+                  "18+"
+                ]
+              },
+              "cards": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "award": {
+                      "type": "string"
+                    },
+                    "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "source": {
+                      "default": "official",
+                      "type": "string",
+                      "enum": [
+                        "official",
+                        "community"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "emoji",
+              "cards"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mechanic": {
+          "type": "string",
+          "const": "guess-partner"
+        },
+        "ranks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "minPercent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "minPercent",
+              "title",
+              "emoji",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "slug",
+        "title",
+        "description",
+        "emoji",
+        "sections",
+        "players",
+        "durationMin",
+        "kind",
+        "decks",
+        "mechanic",
+        "ranks"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

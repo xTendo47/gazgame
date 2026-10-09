@@ -1,0 +1,26 @@
+/* Дизайн-токены GAZ Game для Tailwind CSS v4.
+   Меняешь цвет здесь — он меняется во всём приложении.
+   В коде используются как классы: bg-bg, bg-surface, text-orange, text-lime, font-display и т.д. */
+
+@theme {
+  /* Фон и поверхности */
+  --color-bg: #141217;
+  --color-surface: #221e27;
+  --color-surface-2: #2d2833;
+  --color-line: #3a3441;
+
+  /* Акценты бренда */
+  --color-orange: #ff5a1f;
+  --color-orange-deep: #c9390a;
+  --color-lime: #d4ff3a;
+
+  /* Текст */
+  --color-cream: #f3eee6;
+  --color-muted: #a79fb0;
+
+  /* Шрифты подключаются в apps/web/app/layout.tsx (Fontsource), имена — в globals.css */
+  --font-display: var(--font-unbounded), system-ui, sans-serif;
+  --font-body: var(--font-manrope), system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+}

@@ -1,0 +1,10 @@
+// @gazgame/engine — чистая логика GAZ Game: тесты, игры, тиры, прогресс.
+// Без React, DOM и Next.js — поэтому работает и в вебе, и в боте, и на сервере.
+export * from "./random";
+export * from "./tiers";
+export * from "./test-runner";
+export * from "./catalog";
+export * from "./storage";
+export * from "./mechanics/deck";
+export * from "./mechanics/vote";
+export * from "./mechanics/guess-partner";

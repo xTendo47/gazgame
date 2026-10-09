@@ -1,0 +1,26 @@
+# Зависимости
+node_modules/
+
+# Сборка и кэш
+.next/
+out/
+build/
+dist/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+
+# Секреты: .env никогда не коммитим, пример — можно
+.env
+.env.*
+!.env.example
+
+# Система и редакторы
+.DS_Store
+Thumbs.db
+*.pem
+npm-debug.log*
+
+# Vercel
+.vercel

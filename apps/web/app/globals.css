@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "@gazgame/ui/theme.css";
+
+/* Tailwind ищет классы и в компонентах дизайн-системы */
+@source "../../../packages/ui/src";
+
+/* Шрифты подключены в layout.tsx (Fontsource), здесь — их имена для токенов из theme.css */
+:root {
+  --font-unbounded: "Unbounded Variable";
+  --font-manrope: "Manrope Variable";
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-bg font-body text-[17px] leading-normal text-cream antialiased;
+    min-height: 100dvh;
+  }
+
+  :focus-visible {
+    @apply outline-3 outline-offset-2 outline-lime;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
