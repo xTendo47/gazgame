@@ -9,6 +9,7 @@ import type { Test } from "@gazgame/content";
 import { scoreTest } from "@gazgame/engine";
 import { Button, ProgressBar } from "@gazgame/ui";
 import { getProgress } from "@/lib/progress";
+import { scaleQuery } from "@/lib/scale-query";
 
 export function TestRunner({ test }: { test: Test }) {
   const router = useRouter();
@@ -23,9 +24,10 @@ export function TestRunner({ test }: { test: Test }) {
     const next = [...answers, optionIndex];
     setAnswers(next);
     if (next.length === total) {
-      const { resultId, blend } = scoreTest(test, next);
+      const { resultId, blend, scales, scores } = scoreTest(test, next);
       getProgress().saveTestResult(test.id, resultId);
-      router.push(`/test/${test.slug}/result/${resultId}${blend ? `/${blend.resultId}` : ""}`);
+      const path = `/test/${test.slug}/result/${resultId}${blend ? `/${blend.resultId}` : ""}`;
+      router.push(scales ? path + scaleQuery(scores) : path);
     }
   }
 

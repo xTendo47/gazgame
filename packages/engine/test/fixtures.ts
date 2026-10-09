@@ -57,6 +57,52 @@ export const temperamentBlend: Test = testSchema.parse({
   },
 });
 
+/** Подсчёт "scales": 3 шкалы по 2 вопроса, вариант i даёт 3 - i баллов (максимум шкалы — 6). */
+const scaleQuestion = (id: string, scale: string) => ({
+  id,
+  scale,
+  text: id,
+  options: [3, 2, 1, 0].map((score) => ({ text: String(score), score })),
+});
+
+export const selfEsteemLike: Test = testSchema.parse({
+  ...base,
+  id: "se",
+  slug: "se",
+  kind: "test",
+  title: "Шкалы",
+  sections: ["solo"],
+  scoring: {
+    type: "scales",
+    scales: [
+      { id: "a", title: "Шкала А", emoji: "🅰️", max: 6 },
+      { id: "b", title: "Шкала Б", emoji: "🅱️", max: 6 },
+      { id: "c", title: "Шкала В", emoji: "🌀", max: 6 },
+    ],
+    totalMax: 18,
+    scaleLevels: { low: [0, 2], mid: [3, 4], high: [5, 6] },
+    flatGap: 1,
+  },
+  // Порядок вопросов: a, b, c, a, b, c
+  questions: [
+    scaleQuestion("q1", "a"),
+    scaleQuestion("q2", "b"),
+    scaleQuestion("q3", "c"),
+    scaleQuestion("q4", "a"),
+    scaleQuestion("q5", "b"),
+    scaleQuestion("q6", "c"),
+  ],
+  results: [
+    { id: "low", range: [0, 6], title: "low", emoji: "🌧️", paragraphs: ["low"] },
+    { id: "mid", range: [7, 12], title: "mid", emoji: "🌤️", paragraphs: ["mid"] },
+    { id: "high", range: [13, 18], title: "high", emoji: "🧱", paragraphs: ["high"] },
+  ],
+  zones: Object.fromEntries(
+    ["a", "b", "c"].map((sc) => [sc, { low: `${sc}-low`, mid: `${sc}-mid`, high: `${sc}-high` }]),
+  ),
+  profileBlocks: { strongest: "Опора", weakest: "Зона роста", flatProfile: "Ровно" },
+});
+
 export const truthOrDare = gameSchema.parse({
   ...base,
   id: "tod",

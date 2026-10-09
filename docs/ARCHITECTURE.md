@@ -68,7 +68,7 @@ web      ← всё из packages/*
 
 ## Движок (`packages/engine`)
 
-- `scoreTest(test, answers)` — подсчёт результата. При ничьей решают баллы за `tieBreak.lastQuestions`, затем порядок `scoring.types` (или `results`). Если второй тип отстал не больше чем на `blend.maxGap` — в ответе есть `blend` (смешанный результат, страница `/test/<slug>/result/<тип>/<второй тип>`).
+- `scoreTest(test, answers)` — подсчёт результата. При ничьей решают баллы за `tieBreak.lastQuestions`, затем порядок `scoring.types` (или `results`). Если второй тип отстал не больше чем на `blend.maxGap` — в ответе есть `blend` (смешанный результат, страница `/test/<slug>/result/<тип>/<второй тип>`). Подсчёт `scales`: баллы по шкалам, результат по сумме (`results[].range`), опора/зона роста или ровный профиль (`scaleBreakdown`). Баллы шкал передаются в адресе результата (`?шкала=балл`), страница остаётся статической.
 - Механики — **чистые редьюсеры** (`deckReducer`, `voteReducer`, `guessPartnerReducer`): состояние + действие → новое состояние. В вебе используются через `useReducer`/`useState`, а в будущем могут работать на сервере для комнат по ссылке. Случайность можно передать снаружи, поэтому тесты детерминированы.
 - `hasAccess(userTier, requiredTier)` — тиры. Пока у всех `DEFAULT_USER_TIER = "free"`.
 - `ProgressStore` — интерфейс хранения прогресса. Сейчас `createProgressStore(localStorage)`, позже сервер. Экраны не меняются.

@@ -14,7 +14,7 @@ export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
 export const MECHANICS = ["deck", "vote", "guess-partner"] as const;
-export const SCORING_METHODS = ["types"] as const;
+export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
 
@@ -64,17 +64,29 @@ export const testOptionSchema = z
     type: z.string().optional(),
     /** Полная запись: сколько баллов дать каким результатам или шкалам. */
     scores: z.record(z.string(), z.number()).optional(),
+    /** Подсчёт "scales": сколько баллов вариант даёт шкале своего вопроса (обычно 0–3). */
+    score: z.number().min(0).optional(),
   })
-  .refine((o) => o.type !== undefined || o.scores !== undefined, "у варианта ответа должен быть type или scores");
+  .refine(
+    (o) => o.type !== undefined || o.scores !== undefined || o.score !== undefined,
+    "у варианта ответа должен быть type, scores или score",
+  );
 
 export const testQuestionSchema = z.strictObject({
   /** id вопроса — нужен, чтобы сослаться на него в scoring.tieBreak.lastQuestions. */
   id: z.string().optional(),
+  /** Подсчёт "scales": к какой шкале относится вопрос. */
+  scale: z.string().optional(),
   text,
   options: z.array(testOptionSchema).min(2, "у вопроса должно быть минимум 2 варианта"),
 });
 
 /** Закрытая часть: старый формат (у каждого результата свой deepTeaser). */
+/** Диапазон баллов [от, до] включительно. */
+const rangeSchema = z
+  .tuple([z.number().min(0), z.number().min(0)])
+  .refine(([from, to]) => from <= to, "в диапазоне [от, до] первое число не может быть больше второго");
+
 const deepTeaserSchema = z.strictObject({
   tier: z.enum(["premium", "supreme"]).default("premium"),
   text,
@@ -97,6 +109,10 @@ export const testResultSchema = z
     watchOut: text.optional(),
     /** Совет. */
     tip: text.optional(),
+    /** Мягкая забота под советом, например «поговори с близким или психологом». */
+    care: text.optional(),
+    /** Подсчёт "scales": при какой сумме баллов [от, до] показывается этот результат. */
+    range: rangeSchema.optional(),
     /** Текст, который подставляется при «Поделиться». */
     shareText: text.optional(),
     /** Закрытая «глубокая» часть (старый формат; в новом — общий блок upsell у теста). */
@@ -104,15 +120,16 @@ export const testResultSchema = z
   })
   .refine((r) => r.text !== undefined || r.paragraphs !== undefined, "у результата должен быть text или paragraphs");
 
-/** Подробные настройки подсчёта. Короткая запись "types" = { "type": "types" }. */
-export const scoringConfigSchema = z.strictObject({
-  type: z.enum(SCORING_METHODS),
+/** Подсчёт "types": побеждает тип с наибольшим счётом. Короткая запись "types" = { "type": "types" }. */
+export const typesScoringSchema = z.strictObject({
+  type: z.literal("types"),
+  /** Описание правила для редактора. На подсчёт не влияет. */
+  rule: z.string().optional(),
   /** Порядок типов: по нему решается ничья, если остальное равно. По умолчанию — порядок results. */
   types: z.array(z.string()).optional(),
   /** Ничья: побеждает тип, набравший больше в этих вопросах. */
   tieBreak: z
     .strictObject({
-      /** Описание правила для редактора. На подсчёт не влияет. */
       rule: z.string().optional(),
       lastQuestions: z.array(z.string()).min(1),
     })
@@ -125,6 +142,26 @@ export const scoringConfigSchema = z.strictObject({
     })
     .optional(),
 });
+
+/**
+ * Подсчёт "scales": каждый вопрос относится к шкале, вариант даёт ей score.
+ * Сумма всех шкал выбирает результат по results[].range, по каждой шкале — уровень из scaleLevels.
+ */
+export const scalesScoringSchema = z.strictObject({
+  type: z.literal("scales"),
+  rule: z.string().optional(),
+  scales: z
+    .array(z.strictObject({ id: z.string().min(1), title: text, emoji: text, max: z.number().min(1) }))
+    .min(1),
+  /** Максимум суммы. Если указан — проверяется, что он равен сумме max всех шкал. */
+  totalMax: z.number().min(1).optional(),
+  /** Уровни шкалы: { "low": [0, 5], "mid": [6, 8], "high": [9, 12] }. */
+  scaleLevels: z.record(z.string(), rangeSchema),
+  /** Если все шкалы отличаются не больше чем на flatGap, профиль «ровный»: вместо опоры и зоны роста — profileBlocks.flatProfile. */
+  flatGap: z.number().min(0).default(0),
+});
+
+export const scoringConfigSchema = z.discriminatedUnion("type", [typesScoringSchema, scalesScoringSchema]);
 
 /** Блок «Глубже»: одна кнопка → экран с premium (главный вариант) и supreme (мелкой строкой). */
 export const upsellSchema = z.strictObject({
@@ -149,7 +186,8 @@ export const upsellSchema = z.strictObject({
 export const testSchema = itemBase
   .extend({
     kind: z.literal("test"),
-    scoring: z.union([z.enum(SCORING_METHODS), scoringConfigSchema]).default("types"),
+    /** Короткая запись "types" или полная: { "type": "types" | "scales", ... }. */
+    scoring: z.union([z.literal("types"), scoringConfigSchema]).default("types"),
     /** Мелкая оговорка, например «Тест для самопознания, а не диагноз». */
     disclaimer: text.optional(),
     /** Подсказка перед стартом. */
@@ -158,6 +196,10 @@ export const testSchema = itemBase
     results: z.array(testResultSchema).min(1),
     /** Для смешанного результата: как звучат «нотки» каждого типа. Ключ — id результата. */
     blendNotes: z.record(z.string(), z.strictObject({ title: text, text })).optional(),
+    /** Подсчёт "scales": текст для каждой шкалы и уровня: zones.<шкала>.<уровень>. */
+    zones: z.record(z.string(), z.record(z.string(), text)).optional(),
+    /** Подсчёт "scales": заголовки «Твоя опора» / «Твоя зона роста» и текст для ровного профиля. */
+    profileBlocks: z.strictObject({ strongest: text, weakest: text, flatProfile: text }).optional(),
     upsell: upsellSchema.optional(),
   })
   .superRefine((test, ctx) => {
@@ -169,8 +211,15 @@ export const testSchema = itemBase
       ids.add(r.id);
     });
     const known = `(есть: ${[...ids].join(", ")})`;
+    if (typeof test.scoring === "object" && test.scoring.type === "scales") {
+      checkScales(test, test.scoring, ctx);
+      return;
+    }
     test.questions.forEach((q, qi) =>
       q.options.forEach((o, oi) => {
+        if (o.type === undefined && o.scores === undefined) {
+          ctx.addIssue({ code: "custom", path: ["questions", qi, "options", oi], message: "у варианта должен быть type или scores" });
+        }
         const keys = [...(o.type ? [o.type] : []), ...Object.keys(o.scores ?? {})];
         for (const key of keys) {
           if (!ids.has(key)) {
@@ -218,6 +267,101 @@ export const testSchema = itemBase
       }
     }
   });
+
+interface ScalesTestInput {
+  questions: TestQuestion[];
+  results: TestResult[];
+  zones?: Record<string, Record<string, string>>;
+}
+
+/** Проверки для подсчёта "scales": шкалы у вопросов, score у вариантов, диапазоны без дыр и пересечений. */
+function checkScales(test: ScalesTestInput, scoring: ScalesScoring, ctx: z.RefinementCtx) {
+  const scaleIds = scoring.scales.map((sc) => sc.id);
+  const scaleList = `(есть: ${scaleIds.join(", ")})`;
+  const realMax: Record<string, number> = {};
+
+  test.questions.forEach((q, qi) => {
+    if (!q.scale || !scaleIds.includes(q.scale)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["questions", qi, "scale"],
+        message: q.scale ? `нет шкалы "${q.scale}" ${scaleList}` : `у вопроса должно быть поле scale ${scaleList}`,
+      });
+      return;
+    }
+    q.options.forEach((o, oi) => {
+      if (o.score === undefined) {
+        ctx.addIssue({ code: "custom", path: ["questions", qi, "options", oi], message: "у варианта должен быть score" });
+      }
+    });
+    realMax[q.scale] = (realMax[q.scale] ?? 0) + Math.max(...q.options.map((o) => o.score ?? 0));
+  });
+
+  scoring.scales.forEach((sc, si) => {
+    if ((realMax[sc.id] ?? 0) !== sc.max) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["scoring", "scales", si, "max"],
+        message: `по вопросам у шкалы "${sc.id}" максимум ${realMax[sc.id] ?? 0}, а указано ${sc.max}`,
+      });
+    }
+  });
+  const total = scoring.scales.reduce((sum, sc) => sum + sc.max, 0);
+  if (scoring.totalMax !== undefined && scoring.totalMax !== total) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["scoring", "totalMax"],
+      message: `сумма max шкал — ${total}, а totalMax — ${scoring.totalMax}`,
+    });
+  }
+
+  const resultRanges: [number, number][] = [];
+  test.results.forEach((r, ri) => {
+    if (r.range) resultRanges.push(r.range);
+    else ctx.addIssue({ code: "custom", path: ["results", ri, "range"], message: "у результата должен быть range: [от, до]" });
+  });
+  const gap = findGap(resultRanges, total);
+  if (resultRanges.length === test.results.length && gap) {
+    ctx.addIssue({ code: "custom", path: ["results"], message: `диапазоны range: ${gap} (сумма бывает от 0 до ${total})` });
+  }
+
+  const levels = Object.keys(scoring.scaleLevels);
+  const maxScale = Math.max(...scoring.scales.map((sc) => sc.max));
+  const levelGap = findGap(Object.values(scoring.scaleLevels), maxScale);
+  if (levelGap) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["scoring", "scaleLevels"],
+      message: `уровни шкал: ${levelGap} (баллы шкалы — от 0 до ${maxScale})`,
+    });
+  }
+
+  for (const [scale, byLevel] of Object.entries(test.zones ?? {})) {
+    if (!scaleIds.includes(scale)) {
+      ctx.addIssue({ code: "custom", path: ["zones", scale], message: `нет шкалы "${scale}" ${scaleList}` });
+      continue;
+    }
+    for (const level of Object.keys(byLevel)) {
+      if (!levels.includes(level)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["zones", scale, level],
+          message: `нет уровня "${level}" (есть: ${levels.join(", ")})`,
+        });
+      }
+    }
+  }
+}
+
+/** Проверяет, что целые числа от 0 до max покрыты диапазонами ровно по одному разу. Возвращает описание проблемы. */
+function findGap(ranges: [number, number][], max: number): string | null {
+  for (let n = 0; n <= max; n++) {
+    const hits = ranges.filter(([from, to]) => from <= n && n <= to).length;
+    if (hits === 0) return `число ${n} не попадает ни в один диапазон`;
+    if (hits > 1) return `число ${n} попадает сразу в несколько диапазонов`;
+  }
+  return null;
+}
 
 // ---------- Игры ----------
 
@@ -301,6 +445,9 @@ export type TestQuestion = z.infer<typeof testQuestionSchema>;
 export type TestOption = z.infer<typeof testOptionSchema>;
 export type TestResult = z.infer<typeof testResultSchema>;
 export type ScoringConfig = z.infer<typeof scoringConfigSchema>;
+export type TypesScoring = z.infer<typeof typesScoringSchema>;
+export type ScalesScoring = z.infer<typeof scalesScoringSchema>;
+export type Scale = ScalesScoring["scales"][number];
 export type Upsell = z.infer<typeof upsellSchema>;
 export type BlendNote = NonNullable<Test["blendNotes"]>[string];
 export type Card = z.infer<typeof cardSchema>;

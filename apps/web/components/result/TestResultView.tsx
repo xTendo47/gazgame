@@ -1,15 +1,17 @@
 // Экран результата теста. Общий для обычного результата и смешанного («Холерик с нотками меланхолика»).
 // Показывает только те блоки, что есть в JSON: старые тесты (text + deepTeaser) выглядят как раньше.
-import type { ReactNode } from "react";
+// У тестов по шкалам (scales) баллы шкал приходят в адресе страницы — их показывает ScalesPanel.
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
-import type { TestBlend } from "@gazgame/engine";
+import { scalesConfig, type TestBlend } from "@gazgame/engine";
 import { Badge, buttonVariants, cn, DeepTeaser } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { ShareResult } from "@/components/ShareResult";
+import { ScalesPanel } from "./ScalesPanel";
 
 /** Полное название результата: «Холерик» или «Холерик с нотками меланхолика 🌙». */
 export function resultTitle(result: TestResult, blend?: Pick<TestBlend, "note">): string {
@@ -22,6 +24,7 @@ export function resultDescription(result: TestResult): string | undefined {
 
 export function TestResultView({ test, result, blend }: { test: Test; result: TestResult; blend?: TestBlend }) {
   const paragraphs = result.paragraphs ?? [];
+  const hasScales = scalesConfig(test) !== null;
 
   return (
     <>
@@ -64,6 +67,13 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </section>
       )}
 
+      {hasScales && (
+        // Шкалы читаются из адреса уже в браузере; страница при этом остаётся статической.
+        <Suspense fallback={null}>
+          <ScalesPanel test={test} range={result.range} />
+        </Suspense>
+      )}
+
       {blend && (
         <InsightCard title={resultTitle(result, blend)} accent="border-cream">
           {blend.note.text}
@@ -95,6 +105,14 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           {result.tip}
         </InsightCard>
       )}
+      {result.care && (
+        <section className="flex gap-3 rounded-card bg-surface-2/60 p-5">
+          <span aria-hidden="true" className="text-2xl leading-none">
+            🤍
+          </span>
+          <p className="text-[15px] leading-relaxed text-cream/80">{result.care}</p>
+        </section>
+      )}
 
       {test.upsell ? (
         <section className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
@@ -111,6 +129,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
             source="result"
             label={test.upsell.button}
             href={`/test/${test.slug}/deeper`}
+            keepQuery={hasScales}
           />
         </section>
       ) : (

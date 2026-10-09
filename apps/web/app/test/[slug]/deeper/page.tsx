@@ -1,11 +1,13 @@
 // «Глубже» для теста: /test/<slug>/deeper
 // Главный вариант — premium, supreme — мелкой строкой. Оплаты пока нет: обе ссылки ведут на «Скоро».
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { findTest } from "@gazgame/engine";
+import { fillPlaceholders, findTest } from "@gazgame/engine";
 import { Badge, buttonVariants, Screen } from "@gazgame/ui";
 import { BackButton } from "@/components/BackButton";
+import { UpsellText } from "@/components/result/UpsellText";
 import { getCatalog, visibility } from "@/lib/catalog";
 
 type Props = PageProps<"/test/[slug]/deeper">;
@@ -32,6 +34,7 @@ export default async function TestDeeperPage({ params }: Props) {
   const data = await load(params);
   if (!data) notFound();
   const { test, upsell } = data;
+  const textClass = "text-lg leading-relaxed";
 
   return (
     <Screen className="justify-center">
@@ -46,7 +49,10 @@ export default async function TestDeeperPage({ params }: Props) {
           </span>
         </div>
         <h1 className="font-display text-3xl font-black leading-tight">{upsell.premium.headline ?? upsell.button}</h1>
-        <p className="text-lg leading-relaxed">{upsell.premium.text}</p>
+        {/* {weakestScale} и другие подстановки берутся из адреса уже в браузере */}
+        <Suspense fallback={<p className={textClass}>{fillPlaceholders(upsell.premium.text, {})}</p>}>
+          <UpsellText test={test} text={upsell.premium.text} className={textClass} />
+        </Suspense>
         <Link href="/deeper" className={buttonVariants({ variant: "accent" })}>
           Хочу Premium 💎
         </Link>
@@ -54,7 +60,7 @@ export default async function TestDeeperPage({ params }: Props) {
 
       {upsell.supreme && (
         <p className="px-1 text-center text-sm text-muted">
-          {upsell.supreme.text}{" "}
+          {fillPlaceholders(upsell.supreme.text, {})}{" "}
           <Link href="/deeper" className="font-bold whitespace-nowrap text-cream underline underline-offset-4">
             Supreme →
           </Link>

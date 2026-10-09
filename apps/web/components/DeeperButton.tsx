@@ -8,8 +8,14 @@ import { trackDeeperClick, type DeeperClickEvent } from "@/lib/analytics";
 export function DeeperButton({
   label = "Глубже 💎",
   href = "/deeper",
+  keepQuery = false,
   ...event
-}: DeeperClickEvent & { label?: string; href?: string }) {
+}: DeeperClickEvent & {
+  label?: string;
+  href?: string;
+  /** Передать дальше параметры текущего адреса (например, баллы шкал — для подстановки {weakestScale}). */
+  keepQuery?: boolean;
+}) {
   const router = useRouter();
 
   return (
@@ -17,7 +23,7 @@ export function DeeperButton({
       variant="accent"
       onClick={() => {
         trackDeeperClick(event);
-        router.push(href);
+        router.push(keepQuery ? href + window.location.search : href);
       }}
     >
       {label}

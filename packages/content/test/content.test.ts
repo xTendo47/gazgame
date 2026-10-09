@@ -60,6 +60,53 @@ describe("проверка ошибок", () => {
     expect(() => buildCatalog([{ path: "demo.json", kind: "test", data: broken }])).toThrow(/нет вопроса с id "q9"/);
   });
 
+  describe("подсчёт по шкалам (scales)", () => {
+    const scalesTest = () => ({
+      ...structuredClone(validTest),
+      scoring: {
+        type: "scales",
+        scales: [{ id: "s", title: "Шкала", emoji: "📏", max: 3 }],
+        totalMax: 3,
+        scaleLevels: { low: [0, 1], high: [2, 3] },
+      },
+      questions: [{ scale: "s", text: "?", options: [{ text: "Да", score: 3 }, { text: "Нет", score: 0 }] }],
+      results: [
+        { id: "a", range: [0, 1], title: "А", emoji: "🅰️", paragraphs: ["п"] },
+        { id: "b", range: [2, 3], title: "Б", emoji: "🅱️", paragraphs: ["п"], care: "з" },
+      ],
+      zones: { s: { low: "мало", high: "много" } },
+    });
+    const build = (data: unknown) => buildCatalog([{ path: "demo.json", kind: "test", data }]);
+
+    it("правильный тест проходит, flatGap по умолчанию 0", () => {
+      const scoring = build(scalesTest()).tests[0]?.scoring;
+      expect(typeof scoring === "object" && scoring.type === "scales" && scoring.flatGap).toBe(0);
+    });
+
+    it("ловит вопрос без шкалы и вариант без score", () => {
+      const noScale = scalesTest() as { questions: Record<string, unknown>[] };
+      delete noScale.questions[0]!.scale;
+      expect(() => build(noScale)).toThrow(/поле scale/);
+      const noScore = scalesTest();
+      noScore.questions[0]!.options[0] = { text: "Да", type: "a" } as never;
+      expect(() => build(noScore)).toThrow(/должен быть score/);
+    });
+
+    it("ловит дыру в диапазонах результатов и неверный max шкалы", () => {
+      const gap = scalesTest();
+      gap.results[1]!.range = [3, 3];
+      expect(() => build(gap)).toThrow(/число 2 не попадает/);
+      const wrongMax = scalesTest();
+      wrongMax.scoring.scales[0]!.max = 4;
+      expect(() => build(wrongMax)).toThrow(/максимум 3, а указано 4/);
+    });
+
+    it("ловит зону с несуществующим уровнем", () => {
+      const data = { ...scalesTest(), zones: { s: { low: "мало", top: "?" } } };
+      expect(() => build(data)).toThrow(/нет уровня "top"/);
+    });
+  });
+
   it("ловит ответ, ведущий к несуществующему результату", () => {
     const broken = structuredClone(validTest);
     broken.questions[0]!.options[0]!.type = "zzz";

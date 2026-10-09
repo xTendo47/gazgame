@@ -16,13 +16,15 @@ import {
   rankFor,
   scoreGuessPartner,
   blendPairs,
+  fillPlaceholders,
+  scaleBreakdown,
   scoreTest,
   seededRandom,
   voteReducer,
   voteSummary,
   type GuessPartnerState,
 } from "../src/index";
-import { knowEachOther, temperamentBlend, temperamentLike, truthOrDare, whoInCompany } from "./fixtures";
+import { knowEachOther, selfEsteemLike, temperamentBlend, temperamentLike, truthOrDare, whoInCompany } from "./fixtures";
 
 describe("scoreTest — подсчёт теста", () => {
   it("побеждает тип с наибольшим счётом", () => {
@@ -102,6 +104,81 @@ describe("scoreTest — новый формат (scores, ничья, смесь)
       { resultId: "c", blendId: "a" },
       { resultId: "c", blendId: "b" },
     ]);
+  });
+});
+
+describe("scoreTest — подсчёт по шкалам (scales)", () => {
+  // Вариант i даёт 3 - i баллов. Вопросы по кругу: a, b, c, a, b, c.
+  it("считает баллы шкал, сумму и результат по range", () => {
+    const score = scoreTest(selfEsteemLike, [0, 1, 3, 1, 2, 3]); // a=3+2, b=2+1, c=0+0
+    expect(score.scores).toEqual({ a: 5, b: 3, c: 0 });
+    expect(score.scales?.total).toBe(8);
+    expect(score.scales?.totalMax).toBe(18);
+    expect(score.resultId).toBe("mid");
+  });
+
+  it("границы диапазонов: 6 — нижний результат, 7 — средний", () => {
+    expect(scoreTest(selfEsteemLike, [0, 0, 3, 3, 3, 3]).resultId).toBe("low"); // 3+3+0
+    expect(scoreTest(selfEsteemLike, [0, 0, 2, 3, 3, 3]).resultId).toBe("mid"); // 3+3+1
+    expect(scoreTest(selfEsteemLike, [0, 0, 0, 0, 0, 0]).resultId).toBe("high");
+  });
+
+  it("уровень и текст зоны по каждой шкале", () => {
+    const scales = scoreTest(selfEsteemLike, [0, 1, 3, 1, 2, 3]).scales!.scales;
+    expect(scales.map((s) => [s.scale.id, s.level, s.zone])).toEqual([
+      ["a", "high", "a-high"],
+      ["b", "mid", "b-mid"],
+      ["c", "low", "c-low"],
+    ]);
+  });
+
+  it("самая сильная шкала — опора, самая слабая — зона роста", () => {
+    const { profile, weakest } = scoreTest(selfEsteemLike, [0, 1, 3, 1, 2, 3]).scales!;
+    expect(profile.kind).toBe("peaks");
+    if (profile.kind !== "peaks") return;
+    expect(profile.strongest.scale.id).toBe("a");
+    expect(profile.weakest.scale.id).toBe("c");
+    expect(weakest.scale.id).toBe("c");
+  });
+
+  it("при равных баллах опорой и зоной роста становится шкала, что раньше в списке", () => {
+    const { profile } = scaleBreakdown(selfEsteemLike, { a: 2, b: 6, c: 6 })!; // b и c по 6
+    expect(profile).toMatchObject({ kind: "peaks", strongest: { scale: { id: "b" } }, weakest: { scale: { id: "a" } } });
+    const tiedLow = scaleBreakdown(selfEsteemLike, { a: 6, b: 1, c: 1 })!;
+    expect(tiedLow.profile).toMatchObject({ kind: "peaks", weakest: { scale: { id: "b" } } });
+  });
+
+  it("ровный профиль, если шкалы отличаются не больше чем на flatGap", () => {
+    const score = scoreTest(selfEsteemLike, [0, 0, 0, 1, 1, 0]); // a=5, b=5, c=6
+    expect(score.scores).toEqual({ a: 5, b: 5, c: 6 });
+    expect(score.scales?.profile).toEqual({ kind: "flat" });
+    expect(score.scales?.weakest.scale.id).toBe("a"); // зона роста для upsell всё равно известна
+    expect(scaleBreakdown(selfEsteemLike, { a: 4, b: 6, c: 6 })?.profile.kind).toBe("peaks"); // разрыв 2
+  });
+
+  it("scaleBreakdown не принимает неполные или невозможные баллы (например, из чужой ссылки)", () => {
+    expect(scaleBreakdown(selfEsteemLike, { a: 1, b: 2 })).toBeNull();
+    expect(scaleBreakdown(selfEsteemLike, { a: 1, b: 2, c: 7 })).toBeNull();
+    expect(scaleBreakdown(selfEsteemLike, { a: 1, b: 2, c: Number.NaN })).toBeNull();
+    expect(scaleBreakdown(temperamentLike, { a: 1 })).toBeNull();
+  });
+
+  it("старые тесты не получают шкал", () => {
+    expect(scoreTest(temperamentLike, [1, 1, 0]).scales).toBeUndefined();
+  });
+});
+
+describe("fillPlaceholders — подстановка в тексты", () => {
+  const text = "Твоя зона роста — «{weakestScale}». В разборе: практика на 14 дней.";
+
+  it("подставляет значение", () => {
+    expect(fillPlaceholders(text, { weakestScale: "Принятие себя" })).toBe(
+      "Твоя зона роста — «Принятие себя». В разборе: практика на 14 дней.",
+    );
+  });
+
+  it("убирает предложение, если значения нет", () => {
+    expect(fillPlaceholders(text, {})).toBe("В разборе: практика на 14 дней.");
   });
 });
 
