@@ -3,17 +3,29 @@
 // Механика deck раундами («Кто из нас?»): у игры задан roundSize.
 // Правила → карточка «7 / 12» → экран handoffText → … → финал с подсказками, «Ещё раунд» и «Пофлексить 🧊».
 // Сыгранные карточки запоминаются на устройстве — без повторов, пока колода не кончится.
+// Свайп влево по карточке = «Готово 👉». Цвет карточки и финала — из deck.accent, кнопка на карточке — game.cardButton.
 import { useReducer, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import type { Deck, DeckGame as DeckGameData } from "@gazgame/content";
 import { createRoundState, pickHint, pickRound, roundReducer } from "@gazgame/engine";
-import { Button, buttonVariants } from "@gazgame/ui";
+import { Button, buttonVariants, cn } from "@gazgame/ui";
 import { trackDeeperClick } from "@/lib/analytics";
 import { getProgress } from "@/lib/progress";
 import { FlexMenu } from "../result/FlexMenu";
 
 const usedKey = (game: DeckGameData, deck: Deck) => `${game.id}/${deck.id}`;
+
+/** Цвет карточки и финала по deck.accent: салатовый, оранжевый (по умолчанию) или тёмный с голубым свечением, как «Подписка». */
+const ACCENT: Record<NonNullable<Deck["accent"]>, string> = {
+  lime: "bg-lime text-bg",
+  orange: "bg-orange text-bg",
+  blue: "diamond-glow bg-surface text-cream",
+};
+
+/** Сколько протянуть влево (px) или как быстро смахнуть, чтобы карточка ушла. */
+const SWIPE_OFFSET = 80;
+const SWIPE_VELOCITY = 500;
 
 /**
  * Карточки нового раунда с учётом сыгранных на этом устройстве (храним тексты — номера могут сдвинуться при правке колоды).
@@ -32,12 +44,32 @@ function markRoundStarted(game: DeckGameData, deck: Deck, used: readonly number[
   );
 }
 
-export function RoundDeckGame({ game, deck, related }: { game: DeckGameData; deck: Deck; related?: ReactNode }) {
+export function RoundDeckGame({
+  game,
+  deck,
+  related,
+  onChangeDeck,
+}: {
+  game: DeckGameData;
+  deck: Deck;
+  related?: ReactNode;
+  /** «Сменить колоду» на финале — только если у игры колод больше одной. */
+  onChangeDeck?: () => void;
+}) {
   // Первый раунд планируем один раз; сыгранным он станет по нажатию «Газ!».
   const [firstRound] = useState(() => planRound(game, deck));
   const [state, dispatch] = useReducer(roundReducer, firstRound.cards, (cards) => createRoundState(cards));
   const [hint, setHint] = useState<string | null>(null);
+  /** Номер вспышки «Рассказывай! 👀»; null — анимации нет. */
+  const [peek, setPeek] = useState<number | null>(null);
   const finale = game.finale;
+  const accent = ACCENT[deck.accent ?? "orange"];
+
+  function showPeek() {
+    const id = Date.now();
+    setPeek(id);
+    window.setTimeout(() => setPeek((current) => (current === id ? null : current)), 1000);
+  }
 
   if (state.phase === "rules") {
     return (
@@ -79,7 +111,7 @@ export function RoundDeckGame({ game, deck, related }: { game: DeckGameData; dec
   if (state.phase === "finale") {
     return (
       <div className="flex flex-col gap-4">
-        <section className="flex flex-col items-center gap-3 rounded-card bg-orange p-6 text-center text-bg">
+        <section className={cn("flex flex-col items-center gap-3 rounded-card p-6 text-center", accent)}>
           <div aria-hidden="true" className="text-6xl leading-none">
             {finale?.emoji ?? "🎉"}
           </div>
@@ -98,17 +130,25 @@ export function RoundDeckGame({ game, deck, related }: { game: DeckGameData; dec
           </div>
         )}
 
-        <Button
-          variant="primary"
-          onClick={() => {
-            setHint(null);
-            const round = planRound(game, deck);
-            markRoundStarted(game, deck, round.used);
-            dispatch({ type: "newRound", cards: round.cards });
-          }}
-        >
-          Ещё раунд 🔄
-        </Button>
+        <div className={cn("grid gap-3", onChangeDeck && "grid-cols-2")}>
+          <Button
+            variant="primary"
+            className={cn(onChangeDeck && "px-3 text-base whitespace-nowrap")}
+            onClick={() => {
+              setHint(null);
+              const round = planRound(game, deck);
+              markRoundStarted(game, deck, round.used);
+              dispatch({ type: "newRound", cards: round.cards });
+            }}
+          >
+            Ещё раунд 🔄
+          </Button>
+          {onChangeDeck && (
+            <Button variant="outline" className="px-3 text-base whitespace-nowrap" onClick={onChangeDeck}>
+              Сменить колоду
+            </Button>
+          )}
+        </div>
         <FlexMenu
           linkPath={`/game/${game.slug}`}
           fileName={`gazgame-${game.slug}`}
@@ -135,6 +175,11 @@ export function RoundDeckGame({ game, deck, related }: { game: DeckGameData; dec
   }
 
   const card = deck.cards[state.cards[state.index] ?? -1];
+  const next = () => dispatch({ type: "next" });
+  const onSwipe = (_: unknown, info: PanInfo) => {
+    if (info.offset.x < -SWIPE_OFFSET || info.velocity.x < -SWIPE_VELOCITY) next();
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between text-sm font-bold text-muted" aria-live="polite">
@@ -148,16 +193,61 @@ export function RoundDeckGame({ game, deck, related }: { game: DeckGameData; dec
       <AnimatePresence mode="wait">
         <motion.div
           key={state.index}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={{ left: 0.7, right: 0.15 }}
+          dragSnapToOrigin
+          onDragEnd={onSwipe}
           initial={{ opacity: 0, y: 30, rotate: -2 }}
           animate={{ opacity: 1, y: 0, rotate: 0 }}
-          exit={{ opacity: 0, y: -30, rotate: 2 }}
+          exit={{ opacity: 0, x: -160, rotate: -6 }}
           transition={{ duration: 0.25 }}
-          className="flex min-h-64 flex-col justify-center rounded-card bg-orange p-6 text-bg"
+          className={cn(
+            "flex min-h-64 cursor-grab touch-pan-y flex-col justify-center gap-5 rounded-card p-6 select-none active:cursor-grabbing",
+            accent,
+          )}
         >
-          <p className="font-display text-2xl font-bold leading-snug">{card?.text}</p>
+          <p className="font-display text-2xl font-bold leading-snug break-words">{card?.text}</p>
+          {game.cardButton && (
+            <button
+              type="button"
+              onClick={showPeek}
+              onPointerDownCapture={(e) => e.stopPropagation()}
+              className={cn(
+                "min-h-11 self-start rounded-full px-4 text-[15px] font-bold",
+                deck.accent === "blue" ? "bg-cream/10 text-cream" : "bg-bg/15 text-bg",
+              )}
+            >
+              {game.cardButton}
+            </button>
+          )}
         </motion.div>
       </AnimatePresence>
-      <Button variant="primary" onClick={() => dispatch({ type: "next" })}>
+      <p className="-mt-3 text-center text-sm text-muted">Смахни влево, чтобы дальше</p>
+      <AnimatePresence>
+        {peek !== null && (
+          <motion.div
+            key={peek}
+            aria-hidden="true"
+            data-testid="peek"
+            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-bg/60"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <motion.span
+              className="text-[160px] leading-none"
+              initial={{ scale: 0.3, rotate: -20 }}
+              animate={{ scale: [0.3, 1.25, 1], rotate: [-20, 12, -6, 0], x: [0, -14, 14, 0] }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              👀
+            </motion.span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <Button variant="primary" onClick={next}>
         {state.index + 1 < state.cards.length ? "Готово 👉" : "К финалу 🏁"}
       </Button>
     </div>

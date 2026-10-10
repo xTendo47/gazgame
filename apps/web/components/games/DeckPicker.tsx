@@ -34,7 +34,8 @@ export function DeckPicker({
           key={deck.id}
           game={game}
           deck={deck}
-          accent={i % 2 ? "lime" : "orange"}
+          // цвет полоски — как у карточек колоды (deck.accent), иначе по очереди
+          accent={deck.accent === "lime" || deck.accent === "orange" ? deck.accent : i % 2 ? "lime" : "orange"}
           completedDecks={completedDecks}
           onPick={onPick}
         />

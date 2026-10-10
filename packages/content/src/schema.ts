@@ -17,6 +17,8 @@ export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy"] as co
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
+/** Цвет карточки и финала в игре раундами: салатовый, оранжевый или тёмный с голубым свечением (как «Подписка»). */
+export const DECK_ACCENTS = ["lime", "orange", "blue"] as const;
 /** «Костюмы» карточки для шеринга: средний блок картинки у каждого теста свой. */
 export const SHARE_STYLES = ["composition", "batteries", "receipt", "hero", "device", "player"] as const;
 
@@ -473,6 +475,8 @@ export const deckSchema = z.strictObject({
   unlockAfter: slug.optional(),
   /** Строка под финалом игры, зовёт в следующую колоду, например «Слишком мило? Попробуйте Без тормозов 💎». */
   upsellText: text.optional(),
+  /** Цвет карточки и финала (игра раундами). По умолчанию orange. */
+  accent: z.enum(DECK_ACCENTS).optional(),
   cards: z.array(cardSchema),
 }).refine((d) => d.locked !== undefined || d.cards.length > 0, {
   message: "в колоде должна быть хотя бы одна карточка",
@@ -498,6 +502,8 @@ export const deckGameSchema = gameBase.extend({
   roundSize: z.int().min(1).optional(),
   /** Экран после каждой карточки, например «Передай телефон соседу справа 👉». */
   handoffText: text.optional(),
+  /** Маленькая кнопка на карточке, например «Рассказывай! 👀»: на секунду весёлая анимация, ничего не считает. */
+  cardButton: text.optional(),
   /** Финал раунда. */
   finale: z
     .strictObject({

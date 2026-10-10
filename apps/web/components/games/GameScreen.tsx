@@ -15,12 +15,22 @@ import { RoundDeckGame } from "./RoundDeckGame";
 import { SpyGame } from "./SpyGame";
 import { VoteGame } from "./VoteGame";
 
-function Mechanic({ game, deck, related }: { game: DeckBasedGame; deck: Deck; related?: ReactNode }) {
+function Mechanic({
+  game,
+  deck,
+  related,
+  onChangeDeck,
+}: {
+  game: DeckBasedGame;
+  deck: Deck;
+  related?: ReactNode;
+  onChangeDeck?: () => void;
+}) {
   switch (game.mechanic) {
     case "deck":
       // roundSize — игра раундами («Кто из нас?»), иначе — обычная колода
       return game.roundSize !== undefined ? (
-        <RoundDeckGame game={game} deck={deck} related={related} />
+        <RoundDeckGame key={deck.id} game={game} deck={deck} related={related} onChangeDeck={onChangeDeck} />
       ) : (
         <DeckGame game={game} deck={deck} related={related} />
       );
@@ -43,7 +53,9 @@ function DecksScreen({ game, related }: { game: DeckBasedGame; related?: ReactNo
   const [deckId, setDeckId] = useState<string | null>(null);
   const deck = game.decks.find((d) => d.id === deckId);
 
-  if (deck) return <Mechanic game={game} deck={deck} related={related} />;
+  // «Сменить колоду» на финале игры раундами — только если колод больше одной
+  const changeDeck = game.decks.length > 1 ? () => setDeckId(null) : undefined;
+  if (deck) return <Mechanic game={game} deck={deck} related={related} onChangeDeck={changeDeck} />;
 
   const single = game.decks.length === 1 && game.decks[0];
   if (single && deckAccess(single).open) {

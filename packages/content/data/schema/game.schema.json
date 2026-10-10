@@ -192,6 +192,14 @@
                 "type": "string",
                 "minLength": 1
               },
+              "accent": {
+                "type": "string",
+                "enum": [
+                  "lime",
+                  "orange",
+                  "blue"
+                ]
+              },
               "cards": {
                 "type": "array",
                 "items": {
@@ -288,6 +296,10 @@
           "maximum": 9007199254740991
         },
         "handoffText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cardButton": {
           "type": "string",
           "minLength": 1
         },
@@ -539,6 +551,14 @@
               "upsellText": {
                 "type": "string",
                 "minLength": 1
+              },
+              "accent": {
+                "type": "string",
+                "enum": [
+                  "lime",
+                  "orange",
+                  "blue"
+                ]
               },
               "cards": {
                 "type": "array",
@@ -810,6 +830,14 @@
               "upsellText": {
                 "type": "string",
                 "minLength": 1
+              },
+              "accent": {
+                "type": "string",
+                "enum": [
+                  "lime",
+                  "orange",
+                  "blue"
+                ]
               },
               "cards": {
                 "type": "array",
