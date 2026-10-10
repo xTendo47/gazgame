@@ -220,13 +220,13 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
   );
 }
 
-/** «Вернуться в Соло». Если теста нет в Соло — в его первый раздел. */
+/** «Вернуться в «Познай себя»» (раздел solo). Если теста там нет — в его первый раздел. Названия — в sections.ts. */
 function BackToSection({ test }: { test: Test }) {
   const section = getSection(test.sections.includes("solo") ? "solo" : (test.sections[0] ?? "solo"));
   if (!section) return null;
   return (
     <Link href={`/${section.id}`} className={buttonVariants({ variant: "outline" })}>
-      {section.id === "solo" ? "Вернуться в Соло" : `Вернуться: ${section.title}`} {section.emoji}
+      Вернуться в «{section.title}» {section.emoji}
     </Link>
   );
 }

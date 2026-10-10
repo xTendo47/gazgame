@@ -2,6 +2,7 @@
 // Сами данные лежат в packages/content/data/*.json.
 // Загрузка с диска — в "@gazgame/content/node" (только для сервера и бота).
 export * from "./schema";
+export * from "./sections";
 export {
   buildCatalog,
   ContentError,

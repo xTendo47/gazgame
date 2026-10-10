@@ -1,7 +1,7 @@
 // Telegram-бот GAZ Game: вход и каталог. Сами игры и тесты открываются в Mini App (apps/web).
 // Контент и логика — общие с сайтом: @gazgame/content и @gazgame/engine.
 import { Bot, InlineKeyboard } from "grammy";
-import type { Catalog, Section } from "@gazgame/content";
+import { SECTION_LABELS, type Catalog, type Section } from "@gazgame/content";
 import { itemPath, itemsForSection, type VisibilityOptions } from "@gazgame/engine";
 
 export interface BotConfig {
@@ -11,11 +11,11 @@ export interface BotConfig {
   visibility?: VisibilityOptions;
 }
 
-const SECTIONS: { id: Section; title: string }[] = [
-  { id: "pairs", title: "💞 Для пар" },
-  { id: "company", title: "🎉 Для компаний" },
-  { id: "solo", title: "👤 Соло" },
-];
+// Названия разделов — из общего конфига packages/content/src/sections.ts.
+const SECTIONS: { id: Section; title: string }[] = (["pairs", "company", "solo"] as const).map((id) => ({
+  id,
+  title: `${SECTION_LABELS[id].emoji} ${SECTION_LABELS[id].title}`,
+}));
 
 const GREETING = [
   "Йо! Это <b>GAZ Game</b> 🔥",
