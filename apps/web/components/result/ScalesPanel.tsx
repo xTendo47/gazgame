@@ -8,6 +8,7 @@ import type { Test } from "@gazgame/content";
 import type { ScaleScore } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { scalesFromQuery } from "@/lib/result-query";
+import { FillBar } from "./FillBar";
 
 const LEVEL_LABELS: Record<string, string> = { low: "низкий", mid: "средний", high: "высокий" };
 const LEVEL_BARS: Record<string, string> = { low: "bg-orange", mid: "bg-gradient-to-r from-orange to-lime", high: "bg-lime" };
@@ -73,10 +74,7 @@ function ScaleRow({ item }: { item: ScaleScore }) {
         aria-valuetext={`${score} из ${scale.max}${levelLabel ? `, ${levelLabel} уровень` : ""}`}
         className="h-3 overflow-hidden rounded-full bg-surface-2"
       >
-        <div
-          className={cn("h-full rounded-full", (level && LEVEL_BARS[level]) ?? "bg-cream")}
-          style={{ width: `${Math.max(percent, 4)}%` }}
-        />
+        <FillBar percent={percent} className={(level && LEVEL_BARS[level]) ?? "bg-cream"} />
       </div>
       {zone && <p className="text-[15px] leading-relaxed text-cream/80">{zone}</p>}
     </div>

@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
 import { cn } from "@gazgame/ui";
 import { rankingFromQuery } from "@/lib/result-query";
+import { FillBar } from "./FillBar";
 
 export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId: string; blendId?: string }) {
   const ranking = rankingFromQuery(test, useSearchParams(), { resultId, blendId });
@@ -28,9 +29,7 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
                   </span>
                   {result.title}
                 </span>
-                <span className="shrink-0 text-sm font-bold text-muted">
-                  {score}/{max}
-                </span>
+                <span className="shrink-0 text-sm font-bold text-muted tabular-nums">{percent}%</span>
               </div>
               <div
                 role="meter"
@@ -38,12 +37,13 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
                 aria-valuemin={0}
                 aria-valuemax={max}
                 aria-valuenow={score}
-                aria-valuetext={`${i + 1}-е место, ${score} из ${max}`}
+                aria-valuetext={`${i + 1}-е место, ${percent}%`}
                 className="h-3 overflow-hidden rounded-full bg-surface-2"
               >
-                <div
-                  className={cn("h-full rounded-full", i === 0 ? "bg-orange" : i === 1 ? "bg-lime" : "bg-cream/35")}
-                  style={{ width: `${Math.max(percent, 3)}%` }}
+                <FillBar
+                  percent={percent}
+                  delay={i * 0.06}
+                  className={i === 0 ? "bg-orange" : i === 1 ? "bg-lime" : "bg-cream/35"}
                 />
               </div>
             </li>

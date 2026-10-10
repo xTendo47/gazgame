@@ -7,7 +7,7 @@ import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
-import { scalesConfig, scoringConfig, splitListLabel, type TestBlend } from "@gazgame/engine";
+import { fillPlaceholders, scalesConfig, scoringConfig, splitListLabel, type TestBlend } from "@gazgame/engine";
 import { Badge, buttonVariants, cn, DeepTeaser } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { DeeperButton } from "@/components/DeeperButton";
@@ -16,7 +16,9 @@ import { getSection } from "@/lib/sections";
 import { CopyListButton } from "./CopyListButton";
 import { FlexMenu } from "./FlexMenu";
 import { RankingPanel } from "./RankingPanel";
+import { ResultHero } from "./ResultHero";
 import { ScalesPanel } from "./ScalesPanel";
+import { UpsellText } from "./UpsellText";
 
 /** Название для заголовка вкладки: «Холерик» или «Холерик (с нотками меланхолика 🌙)». */
 export function resultTitle(result: TestResult, blend?: Pick<TestBlend, "note">): string {
@@ -34,6 +36,8 @@ export function resultDescription(result: TestResult): string | undefined {
   return result.paragraphs?.[0] ?? result.text;
 }
 
+const premiumTextClass = "-mt-1 leading-relaxed text-cream/85";
+
 export function TestResultView({ test, result, blend }: { test: Test; result: TestResult; blend?: TestBlend }) {
   const paragraphs = result.paragraphs ?? [];
   const hasScales = scalesConfig(test) !== null;
@@ -48,27 +52,15 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
     <>
       <BackLink href={`/${test.sections[0] ?? ""}`}>Все тесты</BackLink>
 
-      <section className="flex flex-col items-center gap-3 rounded-card bg-orange px-6 pt-8 pb-7 text-center text-bg">
-        <div className="text-sm font-extrabold uppercase tracking-wide">
-          {test.emoji} {test.title} · твой результат
-        </div>
-        <div aria-hidden="true" className="relative text-7xl leading-none">
-          {result.emoji}
-          {blend && (
-            <span className="absolute -right-7 -bottom-1 rounded-full bg-bg p-1.5 text-3xl leading-none">
-              {blend.result.emoji}
-            </span>
-          )}
-        </div>
-        <h1 className="font-display text-4xl font-black">{result.title}</h1>
-        {blend && <p className="-mt-2 text-lg font-bold">{blend.note.title}</p>}
-        {result.subtitle && (
-          <p className="rounded-full bg-bg px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-orange">
-            {result.subtitle}
-          </p>
-        )}
-        {result.text && <p className="text-lg font-semibold">{result.text}</p>}
-      </section>
+      <ResultHero
+        label={`${test.emoji} ${test.title} · твой результат`}
+        emoji={result.emoji}
+        title={result.title}
+        blendEmoji={blend?.result.emoji}
+        blendTitle={blend?.note.title}
+        subtitle={result.subtitle}
+        text={result.text}
+      />
       {test.status === "draft" && (
         <Badge tone="draft" className="self-start">
           черновик
@@ -84,6 +76,19 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           ))}
         </section>
       )}
+
+      {/* Делиться — пока результат на эмоциях: сразу после разбора */}
+      <FlexMenu
+        linkPath={`/test/${test.slug}`}
+        fileName={`gazgame-${test.slug}-${result.id}${blend ? `-${blend.resultId}` : ""}`}
+        shareText={result.shareText}
+        card={{
+          label: test.title,
+          emoji: result.emoji,
+          title: result.title,
+          text: blend ? blend.note.title : (result.subtitle ?? result.text),
+        }}
+      />
 
       {showRanking && (
         // Полоски всех типов читаются из адреса уже в браузере; страница при этом остаётся статической.
@@ -184,7 +189,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       )}
 
       {test.upsell ? (
-        <section className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5">
+        <section className="diamond-glow flex flex-col gap-4 rounded-card bg-surface p-5">
           <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-lime">
             <Lock aria-hidden="true" size={16} />
             Premium
@@ -192,6 +197,10 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           {test.upsell.premium.headline && (
             <p className="-mt-2 font-display text-xl font-bold">{test.upsell.premium.headline}</p>
           )}
+          {/* Что человек узнает в глубоком разборе; {weakestScale} подставится из шкал в адресе */}
+          <Suspense fallback={<p className={premiumTextClass}>{fillPlaceholders(test.upsell.premium.text, {})}</p>}>
+            <UpsellText test={test} text={test.upsell.premium.text} className={premiumTextClass} />
+          </Suspense>
           <DeeperButton
             id={test.id}
             kind="test"
@@ -209,26 +218,14 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         )
       )}
 
-      <Link href={`/test/${test.slug}`} className={buttonVariants({ variant: "ghost" })}>
-        Пройти ещё раз 🔄
-      </Link>
-
       {test.disclaimer && <p className="px-1 text-center text-sm text-muted">{test.disclaimer}</p>}
 
       <RelatedBlock item={test} />
 
       <nav aria-label="Что дальше" className="mt-4 flex flex-col gap-3">
-        <FlexMenu
-          linkPath={`/test/${test.slug}`}
-          fileName={`gazgame-${test.slug}-${result.id}${blend ? `-${blend.resultId}` : ""}`}
-          shareText={result.shareText}
-          card={{
-            label: test.title,
-            emoji: result.emoji,
-            title: result.title,
-            text: blend ? blend.note.title : (result.subtitle ?? result.text),
-          }}
-        />
+        <Link href={`/test/${test.slug}`} className={buttonVariants({ variant: "ghost" })}>
+          Пройти ещё раз 🔄
+        </Link>
         <BackToSection test={test} />
         <Link href="/" className={buttonVariants({ variant: "ghost", size: "md", className: "text-muted hover:text-cream" })}>
           В меню
