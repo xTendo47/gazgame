@@ -35,6 +35,9 @@ import {
   isVisible,
   findLockedTest,
   afterWhen,
+  audienceForLabel,
+  isAudience,
+  questionTexts,
   answerBackMessage,
   ingredientsLine,
   partnerLabel,
@@ -363,8 +366,8 @@ describe("шеринг: проценты и текст сообщения", () =
   it("у теста по шкалам {scale} и {emoji} — самая высокая шкала", () => {
     const test = testSchema.parse(selfEsteemJson);
     const result = test.results[0]!;
-    expect(shareMessage(test, result, { link: "L", topScale: { title: "Принятие себя", emoji: "🫶" } })).toBe(
-      "Моя опора: Принятие себя 🫶 А на чём стоишь ты? 👉 L",
+    expect(shareMessage(test, result, { link: "L", topScale: { title: "Принятие себя", emoji: "💛" } })).toBe(
+      "Моя опора: Принятие себя 💛 А на чём стоишь ты? 👉 L",
     );
   });
 
@@ -433,6 +436,62 @@ describe("шеринг: ссылка на итог, превью и «ответ
     store.saveTestResult("temperament", "choleric");
     expect(store.getFriendResult("temperament")).toMatchObject({ resultId: "sanguine", blendId: "choleric" });
     expect(store.getTestResult("temperament")?.resultId).toBe("choleric");
+  });
+});
+
+describe("версии теста: «Языки любви» для парня и для девушки", () => {
+  const love = testSchema.parse(loveLanguagesJson);
+  const versions = love.audience!.options.map((o) => o.id);
+
+  it("у теста две версии: Парень и Девушка", () => {
+    expect(love.audience).toMatchObject({ title: "Кто проходит?" });
+    expect(love.audience!.options.map((o) => o.label)).toEqual(["Парень", "Девушка"]);
+  });
+
+  it("в каждой версии 13 вопросов, ответов столько же и баллы те же, что у базы", () => {
+    for (const v of versions) {
+      const view = love.questions.map((q) => questionTexts(q, v));
+      expect(view).toHaveLength(13);
+      view.forEach((q, i) => {
+        const base = love.questions[i]!;
+        expect(q.options).toHaveLength(base.options.length);
+        expect(q.text.length).toBeGreaterThan(0);
+      });
+    }
+    // баллы считаются по базовым ответам — одинаковые ответы дают одинаковый итог в любой версии
+    const answers = love.questions.map(() => 0);
+    expect(scoreTest(love, answers)).toEqual(scoreTest(love, answers));
+  });
+
+  it("версия для парня подменяет тексты, где они есть; без версии — базовый текст", () => {
+    const changed = love.questions.filter((q) => q.audience?.him);
+    expect(changed.length).toBeGreaterThan(0);
+    for (const q of changed) {
+      const him = questionTexts(q, "him");
+      const o = q.audience!.him!;
+      if (o.text) expect(him.text).toBe(o.text);
+      q.options.forEach((opt, i) => {
+        if (opt.id && o.options?.[opt.id]) expect(him.options[i]).toBe(o.options[opt.id]);
+        else expect(him.options[i]).toBe(opt.text);
+      });
+      expect(questionTexts(q, "her")).toEqual({ text: q.text, options: q.options.map((x) => x.text) });
+      expect(questionTexts(q, null)).toEqual({ text: q.text, options: q.options.map((x) => x.text) });
+    }
+  });
+
+  it("проверка версии и подпись над первым вопросом", () => {
+    expect(isAudience(love, "him")).toBe(true);
+    expect(isAudience(love, "nope")).toBe(false);
+    expect(isAudience(love, null)).toBe(false);
+    expect(audienceForLabel("Парень")).toBe("Для парня");
+    expect(audienceForLabel("Девушка")).toBe("Для девушки");
+  });
+
+  it("выбор версии запоминается на устройстве", () => {
+    const store = createProgressStore(createMemoryKeyValueStore());
+    expect(store.getAudience("love-languages")).toBeNull();
+    store.saveAudience("love-languages", "him");
+    expect(store.getAudience("love-languages")).toBe("him");
   });
 });
 

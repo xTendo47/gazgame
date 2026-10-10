@@ -180,7 +180,7 @@ export const knowEachOther = gameSchema.parse({
     {
       id: "middle",
       title: "Середина",
-      emoji: "🫧",
+      emoji: "🐋",
       questionsPerGame: 4,
       unlockAfter: "basics",
       cards: ["А", "Б", "В", "Г", "Д", "Е"].map((t) => ({ text: `${t} {name}?`, options: ["1", "2", "3"] })),

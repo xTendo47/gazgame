@@ -5,6 +5,8 @@ export * from "./schema";
 export * from "./sections";
 export {
   buildCatalog,
+  findHiddenEmoji,
+  hiddenEmojiMessage,
   ContentError,
   inspectContent,
   type ContentIssue,

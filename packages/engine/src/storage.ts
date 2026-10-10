@@ -34,6 +34,8 @@ export interface ProgressData {
   completedDecks?: Record<string, string[]>;
   /** Итог друга, который прислал ссылку, по тестам — для строки «Ты: … · Друг: …» и «ответки». */
   friendResults?: Record<string, FriendResult>;
+  /** Выбранная версия теста («Кто проходит?»), по тестам. */
+  audiences?: Record<string, string>;
 }
 
 export interface FriendResult {
@@ -53,6 +55,8 @@ export interface ProgressStore {
   saveLastCards(key: string, cardTexts: readonly string[]): void;
   getCompletedDecks(gameId: string): string[];
   getFriendResult(testId: string): FriendResult | null;
+  getAudience(testId: string): string | null;
+  saveAudience(testId: string, audienceId: string): void;
   saveFriendResult(testId: string, result: { resultId: string; blendId?: string }, now?: Date): void;
   markDeckCompleted(gameId: string, deckId: string): void;
   clear(): void;
@@ -89,6 +93,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.lastCards ? { lastCards: data.lastCards } : {}),
         ...(data.completedDecks ? { completedDecks: data.completedDecks } : {}),
         ...(data.friendResults ? { friendResults: data.friendResults } : {}),
+        ...(data.audiences ? { audiences: data.audiences } : {}),
       };
     } catch {
       return emptyProgress();
@@ -147,6 +152,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       const data = load();
       const record: FriendResult = { resultId, receivedAt: now.toISOString(), ...(blendId ? { blendId } : {}) };
       data.friendResults = { ...data.friendResults, [testId]: record };
+      save(data);
+    },
+    getAudience: (testId) => load().audiences?.[testId] ?? null,
+    saveAudience(testId, audienceId) {
+      const data = load();
+      data.audiences = { ...data.audiences, [testId]: audienceId };
       save(data);
     },
     clear() {

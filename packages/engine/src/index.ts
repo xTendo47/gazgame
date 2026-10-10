@@ -3,6 +3,7 @@
 export * from "./random";
 export * from "./tiers";
 export * from "./test-runner";
+export * from "./audience";
 export * from "./result-list";
 export * from "./percent";
 export * from "./share";

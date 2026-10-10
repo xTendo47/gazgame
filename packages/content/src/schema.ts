@@ -74,9 +74,20 @@ export const testOptionSchema = z
     "у варианта ответа должен быть type, scores или score",
   );
 
+/**
+ * Подмена текста вопроса для одной версии теста (например, для парня): text — новый текст вопроса,
+ * options — новые тексты ответов по их id. Баллы, id и порядок ответов всегда берутся из базового вопроса.
+ */
+export const questionAudienceSchema = z.strictObject({
+  text: text.optional(),
+  options: z.record(z.string(), text).optional(),
+});
+
 export const testQuestionSchema = z.strictObject({
   /** id вопроса — нужен, чтобы сослаться на него в scoring.tieBreak.lastQuestions. */
   id: z.string().optional(),
+  /** Тексты для версий теста (ключ — id версии из audience теста). Нет версии — базовый текст. */
+  audience: z.record(z.string(), questionAudienceSchema).optional(),
   /** Подсчёт "scales": к какой шкале относится вопрос. */
   scale: z.string().optional(),
   text,
@@ -197,6 +208,16 @@ export const testSchema = itemBase
     disclaimer: text.optional(),
     /** Подсказка перед стартом. */
     intro: text.optional(),
+    /**
+     * Версии теста: перед первым вопросом спрашиваем «Кто проходит?» (например, «Парень» / «Девушка»).
+     * Итоги, баллы и подсчёт общие; у вопросов можно подменить тексты для версии (question.audience).
+     */
+    audience: z
+      .strictObject({
+        title: text,
+        options: z.array(z.strictObject({ id: slug, label: text })).min(2, "нужно минимум две версии"),
+      })
+      .optional(),
     questions: z.array(testQuestionSchema).min(1),
     results: z.array(testResultSchema).min(1),
     /** Для смешанного результата: как звучат «нотки» каждого типа. Ключ — id результата. */
@@ -234,6 +255,31 @@ export const testSchema = itemBase
       ids.add(r.id);
     });
     const known = `(есть: ${[...ids].join(", ")})`;
+    // Версии теста: ключи у вопросов — из audience теста, id ответов в подмене — существующие
+    const versions = new Set(test.audience?.options.map((o) => o.id) ?? []);
+    test.questions.forEach((q, qi) => {
+      for (const [version, override] of Object.entries(q.audience ?? {})) {
+        if (!versions.has(version)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["questions", qi, "audience", version],
+            message: test.audience
+              ? `нет версии "${version}" в audience теста (есть: ${[...versions].join(", ")})`
+              : `у вопроса есть audience, а у теста нет поля audience с версиями`,
+          });
+        }
+        const optionIds = new Set(q.options.map((o) => o.id).filter((id): id is string => id !== undefined));
+        for (const optionId of Object.keys(override.options ?? {})) {
+          if (!optionIds.has(optionId)) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["questions", qi, "audience", version, "options", optionId],
+              message: `нет ответа с id "${optionId}" в этом вопросе (есть: ${[...optionIds].join(", ")})`,
+            });
+          }
+        }
+      }
+    });
     test.results.forEach((r, ri) => {
       for (const key of ["duo", "danger"] as const) {
         const ref = r.share?.[key];

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { buildCatalog, ContentError, inspectContent } from "../src/index";
+import { buildCatalog, ContentError, findHiddenEmoji, inspectContent } from "../src/index";
 import { loadCatalog } from "../src/node";
 
 const validTest = {
@@ -202,8 +202,8 @@ describe("игра guess-partner: уровни и вопросы «про себ
 
   it("unlockAfter должен указывать на другую колоду этой игры", () => {
     const surface = { id: "surface", title: "П", emoji: "🌊", cards: [card] };
-    expect(() => build(game([surface, { id: "depth", title: "Г", emoji: "🫧", unlockAfter: "surface", cards: [card] }]))).not.toThrow();
-    expect(() => build(game([surface, { id: "depth", title: "Г", emoji: "🫧", unlockAfter: "nope", cards: [card] }]))).toThrow(
+    expect(() => build(game([surface, { id: "depth", title: "Г", emoji: "🐋", unlockAfter: "surface", cards: [card] }]))).not.toThrow();
+    expect(() => build(game([surface, { id: "depth", title: "Г", emoji: "🐋", unlockAfter: "nope", cards: [card] }]))).toThrow(
       /нет колоды с id "nope"/,
     );
     expect(() => build(game([{ ...surface, unlockAfter: "surface" }]))).toThrow(/после самой себя/);
@@ -287,5 +287,47 @@ describe("платные тесты под замком (locked-tests.json)", ()
     expect(() => build([locked(), locked()])).toThrow(/"dark" повторяется/);
     expect(() => build([locked({ id: "demo", slug: "other" })])).toThrow(/id "demo" уже есть/);
     expect(() => build([locked({ slug: "demo" })])).toThrow(/slug "demo" уже есть/);
+  });
+});
+
+describe("версии теста (audience)", () => {
+  const withAudience = (questionAudience: unknown) => ({
+    ...structuredClone(validTest),
+    audience: { title: "Кто проходит?", options: [{ id: "him", label: "Парень" }, { id: "her", label: "Девушка" }] },
+    questions: [{ text: "?", audience: questionAudience, options: [{ id: "x", text: "А", type: "a" }, { id: "y", text: "Б", type: "b" }] }],
+  });
+  const build = (data: unknown) => buildCatalog([{ path: "demo.json", kind: "test", data }]);
+
+  it("правильная подмена проходит", () => {
+    expect(() => build(withAudience({ him: { text: "Вопрос для парня", options: { x: "Ответ А для парня" } } }))).not.toThrow();
+  });
+
+  it("ловит версию, которой нет у теста, и несуществующий id ответа", () => {
+    expect(() => build(withAudience({ them: { text: "?" } }))).toThrow(/нет версии "them"/);
+    expect(() => build(withAudience({ him: { options: { z: "?" } } }))).toThrow(/нет ответа с id "z"/);
+  });
+});
+
+describe("эмодзи, которых не видно на Windows 10 и старых Android", () => {
+  it("🥲 и 🫠 ловятся, 🔥 и 🧡 проходят", () => {
+    expect(findHiddenEmoji({ a: "Я 🥲", b: ["ок", { c: "🫠 растаял" }] })).toEqual(["🥲", "🫠"]);
+    expect(findHiddenEmoji({ a: "Холерик 🔥", b: "Человековед 🧡" })).toEqual([]);
+  });
+
+  it("новые сочетания ловятся, даже без невидимого селектора; старые части по отдельности — нет", () => {
+    expect(findHiddenEmoji("Любовь ❤️‍🔥")).toEqual(["❤️‍🔥"]);
+    expect(findHiddenEmoji("Выдох 😮\u200d💨")).toEqual(["😮‍💨"]);
+    expect(findHiddenEmoji("❤️ и 🔥 отдельно, 😮 и 💨 тоже")).toEqual([]);
+  });
+
+  it("валидация падает с понятной ошибкой и именем файла", () => {
+    const withEmoji = { ...structuredClone(validTest), emoji: "🫠" };
+    expect(() => buildCatalog([{ path: "demo.json", kind: "test", data: withEmoji }])).toThrow(
+      "demo.json: эмодзи 🫠 не видно на Windows 10 и старых Android, возьми другой",
+    );
+  });
+
+  it("весь контент в data/ без таких эмодзи", () => {
+    expect(() => loadCatalog()).not.toThrow();
   });
 });
