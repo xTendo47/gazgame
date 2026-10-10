@@ -188,6 +188,10 @@
                 "type": "string",
                 "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
               },
+              "upsellText": {
+                "type": "string",
+                "minLength": 1
+              },
               "cards": {
                 "type": "array",
                 "items": {
@@ -277,6 +281,57 @@
             ],
             "additionalProperties": false
           }
+        },
+        "roundSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "handoffText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "finale": {
+          "type": "object",
+          "properties": {
+            "emoji": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hintButton": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hints": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "flexText": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "emoji",
+            "title",
+            "text",
+            "hintButton",
+            "hints",
+            "flexText"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -480,6 +535,10 @@
               "unlockAfter": {
                 "type": "string",
                 "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "upsellText": {
+                "type": "string",
+                "minLength": 1
               },
               "cards": {
                 "type": "array",
@@ -747,6 +806,10 @@
               "unlockAfter": {
                 "type": "string",
                 "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "upsellText": {
+                "type": "string",
+                "minLength": 1
               },
               "cards": {
                 "type": "array",

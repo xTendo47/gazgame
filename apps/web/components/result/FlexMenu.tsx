@@ -1,7 +1,7 @@
 "use client";
 
 // «Пофлексить 🧊» на экране результата: меню из двух вариантов —
-// карточка 9:16 для сторис (ShareResult) или ссылка на тест в буфер обмена.
+// карточка 9:16 для сторис (ShareResult) или ссылка на тест/игру в буфер обмена.
 import { useId, useState } from "react";
 import { Image as ImageIcon, Link2 } from "lucide-react";
 import { Button, type ShareCardProps } from "@gazgame/ui";
@@ -15,20 +15,20 @@ export function FlexMenu({
   card,
   fileName,
   shareText,
-  testPath,
+  linkPath,
 }: {
   card: Omit<ShareCardProps, "ref">;
   fileName: string;
   shareText?: string;
-  /** Адрес теста, например "/test/temperament" — его копирует «Скопировать ссылку». */
-  testPath: string;
+  /** Адрес теста или игры, например "/test/temperament", — его копирует «Скопировать ссылку». */
+  linkPath: string;
 }) {
   const [view, setView] = useState<View>("closed");
   const [copy, setCopy] = useState<{ status: CopyStatus; url: string }>({ status: "idle", url: "" });
   const menuId = useId();
 
   async function copyLink() {
-    const url = new URL(testPath, window.location.origin).toString();
+    const url = new URL(linkPath, window.location.origin).toString();
     // Если буфер обмена недоступен (Telegram, старые браузеры) — показываем ссылку, чтобы скопировать руками.
     setCopy({ status: (await copyText(url)) ? "copied" : "failed", url });
   }

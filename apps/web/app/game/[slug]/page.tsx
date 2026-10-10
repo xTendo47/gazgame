@@ -24,6 +24,8 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
   const game = findGame(getCatalog(), (await params).slug, visibility);
   if (!game) notFound();
   const section = getSection(game.sections[0] ?? "company");
+  // Игра раундами показывает правила отдельным экраном перед первой карточкой — здесь их не дублируем.
+  const rulesOnOwnScreen = game.mechanic === "deck" && game.roundSize !== undefined;
 
   return (
     <Screen>
@@ -45,7 +47,7 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
         }
       />
 
-      {game.rules.length > 0 && (
+      {game.rules.length > 0 && !rulesOnOwnScreen && (
         <ol className="flex list-inside list-decimal flex-col gap-1 rounded-card bg-surface p-4 text-[15px] text-muted marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
             <li key={rule}>{rule}</li>

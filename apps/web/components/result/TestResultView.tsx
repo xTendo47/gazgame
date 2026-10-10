@@ -201,7 +201,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
 
       <nav aria-label="Что дальше" className="mt-4 flex flex-col gap-3">
         <FlexMenu
-          testPath={`/test/${test.slug}`}
+          linkPath={`/test/${test.slug}`}
           fileName={`gazgame-${test.slug}-${result.id}${blend ? `-${blend.resultId}` : ""}`}
           shareText={result.shareText}
           card={{

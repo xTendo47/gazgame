@@ -401,6 +401,8 @@ export const deckSchema = z.strictObject({
   locked: z.strictObject({ reason: z.enum(["soon", "subscription"]), text }).optional(),
   /** id другой колоды этой игры: эта откроется, когда пара хоть раз доиграет ту до финала (запоминается на устройстве). */
   unlockAfter: slug.optional(),
+  /** Строка под финалом игры, зовёт в следующую колоду, например «Слишком мило? Попробуйте Без тормозов 💎». */
+  upsellText: text.optional(),
   cards: z.array(cardSchema),
 }).refine((d) => d.locked !== undefined || d.cards.length > 0, {
   message: "в колоде должна быть хотя бы одна карточка",
@@ -419,6 +421,26 @@ export const deckGameSchema = gameBase.extend({
   mechanic: z.literal("deck"),
   /** Если заданы — игрок сам выбирает тип карточки (например, Правда / Действие). */
   cardTypes: z.array(z.strictObject({ id: z.string().min(1), title: text, emoji: text })).optional(),
+  /**
+   * Игра раундами («Кто из нас?»): столько карточек за раунд. Перед первой карточкой — экран правил,
+   * после каждой — экран handoffText, в конце раунда — finale. Без повторов, пока колода не кончится.
+   */
+  roundSize: z.int().min(1).optional(),
+  /** Экран после каждой карточки, например «Передай телефон соседу справа 👉». */
+  handoffText: text.optional(),
+  /** Финал раунда. */
+  finale: z
+    .strictObject({
+      emoji: text,
+      title: text,
+      text,
+      /** Кнопка, которая показывает случайную подсказку из hints, например «Нет идей? 🎲». */
+      hintButton: text,
+      hints: z.array(text).min(1, "нужна хотя бы одна подсказка"),
+      /** Текст для «Пофлексить 🧊». */
+      flexText: text,
+    })
+    .optional(),
 });
 
 /** «Кто из компании?»: все тайно голосуют за игрока. */

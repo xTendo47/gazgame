@@ -6,5 +6,6 @@ export * from "./test-runner";
 export * from "./catalog";
 export * from "./storage";
 export * from "./mechanics/deck";
+export * from "./mechanics/deck-rounds";
 export * from "./mechanics/vote";
 export * from "./mechanics/guess-partner";

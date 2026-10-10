@@ -4,6 +4,7 @@ import loveLanguagesJson from "@gazgame/content/data/tests/love-languages.json";
 import {
   castVote,
   createDeckState,
+  createRoundState,
   createGuessPartnerState,
   currentView,
   deckAccess,
@@ -20,6 +21,9 @@ import {
   isExhausted,
   isVisible,
   nextRound,
+  pickHint,
+  pickRound,
+  roundReducer,
   randomPool,
   rankFor,
   scoreGuessPartner,
@@ -292,6 +296,55 @@ describe("randomPool — из чего выбирает «Случайная и�
 
   it("черновики скрыты настройкой — их нет и в запасном варианте", () => {
     expect(randomPool({ tests: [draftTest], games: [] }, { includeDrafts: false })).toEqual([]);
+  });
+});
+
+describe("deck раундами — «Кто из нас?»", () => {
+  it("без повторов между раундами, пока колода не кончится; потом — заново, без повторов внутри раунда", () => {
+    const random = seededRandom(5);
+    let used: number[] = [];
+    const seen: number[] = [];
+    for (let r = 0; r < 4; r++) {
+      const round = pickRound(50, 12, used, random);
+      expect(round.cards).toHaveLength(12);
+      seen.push(...round.cards);
+      used = round.used;
+    }
+    expect(new Set(seen).size).toBe(48); // 4 раунда по 12 — все разные
+    const fifth = pickRound(50, 12, used, random);
+    expect(new Set(fifth.cards).size).toBe(12);
+    const leftovers = [...Array(50).keys()].filter((i) => !seen.includes(i));
+    expect(fifth.cards).toEqual(expect.arrayContaining(leftovers)); // сначала доигрываем 2 оставшиеся
+    expect(fifth.used).toHaveLength(10); // колода перемешана заново, 10 из неё уже сыграли
+    const sixth = pickRound(50, 12, fifth.used, random);
+    expect(sixth.cards.some((c) => fifth.used.includes(c))).toBe(false);
+  });
+
+  it("раунд не больше колоды; мусор в сохранённых номерах игнорируется", () => {
+    expect(pickRound(5, 12, []).cards).toHaveLength(5);
+    expect(pickRound(5, 3, [99, -1, 0]).cards).not.toContain(0);
+  });
+
+  it("правила → карточка → передай телефон → … → финал; «Ещё раунд» — без правил", () => {
+    let state = createRoundState([4, 7, 9]);
+    expect(state.phase).toBe("rules");
+    expect(roundReducer(state, { type: "next" })).toBe(state); // с правил — только «start»
+    state = roundReducer(state, { type: "start" });
+    const phases: string[] = [];
+    while (state.phase !== "finale") {
+      phases.push(`${state.phase}:${state.index}`);
+      state = roundReducer(state, { type: "next" });
+    }
+    expect(phases).toEqual(["card:0", "handoff:0", "card:1", "handoff:1", "card:2"]);
+    expect(roundReducer(state, { type: "next" })).toBe(state);
+    expect(roundReducer(state, { type: "newRound", cards: [1, 2] })).toEqual({ cards: [1, 2], index: 0, phase: "card" });
+  });
+
+  it("подсказка — случайная и не та же, что только что", () => {
+    const hints = ["a", "b", "c"];
+    for (let seed = 1; seed < 20; seed++) expect(pickHint(hints, "b", seededRandom(seed))).not.toBe("b");
+    expect(pickHint(["один"], "один")).toBe("один");
+    expect(pickHint([], null)).toBeNull();
   });
 });
 

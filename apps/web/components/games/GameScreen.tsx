@@ -10,12 +10,18 @@ import { Button } from "@gazgame/ui";
 import { DeckGame } from "./DeckGame";
 import { DeckPicker } from "./DeckPicker";
 import { GuessPartnerGame } from "./GuessPartnerGame";
+import { RoundDeckGame } from "./RoundDeckGame";
 import { VoteGame } from "./VoteGame";
 
 function Mechanic({ game, deck, related }: { game: Game; deck: Deck; related?: ReactNode }) {
   switch (game.mechanic) {
     case "deck":
-      return <DeckGame game={game} deck={deck} related={related} />;
+      // roundSize — игра раундами («Кто из нас?»), иначе — обычная колода
+      return game.roundSize !== undefined ? (
+        <RoundDeckGame game={game} deck={deck} related={related} />
+      ) : (
+        <DeckGame game={game} deck={deck} related={related} />
+      );
     case "vote":
       return <VoteGame game={game} deck={deck} related={related} />;
     case "guess-partner":
