@@ -41,6 +41,16 @@ export function relatedItems(catalog: Catalog, item: ContentItem, options?: Visi
     .filter((rel): rel is ContentItem => rel !== undefined && isVisible(rel, options));
 }
 
+/**
+ * Из чего выбирать «Случайную игру»: опубликованные тесты и игры из всех разделов.
+ * Пока опубликованных нет (весь контент — черновики), берём всё, что сейчас видно на сайте.
+ */
+export function randomPool(catalog: Catalog, options?: VisibilityOptions): ContentItem[] {
+  const visible = allItems(catalog).filter((item) => isVisible(item, options));
+  const published = visible.filter((item) => item.status === "published");
+  return published.length > 0 ? published : visible;
+}
+
 /** Адрес страницы элемента — общий для сайта и бота. */
 export function itemPath(item: ContentItem): string {
   return item.kind === "test" ? `/test/${item.slug}` : `/game/${item.slug}`;

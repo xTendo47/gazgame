@@ -1,15 +1,23 @@
 // Главное меню GAZ Game: три большие тёмные карточки разделов + маленькие кнопки по две в ряд.
 // Что и в каком порядке — в lib/menu.ts, названия разделов — в packages/content/src/sections.ts.
 import Link from "next/link";
+import { itemPath, randomPool } from "@gazgame/engine";
 import { cn, Logo, Screen, Tile } from "@gazgame/ui";
+import { RandomDice } from "@/components/RandomDice";
+import { getCatalog, visibility } from "@/lib/catalog";
 import { MAIN_CARDS, SMALL_BUTTONS } from "@/lib/menu";
 import { getSection } from "@/lib/sections";
 
 export default function Home() {
+  const randomPaths = randomPool(getCatalog(), visibility).map(itemPath);
+
   return (
     <Screen>
       <header className="pt-4">
-        <Logo className="text-5xl" />
+        <div className="flex items-start justify-between gap-3">
+          <Logo className="text-5xl" />
+          <RandomDice paths={randomPaths} className="-mt-1 -mr-1" />
+        </div>
         <p className="mt-3 text-lg font-bold text-muted">
           Не сиди. Не тупи. <span className="text-lime">Газ!</span>
         </p>

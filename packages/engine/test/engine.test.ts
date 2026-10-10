@@ -15,6 +15,7 @@ import {
   isExhausted,
   isVisible,
   nextRound,
+  randomPool,
   rankFor,
   scoreGuessPartner,
   blendPairs,
@@ -266,6 +267,26 @@ describe("fillPlaceholders — подстановка в тексты", () => {
 
   it("убирает предложение, если значения нет", () => {
     expect(fillPlaceholders(text, {})).toBe("В разборе: практика на 14 дней.");
+  });
+});
+
+describe("randomPool — из чего выбирает «Случайная игра»", () => {
+  const draftTest = { ...temperamentLike, status: "draft" as const };
+  const publishedGame = { ...truthOrDare, status: "published" as const };
+  const adultGame = { ...whoInCompany, status: "published" as const, ageRating: "18+" as const };
+
+  it("берёт только опубликованное, если оно есть (18+ без гейта — нет)", () => {
+    const pool = randomPool({ tests: [draftTest], games: [publishedGame, adultGame] });
+    expect(pool.map((i) => i.id)).toEqual([publishedGame.id]);
+  });
+
+  it("пока опубликованного нет — всё видимое, включая черновики", () => {
+    const pool = randomPool({ tests: [draftTest], games: [{ ...truthOrDare, status: "draft" }] });
+    expect(pool.map((i) => i.id).sort()).toEqual([draftTest.id, truthOrDare.id].sort());
+  });
+
+  it("черновики скрыты настройкой — их нет и в запасном варианте", () => {
+    expect(randomPool({ tests: [draftTest], games: [] }, { includeDrafts: false })).toEqual([]);
   });
 });
 
