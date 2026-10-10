@@ -9,7 +9,7 @@
 import { z } from "zod";
 
 export const SECTIONS = ["pairs", "company", "solo"] as const;
-export const TIERS = ["free", "premium", "supreme"] as const;
+export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
@@ -88,7 +88,7 @@ const rangeSchema = z
   .refine(([from, to]) => from <= to, "в диапазоне [от, до] первое число не может быть больше второго");
 
 const deepTeaserSchema = z.strictObject({
-  tier: z.enum(["premium", "supreme"]).default("premium"),
+  tier: z.enum(["premium"]).default("premium"),
   text,
 });
 
@@ -169,7 +169,7 @@ export const scalesScoringSchema = z.strictObject({
 
 export const scoringConfigSchema = z.discriminatedUnion("type", [typesScoringSchema, scalesScoringSchema]);
 
-/** Блок «Глубже»: одна кнопка → экран с premium (главный вариант) и supreme (мелкой строкой). */
+/** Блок «Глубже»: одна кнопка → экран с предложением подписки premium (она одна на весь продукт). */
 export const upsellSchema = z.strictObject({
   /** Надпись на кнопке, например «Глубже 💎». */
   button: text,
@@ -179,14 +179,6 @@ export const upsellSchema = z.strictObject({
     text,
     primary: z.boolean().default(true),
   }),
-  supreme: z
-    .strictObject({
-      tier: z.literal("supreme"),
-      headline: text.optional(),
-      text,
-      primary: z.boolean().default(false),
-    })
-    .optional(),
 });
 
 export const testSchema = itemBase
@@ -388,6 +380,10 @@ export const cardSchema = z.strictObject({
   award: z.string().optional(),
   /** Варианты ответа (механика guess-partner). */
   options: z.array(text).min(2).optional(),
+  /** guess-partner: вопрос для того, кто отвечает про себя («Ты…»). В text — форма для угадывающего с {name}. */
+  selfText: text.optional(),
+  /** guess-partner: варианты в форме «про себя», в том же порядке, что options. */
+  selfOptions: z.array(text).min(2).optional(),
   source: z.enum(CARD_SOURCES).default("official"),
 });
 
@@ -399,7 +395,16 @@ export const deckSchema = z.strictObject({
   description: z.string().optional(),
   tier: tierSchema.default("free"),
   ageRating: ageRatingSchema.default("all"),
-  cards: z.array(cardSchema).min(1, "в колоде должна быть хотя бы одна карточка"),
+  /** Сколько вопросов брать из колоды за одну игру (guess-partner). */
+  questionsPerGame: z.int().min(1).optional(),
+  /** Закрытая колода: «скоро» или «по подписке». Может быть без карточек. */
+  locked: z.strictObject({ reason: z.enum(["soon", "subscription"]), text }).optional(),
+  /** id другой колоды этой игры: эта откроется, когда пара хоть раз доиграет ту до финала (запоминается на устройстве). */
+  unlockAfter: slug.optional(),
+  cards: z.array(cardSchema),
+}).refine((d) => d.locked !== undefined || d.cards.length > 0, {
+  message: "в колоде должна быть хотя бы одна карточка",
+  path: ["cards"],
 });
 
 const gameBase = itemBase.extend({
@@ -433,11 +438,30 @@ export const guessPartnerGameSchema = gameBase.extend({
 export const gameSchema = z
   .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema])
   .superRefine((game, ctx) => {
+    const deckIds = game.decks.map((d) => d.id);
+    game.decks.forEach((deck, di) => {
+      if (deck.unlockAfter === deck.id) {
+        ctx.addIssue({ code: "custom", path: ["decks", di, "unlockAfter"], message: "колода не может открываться после самой себя" });
+      } else if (deck.unlockAfter && !deckIds.includes(deck.unlockAfter)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["decks", di, "unlockAfter"],
+          message: `нет колоды с id "${deck.unlockAfter}" (есть: ${deckIds.join(", ")})`,
+        });
+      }
+    });
     game.decks.forEach((deck, di) =>
       deck.cards.forEach((card, ci) => {
         const path = ["decks", di, "cards", ci];
         if (game.mechanic === "guess-partner" && !card.options) {
           ctx.addIssue({ code: "custom", path, message: "в этой игре у карточки должны быть options (варианты ответа)" });
+        }
+        if (card.selfOptions && card.selfOptions.length !== card.options?.length) {
+          ctx.addIssue({
+            code: "custom",
+            path: [...path, "selfOptions"],
+            message: `в selfOptions должно быть столько же вариантов, сколько в options (${card.options?.length ?? 0}), сейчас ${card.selfOptions.length}`,
+          });
         }
         if (game.mechanic === "deck" && game.cardTypes) {
           const types = game.cardTypes.map((t) => t.id);

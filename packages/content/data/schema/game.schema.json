@@ -47,8 +47,7 @@
           "type": "string",
           "enum": [
             "free",
-            "premium",
-            "supreme"
+            "premium"
           ]
         },
         "ageRating": {
@@ -147,8 +146,7 @@
                 "type": "string",
                 "enum": [
                   "free",
-                  "premium",
-                  "supreme"
+                  "premium"
                 ]
               },
               "ageRating": {
@@ -160,8 +158,37 @@
                   "18+"
                 ]
               },
+              "questionsPerGame": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "locked": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "soon",
+                      "subscription"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "reason",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "unlockAfter": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
               "cards": {
-                "minItems": 1,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -177,6 +204,18 @@
                       "type": "string"
                     },
                     "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "selfText": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "selfOptions": {
                       "minItems": 2,
                       "type": "array",
                       "items": {
@@ -301,8 +340,7 @@
           "type": "string",
           "enum": [
             "free",
-            "premium",
-            "supreme"
+            "premium"
           ]
         },
         "ageRating": {
@@ -401,8 +439,7 @@
                 "type": "string",
                 "enum": [
                   "free",
-                  "premium",
-                  "supreme"
+                  "premium"
                 ]
               },
               "ageRating": {
@@ -414,8 +451,37 @@
                   "18+"
                 ]
               },
+              "questionsPerGame": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "locked": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "soon",
+                      "subscription"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "reason",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "unlockAfter": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
               "cards": {
-                "minItems": 1,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -431,6 +497,18 @@
                       "type": "string"
                     },
                     "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "selfText": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "selfOptions": {
                       "minItems": 2,
                       "type": "array",
                       "items": {
@@ -529,8 +607,7 @@
           "type": "string",
           "enum": [
             "free",
-            "premium",
-            "supreme"
+            "premium"
           ]
         },
         "ageRating": {
@@ -629,8 +706,7 @@
                 "type": "string",
                 "enum": [
                   "free",
-                  "premium",
-                  "supreme"
+                  "premium"
                 ]
               },
               "ageRating": {
@@ -642,8 +718,37 @@
                   "18+"
                 ]
               },
+              "questionsPerGame": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "locked": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "soon",
+                      "subscription"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "reason",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "unlockAfter": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
               "cards": {
-                "minItems": 1,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -659,6 +764,18 @@
                       "type": "string"
                     },
                     "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "selfText": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "selfOptions": {
                       "minItems": 2,
                       "type": "array",
                       "items": {

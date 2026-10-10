@@ -48,7 +48,7 @@ web      ← всё из packages/*
 
 Схемы лежат в `packages/content/src/schema.ts`. Инструкция для редактора — в [CONTENT-GUIDE.md](CONTENT-GUIDE.md).
 
-**Общие поля** (тест и игра): `id`, `slug`, `title`, `description`, `emoji`, `sections[]` (`pairs`/`company`/`solo`, можно несколько), `kind`, `tier` (`free`/`premium`/`supreme`), `ageRating` (`all`/`16+`/`18+`), `players {min,max}`, `durationMin`, `tags[]`, `related[]`, `status` (`draft`/`published`).
+**Общие поля** (тест и игра): `id`, `slug`, `title`, `description`, `emoji`, `sections[]` (`pairs`/`company`/`solo`, можно несколько), `kind`, `tier` (`free`/`premium`), `ageRating` (`all`/`16+`/`18+`), `players {min,max}`, `durationMin`, `tags[]`, `related[]`, `status` (`draft`/`published`).
 
 **Тест:** `scoring` (сейчас `types`), `questions[].options[]`. У каждого варианта есть `type` (+1 результату) или `scores` (баллы по шкалам). В `results[]` у каждого результата бесплатный `text` и закрытый `deepTeaser { tier, text }`. Расширенный формат: `scoring`-объект с `tieBreak` и `blend`, у результатов `paragraphs`/`strengths`/`watchOut`/`tip`, у теста `blendNotes` и `upsell` (см. CONTENT-GUIDE).
 

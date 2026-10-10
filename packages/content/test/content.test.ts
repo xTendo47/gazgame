@@ -43,7 +43,7 @@ describe("проверка ошибок", () => {
         { id: "b", title: "Б", emoji: "🅱️", paragraphs: ["п"] },
       ],
       blendNotes: { a: { title: "с нотками А", text: "т" }, b: { title: "с нотками Б", text: "т" } },
-      upsell: { button: "Глубже", premium: { tier: "premium", text: "п" }, supreme: { tier: "supreme", text: "с" } },
+      upsell: { button: "Глубже", premium: { tier: "premium", text: "п" } },
     };
     const { tests } = buildCatalog([{ path: "demo.json", kind: "test", data }]);
     expect(tests[0]?.upsell?.premium.primary).toBe(true);
@@ -161,5 +161,52 @@ describe("отчёт для /dev/content", () => {
       { path: "b.json", kind: "test", data: { ...validTest, slug: "demo-2" } },
     ]);
     expect(files.every((f) => f.issues.some((i) => i.field === "id"))).toBe(true);
+  });
+});
+
+describe("игра guess-partner: уровни и вопросы «про себя»", () => {
+  const card = { text: "Что {name} ест?", selfText: "Что ты ешь?", options: ["Суп", "Пиццу"], selfOptions: ["Суп", "Пиццу"] };
+  const game = (decks: unknown[]) => ({
+    id: "know",
+    slug: "know",
+    kind: "game",
+    mechanic: "guess-partner",
+    title: "Знаете друг друга?",
+    description: "Описание",
+    emoji: "💞",
+    sections: ["pairs"],
+    players: { min: 2, max: 2 },
+    durationMin: 5,
+    decks,
+    ranks: [{ minPercent: 0, title: "Т", emoji: "🔍", text: "т" }],
+  });
+  const build = (data: unknown) => buildCatalog([{ path: "know.json", kind: "game", data }]);
+
+  it("закрытая колода может быть без карточек, у открытой questionsPerGame", () => {
+    const { games } = build(
+      game([
+        { id: "surface", title: "Поверхность", emoji: "🌊", questionsPerGame: 1, cards: [card] },
+        { id: "abyss", title: "Бездна", emoji: "💎", tier: "premium", locked: { reason: "subscription", text: "По подписке" }, cards: [] },
+      ]),
+    );
+    expect(games[0]?.decks[1]?.locked?.reason).toBe("subscription");
+  });
+
+  it("unlockAfter должен указывать на другую колоду этой игры", () => {
+    const surface = { id: "surface", title: "П", emoji: "🌊", cards: [card] };
+    expect(() => build(game([surface, { id: "depth", title: "Г", emoji: "🫧", unlockAfter: "surface", cards: [card] }]))).not.toThrow();
+    expect(() => build(game([surface, { id: "depth", title: "Г", emoji: "🫧", unlockAfter: "nope", cards: [card] }]))).toThrow(
+      /нет колоды с id "nope"/,
+    );
+    expect(() => build(game([{ ...surface, unlockAfter: "surface" }]))).toThrow(/после самой себя/);
+  });
+
+  it("открытая колода без карточек — ошибка", () => {
+    expect(() => build(game([{ id: "surface", title: "П", emoji: "🌊", cards: [] }]))).toThrow(/хотя бы одна карточка/);
+  });
+
+  it("selfOptions другой длины, чем options, — ошибка", () => {
+    const bad = { ...card, selfOptions: ["Суп"], options: ["Суп", "Пиццу", "Салат"] };
+    expect(() => build(game([{ id: "surface", title: "П", emoji: "🌊", cards: [bad] }]))).toThrow(/столько же вариантов/);
   });
 });

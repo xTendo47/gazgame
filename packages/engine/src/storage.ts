@@ -26,6 +26,12 @@ export interface ProgressData {
   version: 1;
   tests: Record<string, TestRecord>;
   games: Record<string, GameRecord>;
+  /** Имена игроков по играм — чтобы при следующем заходе они уже были подставлены. */
+  players?: Record<string, string[]>;
+  /** Тексты карточек прошлой игры по ключу "<игра>/<колода>" — в новой игре сначала будут другие. */
+  lastCards?: Record<string, string[]>;
+  /** Колоды, которые доиграли до финала, по играм — для unlockAfter. */
+  completedDecks?: Record<string, string[]>;
 }
 
 export interface ProgressStore {
@@ -33,6 +39,12 @@ export interface ProgressStore {
   getTestResult(testId: string): TestRecord | null;
   saveTestResult(testId: string, resultId: string, now?: Date): void;
   recordGamePlayed(gameId: string, options?: { score?: number; now?: Date }): void;
+  getPlayers(gameId: string): string[] | null;
+  savePlayers(gameId: string, names: readonly string[]): void;
+  getLastCards(key: string): string[];
+  saveLastCards(key: string, cardTexts: readonly string[]): void;
+  getCompletedDecks(gameId: string): string[];
+  markDeckCompleted(gameId: string, deckId: string): void;
   clear(): void;
 }
 
@@ -59,7 +71,14 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       if (!raw) return emptyProgress();
       const data = JSON.parse(raw) as Partial<ProgressData>;
       if (data.version !== 1) return emptyProgress();
-      return { version: 1, tests: data.tests ?? {}, games: data.games ?? {} };
+      return {
+        version: 1,
+        tests: data.tests ?? {},
+        games: data.games ?? {},
+        ...(data.players ? { players: data.players } : {}),
+        ...(data.lastCards ? { lastCards: data.lastCards } : {}),
+        ...(data.completedDecks ? { completedDecks: data.completedDecks } : {}),
+      };
     } catch {
       return emptyProgress();
     }
@@ -90,6 +109,26 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         lastPlayedAt: now.toISOString(),
         ...(best.length > 0 ? { bestScore: Math.max(...best) } : {}),
       };
+      save(data);
+    },
+    getPlayers: (gameId) => load().players?.[gameId] ?? null,
+    savePlayers(gameId, names) {
+      const data = load();
+      data.players = { ...data.players, [gameId]: [...names] };
+      save(data);
+    },
+    getLastCards: (key) => load().lastCards?.[key] ?? [],
+    saveLastCards(key, cardTexts) {
+      const data = load();
+      data.lastCards = { ...data.lastCards, [key]: [...cardTexts] };
+      save(data);
+    },
+    getCompletedDecks: (gameId) => load().completedDecks?.[gameId] ?? [],
+    markDeckCompleted(gameId, deckId) {
+      const data = load();
+      const done = data.completedDecks?.[gameId] ?? [];
+      if (done.includes(deckId)) return;
+      data.completedDecks = { ...data.completedDecks, [gameId]: [...done, deckId] };
       save(data);
     },
     clear() {

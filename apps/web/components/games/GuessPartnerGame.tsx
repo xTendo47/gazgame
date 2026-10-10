@@ -1,13 +1,20 @@
 "use client";
 
-// Механика guess-partner на экране: «Насколько хорошо вы знаете друг друга».
-import { useState, type ReactNode } from "react";
+// «Насколько ты меня знаешь» (механика guess-partner).
+// Имена (запоминаются на устройстве) → уровень → раунд 1: первый отвечает про себя, второй угадывает →
+// «меняемся» или «результат сейчас» → раунд 2 наоборот → проценты и звание. Правильные ответы не показываем.
+import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { Deck, GuessPartnerGame as GuessPartnerGameData } from "@gazgame/content";
 import {
   createGuessPartnerState,
+  currentView,
+  deckAccess,
   guessPartnerReducer,
+  nextDeck,
+  playedCards,
   rankFor,
+  roundRoles,
   scoreGuessPartner,
   type GuessPartnerAction,
   type GuessPartnerState,
@@ -15,73 +22,157 @@ import {
 import { Button, ProgressBar } from "@gazgame/ui";
 import { getProgress } from "@/lib/progress";
 import { ShareResult } from "../ShareResult";
+import { DeckPicker, DeckTile } from "./DeckPicker";
 import { GameOver } from "./GameOver";
 import { PlayersForm } from "./PlayersForm";
 
-export function GuessPartnerGame({
-  game,
-  deck,
-  related,
-}: {
-  game: GuessPartnerGameData;
-  deck: Deck;
-  related?: ReactNode;
-}) {
+type Players = [string, string];
+
+/** Сохранённые имена: на сервере их нет (null), в браузере — из ProgressStore. Снимок — строка, чтобы не перерисовывать зря. */
+function useSavedPlayers(gameId: string): Players | null {
+  const snapshot = useSyncExternalStore(
+    noopSubscribe,
+    () => JSON.stringify(getProgress().getPlayers(gameId)),
+    () => "null",
+  );
+  const names = JSON.parse(snapshot) as string[] | null;
+  return names && names.length === 2 && names[0] && names[1] ? [names[0], names[1]] : null;
+}
+const noopSubscribe = () => () => {};
+
+export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData; related?: ReactNode }) {
+  const saved = useSavedPlayers(game.id);
+  const [players, setPlayers] = useState<Players | null>(null);
+  const [editingNames, setEditingNames] = useState(false);
+  const [deck, setDeck] = useState<Deck | null>(null);
   const [state, setState] = useState<GuessPartnerState | null>(null);
-  const [started, setStarted] = useState(false);
+  /** Показали ли заставку «Сейчас отвечает …» перед раундом (по номеру раунда). */
+  const [introSeen, setIntroSeen] = useState<[boolean, boolean]>([false, false]);
+  /** Колоды, доигранные до финала (для unlockAfter). Экран уровней показывается только после нажатий — читаем с устройства. */
+  const [completedDecks, setCompletedDecks] = useState<string[]>(() => getProgress().getCompletedDecks(game.id));
+
+  function start(d: Deck, names: Players = players as Players) {
+    const key = `${game.id}/${d.id}`;
+    const lastTexts = new Set(getProgress().getLastCards(key));
+    const previous = d.cards.flatMap((c, i) => (lastTexts.has(c.text) ? [i] : []));
+    const next = createGuessPartnerState(names, d, { previous });
+    getProgress().saveLastCards(
+      key,
+      playedCards(next).map((i) => d.cards[i]?.text ?? ""),
+    );
+    setDeck(d);
+    setState(next);
+    setIntroSeen([false, false]);
+  }
 
   function dispatch(action: GuessPartnerAction) {
     if (!state) return;
     const next = guessPartnerReducer(state, action);
     if (next.phase === "finished" && state.phase !== "finished") {
       getProgress().recordGamePlayed(game.id, { score: scoreGuessPartner(next).percent });
+      if (deck) {
+        getProgress().markDeckCompleted(game.id, deck.id);
+        setCompletedDecks(getProgress().getCompletedDecks(game.id));
+      }
     }
     setState(next);
   }
 
-  if (!state) {
+  // 1. Имена
+  if (!players) {
+    if (saved && !editingNames) {
+      return (
+        <section className="flex flex-col gap-4">
+          <div className="rounded-card bg-surface p-5">
+            <div className="text-sm font-bold uppercase tracking-wide text-muted">Играют</div>
+            <div className="mt-1 font-display text-2xl font-bold">
+              {saved[0]} <span className="text-orange">+</span> {saved[1]}
+            </div>
+          </div>
+          <Button variant="primary" onClick={() => setPlayers(saved)}>
+            Дальше 👉
+          </Button>
+          <Button variant="ghost" size="md" onClick={() => setEditingNames(true)}>
+            Сменить
+          </Button>
+        </section>
+      );
+    }
     return (
       <PlayersForm
         min={2}
         max={2}
+        initial={saved ?? []}
         placeholders={["Имя первого", "Имя второго"]}
         submitLabel="Дальше 👉"
-        onSubmit={([a = "", b = ""]) => setState(createGuessPartnerState([a, b], deck))}
+        onSubmit={([a = "", b = ""]) => {
+          const names: Players = [a, b];
+          getProgress().savePlayers(game.id, names);
+          setPlayers(names);
+          setEditingNames(false);
+        }}
       />
     );
   }
 
-  const [first, second] = state.players;
+  const [first, second] = players;
 
-  if (!started) {
+  // 2. Уровень
+  if (!state || !deck) {
     return (
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-col items-center gap-3 py-8 text-center">
-          <div aria-hidden="true" className="text-6xl">
-            🙈
-          </div>
-          <h2 className="font-display text-2xl font-bold">Первым отвечает {first}</h2>
-          <p className="text-muted">{second}, не подглядывай! Потом будет твоя очередь.</p>
-        </div>
-        <Button variant="primary" onClick={() => setStarted(true)}>
-          Газ! 🔥
+      <div className="flex flex-col gap-4">
+        <DeckPicker game={game} completedDecks={completedDecks} onPick={(d) => start(d)} />
+        <Button variant="ghost" size="md" onClick={() => setPlayers(null)}>
+          Играют {first} и {second} · Сменить
         </Button>
       </div>
     );
   }
 
+  const { subject: subjectIndex, guesser: guesserIndex } = roundRoles(state.round);
+  const subject = players[subjectIndex];
+  const guesser = players[guesserIndex];
+
+  // Заставка перед раундом: кто отвечает про себя, кто не подглядывает
+  if (state.phase === "self" && state.question === 0 && !introSeen[state.round]) {
+    return (
+      <Pause
+        emoji="🙈"
+        title={`Сейчас ${subject} отвечает про себя`}
+        text={`${guesser}, не подглядывай! Потом будешь угадывать.`}
+        button="Газ! 🔥"
+        onContinue={() => setIntroSeen(state.round === 0 ? [true, introSeen[1]] : [introSeen[0], true])}
+      />
+    );
+  }
+
   if (state.phase === "handoff") {
     return (
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-col items-center gap-3 py-8 text-center">
+      <Pause
+        emoji="🙈"
+        title="Передай телефон"
+        text={`Телефон — ${guesser}. Угадай, что ответил(а) ${subject}. ${subject}, не подсказывай!`}
+        button={`Я ${guesser}, поехали`}
+        onContinue={() => dispatch({ type: "continue" })}
+      />
+    );
+  }
+
+  if (state.phase === "between") {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-center gap-3 py-6 text-center">
           <div aria-hidden="true" className="text-6xl">
-            📱
+            🔄
           </div>
-          <h2 className="font-display text-2xl font-bold">Передай телефон: {second}</h2>
-          <p className="text-muted">{first}, теперь твоя очередь не подглядывать 😉</p>
+          <h2 className="font-display text-2xl font-bold">Первый раунд сыгран</h2>
+          <p className="text-muted">Меняемся местами или смотрим результат?</p>
         </div>
         <Button variant="primary" onClick={() => dispatch({ type: "continue" })}>
-          Я {second}, поехали
+          Теперь {first} угадывает {second} →
+        </Button>
+        <Button variant="ghost" onClick={() => dispatch({ type: "finish" })}>
+          Показать результат сейчас
         </Button>
       </div>
     );
@@ -90,73 +181,64 @@ export function GuessPartnerGame({
   if (state.phase === "finished") {
     const score = scoreGuessPartner(state);
     const rank = rankFor(score.percent, game.ranks);
+    const lines = score.rounds.map((r) => `${players[r.guesser]} знает ${players[r.subject]} на ${r.percent}%`);
+    const next = nextDeck(game, deck.id);
     return (
-      <GameOver
-        game={game}
-        related={related}
-        onRestart={() => {
-          setStarted(false);
-          setState(createGuessPartnerState(state.players, deck));
-        }}
-      >
-        <section className="flex flex-col items-center gap-2 rounded-card bg-orange p-6 text-center text-bg">
+      <GameOver game={game} related={related} onRestart={() => start(deck)}>
+        <section className="flex flex-col items-center gap-3 rounded-card bg-orange p-6 text-center text-bg">
           <div className="text-sm font-extrabold uppercase">
-            {first} + {second}
+            {first} + {second} · {deck.title}
           </div>
-          <div className="font-display text-6xl font-black">{score.percent}%</div>
-          <div className="font-display text-2xl font-black">
-            {rank.title} {rank.emoji}
+          <div aria-hidden="true" className="text-6xl leading-none">
+            {rank.emoji}
           </div>
+          <div className="font-display text-3xl font-black">{rank.title}</div>
           <p className="font-semibold">{rank.text}</p>
         </section>
-        <div className="grid grid-cols-2 gap-3 text-center">
-          {state.players.map((name, i) => (
-            <div key={name} className="rounded-card bg-surface p-4">
-              <div className="font-display text-2xl font-bold">
-                {score.correctByPlayer[i]}/{state.questions.length}
-              </div>
-              <div className="text-sm text-muted">{name} угадал(а)</div>
-            </div>
+        <ul className="flex flex-col gap-3">
+          {score.rounds.map((r, i) => (
+            <li key={i} className="flex items-center justify-between gap-4 rounded-card bg-surface p-4">
+              <span className="font-semibold">
+                {players[r.guesser]} знает {players[r.subject]} на
+              </span>
+              <span className="font-display text-3xl font-black text-lime">{r.percent}%</span>
+            </li>
           ))}
-        </div>
-        <details className="rounded-card bg-surface p-4">
-          <summary className="cursor-pointer font-bold">Разбор ответов</summary>
-          <ul className="mt-3 flex flex-col gap-3 text-[15px]">
-            {score.questions.map((q) => {
-              const c = deck.cards[q.card];
-              const opt = (i: number | null) => (i === null ? "—" : (c?.options?.[i] ?? "—"));
-              return (
-                <li key={q.card}>
-                  <div className="font-semibold">{c?.text}</div>
-                  <div className="text-muted">
-                    {first}: «{opt(q.self[0])}» — {second} {q.correct[1] ? "угадал(а) ✅" : "не угадал(а) ❌"}
-                  </div>
-                  <div className="text-muted">
-                    {second}: «{opt(q.self[1])}» — {first} {q.correct[0] ? "угадал(а) ✅" : "не угадал(а) ❌"}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </details>
+        </ul>
         <ShareResult
           fileName={`gazgame-${game.slug}`}
-          card={{ label: game.title, emoji: rank.emoji, highlight: `${score.percent}%`, title: rank.title, text: rank.text }}
+          shareText={lines.join("\n")}
+          card={{ label: game.title, emoji: rank.emoji, highlight: `${score.percent}%`, title: rank.title, text: lines.join(" · ") }}
         />
+        {next && (
+          <section aria-labelledby="next-level" className="flex flex-col gap-2">
+            <h2 id="next-level" className="font-display text-xl font-bold">
+              Следующий уровень
+            </h2>
+            <DeckTile game={game} deck={next} completedDecks={completedDecks} onPick={(d) => start(d)} />
+            {deckAccess(next, { completedDecks, decks: game.decks }).open && (
+              <p className="text-sm text-muted">Те же игроки, новые вопросы.</p>
+            )}
+          </section>
+        )}
       </GameOver>
     );
   }
 
-  const player = state.players[state.player];
-  const partner = state.players[state.player === 0 ? 1 : 0];
-  const card = deck.cards[state.questions[state.question] ?? 0];
+  // Вопрос
+  const view = currentView(state, deck);
+  const isSelf = state.phase === "self";
 
   return (
     <div className="flex flex-col gap-5">
-      <ProgressBar current={state.question + 1} total={state.questions.length} label={`Отвечает ${player}`} />
+      <ProgressBar
+        current={state.question + 1}
+        total={state.questions.length}
+        label={isSelf ? `${subject} про себя` : `${guesser} угадывает`}
+      />
       <AnimatePresence mode="wait">
         <motion.fieldset
-          key={`${state.player}-${state.question}-${state.step}`}
+          key={`${state.round}-${state.phase}-${state.question}`}
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -40 }}
@@ -166,22 +248,51 @@ export function GuessPartnerGame({
           <legend className="mb-4 flex flex-col gap-2">
             <span
               className={
-                state.step === "self"
+                isSelf
                   ? "self-start rounded-full bg-lime px-3 py-1 text-sm font-extrabold text-bg"
                   : "self-start rounded-full bg-orange px-3 py-1 text-sm font-extrabold text-bg"
               }
             >
-              {state.step === "self" ? "Про себя" : `Как ответит ${partner}?`}
+              {isSelf ? `${subject}, про себя 🤫` : `${guesser}, угадывай`}
             </span>
-            <span className="font-display text-2xl font-bold leading-tight">{card?.text}</span>
+            <span className="font-display text-2xl font-bold leading-tight">{view?.text}</span>
           </legend>
-          {card?.options?.map((option, i) => (
-            <Button key={i} variant="option" onClick={() => dispatch({ type: "answer", option: i })}>
+          {view?.options.map((option, i) => (
+            <Button key={`${state.question}-${i}`} variant="option" onClick={() => dispatch({ type: "answer", shown: i })}>
               {option}
             </Button>
           ))}
         </motion.fieldset>
       </AnimatePresence>
+    </div>
+  );
+}
+
+function Pause({
+  emoji,
+  title,
+  text,
+  button,
+  onContinue,
+}: {
+  emoji: string;
+  title: string;
+  text: string;
+  button: string;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col items-center gap-3 py-8 text-center">
+        <div aria-hidden="true" className="text-6xl">
+          {emoji}
+        </div>
+        <h2 className="font-display text-2xl font-bold">{title}</h2>
+        <p className="text-muted">{text}</p>
+      </div>
+      <Button variant="primary" onClick={onContinue}>
+        {button}
+      </Button>
     </div>
   );
 }

@@ -45,8 +45,7 @@
       "type": "string",
       "enum": [
         "free",
-        "premium",
-        "supreme"
+        "premium"
       ]
     },
     "ageRating": {
@@ -424,8 +423,7 @@
                 "default": "premium",
                 "type": "string",
                 "enum": [
-                  "premium",
-                  "supreme"
+                  "premium"
                 ]
               },
               "text": {
@@ -548,32 +546,6 @@
             },
             "primary": {
               "default": true,
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "tier",
-            "text"
-          ],
-          "additionalProperties": false
-        },
-        "supreme": {
-          "type": "object",
-          "properties": {
-            "tier": {
-              "type": "string",
-              "const": "supreme"
-            },
-            "headline": {
-              "type": "string",
-              "minLength": 1
-            },
-            "text": {
-              "type": "string",
-              "minLength": 1
-            },
-            "primary": {
-              "default": false,
               "type": "boolean"
             }
           },

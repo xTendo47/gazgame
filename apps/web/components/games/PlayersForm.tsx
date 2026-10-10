@@ -10,12 +10,16 @@ interface PlayersFormProps {
   /** Подписи для полей, например ["Ты", "Партнёр"]. */
   placeholders?: string[];
   submitLabel?: string;
+  /** Уже известные имена (например, сохранённые на устройстве). */
+  initial?: readonly string[];
   onSubmit: (names: string[]) => void;
 }
 
 /** Ввод имён игроков. Все играют с одного телефона. */
-export function PlayersForm({ min, max, placeholders = [], submitLabel = "Газ! 🔥", onSubmit }: PlayersFormProps) {
-  const [names, setNames] = useState<string[]>(() => Array.from({ length: min }, () => ""));
+export function PlayersForm({ min, max, placeholders = [], submitLabel = "Газ! 🔥", initial = [], onSubmit }: PlayersFormProps) {
+  const [names, setNames] = useState<string[]>(() =>
+    Array.from({ length: Math.max(min, Math.min(initial.length, max)) }, (_, i) => initial[i] ?? ""),
+  );
   const filled = names.map((n) => n.trim()).filter(Boolean);
   const unique = new Set(filled.map((n) => n.toLowerCase())).size === filled.length;
   const ready = filled.length >= min && unique;

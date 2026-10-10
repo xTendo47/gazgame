@@ -50,7 +50,7 @@ export const CRISIS_RESOURCES: readonly HelpResource[] = [
 /** Лимиты сообщений в день по уровню подписки. Значения — заглушки, решаются продуктово. */
 export type MessageLimits = Record<Tier, number>;
 
-export const DEFAULT_MESSAGE_LIMITS: MessageLimits = { free: 0, premium: 20, supreme: 100 };
+export const DEFAULT_MESSAGE_LIMITS: MessageLimits = { free: 0, premium: 20 };
 
 /** Что агент знает о пользователе — только результаты тестов, без переписок и личных данных. */
 export interface AgentContext {

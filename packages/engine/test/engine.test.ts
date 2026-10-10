@@ -5,12 +5,17 @@ import {
   castVote,
   createDeckState,
   createGuessPartnerState,
+  currentView,
+  deckAccess,
   createMemoryKeyValueStore,
   createProgressStore,
   createVoteState,
   currentVoter,
   deckReducer,
   guessPartnerReducer,
+  nextDeck,
+  pickQuestions,
+  playedCards,
   hasAccess,
   isExhausted,
   isVisible,
@@ -349,39 +354,142 @@ describe("vote — «Кто из компании?»", () => {
   });
 });
 
-describe("guess-partner — «Насколько хорошо вы знаете друг друга»", () => {
+describe("guess-partner — «Насколько ты меня знаешь»", () => {
   const deck = knowEachOther.decks[0]!;
+  const start = (seed = 1, previous: number[] = []) =>
+    createGuessPartnerState(["Маша", "Саша"], deck, { previous, random: seededRandom(seed) });
 
-  function play(answers: number[]): GuessPartnerState {
-    let state = createGuessPartnerState(["Маша", "Саша"], deck);
-    const queue = [...answers];
-    while (state.phase !== "finished") {
-      state =
-        state.phase === "handoff"
-          ? guessPartnerReducer(state, { type: "continue" })
-          : guessPartnerReducer(state, { type: "answer", option: queue.shift()! });
-    }
-    return state;
-  }
-
-  it("100%, если оба всё угадали", () => {
-    // Маша: q1 self 0, guess 1; q2 self 1, guess 0. Саша: q1 self 1, guess 0; q2 self 0, guess 1
-    const score = scoreGuessPartner(play([0, 1, 1, 0, 1, 0, 0, 1]));
-    expect(score).toMatchObject({ matches: 4, total: 4, percent: 100, correctByPlayer: [2, 2] });
-  });
-
-  it("считает частичные совпадения", () => {
-    // Маша угадала только q1, Саша не угадала ничего
-    const score = scoreGuessPartner(play([0, 1, 1, 1, 1, 1, 0, 0]));
-    expect(score).toMatchObject({ matches: 1, total: 4, percent: 25, correctByPlayer: [1, 0] });
-  });
-
-  it("делает паузу «передай телефон» после первого игрока", () => {
-    let state = createGuessPartnerState(["Маша", "Саша"], deck);
-    for (let i = 0; i < 4; i++) state = guessPartnerReducer(state, { type: "answer", option: 0 });
+  /** Нажать вариант по его исходному номеру (на экране варианты перемешаны). */
+  const answer = (state: GuessPartnerState, original: number) => {
+    const shown = state.questions[state.question]!.order.indexOf(original);
+    return guessPartnerReducer(state, { type: "answer", shown });
+  };
+  /** Сыграть раунд: ответы про себя и догадки — исходные номера вариантов. */
+  const playRound = (state: GuessPartnerState, self: number[], guess: number[]) => {
+    for (const o of self) state = answer(state, o);
     expect(state.phase).toBe("handoff");
-    expect(state.player).toBe(1);
-    expect(guessPartnerReducer(state, { type: "answer", option: 0 })).toBe(state);
+    state = guessPartnerReducer(state, { type: "continue" });
+    for (const o of guess) state = answer(state, o);
+    return state;
+  };
+
+  it("pickQuestions: сначала карточки, которых не было в прошлой игре", () => {
+    const picked = pickQuestions(5, 3, [0, 1], seededRandom(7));
+    expect([...picked].sort()).toEqual([2, 3, 4]);
+    const mixed = pickQuestions(5, 3, [0, 1, 2], seededRandom(7));
+    expect(mixed).toHaveLength(3);
+    expect(mixed).toEqual(expect.arrayContaining([3, 4]));
+    expect(new Set(mixed).size).toBe(3);
+    expect(pickQuestions(2, 10, [])).toHaveLength(2); // не больше, чем карточек
+  });
+
+  it("берёт questionsPerGame вопросов и перемешивает варианты", () => {
+    const state = start();
+    expect(state.questions).toHaveLength(3);
+    for (const q of state.questions) expect([...q.order].sort()).toEqual([0, 1, 2]);
+    // с другим зерном получается другой набор или порядок
+    expect(JSON.stringify(start(2).questions)).not.toBe(JSON.stringify(state.questions));
+  });
+
+  it("про себя — selfText и selfOptions, угадывающий видит text с именем", () => {
+    let state = createGuessPartnerState(["Маша", "Саша"], deck, { previous: [1, 2, 3, 4], random: seededRandom(3) });
+    // первые 3 карточки: 0 (новая) + две из прошлых; найдём, где карточка 0
+    const at = state.questions.findIndex((q) => q.card === 0);
+    for (let i = 0; i < at; i++) state = answer(state, 0);
+    const self = currentView(state, deck)!;
+    expect(self.text).toBe("Что ты делаешь ночью?");
+    expect([...self.options].sort()).toEqual(["Ем", "Листаю", "Сплю"]);
+    for (let i = at; i < 3; i++) state = answer(state, 0);
+    state = guessPartnerReducer(state, { type: "continue" });
+    for (let i = 0; i < at; i++) state = answer(state, 0);
+    const guess = currentView(state, deck)!;
+    expect(guess.text).toBe("Что Маша делает ночью?");
+    expect([...guess.options].sort()).toEqual(["Ест", "Листает", "Спит"]);
+  });
+
+  it("раунд 1 → выбор «меняемся или результат»; совпадение — по номеру варианта", () => {
+    const state = playRound(start(), [0, 1, 2], [0, 1, 0]);
+    expect(state.phase).toBe("between");
+    const done = guessPartnerReducer(state, { type: "finish" });
+    expect(done.phase).toBe("finished");
+    const score = scoreGuessPartner(done);
+    expect(score.rounds).toEqual([{ subject: 0, guesser: 1, matches: 2, total: 3, percent: 67 }]);
+    expect(score.percent).toBe(67);
+  });
+
+  it("раунд 2: игроки меняются местами, вопросы те же; звание — по среднему", () => {
+    let state = playRound(start(), [0, 1, 2], [0, 1, 2]); // Саша знает Машу на 100%
+    const questions = state.questions;
+    state = guessPartnerReducer(state, { type: "continue" });
+    expect(state).toMatchObject({ round: 1, phase: "self", question: 0 });
+    expect(state.questions).toBe(questions);
+    state = playRound(state, [2, 2, 2], [2, 0, 0]); // Маша знает Сашу на 33%
+    expect(state.phase).toBe("finished");
+    const score = scoreGuessPartner(state);
+    expect(score.rounds.map((r) => [r.subject, r.guesser, r.percent])).toEqual([
+      [0, 1, 100],
+      [1, 0, 33],
+    ]);
+    expect(score.percent).toBe(67);
+    expect(rankFor(score.percent, knowEachOther.ranks).title).toBe("Ещё знакомитесь");
+  });
+
+  it("во втором раунде вопрос показывает имя второго игрока", () => {
+    let state = playRound(start(), [0, 0, 0], [0, 0, 0]);
+    state = guessPartnerReducer(state, { type: "continue" });
+    for (let i = 0; i < 3; i++) state = answer(state, 0);
+    state = guessPartnerReducer(state, { type: "continue" });
+    expect(currentView(state, deck)!.text).toContain("Саша");
+  });
+
+  it("на паузах ответы не принимаются, лишние действия ничего не ломают", () => {
+    let state = start();
+    for (let i = 0; i < 3; i++) state = answer(state, 0);
+    expect(state.phase).toBe("handoff");
+    expect(guessPartnerReducer(state, { type: "answer", shown: 0 })).toBe(state);
+    expect(guessPartnerReducer(state, { type: "finish" })).toBe(state);
+    expect(guessPartnerReducer(start(), { type: "answer", shown: 99 }).question).toBe(0);
+  });
+
+  it("playedCards — набор этой игры, чтобы в следующей начать с других", () => {
+    const state = start();
+    expect(playedCards(state)).toEqual(state.questions.map((q) => q.card));
+  });
+
+  it("deckAccess: locked, подписка и следующий уровень", () => {
+    const [, , deep, abyss] = knowEachOther.decks;
+    expect(deckAccess(deck)).toEqual({ open: true });
+    expect(deckAccess(deep!)).toEqual({ open: false, reason: "soon", text: "Скоро" });
+    expect(deckAccess(abyss!)).toMatchObject({ open: false, reason: "subscription" });
+    expect(deckAccess({ ...deck, tier: "premium" })).toMatchObject({ open: false, reason: "subscription" });
+    expect(deckAccess({ ...deck, tier: "premium" }, { userTier: "premium" })).toEqual({ open: true });
+    expect(nextDeck(knowEachOther, "basics")?.id).toBe("middle");
+    expect(nextDeck(knowEachOther, "middle")?.id).toBe("deep");
+    expect(nextDeck(knowEachOther, "abyss")).toBeUndefined();
+  });
+
+  it("unlockAfter: закрыта, пока не доиграли указанную колоду", () => {
+    const middle = knowEachOther.decks[1]!;
+    const decks = knowEachOther.decks;
+    expect(deckAccess(middle, { decks })).toEqual({ open: false, reason: "after", text: "Откроется после уровня «Основы»" });
+    expect(deckAccess(middle, { decks, completedDecks: ["deep"] }).open).toBe(false);
+    expect(deckAccess(middle, { decks, completedDecks: ["basics"] })).toEqual({ open: true });
+  });
+
+  it("новая игра в колоде не повторяет прошлый набор целиком; варианты и вопросы перемешаны", () => {
+    const middle = knowEachOther.decks[1]!; // 6 карточек, по 4 за игру
+    let previous: number[] = [];
+    for (let seed = 1; seed <= 30; seed++) {
+      const state = createGuessPartnerState(["Маша", "Саша"], middle, { previous, random: seededRandom(seed) });
+      const cards = playedCards(state);
+      expect(cards).toHaveLength(4);
+      if (previous.length > 0) expect([...cards].sort()).not.toEqual([...previous].sort());
+      // обе новые карточки (которых не было в прошлый раз) обязательно попадают в игру
+      for (const fresh of [0, 1, 2, 3, 4, 5].filter((c) => previous.length > 0 && !previous.includes(c))) {
+        expect(cards).toContain(fresh);
+      }
+      previous = cards;
+    }
   });
 
   it("выбирает звание по проценту", () => {
@@ -395,8 +503,8 @@ describe("тиры и видимость", () => {
   it("подписка открывает уровни ниже своего", () => {
     expect(hasAccess("free", "free")).toBe(true);
     expect(hasAccess("free", "premium")).toBe(false);
-    expect(hasAccess("supreme", "premium")).toBe(true);
-    expect(hasAccess("premium", "supreme")).toBe(false);
+    expect(hasAccess("premium", "premium")).toBe(true);
+    expect(hasAccess("premium", "free")).toBe(true);
   });
 
   it("18+ скрыт без возрастного гейта, черновики можно скрыть", () => {
@@ -421,6 +529,33 @@ describe("storage — прогресс", () => {
     const kv = createMemoryKeyValueStore();
     kv.setItem("gazgame:progress:v1", "{не json");
     expect(createProgressStore(kv).load().tests).toEqual({});
+  });
+
+  it("помнит имена игроков и прошлый набор карточек, не теряя остального", () => {
+    const store = createProgressStore(createMemoryKeyValueStore());
+    store.saveTestResult("temperament", "choleric");
+    expect(store.getPlayers("know")).toBeNull();
+    expect(store.getLastCards("know/basics")).toEqual([]);
+    store.savePlayers("know", ["Маша", "Саша"]);
+    store.saveLastCards("know/basics", ["Вопрос 1", "Вопрос 2"]);
+    store.recordGamePlayed("know", { score: 60 });
+    expect(store.getPlayers("know")).toEqual(["Маша", "Саша"]);
+    expect(store.getLastCards("know/basics")).toEqual(["Вопрос 1", "Вопрос 2"]);
+    expect(store.getTestResult("temperament")?.resultId).toBe("choleric");
+    expect(store.getCompletedDecks("know")).toEqual([]);
+    store.markDeckCompleted("know", "basics");
+    store.markDeckCompleted("know", "basics"); // повтор не дублируется
+    store.markDeckCompleted("know", "middle");
+    expect(store.getCompletedDecks("know")).toEqual(["basics", "middle"]);
+    expect(store.getCompletedDecks("other")).toEqual([]);
+  });
+
+  it("читает старые сохранения без новых полей", () => {
+    const kv = createMemoryKeyValueStore();
+    kv.setItem("gazgame:progress:v1", JSON.stringify({ version: 1, tests: { t: { resultId: "a", completedAt: "x" } }, games: {} }));
+    const store = createProgressStore(kv);
+    expect(store.getPlayers("know")).toBeNull();
+    expect(store.getTestResult("t")?.resultId).toBe("a");
   });
 
   it("работает без хранилища (null)", () => {

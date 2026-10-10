@@ -1,5 +1,5 @@
 // «Глубже» для теста: /test/<slug>/deeper
-// Главный вариант — premium, supreme — мелкой строкой. Оплаты пока нет: обе ссылки ведут на «Скоро».
+// Предложение подписки premium (она одна). Оплаты пока нет: кнопка ведёт на «Скоро».
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -57,15 +57,6 @@ export default async function TestDeeperPage({ params }: Props) {
           Хочу Premium 💎
         </Link>
       </section>
-
-      {upsell.supreme && (
-        <p className="px-1 text-center text-sm text-muted">
-          {fillPlaceholders(upsell.supreme.text, {})}{" "}
-          <Link href="/deeper" className="font-bold whitespace-nowrap text-cream underline underline-offset-4">
-            Supreme →
-          </Link>
-        </p>
-      )}
 
       <BackButton>← К результату</BackButton>
     </Screen>
