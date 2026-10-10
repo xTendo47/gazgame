@@ -29,6 +29,8 @@ import {
   hasAccess,
   isExhausted,
   isVisible,
+  findLockedTest,
+  lockedTestsForSection,
   nextRound,
   pickHint,
   pickRound,
@@ -285,6 +287,19 @@ describe("fillPlaceholders — подстановка в тексты", () => {
 
   it("убирает предложение, если значения нет", () => {
     expect(fillPlaceholders(text, {})).toBe("В разборе: практика на 14 дней.");
+  });
+});
+
+describe("платные тесты под замком в каталоге", () => {
+  const locked = { id: "dark", slug: "dark", title: "Т", emoji: "😈", description: "о", learn: ["п"], durationMin: 5, tags: [], tier: "premium" as const, locked: { reason: "subscription" as const, text: "💎" } };
+  const catalog = { tests: [], games: [], lockedTests: [{ ...locked, sections: ["solo" as const] }, { ...locked, id: "pair", slug: "pair", sections: ["pairs" as const] }] };
+
+  it("по разделу и по адресу; без поля lockedTests — пусто", () => {
+    expect(lockedTestsForSection(catalog, "solo").map((t) => t.id)).toEqual(["dark"]);
+    expect(lockedTestsForSection(catalog, "company")).toEqual([]);
+    expect(findLockedTest(catalog, "pair")?.id).toBe("pair");
+    expect(findLockedTest(catalog, "nope")).toBeUndefined();
+    expect(lockedTestsForSection({ tests: [], games: [] }, "solo")).toEqual([]);
   });
 });
 

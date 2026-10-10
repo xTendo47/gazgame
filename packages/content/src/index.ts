@@ -11,4 +11,5 @@ export {
   type ContentReport,
   type FileReport,
   type RawContentFile,
+  type RawLockedTestsFile,
 } from "./validate";

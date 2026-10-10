@@ -607,6 +607,37 @@ export const gameSchema = z
     }
   });
 
+// ---------- Платные тесты под замком ----------
+
+/**
+ * Тест «под замком» (data/locked-tests.json): только карточка — название, обложка, «что узнаешь».
+ * Вопросов нет. Нажатие на карточку и на «Открыть по подписке 💎» считается как «Глубже 💎».
+ */
+export const lockedTestSchema = z.strictObject({
+  id: slug,
+  /** Часть адреса экрана с описанием: /locked/<slug>. */
+  slug,
+  title: text,
+  emoji: text,
+  description: text,
+  /** Список «Что узнаешь». */
+  learn: z.array(text).min(1, "добавь хотя бы один пункт в learn («Что узнаешь»)"),
+  /** Мелкая оговорка, например «Это не диагноз». */
+  disclaimer: text.optional(),
+  durationMin: z.int().min(1),
+  tags: z.array(text).default([]),
+  sections: z.array(sectionSchema).min(1, "укажи хотя бы один раздел"),
+  tier: tierSchema.default("premium"),
+  locked: z.strictObject({ reason: z.enum(["soon", "subscription"]), text }),
+});
+
+/** Файл data/locked-tests.json. */
+export const lockedTestsFileSchema = z.strictObject({
+  _note: z.string().optional(),
+  $schema: z.string().optional(),
+  lockedTests: z.array(lockedTestSchema),
+});
+
 export type Section = z.infer<typeof sectionSchema>;
 export type Tier = z.infer<typeof tierSchema>;
 export type AgeRating = z.infer<typeof ageRatingSchema>;
@@ -631,10 +662,13 @@ export type MafiaRole = MafiaGame["roles"][number];
 /** Игры с колодами карточек (все механики, кроме «Мафии»). */
 export type DeckBasedGame = Exclude<Game, MafiaGame>;
 export type Mechanic = Game["mechanic"];
+export type LockedTest = z.infer<typeof lockedTestSchema>;
 export type ContentItem = Test | Game;
 
 /** Весь контент приложения. */
 export interface Catalog {
   tests: Test[];
   games: Game[];
+  /** Платные тесты под замком (data/locked-tests.json). Нет файла — пусто. */
+  lockedTests?: LockedTest[];
 }

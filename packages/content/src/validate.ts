@@ -1,7 +1,7 @@
 // Проверка контента: по схемам и связей между файлами.
 // Чистая функция — без чтения диска, поэтому работает где угодно и легко тестируется.
 import { z } from "zod";
-import { gameSchema, testSchema, type Catalog, type ContentItem } from "./schema";
+import { gameSchema, lockedTestsFileSchema, testSchema, type Catalog, type ContentItem, type LockedTest } from "./schema";
 
 z.config(z.locales.ru());
 
@@ -11,6 +11,13 @@ export interface RawContentFile {
   kind: "test" | "game";
   data: unknown;
   /** Файл не читается как JSON — текст ошибки. */
+  parseError?: string;
+}
+
+/** Файл data/locked-tests.json (необязательный). */
+export interface RawLockedTestsFile {
+  path: string;
+  data: unknown;
   parseError?: string;
 }
 
@@ -37,6 +44,8 @@ export interface FileReport {
 export interface ContentReport {
   files: FileReport[];
   problems: string[];
+  /** Платные тесты под замком, если файл есть и прошёл проверку. */
+  lockedTests: LockedTest[];
 }
 
 export class ContentError extends Error {
@@ -47,7 +56,7 @@ export class ContentError extends Error {
 }
 
 /** Проверяет все файлы и не падает на ошибках — возвращает отчёт. */
-export function inspectContent(files: RawContentFile[]): ContentReport {
+export function inspectContent(files: RawContentFile[], lockedFile?: RawLockedTestsFile): ContentReport {
   const problems: string[] = [];
   const reports: FileReport[] = files.map((file) => {
     const report: FileReport = { path: file.path, kind: file.kind, data: file.data, issues: [], brokenRelated: [] };
@@ -113,13 +122,39 @@ export function inspectContent(files: RawContentFile[]): ContentReport {
     });
   }
 
-  return { files: reports, problems };
+  const lockedTests = inspectLockedTests(lockedFile, valid.map((r) => r.item), problems);
+  return { files: reports, problems, lockedTests };
 }
 
-export function buildCatalog(files: RawContentFile[]): Catalog {
-  const { files: reports, problems } = inspectContent(files);
+/** Проверяет locked-tests.json: схема, уникальные id/slug и что они не совпадают с обычными тестами и играми. */
+function inspectLockedTests(file: RawLockedTestsFile | undefined, items: ContentItem[], problems: string[]): LockedTest[] {
+  if (!file) return [];
+  if (file.parseError !== undefined) {
+    problems.push(`❌ ${file.path}: файл не читается как JSON — проверь запятые и кавычки.\n${file.parseError}`);
+    return [];
+  }
+  const parsed = lockedTestsFileSchema.safeParse(file.data);
+  if (!parsed.success) {
+    problems.push(`❌ ${file.path}\n${z.prettifyError(parsed.error)}`);
+    return [];
+  }
+  const tests = parsed.data.lockedTests;
+  const taken = new Set(items.flatMap((i) => [i.id, `test:${i.slug}`]));
+  const seen = new Set<string>();
+  for (const t of tests) {
+    if (seen.has(t.id) || seen.has(`slug:${t.slug}`)) problems.push(`❌ ${file.path}: "${t.id}" повторяется`);
+    seen.add(t.id);
+    seen.add(`slug:${t.slug}`);
+    if (taken.has(t.id)) problems.push(`❌ ${file.path}: id "${t.id}" уже есть у обычного теста или игры`);
+    if (taken.has(`test:${t.slug}`)) problems.push(`❌ ${file.path}: slug "${t.slug}" уже есть у обычного теста`);
+  }
+  return tests;
+}
+
+export function buildCatalog(files: RawContentFile[], lockedFile?: RawLockedTestsFile): Catalog {
+  const { files: reports, problems, lockedTests } = inspectContent(files, lockedFile);
   if (problems.length > 0) throw new ContentError(problems);
-  const catalog: Catalog = { tests: [], games: [] };
+  const catalog: Catalog = { tests: [], games: [], lockedTests };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);
     else if (item?.kind === "game") catalog.games.push(item);

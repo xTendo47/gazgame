@@ -242,3 +242,44 @@ describe("игра «Мафия» (mechanic: mafia)", () => {
     expect(() => build(gap)).toThrow(/для 5 игроков нет состава/);
   });
 });
+
+describe("платные тесты под замком (locked-tests.json)", () => {
+  const locked = (extra: Record<string, unknown> = {}) => ({
+    id: "dark",
+    slug: "dark",
+    title: "Тёмная триада",
+    emoji: "😈",
+    description: "Описание",
+    learn: ["Пункт"],
+    durationMin: 5,
+    sections: ["solo"],
+    locked: { reason: "subscription", text: "По подписке 💎" },
+    ...extra,
+  });
+  const build = (lockedTests: unknown[], tests = [validTest]) =>
+    buildCatalog(
+      tests.map((data, i) => ({ path: `t${i}.json`, kind: "test" as const, data })),
+      { path: "locked-tests.json", data: { lockedTests } },
+    );
+
+  it("настоящий файл загружается вместе с каталогом", () => {
+    const catalog = loadCatalog();
+    expect(catalog.lockedTests?.map((t) => t.id)).toEqual(["dark-triad", "anxiety-level", "jung-archetype"]);
+    expect(catalog.lockedTests?.find((t) => t.id === "anxiety-level")?.disclaimer).toBeTruthy();
+  });
+
+  it("подставляет tier premium и пустые tags", () => {
+    expect(build([locked()]).lockedTests?.[0]).toMatchObject({ tier: "premium", tags: [] });
+  });
+
+  it("без файла — пусто, а не ошибка", () => {
+    expect(buildCatalog([{ path: "t.json", kind: "test", data: validTest }]).lockedTests).toEqual([]);
+  });
+
+  it("ловит пустой «Что узнаешь», повтор и совпадение с обычным тестом", () => {
+    expect(() => build([locked({ learn: [] })])).toThrow(/learn/);
+    expect(() => build([locked(), locked()])).toThrow(/"dark" повторяется/);
+    expect(() => build([locked({ id: "demo", slug: "other" })])).toThrow(/id "demo" уже есть/);
+    expect(() => build([locked({ slug: "demo" })])).toThrow(/slug "demo" уже есть/);
+  });
+});

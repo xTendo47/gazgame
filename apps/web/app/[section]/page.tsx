@@ -1,10 +1,11 @@
-// Раздел: /pairs, /company, /solo — список тестов и игр из packages/content.
+// Раздел: /pairs, /company, /solo — список тестов и игр из packages/content, после них — платные тесты под замком.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { itemsForSection } from "@gazgame/engine";
+import { itemsForSection, lockedTestsForSection } from "@gazgame/engine";
 import { PageHeader, Screen } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { ItemTile } from "@/components/ItemTile";
+import { LockedTestTile } from "@/components/LockedTestTile";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { getSection, SECTIONS } from "@/lib/sections";
 
@@ -24,6 +25,7 @@ export default async function SectionPage({ params }: PageProps<"/[section]">) {
   if (!section) notFound();
 
   const items = itemsForSection(getCatalog(), section.id, visibility);
+  const locked = lockedTestsForSection(getCatalog(), section.id);
 
   return (
     <Screen>
@@ -32,7 +34,10 @@ export default async function SectionPage({ params }: PageProps<"/[section]">) {
         {items.map((item, i) => (
           <ItemTile key={item.id} item={item} accent={i % 2 ? "lime" : "orange"} />
         ))}
-        {items.length === 0 && <p className="text-muted">Здесь скоро что-то появится 👀</p>}
+        {locked.map((test) => (
+          <LockedTestTile key={test.id} test={test} />
+        ))}
+        {items.length === 0 && locked.length === 0 && <p className="text-muted">Здесь скоро что-то появится 👀</p>}
       </div>
     </Screen>
   );

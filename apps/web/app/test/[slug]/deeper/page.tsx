@@ -53,7 +53,7 @@ export default async function TestDeeperPage({ params }: Props) {
         <Suspense fallback={<p className={textClass}>{fillPlaceholders(upsell.premium.text, {})}</p>}>
           <UpsellText test={test} text={upsell.premium.text} className={textClass} />
         </Suspense>
-        <Link href="/deeper" className={buttonVariants({ variant: "accent" })}>
+        <Link href="/deeper" className={buttonVariants({ variant: "accent", className: "diamond-glow-ring" })}>
           Хочу Premium 💎
         </Link>
       </section>

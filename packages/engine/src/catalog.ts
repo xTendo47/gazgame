@@ -1,5 +1,5 @@
 // Запросы к каталогу: что показать в разделе, найти по адресу, «Связанное».
-import type { Catalog, ContentItem, Game, Section, Test } from "@gazgame/content";
+import type { Catalog, ContentItem, Game, LockedTest, Section, Test } from "@gazgame/content";
 
 export interface VisibilityOptions {
   /** Показывать черновики (status: "draft"). В MVP — да, весь контент пока черновой. */
@@ -49,6 +49,15 @@ export function randomPool(catalog: Catalog, options?: VisibilityOptions): Conte
   const visible = allItems(catalog).filter((item) => isVisible(item, options));
   const published = visible.filter((item) => item.status === "published");
   return published.length > 0 ? published : visible;
+}
+
+/** Платные тесты под замком в разделе — показываются после обычных. */
+export function lockedTestsForSection(catalog: Catalog, section: Section): LockedTest[] {
+  return (catalog.lockedTests ?? []).filter((t) => t.sections.includes(section));
+}
+
+export function findLockedTest(catalog: Catalog, slug: string): LockedTest | undefined {
+  return (catalog.lockedTests ?? []).find((t) => t.slug === slug);
 }
 
 /** Адрес страницы элемента — общий для сайта и бота. */

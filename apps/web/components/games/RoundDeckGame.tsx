@@ -120,7 +120,7 @@ export function RoundDeckGame({ game, deck, related }: { game: DeckGameData; dec
           <Link
             href="/deeper"
             onClick={() => trackDeeperClick({ id: game.id, kind: "game", source: "game-over" })}
-            className="min-h-11 self-center px-2 py-2 text-center text-[15px] font-semibold text-muted underline-offset-4 hover:text-cream hover:underline"
+            className="diamond-glow min-h-11 self-center rounded-full bg-surface px-5 py-2.5 text-center text-[15px] font-semibold text-cream"
           >
             {deck.upsellText}
           </Link>

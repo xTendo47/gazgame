@@ -78,7 +78,7 @@ export function DeckTile({
     return (
       <button
         type="button"
-        className="group block rounded-card text-left"
+        className="diamond-glow group block rounded-card text-left"
         aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`}
         onClick={() => {
           trackDeeperClick({ id: game.id, kind: "game", source: "locked-deck" });

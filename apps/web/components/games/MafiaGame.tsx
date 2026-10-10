@@ -610,7 +610,7 @@ function LockedExtras({ game, onOpen }: { game: MafiaGameData; onOpen: () => voi
           type="button"
           onClick={onOpen}
           aria-label={`${extra.title} — закрыто: ${game.lockedText}`}
-          className="flex min-h-14 items-center gap-3 rounded-card bg-surface px-4 py-2 text-left opacity-80 transition hover:opacity-100"
+          className="diamond-glow flex min-h-14 items-center gap-3 rounded-card bg-surface px-4 py-2 text-left"
         >
           <span aria-hidden="true" className="w-8 text-center text-2xl">
             {extra.emoji}

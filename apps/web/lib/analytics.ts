@@ -6,8 +6,8 @@ export interface DeeperClickEvent {
   /** id теста или игры */
   id: string;
   kind: "test" | "game";
-  /** Где нажали: результат теста, закрытая колода, конец игры */
-  source: "result" | "locked-deck" | "game-over";
+  /** Где нажали: результат теста, закрытая колода, конец игры, платный тест под замком */
+  source: "result" | "locked-deck" | "game-over" | "locked-test";
 }
 
 /** Нажатие «Глубже 💎» — наш замер спроса на подписку. */

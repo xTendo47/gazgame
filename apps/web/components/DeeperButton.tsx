@@ -21,6 +21,7 @@ export function DeeperButton({
   return (
     <Button
       variant="accent"
+      className="diamond-glow-ring"
       onClick={() => {
         trackDeeperClick(event);
         router.push(keepQuery ? href + window.location.search : href);

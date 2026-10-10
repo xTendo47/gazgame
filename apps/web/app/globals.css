@@ -10,15 +10,20 @@
   --font-manrope: "Manrope Variable";
 }
 
-/* Голубое «алмазное» свечение на кнопке «Подписка» в главном меню: мягкое, слегка пульсирует */
+/* Голубое «алмазное» свечение — у всего, что ведёт на подписку 💎: мягкое, слегка пульсирует.
+   diamond-glow      — тёмные карточки и плитки (рамка + голубой отлив + ореол), как «Подписка» в меню;
+   diamond-glow-ring — яркие кнопки (салатовая «Глубже 💎» и т.п.): та же рамка и ореол, без отлива, чтобы не мутить цвет. */
 @layer components {
-  .diamond-glow {
+  .diamond-glow,
+  .diamond-glow-ring {
     border: 1.5px solid rgb(96 214 255 / 0.75);
-    background-image: radial-gradient(circle at 50% 0%, rgb(96 214 255 / 0.28), transparent 70%);
     box-shadow:
       0 0 14px rgb(96 214 255 / 0.45),
       inset 0 0 12px rgb(96 214 255 / 0.18);
     animation: diamond-pulse 2.8s ease-in-out infinite;
+  }
+  .diamond-glow {
+    background-image: radial-gradient(circle at 50% 0%, rgb(96 214 255 / 0.28), transparent 70%);
   }
 }
 
@@ -38,7 +43,8 @@
 
 /* Кому мешает движение — свечение остаётся, но не пульсирует */
 @media (prefers-reduced-motion: reduce) {
-  .diamond-glow {
+  .diamond-glow,
+  .diamond-glow-ring {
     animation: none;
   }
 }

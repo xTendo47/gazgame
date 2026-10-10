@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "_note": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "lockedTests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "learn": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "disclaimer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "durationMin": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "tags": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "sections": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pairs",
+                "company",
+                "solo"
+              ]
+            }
+          },
+          "tier": {
+            "default": "premium",
+            "type": "string",
+            "enum": [
+              "free",
+              "premium"
+            ]
+          },
+          "locked": {
+            "type": "object",
+            "properties": {
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "soon",
+                  "subscription"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "reason",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "emoji",
+          "description",
+          "learn",
+          "durationMin",
+          "sections",
+          "locked"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "lockedTests"
+  ],
+  "additionalProperties": false
+}
