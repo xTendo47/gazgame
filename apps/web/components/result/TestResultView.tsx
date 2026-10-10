@@ -7,14 +7,14 @@ import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
-import { fillPlaceholders, scalesConfig, scoringConfig, splitListLabel, type TestBlend } from "@gazgame/engine";
+import { fillPlaceholders, scalesConfig, scoringConfig, shareButtonLabel, splitListLabel, type TestBlend } from "@gazgame/engine";
 import { Badge, buttonVariants, cn, DeepTeaser } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getSection } from "@/lib/sections";
 import { CopyListButton } from "./CopyListButton";
-import { FlexMenu } from "./FlexMenu";
+import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
 import { RankingPanel } from "./RankingPanel";
 import { ResultHero } from "./ResultHero";
 import { ScalesPanel } from "./ScalesPanel";
@@ -49,8 +49,11 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
   const listEmoji = blocks?.howToLoveMeEmoji;
 
   return (
-    <>
-      <BackLink href={`/${test.sections[0] ?? ""}`}>Все тесты</BackLink>
+    <ShareProvider test={test} resultId={result.id} blendId={blend?.resultId}>
+      <div className="flex items-center justify-between gap-3">
+        <BackLink href={`/${test.sections[0] ?? ""}`}>Все тесты</BackLink>
+        <ShareIconButton />
+      </div>
 
       <ResultHero
         label={`${test.emoji} ${test.title} · твой результат`}
@@ -61,6 +64,8 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         subtitle={result.subtitle}
         text={result.text}
       />
+      {/* «Куда кидаем?» — сразу под главным блоком итога, пока результат на эмоциях */}
+      <ShareButton label={shareButtonLabel(test)} />
       {test.status === "draft" && (
         <Badge tone="draft" className="self-start">
           черновик
@@ -76,19 +81,6 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           ))}
         </section>
       )}
-
-      {/* Делиться — пока результат на эмоциях: сразу после разбора */}
-      <FlexMenu
-        linkPath={`/test/${test.slug}`}
-        fileName={`gazgame-${test.slug}-${result.id}${blend ? `-${blend.resultId}` : ""}`}
-        shareText={result.shareText}
-        card={{
-          label: test.title,
-          emoji: result.emoji,
-          title: result.title,
-          text: blend ? blend.note.title : (result.subtitle ?? result.text),
-        }}
-      />
 
       {showRanking && (
         // Полоски всех типов читаются из адреса уже в браузере; страница при этом остаётся статической.
@@ -231,7 +223,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           В меню
         </Link>
       </nav>
-    </>
+    </ShareProvider>
   );
 }
 

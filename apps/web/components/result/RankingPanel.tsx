@@ -18,8 +18,9 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
         Твой расклад 📊
       </h2>
       <ol className="flex flex-col gap-3.5">
-        {ranking.map(({ result, score, max }, i) => {
-          const percent = max > 0 ? Math.round((score / max) * 100) : 0;
+        {ranking.map(({ result, score, max, percent }, i) => {
+          // подпись — доля в сумме 100 (как на карточке для шеринга), полоска — сколько набрано из возможного
+          const fill = max > 0 ? Math.round((score / max) * 100) : 0;
           return (
             <li key={result.id} className="flex flex-col gap-1.5">
               <div className="flex items-baseline justify-between gap-3">
@@ -41,7 +42,7 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
                 className="h-3 overflow-hidden rounded-full bg-surface-2"
               >
                 <FillBar
-                  percent={percent}
+                  percent={fill}
                   delay={i * 0.06}
                   className={i === 0 ? "bg-orange" : i === 1 ? "bg-lime" : "bg-cream/35"}
                 />

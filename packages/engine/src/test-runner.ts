@@ -1,4 +1,5 @@
 // Подсчёт результата теста. Движок не знает конкретных тестов — всё берёт из данных.
+import { largestRemainderPercents } from "./share";
 import type {
   BlendNote,
   Scale,
@@ -205,6 +206,8 @@ export interface RankedType {
   result: TestResult;
   score: number;
   max: number;
+  /** Доля баллов от суммы всех результатов, проценты в сумме ровно 100 (как на карточке для шеринга). */
+  percent: number;
 }
 
 /**
@@ -225,13 +228,16 @@ export function typeRanking(
     const score = scores[result.id];
     const max = maxima[result.id] ?? 0;
     if (score === undefined || !Number.isFinite(score) || score < 0 || score > max) return null;
-    ranked.push({ result, score, max });
+    ranked.push({ result, score, max, percent: 0 });
   }
   const order = config.types ?? [];
   const priority = (id: string) =>
     id === lead.resultId ? -2 : id === lead.blendId ? -1 : order.includes(id) ? order.indexOf(id) : order.length + 1;
   ranked.sort((a, b) => b.score - a.score || priority(a.result.id) - priority(b.result.id));
   if (lead.resultId && ranked[0]?.result.id !== lead.resultId) return null;
+  // Проценты считаем уже по порядку показа: при равных баллах лишний процент получает тот, кто выше
+  const percents = largestRemainderPercents(ranked.map((r) => r.score));
+  ranked.forEach((r, i) => (r.percent = percents[i] ?? 0));
   return ranked;
 }
 

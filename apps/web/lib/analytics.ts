@@ -19,3 +19,22 @@ export function trackDeeperClick(event: DeeperClickEvent) {
     // аналитика не должна ломать приложение
   }
 }
+
+/** Куда поделились итогом: сторис, Telegram, системное меню/текст другу, ссылка, сохранение картинки. */
+export type ShareChannel = "story" | "telegram" | "other" | "copy" | "save";
+
+export interface ShareClickEvent {
+  /** id теста */
+  id: string;
+  channel: ShareChannel;
+}
+
+/** Нажатие в меню «Куда кидаем?». */
+export function trackShareClick(event: ShareClickEvent) {
+  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
+  try {
+    track("share_click", { ...event });
+  } catch {
+    // аналитика не должна ломать приложение
+  }
+}

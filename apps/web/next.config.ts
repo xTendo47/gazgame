@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   // Открывать сайт разработки с телефона в той же Wi-Fi сети (http://192.168.x.x:3000).
   // Без этого Next.js блокирует горячую перезагрузку и служебные запросы с чужих адресов.
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*", "*.local"],
+  // Шрифты для картинок шеринга читаются с диска — кладём их в сборку маршрута.
+  outputFileTracingIncludes: { "/share/test/[slug]": ["./assets/fonts/**"] },
 };
 
 export default nextConfig;

@@ -1,12 +1,11 @@
 // Баллы в адресе результата: /test/<slug>/result/<id>?acceptance=7&confidence=5&independence=9
 // Страницы результатов статические, а баллы у каждого свои — поэтому они едут в адресе.
 // Так ссылкой можно поделиться, и у друга откроется тот же разбор.
-// Нужны тестам по шкалам (scales) и тестам с полосками всех типов (scoring.showRanking).
+// Есть у всех тестов: шкалы, «Твой расклад» (showRanking) и проценты на карточке для шеринга.
 import type { Test } from "@gazgame/content";
 import {
   scaleBreakdown,
   scalesConfig,
-  scoringConfig,
   typeRanking,
   type RankedType,
   type ScalesBreakdown,
@@ -14,10 +13,12 @@ import {
 
 type Params = { get(name: string): string | null };
 
-/** Нужно ли передавать баллы в адресе результата. */
+/**
+ * Передавать ли баллы в адресе результата. Да — у всех тестов: из них считаются шкалы, «Твой расклад»,
+ * а для шеринга — проценты ({pct}) и полоски на карточке. Сами полоски на экране — только где showRanking.
+ */
 export function needsScoresInQuery(test: Test): boolean {
-  const config = scoringConfig(test);
-  return config.type === "scales" || config.showRanking === true;
+  return test.results.length > 0;
 }
 
 export function scoreQuery(scores: Readonly<Record<string, number>>): string {

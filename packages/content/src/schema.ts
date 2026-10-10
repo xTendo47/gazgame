@@ -212,6 +212,11 @@ export const testSchema = itemBase
       })
       .optional(),
     upsell: upsellSchema.optional(),
+    /**
+     * Шеринг итога: надпись на кнопке «Куда кидаем?» и текст сообщения в чат.
+     * Плейсхолдеры: {title} {emoji} {pct} {scale} {link}. Нет share — «Пофлексить 🧊» и shareText результата.
+     */
+    share: z.strictObject({ button: text, text }).optional(),
   })
   .superRefine((test, ctx) => {
     const ids = new Set<string>();

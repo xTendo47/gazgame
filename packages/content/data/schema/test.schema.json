@@ -569,6 +569,24 @@
         "premium"
       ],
       "additionalProperties": false
+    },
+    "share": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "button",
+        "text"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

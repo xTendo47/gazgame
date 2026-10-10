@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { gameSchema, testSchema, type MafiaGame } from "@gazgame/content";
 import loveLanguagesJson from "@gazgame/content/data/tests/love-languages.json";
 import mafiaJson from "@gazgame/content/data/games/mafia.json";
+import selfEsteemJson from "@gazgame/content/data/tests/self-esteem.json";
+import temperamentJson from "@gazgame/content/data/tests/temperament.json";
 import {
   castVote,
   aliveSides,
@@ -30,6 +32,9 @@ import {
   isExhausted,
   isVisible,
   findLockedTest,
+  largestRemainderPercents,
+  shareButtonLabel,
+  shareMessage,
   listCopyText,
   splitListLabel,
   lockedTestsForSection,
@@ -289,6 +294,73 @@ describe("fillPlaceholders — подстановка в тексты", () => {
 
   it("убирает предложение, если значения нет", () => {
     expect(fillPlaceholders(text, {})).toBe("В разборе: практика на 14 дней.");
+  });
+});
+
+describe("шеринг: проценты и текст сообщения", () => {
+  it("метод наибольшего остатка: ровно 100 в сумме", () => {
+    expect(largestRemainderPercents([1, 1, 1])).toEqual([34, 33, 33]); // ничья — тому, кто раньше
+    expect(largestRemainderPercents([20, 2, 2, 0, 0])).toEqual([84, 8, 8, 0, 0]);
+    expect(largestRemainderPercents([12, 12, 0, 0, 2])).toEqual([46, 46, 0, 0, 8]);
+    expect(largestRemainderPercents([5])).toEqual([100]);
+    expect(largestRemainderPercents([0, 0, 0])).toEqual([0, 0, 0]);
+    expect(largestRemainderPercents([])).toEqual([]);
+  });
+
+  it("на случайных наборах: сумма 100, каждое число — округление вниз или вверх точной доли", () => {
+    const random = seededRandom(9);
+    for (let k = 0; k < 300; k++) {
+      const values = Array.from({ length: 2 + Math.floor(random() * 6) }, () => Math.floor(random() * 25));
+      const total = values.reduce((a, b) => a + b, 0);
+      const pct = largestRemainderPercents(values);
+      if (total === 0) continue;
+      expect(pct.reduce((a, b) => a + b, 0)).toBe(100);
+      pct.forEach((p, i) => {
+        const exact = ((values[i] ?? 0) / total) * 100;
+        expect(p === Math.floor(exact) || p === Math.floor(exact) + 1).toBe(true);
+      });
+    }
+  });
+
+  it("проценты в «Твой расклад» — те же и в сумме 100", () => {
+    const ranking = typeRanking(temperamentBlend, { a: 4, b: 4, c: 2 }, { resultId: "b" })!;
+    expect(ranking.map((r) => r.percent)).toEqual([40, 40, 20]);
+  });
+
+  it("текст сообщения: подстановки {title} {emoji} {pct} {link}", () => {
+    const test = testSchema.parse(temperamentJson);
+    const choleric = test.results.find((r) => r.id === "choleric")!;
+    expect(shareButtonLabel(test)).toBe("Показать состав 🧪");
+    expect(shareMessage(test, choleric, { link: "https://x.ru/test/temperament?from=share", pct: 58 })).toBe(
+      "Мой состав характера: Холерик 🔥 58%. А из чего ты? 👉 https://x.ru/test/temperament?from=share",
+    );
+  });
+
+  it("нет баллов — «{pct}%» убирается целиком, без «… 🔥 %.»", () => {
+    const test = testSchema.parse(temperamentJson);
+    const choleric = test.results.find((r) => r.id === "choleric")!;
+    expect(shareMessage(test, choleric, { link: "L" })).toBe("Мой состав характера: Холерик 🔥. А из чего ты? 👉 L");
+  });
+
+  it("при равных баллах проценты сверху вниз не растут", () => {
+    // 10/4/4/4/2/0 из 24: трём равным достаются 17, 17, 16 — по порядку показа
+    const pct = largestRemainderPercents([10, 4, 4, 4, 2, 0]);
+    expect(pct).toEqual([42, 17, 17, 16, 8, 0]);
+  });
+
+  it("у теста по шкалам {scale} и {emoji} — самая высокая шкала", () => {
+    const test = testSchema.parse(selfEsteemJson);
+    const result = test.results[0]!;
+    expect(shareMessage(test, result, { link: "L", topScale: { title: "Принятие себя", emoji: "🫶" } })).toBe(
+      "Моя опора: Принятие себя 🫶 А на чём стоишь ты? 👉 L",
+    );
+  });
+
+  it("без share у теста — «Пофлексить 🧊» и shareText результата со ссылкой", () => {
+    const result = temperamentLike.results[0]!;
+    expect(shareButtonLabel(temperamentLike)).toBe("Пофлексить 🧊");
+    expect(shareMessage(temperamentLike, { ...result, shareText: "Я — a ✨" }, { link: "L" })).toBe("Я — a ✨ L");
+    expect(shareMessage(temperamentLike, result, { link: "L" })).toBe("a ✨ L");
   });
 });
 
