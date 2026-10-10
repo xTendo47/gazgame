@@ -1,5 +1,7 @@
-// Карточка итога теста для next/og (Satori): сторис 1080×1920 и превью 1200×630.
+// Картинки для next/og (Satori): итог теста — сторис 1080×1920 и превью ссылки 1200×630,
+// обложки 1200×630 для превью ссылки на тест и на главную.
 // Satori понимает только flexbox и часть CSS: у каждого блока с несколькими детьми — display: flex.
+import { OG_BODY, OG_DISPLAY } from "@/lib/og-fonts";
 import type { ShareCard, ShareFormat } from "@/lib/share-card";
 
 const BG = "#141217";
@@ -7,9 +9,8 @@ const CREAM = "#F3EEE6";
 const MUTED = "rgba(243,238,230,0.62)";
 const ORANGE = "#FF5A1F";
 const LIME = "#D4FF3A";
-// Кириллица и латиница — разные файлы шрифта (см. route.tsx), поэтому пара имён
-const DISPLAY = "Unbounded Cyr, Unbounded Lat";
-const BODY = "Manrope Cyr, Manrope Lat";
+const DISPLAY = OG_DISPLAY;
+const BODY = OG_BODY;
 
 /** Лёгкое зерно поверх фона: шум SVG (Resvg рисует feTurbulence). */
 const GRAIN = `data:image/svg+xml;utf8,${encodeURIComponent(
@@ -232,7 +233,120 @@ function Story({ card }: { card: ShareCard }) {
   );
 }
 
+/** Превью ссылки на итог (1200×630): герой слева, полоски справа, внизу «А ты кто? Пройди за N мин». */
 function Preview({ card }: { card: ShareCard }) {
+  const bars = (card.bars ?? []).slice(0, 6);
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        width: 1200,
+        height: 630,
+        padding: "44px 56px 40px",
+        backgroundColor: BG,
+        color: CREAM,
+        fontFamily: BODY,
+      }}
+    >
+      <Glow color={card.color} width={1200} height={630} x="22%" y="40%" />
+      <Grain width={1200} height={630} />
+      <div style={{ display: "flex", flex: 1, gap: 48 }}>
+        {/* герой */}
+        <div style={{ display: "flex", flexDirection: "column", width: bars.length ? 500 : 1088, alignItems: "flex-start", justifyContent: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              padding: "6px 16px",
+              borderRadius: 999,
+              backgroundColor: "rgba(243,238,230,0.12)",
+              fontWeight: 800,
+              fontSize: 20,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+            }}
+          >
+            {card.testTitle}
+          </div>
+          <div style={{ display: "flex", marginTop: 18, fontSize: 120, lineHeight: 1 }}>{card.emoji}</div>
+          <div
+            style={{
+              display: "flex",
+              marginTop: 14,
+              fontFamily: DISPLAY,
+              fontWeight: 900,
+              fontSize: titleSize(card.title, 66),
+              lineHeight: 1.05,
+              letterSpacing: -1,
+            }}
+          >
+            {card.title}
+          </div>
+          {card.blendLine && (
+            <div style={{ display: "flex", marginTop: 10, fontWeight: 800, fontSize: 26, color: card.color }}>{card.blendLine}</div>
+          )}
+          {card.subtitle && (
+            <div style={{ display: "flex", marginTop: 8, fontWeight: 600, fontSize: 26, color: MUTED }}>{card.subtitle}</div>
+          )}
+        </div>
+        {/* полоски */}
+        {bars.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center", gap: 14 }}>
+            {bars.map((b) => (
+              <div key={b.label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ display: "flex", fontSize: 26 }}>{b.emoji}</div>
+                  <div style={{ display: "flex", flex: 1, fontWeight: b.main ? 800 : 600, fontSize: 24, color: b.main ? CREAM : MUTED }}>
+                    {b.label}
+                  </div>
+                  <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 24, color: b.main ? CREAM : MUTED }}>
+                    {b.value}
+                  </div>
+                </div>
+                <div style={{ display: "flex", height: 10, borderRadius: 5, backgroundColor: "rgba(243,238,230,0.12)" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      width: `${Math.max(3, Math.round(b.fill * 100))}%`,
+                      height: 10,
+                      borderRadius: 5,
+                      backgroundColor: b.main ? card.color : "rgba(243,238,230,0.55)",
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {/* низ */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20 }}>
+        <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 30 }}>
+          А ты кто? Пройди за {card.durationMin} мин
+        </div>
+        <Logo size={26} />
+      </div>
+    </div>
+  );
+}
+
+/** Обложка теста для превью ссылки (1200×630): эмодзи, название, «12 ситуаций · 4 мин · бесплатно», крючок. */
+export function TestCover({
+  emoji,
+  title,
+  meta,
+  hook,
+  color,
+}: {
+  emoji: string;
+  title: string;
+  /** «12 ситуаций · 4 мин · бесплатно». */
+  meta: string;
+  /** description теста. */
+  hook: string;
+  color: string;
+}) {
   return (
     <div
       style={{
@@ -246,38 +360,51 @@ function Preview({ card }: { card: ShareCard }) {
         fontFamily: BODY,
       }}
     >
-      <Glow color={card.color} width={1200} height={630} x="18%" y="50%" />
+      <Glow color={color} width={1200} height={630} x="18%" y="50%" />
       <Grain width={1200} height={630} />
-      <div style={{ display: "flex", width: 330, alignItems: "center", justifyContent: "center", fontSize: 230, lineHeight: 1 }}>
-        {card.emoji}
-      </div>
+      <div style={{ display: "flex", width: 330, alignItems: "center", justifyContent: "center", fontSize: 220, lineHeight: 1 }}>{emoji}</div>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, marginLeft: 40, justifyContent: "center" }}>
-        <div
-          style={{
-            display: "flex",
-            alignSelf: "flex-start",
-            padding: "8px 18px",
-            borderRadius: 999,
-            backgroundColor: "rgba(243,238,230,0.12)",
-            fontWeight: 800,
-            fontSize: 22,
-            letterSpacing: 2,
-            textTransform: "uppercase",
-          }}
-        >
-          {card.testTitle}
+        <Logo size={28} />
+        <div style={{ display: "flex", marginTop: 26, fontFamily: DISPLAY, fontWeight: 900, fontSize: titleSize(title, 76), lineHeight: 1.05 }}>
+          {title}
         </div>
-        <div style={{ display: "flex", marginTop: 22, fontFamily: DISPLAY, fontWeight: 900, fontSize: titleSize(card.title, 84), lineHeight: 1.05 }}>
-          {card.title}
-        </div>
-        {card.blendLine && (
-          <div style={{ display: "flex", marginTop: 14, fontWeight: 800, fontSize: 30, color: card.color }}>{card.blendLine}</div>
-        )}
-        {card.subtitle && <div style={{ display: "flex", marginTop: 12, fontWeight: 600, fontSize: 30, color: MUTED }}>{card.subtitle}</div>}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 40 }}>
-          <div style={{ display: "flex", fontWeight: 800, fontSize: 26, color: LIME }}>{card.shortLink}</div>
-          <Logo size={26} />
-        </div>
+        <div style={{ display: "flex", marginTop: 18, fontWeight: 800, fontSize: 28, color: LIME }}>{meta}</div>
+        <div style={{ display: "flex", marginTop: 18, fontWeight: 600, fontSize: 30, lineHeight: 1.3, color: MUTED }}>{hook}</div>
+      </div>
+    </div>
+  );
+}
+
+/** Обложка главной (1200×630): логотип, «Не сиди. Не тупи. Газ!» и эмодзи разделов. */
+export function HomeCover({ emojis }: { emojis: string[] }) {
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 1200,
+        height: 630,
+        backgroundColor: BG,
+        color: CREAM,
+        fontFamily: BODY,
+      }}
+    >
+      <Glow color={ORANGE} width={1200} height={630} x="50%" y="38%" />
+      <Grain width={1200} height={630} />
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", fontFamily: DISPLAY, fontWeight: 900, fontSize: 132, lineHeight: 0.92, letterSpacing: -4 }}>
+        <span style={{ color: CREAM }}>GAZ</span>
+        <span style={{ color: ORANGE }}>GAME</span>
+      </div>
+      <div style={{ display: "flex", marginTop: 34, fontWeight: 800, fontSize: 40 }}>
+        Не сиди. Не тупи.&nbsp;<span style={{ color: LIME }}>Газ!</span>
+      </div>
+      <div style={{ display: "flex", marginTop: 34, gap: 40, fontSize: 84 }}>
+        {emojis.map((e) => (
+          <span key={e}>{e}</span>
+        ))}
       </div>
     </div>
   );

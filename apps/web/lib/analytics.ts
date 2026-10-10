@@ -38,3 +38,23 @@ export function trackShareClick(event: ShareClickEvent) {
     // аналитика не должна ломать приложение
   }
 }
+
+/** Заход по ссылке из шеринга (?from=share). */
+export function trackShareOpen(event: { id: string }) {
+  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
+  try {
+    track("share_open", { ...event });
+  } catch {
+    // аналитика не должна ломать приложение
+  }
+}
+
+/** Нажатие «Кинуть ответку 🔁» — ответ другу, который прислал тест. */
+export function trackAnswerBack(event: { id: string }) {
+  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
+  try {
+    track("answer_back", { ...event });
+  } catch {
+    // аналитика не должна ломать приложение
+  }
+}

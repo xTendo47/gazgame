@@ -1,5 +1,5 @@
 // Подсчёт результата теста. Движок не знает конкретных тестов — всё берёт из данных.
-import { largestRemainderPercents } from "./share";
+import { largestRemainderPercents } from "./percent";
 import type {
   BlendNote,
   Scale,

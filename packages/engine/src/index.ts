@@ -4,6 +4,7 @@ export * from "./random";
 export * from "./tiers";
 export * from "./test-runner";
 export * from "./result-list";
+export * from "./percent";
 export * from "./share";
 export * from "./catalog";
 export * from "./storage";

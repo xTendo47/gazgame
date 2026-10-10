@@ -14,6 +14,7 @@ import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getSection } from "@/lib/sections";
 import { CopyListButton } from "./CopyListButton";
+import { AnswerBack } from "@/components/share/AnswerBack";
 import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
 import { RankingPanel } from "./RankingPanel";
 import { ResultHero } from "./ResultHero";
@@ -64,6 +65,8 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         subtitle={result.subtitle}
         text={result.text}
       />
+      {/* Тест прислал друг — «Ты: … · Друг: …» и «Кинуть ответку 🔁» рядом с героем */}
+      <AnswerBack test={test} mine={result} />
       {/* «Куда кидаем?» — сразу под главным блоком итога, пока результат на эмоциях */}
       <ShareButton label={shareButtonLabel(test)} />
       {test.status === "draft" && (

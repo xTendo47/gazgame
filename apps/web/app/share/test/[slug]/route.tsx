@@ -1,34 +1,13 @@
 // Картинка итога теста: /share/test/<slug>?r=<результат>&b=<второй тип>&s=<баллы>&f=story|preview&stats=1|0
 // PNG рисует сервер (next/og). Один и тот же PNG — и превью в меню «Куда кидаем?», и картинка в сторис.
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+// Без r — обложка теста 1200×630 для превью ссылки на тест.
 import type { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";
 import { findTest } from "@gazgame/engine";
-import { ShareCardImage } from "@/components/share/ShareCardImage";
+import { ShareCardImage, TestCover } from "@/components/share/ShareCardImage";
 import { getCatalog, visibility } from "@/lib/catalog";
-import { buildShareCard, decodeScores, SHARE_SIZE, siteUrl, type ShareFormat } from "@/lib/share-card";
-
-// next/og не читает woff2 — берём woff из @fontsource (лицензия OFL, см. assets/fonts).
-// Латиница и кириллица — отдельные файлы под разными именами: Satori держит один файл на имя и вес,
-// поэтому в разметке шрифт задаётся парой «кириллица, латиница» (см. ShareCardImage).
-const fontDir = join(process.cwd(), "assets", "fonts");
-const fontFiles = [
-  { name: "Unbounded Cyr", weight: 900, file: "unbounded-cyrillic-900-normal.woff" },
-  { name: "Unbounded Lat", weight: 900, file: "unbounded-latin-900-normal.woff" },
-  { name: "Manrope Cyr", weight: 600, file: "manrope-cyrillic-600-normal.woff" },
-  { name: "Manrope Lat", weight: 600, file: "manrope-latin-600-normal.woff" },
-  { name: "Manrope Cyr", weight: 800, file: "manrope-cyrillic-800-normal.woff" },
-  { name: "Manrope Lat", weight: 800, file: "manrope-latin-800-normal.woff" },
-] as const;
-const fontsPromise = Promise.all(
-  fontFiles.map(async (f) => ({
-    name: f.name,
-    weight: f.weight,
-    style: "normal" as const,
-    data: await readFile(join(fontDir, f.file)).then((b) => b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer),
-  })),
-);
+import { ogFonts } from "@/lib/og-fonts";
+import { buildShareCard, decodeScores, glowColor, SHARE_SIZE, siteUrl, type ShareFormat } from "@/lib/share-card";
 
 /** Адрес, с которого пришли (в dev nextUrl.origin бывает 0.0.0.0 — берём из заголовков). */
 function requestOrigin(request: NextRequest): string {
@@ -37,24 +16,41 @@ function requestOrigin(request: NextRequest): string {
   return host ? `${proto}://${host}` : request.nextUrl.origin;
 }
 
+const CACHE = { "Cache-Control": "public, max-age=3600, s-maxage=86400" };
+
 export async function GET(request: NextRequest, ctx: RouteContext<"/share/test/[slug]">) {
   const { slug } = await ctx.params;
   const q = request.nextUrl.searchParams;
   const test = findTest(getCatalog(), slug, visibility);
-  const format: ShareFormat = q.get("f") === "preview" ? "preview" : "story";
-  const card =
-    test &&
-    buildShareCard(
-      test,
-      { slug, resultId: q.get("r") ?? "", blendId: q.get("b") ?? undefined, scores: decodeScores(q.get("s")), stats: q.get("stats") !== "0" },
-      siteUrl(requestOrigin(request)),
+  if (!test) return new Response("Нет такого теста", { status: 404 });
+
+  // Обложка теста — превью ссылки на тест без итога
+  if (!q.get("r")) {
+    const first = test.results[0];
+    return new ImageResponse(
+      <TestCover
+        emoji={test.emoji}
+        title={test.title}
+        meta={`${test.questions.length} ситуаций · ${test.durationMin} мин · бесплатно`}
+        hook={test.description}
+        color={first ? glowColor(test.id, first.id) : "#FF5A1F"}
+      />,
+      { ...SHARE_SIZE.preview, emoji: "twemoji", fonts: await ogFonts(), headers: CACHE },
     );
-  if (!card) return new Response("Нет такого теста или результата", { status: 404 });
+  }
+
+  const format: ShareFormat = q.get("f") === "preview" ? "preview" : "story";
+  const card = buildShareCard(
+    test,
+    { slug, resultId: q.get("r") ?? "", blendId: q.get("b") ?? undefined, scores: decodeScores(q.get("s")), stats: q.get("stats") !== "0" },
+    siteUrl(requestOrigin(request)),
+  );
+  if (!card) return new Response("Нет такого результата", { status: 404 });
 
   return new ImageResponse(<ShareCardImage card={card} format={format} />, {
     ...SHARE_SIZE[format],
     emoji: "twemoji",
-    fonts: await fontsPromise,
-    headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
+    fonts: await ogFonts(),
+    headers: CACHE,
   });
 }

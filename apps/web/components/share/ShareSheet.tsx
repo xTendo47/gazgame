@@ -5,8 +5,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Share2, X } from "lucide-react";
-import type { Test } from "@gazgame/content";
-import { findResult, scalesConfig, shareMessage } from "@gazgame/engine";
+import type { Test, TestResult } from "@gazgame/content";
+import { answerBackMessage, findResult, scalesConfig, shareMessage } from "@gazgame/engine";
 import { Button, cn } from "@gazgame/ui";
 import { trackShareClick, type ShareChannel } from "@/lib/analytics";
 import { copyText } from "@/lib/clipboard";
@@ -18,21 +18,26 @@ interface ShareTarget {
   blendId?: string;
 }
 
-const ShareContext = createContext<(() => void) | null>(null);
+/** С чем открыть меню: answerTo — «ответка» другу (свой текст сообщения). */
+export interface ShareOpenOptions {
+  answerTo?: TestResult;
+}
+
+const ShareContext = createContext<((options?: ShareOpenOptions) => void) | null>(null);
 
 /** Даёт кнопкам «поделиться» на экране итога одно общее меню. */
 export function ShareProvider({ children, ...target }: ShareTarget & { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const openSheet = useCallback(() => setOpen(true), []);
+  const [open, setOpen] = useState<ShareOpenOptions | null>(null);
+  const openSheet = useCallback((options: ShareOpenOptions = {}) => setOpen(options), []);
   return (
     <ShareContext.Provider value={openSheet}>
       {children}
-      <AnimatePresence>{open && <ShareSheet {...target} onClose={() => setOpen(false)} />}</AnimatePresence>
+      <AnimatePresence>{open && <ShareSheet {...target} {...open} onClose={() => setOpen(null)} />}</AnimatePresence>
     </ShareContext.Provider>
   );
 }
 
-function useOpenShare() {
+export function useOpenShare() {
   const open = useContext(ShareContext);
   if (!open) throw new Error("Кнопка «поделиться» должна быть внутри ShareProvider");
   return open;
@@ -42,7 +47,7 @@ function useOpenShare() {
 export function ShareButton({ label }: { label: string }) {
   const open = useOpenShare();
   return (
-    <Button variant="primary" onClick={open}>
+    <Button variant="primary" onClick={() => open()}>
       {label}
     </Button>
   );
@@ -55,7 +60,7 @@ export function ShareIconButton() {
     <button
       type="button"
       aria-label="Поделиться"
-      onClick={open}
+      onClick={() => open()}
       className="flex size-11 items-center justify-center rounded-full bg-surface text-cream transition hover:bg-surface-2"
     >
       <Share2 aria-hidden="true" size={20} />
@@ -80,12 +85,12 @@ function isDesktop(): boolean {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
 
-function ShareSheet({ test, resultId, blendId, onClose }: ShareTarget & { onClose: () => void }) {
+function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget & ShareOpenOptions & { onClose: () => void }) {
   const result = findResult(test, resultId);
   // Всё, что зависит от адреса страницы, считаем один раз при открытии
   const [ctx] = useState(() => {
     const scores = scoresFromLocation(test);
-    const link = shareLink(siteUrl(window.location.origin), test.slug);
+    const link = shareLink(siteUrl(window.location.origin), test, { resultId, blendId, scores });
     return { scores, link, desktop: isDesktop() };
   });
   // У теста по шкалам (самооценка) показатели по умолчанию скрыты
@@ -100,9 +105,11 @@ function ShareSheet({ test, resultId, blendId, onClose }: ShareTarget & { onClos
     [test.slug, resultId, blendId, ctx.scores, stats],
   );
   const imagePath = shareImagePath(params);
-  const message = result
-    ? shareMessage(test, result, { link: ctx.link, pct: mainPercent(test, params), topScale: topScale(test, ctx.scores) })
-    : ctx.link;
+  const message = !result
+    ? ctx.link
+    : answerTo
+      ? answerBackMessage(result, answerTo, ctx.link)
+      : shareMessage(test, result, { link: ctx.link, pct: mainPercent(test, params), topScale: topScale(test, ctx.scores) });
 
   // Картинку грузим заранее: делиться файлом нужно сразу по нажатию, пока телефон считает это действием человека
   useEffect(() => {
@@ -224,7 +231,7 @@ function ShareSheet({ test, resultId, blendId, onClose }: ShareTarget & { onClos
         <div aria-hidden="true" className="mx-auto h-1.5 w-12 rounded-full bg-line" />
         <div className="flex items-center justify-between">
           <h2 id="share-title" className="font-display text-xl font-bold">
-            Куда кидаем?
+            {answerTo ? "Куда кидаем ответку?" : "Куда кидаем?"}
           </h2>
           <button
             type="button"

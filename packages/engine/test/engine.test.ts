@@ -32,7 +32,11 @@ import {
   isExhausted,
   isVisible,
   findLockedTest,
+  answerBackMessage,
   largestRemainderPercents,
+  parseSharedResult,
+  sharedResultMeta,
+  sharedResultQuery,
   shareButtonLabel,
   shareMessage,
   listCopyText,
@@ -361,6 +365,66 @@ describe("шеринг: проценты и текст сообщения", () =
     expect(shareButtonLabel(temperamentLike)).toBe("Пофлексить 🧊");
     expect(shareMessage(temperamentLike, { ...result, shareText: "Я — a ✨" }, { link: "L" })).toBe("Я — a ✨ L");
     expect(shareMessage(temperamentLike, result, { link: "L" })).toBe("a ✨ L");
+  });
+});
+
+describe("шеринг: ссылка на итог, превью и «ответка»", () => {
+  const temperament = testSchema.parse(temperamentJson);
+  const selfEsteem = testSchema.parse(selfEsteemJson);
+  // меланхолик 12, холерик 11 (разрыв 1 ≤ maxGap 2) — смешанный «Меланхолик × Холерик»
+  const mixed = { resultId: "melancholic", blendId: "choleric", scores: { choleric: 11, sanguine: 0, phlegmatic: 1, melancholic: 12 } };
+
+  it("ссылка туда и обратно: баллы через точку в порядке results", () => {
+    const q = sharedResultQuery(temperament, mixed);
+    expect(q).toEqual({ r: "melancholic", b: "choleric", s: "11.0.1.12" });
+    expect(parseSharedResult(temperament, q)).toEqual({ ...mixed, pct: 50 });
+  });
+
+  it("у теста по шкалам баллы — в порядке шкал, процента нет", () => {
+    const q = sharedResultQuery(selfEsteem, { resultId: "almost", scores: { acceptance: 3, confidence: 10, independence: 8 } });
+    expect(q).toEqual({ r: "almost", s: "3.10.8" });
+    expect(parseSharedResult(selfEsteem, q)).toEqual({ resultId: "almost", scores: { acceptance: 3, confidence: 10, independence: 8 } });
+  });
+
+  it("битые и подделанные параметры — null (покажем обычное превью теста)", () => {
+    const bad = [
+      {},
+      { r: "melancholic" }, // без баллов
+      { r: "nope", s: "11.0.1.12" }, // нет такого результата
+      { r: "melancholic", s: "11.0.1" }, // не все баллы
+      { r: "melancholic", s: "11.0.1.12.5" }, // лишние
+      { r: "melancholic", s: "11.0.x.12" }, // не число
+      { r: "melancholic", s: "99.0.1.12" }, // больше максимума
+      { r: "sanguine", s: "11.0.1.12" }, // результат не сходится с баллами
+      { r: "melancholic", b: "melancholic", s: "11.0.1.12" }, // второй тип = первый
+      { r: "melancholic", b: "phlegmatic", s: "11.0.1.12" }, // второй тип не тот
+    ];
+    for (const q of bad) expect(parseSharedResult(temperament, q), JSON.stringify(q)).toBeNull();
+    expect(parseSharedResult(selfEsteem, { r: "solid", s: "3.10.8" })).toBeNull(); // сумма 21 — это «almost», не «solid»
+  });
+
+  it("заголовок и описание превью", () => {
+    expect(sharedResultMeta(temperament, { ...mixed, pct: 50 })).toEqual({
+      title: "Меланхолик 🌙 × Холерик 🔥 · GAZ",
+      description: "Меланхолик 50%. А ты кто? Тест за 4 мин",
+    });
+    const plain = sharedResultMeta(selfEsteem, { resultId: "almost", scores: {} });
+    expect(plain.title).toBe("Почти опора 🌤️ · GAZ");
+    expect(plain.description).toBe("Почти опора. А ты кто? Тест за 4 мин");
+  });
+
+  it("текст «ответки»", () => {
+    const [choleric, sanguine] = temperament.results;
+    expect(answerBackMessage(choleric!, sanguine!, "L")).toBe("Я Холерик, ты Сангвиник. Ну что, похожи? 👉 L");
+  });
+
+  it("итог друга запоминается на устройстве", () => {
+    const store = createProgressStore(createMemoryKeyValueStore());
+    expect(store.getFriendResult("temperament")).toBeNull();
+    store.saveFriendResult("temperament", { resultId: "sanguine", blendId: "choleric" }, new Date("2026-10-10"));
+    store.saveTestResult("temperament", "choleric");
+    expect(store.getFriendResult("temperament")).toMatchObject({ resultId: "sanguine", blendId: "choleric" });
+    expect(store.getTestResult("temperament")?.resultId).toBe("choleric");
   });
 });
 

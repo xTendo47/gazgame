@@ -32,6 +32,14 @@ export interface ProgressData {
   lastCards?: Record<string, string[]>;
   /** Колоды, которые доиграли до финала, по играм — для unlockAfter. */
   completedDecks?: Record<string, string[]>;
+  /** Итог друга, который прислал ссылку, по тестам — для строки «Ты: … · Друг: …» и «ответки». */
+  friendResults?: Record<string, FriendResult>;
+}
+
+export interface FriendResult {
+  resultId: string;
+  blendId?: string;
+  receivedAt: string;
 }
 
 export interface ProgressStore {
@@ -44,6 +52,8 @@ export interface ProgressStore {
   getLastCards(key: string): string[];
   saveLastCards(key: string, cardTexts: readonly string[]): void;
   getCompletedDecks(gameId: string): string[];
+  getFriendResult(testId: string): FriendResult | null;
+  saveFriendResult(testId: string, result: { resultId: string; blendId?: string }, now?: Date): void;
   markDeckCompleted(gameId: string, deckId: string): void;
   clear(): void;
 }
@@ -78,6 +88,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.players ? { players: data.players } : {}),
         ...(data.lastCards ? { lastCards: data.lastCards } : {}),
         ...(data.completedDecks ? { completedDecks: data.completedDecks } : {}),
+        ...(data.friendResults ? { friendResults: data.friendResults } : {}),
       };
     } catch {
       return emptyProgress();
@@ -129,6 +140,13 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       const done = data.completedDecks?.[gameId] ?? [];
       if (done.includes(deckId)) return;
       data.completedDecks = { ...data.completedDecks, [gameId]: [...done, deckId] };
+      save(data);
+    },
+    getFriendResult: (testId) => load().friendResults?.[testId] ?? null,
+    saveFriendResult(testId, { resultId, blendId }, now = new Date()) {
+      const data = load();
+      const record: FriendResult = { resultId, receivedAt: now.toISOString(), ...(blendId ? { blendId } : {}) };
+      data.friendResults = { ...data.friendResults, [testId]: record };
       save(data);
     },
     clear() {

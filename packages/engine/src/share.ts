@@ -1,26 +1,6 @@
-// Шеринг итогов теста: проценты для «Твой расклад» и карточки, текст сообщения в чат.
+// Шеринг итогов теста: текст сообщения в чат, ссылка на итог и её превью. Проценты — в percent.ts.
 import type { Test, TestResult } from "@gazgame/content";
-
-/**
- * Доли в процентах, округлённые так, чтобы в сумме было ровно 100 (метод наибольшего остатка):
- * сначала всем округляем вниз, потом недостающие единицы отдаём тем, у кого остаток больше.
- * При равных остатках — тому, кто раньше в списке. Все нули — все нули.
- */
-export function largestRemainderPercents(values: readonly number[]): number[] {
-  const safe = values.map((v) => (Number.isFinite(v) && v > 0 ? v : 0));
-  const total = safe.reduce((sum, v) => sum + v, 0);
-  if (total === 0) return safe.map(() => 0);
-  const exact = safe.map((v) => (v / total) * 100);
-  const result = exact.map(Math.floor);
-  let left = 100 - result.reduce((sum, v) => sum + v, 0);
-  const order = exact.map((v, i) => ({ i, rest: v - Math.floor(v) })).sort((a, b) => b.rest - a.rest || a.i - b.i);
-  for (const { i } of order) {
-    if (left <= 0) break;
-    result[i] = (result[i] ?? 0) + 1;
-    left--;
-  }
-  return result;
-}
+import { findResult, scaleBreakdown, scalesConfig, typeRanking } from "./test-runner";
 
 /** Что подставить в текст сообщения. */
 export interface ShareValues {
@@ -55,4 +35,77 @@ export function shareMessage(test: Test, result: TestResult, values: ShareValues
     .replace(/\{(\w+)\}/g, (_, key: string) => vars[key] ?? "")
     .replace(/ {2,}/g, " ")
     .trim();
+}
+
+// ---------- Ссылка на итог: /test/<slug>?from=share&r=<результат>[&b=<второй тип>]&s=<баллы через точку> ----------
+
+/** В каком порядке идут баллы в параметре s: шкалы у тестов по шкалам, иначе results. */
+export function scoreKeys(test: Test): string[] {
+  return scalesConfig(test)?.scales.map((s) => s.id) ?? test.results.map((r) => r.id);
+}
+
+export interface SharedResult {
+  resultId: string;
+  blendId?: string;
+  scores: Record<string, number>;
+}
+
+/** Параметры ссылки на итог (без from=share — его добавляет тот, кто собирает адрес). */
+export function sharedResultQuery(test: Test, shared: SharedResult): Record<string, string> {
+  const q: Record<string, string> = { r: shared.resultId };
+  if (shared.blendId) q.b = shared.blendId;
+  const keys = scoreKeys(test);
+  if (keys.every((k) => shared.scores[k] !== undefined)) q.s = keys.map((k) => shared.scores[k]).join(".");
+  return q;
+}
+
+/**
+ * Разбирает ссылку на итог. null — если что-то не так: нет результата, баллы не те или не сходятся с результатом
+ * (подделанную ссылку показываем как обычный тест).
+ */
+export function parseSharedResult(
+  test: Test,
+  q: { r?: string | null; b?: string | null; s?: string | null },
+): (SharedResult & { pct?: number }) | null {
+  const result = q.r ? findResult(test, q.r) : undefined;
+  if (!result || !q.s) return null;
+  const keys = scoreKeys(test);
+  const values = q.s.split(".");
+  if (values.length !== keys.length || values.some((v) => !/^\d{1,3}$/.test(v))) return null;
+  const scores = Object.fromEntries(keys.map((k, i) => [k, Number(values[i])]));
+
+  let blendId: string | undefined;
+  if (q.b) {
+    if (q.b === result.id || !findResult(test, q.b) || !test.blendNotes?.[q.b]) return null;
+    blendId = q.b;
+  }
+
+  const scales = scalesConfig(test);
+  if (scales) {
+    const breakdown = scaleBreakdown(test, scores);
+    const range = result.range;
+    if (!breakdown || blendId || (range && (breakdown.total < range[0] || breakdown.total > range[1]))) return null;
+    return { resultId: result.id, scores };
+  }
+  const ranking = typeRanking(test, scores, { resultId: result.id, blendId });
+  if (!ranking) return null;
+  if (blendId && ranking[1]?.result.id !== blendId) return null;
+  return { resultId: result.id, blendId, scores, pct: ranking[0]?.percent };
+}
+
+/** Заголовок и описание превью ссылки на итог: «Холерик 🔥 × Сангвиник ☀️ · GAZ», «Холерик 58%. А ты кто? Тест за 4 мин». */
+export function sharedResultMeta(test: Test, shared: SharedResult & { pct?: number }): { title: string; description: string } {
+  const result = findResult(test, shared.resultId) as TestResult;
+  const blend = shared.blendId ? findResult(test, shared.blendId) : undefined;
+  const hero = blend ? `${result.title} ${result.emoji} × ${blend.title} ${blend.emoji}` : `${result.title} ${result.emoji}`;
+  const pct = shared.pct === undefined ? "" : ` ${shared.pct}%`;
+  return {
+    title: `${hero} · GAZ`,
+    description: `${result.title}${pct}. А ты кто? Тест за ${test.durationMin} мин`,
+  };
+}
+
+/** Текст «ответки»: «Я Холерик, ты Сангвиник. Ну что, похожи? 👉 <ссылка>». */
+export function answerBackMessage(mine: TestResult, friend: TestResult, link: string): string {
+  return `Я ${mine.title}, ты ${friend.title}. Ну что, похожи? 👉 ${link}`;
 }

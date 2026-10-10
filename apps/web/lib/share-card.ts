@@ -1,7 +1,7 @@
 // Шеринг итога теста: что нарисовать на карточке, адрес картинки и ссылка в сообщении.
 // Общее для сервера (маршрут картинки) и браузера (меню «Куда кидаем?») — чтобы цифры и ссылки совпадали.
 import type { Test } from "@gazgame/content";
-import { findResult, scaleBreakdown, scalesConfig, typeRanking } from "@gazgame/engine";
+import { findResult, scaleBreakdown, scalesConfig, sharedResultQuery, typeRanking, type SharedResult } from "@gazgame/engine";
 
 /**
  * Цвет свечения за героем карточки — свой у каждого результата. Ключ: «тест/результат».
@@ -89,9 +89,12 @@ export function siteUrl(fallbackOrigin: string): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || fallbackOrigin).replace(/\/+$/, "");
 }
 
-/** Ссылка в сообщении: страница теста с пометкой, что пришли по шерингу. */
-export function shareLink(site: string, slug: string): string {
-  return `${site}/test/${slug}?from=share`;
+/**
+ * Ссылка в сообщении: страница теста с моим итогом — /test/<slug>?from=share&r=…[&b=…]&s=…
+ * Сервер прочитает итог для превью (Telegram, VK), а друг увидит «Тебе скинули: …» и начало теста.
+ */
+export function shareLink(site: string, test: Test, shared: SharedResult): string {
+  return `${site}/test/${test.slug}?${new URLSearchParams({ from: "share", ...sharedResultQuery(test, shared) })}`;
 }
 
 export interface CardBar {
