@@ -9,3 +9,4 @@ export * from "./mechanics/deck";
 export * from "./mechanics/deck-rounds";
 export * from "./mechanics/vote";
 export * from "./mechanics/guess-partner";
+export * from "./mechanics/mafia";

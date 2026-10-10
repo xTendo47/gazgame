@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { testSchema } from "@gazgame/content";
+import { gameSchema, testSchema, type MafiaGame } from "@gazgame/content";
 import loveLanguagesJson from "@gazgame/content/data/tests/love-languages.json";
+import mafiaJson from "@gazgame/content/data/games/mafia.json";
 import {
   castVote,
+  aliveSides,
+  checkLineup,
   createDeckState,
+  createMatch,
+  dealRoles,
+  defaultLineup,
+  eliminate,
+  undoElimination,
+  winner,
   createRoundState,
   createGuessPartnerState,
   currentView,
@@ -296,6 +305,92 @@ describe("randomPool — из чего выбирает «Случайная и�
 
   it("черновики скрыты настройкой — их нет и в запасном варианте", () => {
     expect(randomPool({ tests: [draftTest], games: [] }, { includeDrafts: false })).toEqual([]);
+  });
+});
+
+describe("«Мафия» — на настоящем mafia.json", () => {
+  const mafia = gameSchema.parse(mafiaJson) as MafiaGame;
+  const count = (cards: string[]) => cards.reduce<Record<string, number>>((acc, id) => ({ ...acc, [id]: (acc[id] ?? 0) + 1 }), {});
+
+  it("состав по умолчанию — по числу игроков без ведущего", () => {
+    expect(defaultLineup(mafia, 5)).toEqual({ mafia: 1, partygirl: 0, detective: 1, doctor: 1 });
+    expect(defaultLineup(mafia, 6)).toEqual({ mafia: 1, partygirl: 1, detective: 1, doctor: 1 });
+    expect(defaultLineup(mafia, 7)).toEqual({ mafia: 2, partygirl: 0, detective: 1, doctor: 1 });
+    expect(defaultLineup(mafia, 9)).toEqual({ mafia: 2, partygirl: 1, detective: 1, doctor: 1 });
+    expect(defaultLineup(mafia, 13).mafia).toBe(3);
+    expect(defaultLineup(mafia, 20).mafia).toBe(4);
+    // 5 игроков, один из них ведущий-карта → 4 без ведущего: такого в defaults нет, берём ближайший (5)
+    expect(defaultLineup(mafia, 4)).toEqual(defaultLineup(mafia, 5));
+    expect(defaultLineup(mafia, 25)).toEqual(defaultLineup(mafia, 20));
+  });
+
+  it("составы по умолчанию проходят проверку для любого числа игроков и ведущего", () => {
+    for (let total = 5; total <= 20; total++) {
+      for (const host of [0, 1]) {
+        const check = checkLineup(mafia, total, host, defaultLineup(mafia, total - host));
+        expect(check.ok, `${total} игроков, ведущий ${host}`).toBe(true);
+      }
+    }
+  });
+
+  it("мирные — остаток; ведущий не играет", () => {
+    expect(checkLineup(mafia, 8, 0, defaultLineup(mafia, 8))).toMatchObject({ ok: true, civilians: 3, mafia: 2, others: 6 });
+    expect(checkLineup(mafia, 8, 1, defaultLineup(mafia, 7))).toMatchObject({ ok: true, civilians: 3, mafia: 2, others: 5 });
+  });
+
+  it("проверка состава: ролей больше игроков, нет мафии, мафии слишком много", () => {
+    expect(checkLineup(mafia, 5, 0, { mafia: 2, partygirl: 1, detective: 1, doctor: 2 })).toMatchObject({
+      ok: false,
+      problem: "too-many-roles",
+      civilians: -1,
+    });
+    expect(checkLineup(mafia, 8, 0, { mafia: 0, partygirl: 1, detective: 1, doctor: 1 }).problem).toBe("no-mafia");
+    expect(checkLineup(mafia, 6, 0, { mafia: 3, partygirl: 0, detective: 0, doctor: 0 }).problem).toBe("mafia-majority");
+    // граница: 2 мафии против 3 остальных — можно, 3 против 3 — нельзя
+    expect(checkLineup(mafia, 5, 0, { mafia: 2, partygirl: 0, detective: 0, doctor: 0 }).ok).toBe(true);
+    expect(checkLineup(mafia, 6, 1, { mafia: 3, partygirl: 0, detective: 0, doctor: 0 }).problem).toBe("mafia-majority");
+  });
+
+  it("раздача: столько карт, сколько игроков, роли по составу, ведущий — если выбран", () => {
+    const lineup = defaultLineup(mafia, 9);
+    const cards = dealRoles(mafia, 10, 1, lineup, seededRandom(4));
+    expect(cards).toHaveLength(10);
+    expect(count(cards)).toEqual({ mafia: 2, partygirl: 1, detective: 1, doctor: 1, civilian: 4, host: 1 });
+    expect(dealRoles(mafia, 10, 1, lineup, seededRandom(4))).toEqual(cards); // одно зерно — один порядок
+    expect(count(dealRoles(mafia, 6, 0, defaultLineup(mafia, 6))).host).toBeUndefined();
+    expect(() => dealRoles(mafia, 5, 0, { mafia: 0 })).toThrow();
+  });
+
+  it("автопобеда города: мафий не осталось", () => {
+    let match = createMatch(dealRoles(mafia, 7, 0, defaultLineup(mafia, 7))); // 2 мафии, 5 остальных
+    expect(aliveSides(mafia, match)).toEqual({ mafia: 2, city: 5 });
+    match = eliminate(mafia, match, "mafia");
+    expect(winner(mafia, match)).toBeNull();
+    match = eliminate(mafia, match, "mafia");
+    expect(winner(mafia, match)).toBe("city");
+  });
+
+  it("автопобеда мафии: мафий не меньше остальных живых; все роли кроме мафии — город", () => {
+    let match = createMatch(dealRoles(mafia, 7, 0, defaultLineup(mafia, 7))); // 2 против 5
+    for (const role of ["civilian", "detective"]) match = eliminate(mafia, match, role);
+    expect(aliveSides(mafia, match)).toEqual({ mafia: 2, city: 3 });
+    expect(winner(mafia, match)).toBeNull();
+    match = eliminate(mafia, match, "doctor");
+    expect(aliveSides(mafia, match)).toEqual({ mafia: 2, city: 2 });
+    expect(winner(mafia, match)).toBe("mafia");
+    // после победы больше никого не убираем; «Отменить последнее» возвращает игру
+    expect(eliminate(mafia, match, "civilian")).toBe(match);
+    match = undoElimination(match);
+    expect(winner(mafia, match)).toBeNull();
+    expect(match.eliminated).toEqual(["civilian", "detective"]);
+  });
+
+  it("ведущий не считается и не выбывает; нельзя убрать роль, которой не осталось", () => {
+    const match = createMatch(dealRoles(mafia, 6, 1, defaultLineup(mafia, 5))); // ведущий + 1 мафия + 4
+    expect(aliveSides(mafia, match)).toEqual({ mafia: 1, city: 4 });
+    expect(eliminate(mafia, match, "host")).toBe(match);
+    expect(eliminate(mafia, match, "partygirl")).toBe(match); // тусовщицы в составе на 5 нет
+    expect(undoElimination(match)).toBe(match);
   });
 });
 

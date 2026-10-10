@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -457,9 +457,118 @@ export const guessPartnerGameSchema = gameBase.extend({
     .min(1),
 });
 
+// ---------- Мафия ----------
+
+/** Роль в «Мафии». side: mafia — команда мафии, city — город, host — ведущий (не играет). */
+export const mafiaRoleSchema = z.strictObject({
+  id: slug,
+  emoji: text,
+  title: text,
+  side: z.enum(["mafia", "city", "host"]),
+  /** Что делает роль — показывается на карте роли. */
+  text,
+  min: z.int().min(0).optional(),
+  max: z.int().min(0).optional(),
+  /** Считается сама как остаток (мирные жители). Такая роль одна. */
+  auto: z.boolean().optional(),
+});
+
+/**
+ * «Мафия»: раздатчик ролей, таймер и подсчёт победы. Колод нет.
+ * defaults — состав по числу игроков БЕЗ ведущего (from..to включительно), мирные — остаток.
+ */
+export const mafiaGameSchema = itemBase.extend({
+  kind: z.literal("game"),
+  mechanic: z.literal("mafia"),
+  rules: z.array(text).default([]),
+  /** Подпись под выбором числа игроков. */
+  playersHint: text,
+  /** Подсказка к выбору «ведущий 0 или 1». */
+  hostHint: text,
+  roles: z.array(mafiaRoleSchema).min(2),
+  defaults: z
+    .array(z.strictObject({ from: z.int().min(1), to: z.int().min(1), roles: z.record(z.string(), z.int().min(0)) }))
+    .min(1),
+  /** Роли и темы под замком (по подписке). */
+  lockedExtras: z.array(z.strictObject({ emoji: text, title: text, kind: z.enum(["role", "theme"]) })).default([]),
+  lockedText: text,
+  /** Шпаргалка ведущему на ночь — по шагам. */
+  nightScript: z.array(text).min(1),
+  morningHint: text,
+  /** Таймер обсуждения: длительность по умолчанию и шаг, в секундах. */
+  timer: z.strictObject({ defaultSec: z.int().min(10), stepSec: z.int().min(5) }),
+  texts: z.strictObject({
+    start: text,
+    /** {n} — номер игрока, {total} — сколько всего. */
+    deal: text,
+    pass: text,
+    dealt: text,
+    hostButton: text,
+    hostConfirm: text,
+    cityWins: text,
+    mafiaWins: text,
+    flexCity: text,
+    flexMafia: text,
+    /** Надпись на рубашке карты. */
+    cardBack: text,
+  }),
+});
+
+type MafiaGameInput = z.infer<typeof mafiaGameSchema>;
+
+/** Проверки «Мафии»: id ролей, одна auto-роль мирных, есть мафия, defaults ссылаются на роли и покрывают всех игроков. */
+function checkMafia(game: MafiaGameInput, ctx: z.RefinementCtx) {
+  const ids = new Set<string>();
+  game.roles.forEach((r, i) => {
+    if (ids.has(r.id)) ctx.addIssue({ code: "custom", path: ["roles", i, "id"], message: `роль "${r.id}" повторяется` });
+    ids.add(r.id);
+    if (r.min !== undefined && r.max !== undefined && r.min > r.max) {
+      ctx.addIssue({ code: "custom", path: ["roles", i], message: "min не может быть больше max" });
+    }
+  });
+  const autos = game.roles.filter((r) => r.auto);
+  if (autos.length !== 1) {
+    ctx.addIssue({ code: "custom", path: ["roles"], message: `нужна ровно одна роль с "auto": true (мирные как остаток), сейчас ${autos.length}` });
+  }
+  if (autos.some((r) => r.side !== "city")) {
+    ctx.addIssue({ code: "custom", path: ["roles"], message: 'роль с "auto": true должна быть на стороне "city"' });
+  }
+  if (!game.roles.some((r) => r.side === "mafia")) {
+    ctx.addIssue({ code: "custom", path: ["roles"], message: 'нужна хотя бы одна роль с "side": "mafia"' });
+  }
+  const configurable = new Set(game.roles.filter((r) => !r.auto && r.side !== "host").map((r) => r.id));
+  game.defaults.forEach((d, di) => {
+    if (d.from > d.to) ctx.addIssue({ code: "custom", path: ["defaults", di], message: "from не может быть больше to" });
+    for (const id of Object.keys(d.roles)) {
+      if (!configurable.has(id)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["defaults", di, "roles", id],
+          message: `в defaults можно указывать только роли без auto и не ведущего (есть: ${[...configurable].join(", ")})`,
+        });
+      }
+    }
+  });
+  for (let n = game.players.min; n <= game.players.max; n++) {
+    const hits = game.defaults.filter((d) => d.from <= n && n <= d.to).length;
+    if (hits !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["defaults"],
+        message: `для ${n} игроков ${hits === 0 ? "нет состава" : "несколько составов"} в defaults (нужно ровно по одному на ${game.players.min}–${game.players.max})`,
+      });
+      break;
+    }
+  }
+}
+
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, mafiaGameSchema])
   .superRefine((game, ctx) => {
+    if (game.mechanic === "mafia") {
+      checkMafia(game, ctx);
+      return;
+    }
     const deckIds = game.decks.map((d) => d.id);
     game.decks.forEach((deck, di) => {
       if (deck.unlockAfter === deck.id) {
@@ -517,6 +626,10 @@ export type Game = z.infer<typeof gameSchema>;
 export type DeckGame = z.infer<typeof deckGameSchema>;
 export type VoteGame = z.infer<typeof voteGameSchema>;
 export type GuessPartnerGame = z.infer<typeof guessPartnerGameSchema>;
+export type MafiaGame = z.infer<typeof mafiaGameSchema>;
+export type MafiaRole = MafiaGame["roles"][number];
+/** Игры с колодами карточек (все механики, кроме «Мафии»). */
+export type DeckBasedGame = Exclude<Game, MafiaGame>;
 export type Mechanic = Game["mechanic"];
 export type ContentItem = Test | Game;
 

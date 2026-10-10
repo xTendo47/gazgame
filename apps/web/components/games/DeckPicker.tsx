@@ -5,7 +5,7 @@
 // "soon" и unlockAfter («Откроется после …») — просто замок, нажимать некуда.
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
-import type { Deck, Game } from "@gazgame/content";
+import type { Deck, DeckBasedGame } from "@gazgame/content";
 import { deckAccess } from "@gazgame/engine";
 import { Badge, Tile } from "@gazgame/ui";
 import { trackDeeperClick } from "@/lib/analytics";
@@ -17,7 +17,7 @@ export function DeckPicker({
   completedDecks = [],
   onPick,
 }: {
-  game: Game;
+  game: DeckBasedGame;
   decks?: Deck[];
   title?: string;
   /** Колоды, которые уже доиграли до финала (для unlockAfter). */
@@ -50,7 +50,7 @@ export function DeckTile({
   completedDecks = [],
   onPick,
 }: {
-  game: Game;
+  game: DeckBasedGame;
   deck: Deck;
   accent?: "orange" | "lime";
   completedDecks?: readonly string[];

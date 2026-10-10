@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { buildCatalog, ContentError, inspectContent } from "../src/index";
 import { loadCatalog } from "../src/node";
 
@@ -189,7 +190,8 @@ describe("игра guess-partner: уровни и вопросы «про себ
         { id: "abyss", title: "Бездна", emoji: "💎", tier: "premium", locked: { reason: "subscription", text: "По подписке" }, cards: [] },
       ]),
     );
-    expect(games[0]?.decks[1]?.locked?.reason).toBe("subscription");
+    const know = games[0];
+    expect(know && "decks" in know ? know.decks[1]?.locked?.reason : null).toBe("subscription");
   });
 
   it("unlockAfter должен указывать на другую колоду этой игры", () => {
@@ -208,5 +210,35 @@ describe("игра guess-partner: уровни и вопросы «про себ
   it("selfOptions другой длины, чем options, — ошибка", () => {
     const bad = { ...card, selfOptions: ["Суп"], options: ["Суп", "Пиццу", "Салат"] };
     expect(() => build(game([{ id: "surface", title: "П", emoji: "🌊", cards: [bad] }]))).toThrow(/столько же вариантов/);
+  });
+});
+
+describe("игра «Мафия» (mechanic: mafia)", () => {
+  const mafiaFile = () =>
+    JSON.parse(readFileSync(new URL("../data/games/mafia.json", import.meta.url), "utf-8")) as Record<string, unknown> & {
+      roles: Record<string, unknown>[];
+      defaults: { from: number; to: number; roles: Record<string, number> }[];
+    };
+  // related ведёт на другие игры, а в этом каталоге только «Мафия» — ссылки проверяем в тесте «все файлы в data/»
+  const build = (data: unknown) => buildCatalog([{ path: "mafia.json", kind: "game", data: { ...(data as object), related: [] } }]);
+
+  it("настоящий файл проходит, колоды не нужны", () => {
+    const { games } = build(mafiaFile());
+    expect(games[0]?.mechanic).toBe("mafia");
+  });
+
+  it("нужна ровно одна роль мирных с auto", () => {
+    const data = mafiaFile();
+    data.roles = data.roles.map((r) => ({ ...r, auto: undefined }));
+    expect(() => build(data)).toThrow(/ровно одна роль с "auto": true/);
+  });
+
+  it("в defaults только настраиваемые роли и без дыр по числу игроков", () => {
+    const unknown = mafiaFile();
+    unknown.defaults[0]!.roles.civilian = 2;
+    expect(() => build(unknown)).toThrow(/только роли без auto/);
+    const gap = mafiaFile();
+    gap.defaults[0]!.to = 4;
+    expect(() => build(gap)).toThrow(/для 5 игроков нет состава/);
   });
 });
