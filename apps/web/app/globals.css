@@ -10,14 +10,36 @@
   --font-manrope: "Manrope Variable";
 }
 
-/* Неоновый акцент на кнопке Ultimate в главном меню (в стиле экрана Ultimate) */
+/* Голубое «алмазное» свечение на кнопке «Подписка» в главном меню: мягкое, слегка пульсирует */
 @layer components {
-  .neon-ultimate {
-    border: 1.5px solid rgb(255 90 31 / 0.75);
-    background-image: radial-gradient(circle at 50% 0%, rgb(255 90 31 / 0.28), transparent 70%);
+  .diamond-glow {
+    border: 1.5px solid rgb(96 214 255 / 0.75);
+    background-image: radial-gradient(circle at 50% 0%, rgb(96 214 255 / 0.28), transparent 70%);
     box-shadow:
-      0 0 14px rgb(255 90 31 / 0.45),
-      inset 0 0 12px rgb(255 90 31 / 0.18);
+      0 0 14px rgb(96 214 255 / 0.45),
+      inset 0 0 12px rgb(96 214 255 / 0.18);
+    animation: diamond-pulse 2.8s ease-in-out infinite;
+  }
+}
+
+@keyframes diamond-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px rgb(96 214 255 / 0.3),
+      inset 0 0 10px rgb(96 214 255 / 0.12);
+  }
+  50% {
+    box-shadow:
+      0 0 18px rgb(96 214 255 / 0.55),
+      inset 0 0 14px rgb(96 214 255 / 0.22);
+  }
+}
+
+/* Кому мешает движение — свечение остаётся, но не пульсирует */
+@media (prefers-reduced-motion: reduce) {
+  .diamond-glow {
+    animation: none;
   }
 }
 
