@@ -30,6 +30,8 @@ import {
   isExhausted,
   isVisible,
   findLockedTest,
+  listCopyText,
+  splitListLabel,
   lockedTestsForSection,
   nextRound,
   pickHint,
@@ -287,6 +289,44 @@ describe("fillPlaceholders — подстановка в тексты", () => {
 
   it("убирает предложение, если значения нет", () => {
     expect(fillPlaceholders(text, {})).toBe("В разборе: практика на 14 дней.");
+  });
+});
+
+describe("список на экране результата (howToLoveMe)", () => {
+  it("короткая подпись до двоеточия выделяется", () => {
+    expect(splitListLabel("Тебе не хватает: Хаос 🌪️. Кто-то должен встряхнуть тебя.")).toEqual({
+      label: "Тебе не хватает",
+      text: "Хаос 🌪️. Кто-то должен встряхнуть тебя.",
+    });
+    expect(splitListLabel("Опасно тусить с: Мемолог 🤡.").label).toBe("Опасно тусить с");
+    expect(splitListLabel("Идеальный дуэт: Босс 👑.").label).toBe("Идеальный дуэт");
+  });
+
+  it("двоеточие внутри обычной фразы — не подпись", () => {
+    for (const item of [
+      "В ссоре выбирай слова: они бьют сильнее, чем ты думаешь", // 4 слова
+      "Не обижайся, если я задаю уточняющие вопросы: так я вникаю", // длинно и с запятой
+      "Пиши мне без повода, просто так", // двоеточия нет
+      "Время: ", // после двоеточия пусто
+      ": начинается с двоеточия",
+    ]) {
+      expect(splitListLabel(item)).toEqual({ text: item });
+    }
+  });
+
+  it("текст для копирования: заголовок, пункты с маркером и ссылка на тест", () => {
+    expect(listCopyText({ heading: "Как меня любить", result: "⏳ Время вместе", items: ["Раз", "Два"] })).toBe(
+      "Как меня любить (⏳ Время вместе):\n• Раз\n• Два",
+    );
+    expect(
+      listCopyText({
+        heading: "Твоя компания мечты",
+        result: "🍼 Мамочка",
+        items: ["Раз"],
+        marker: "🧩",
+        testUrl: "https://gaz.game/test/company-role",
+      }),
+    ).toBe("Твоя компания мечты (🍼 Мамочка):\n🧩 Раз\n\nПройди тест: https://gaz.game/test/company-role");
   });
 });
 

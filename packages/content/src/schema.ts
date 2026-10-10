@@ -205,6 +205,10 @@ export const testSchema = itemBase
         howToLoveMe: text.optional(),
         /** Подсказка под заголовком, например «Скинь это своему человеку 😉». */
         howToLoveMeHint: text.optional(),
+        /** Эмодзи заголовка и маркер пунктов, например «🗝️». Нет — 💌 и ♥ (как у «Языков любви»). */
+        howToLoveMeEmoji: text.optional(),
+        /** Текст кнопки копирования, например «Скопировать в общий чат». Нет — «Скопировать для своего человека». */
+        howToLoveMeCopy: text.optional(),
       })
       .optional(),
     upsell: upsellSchema.optional(),

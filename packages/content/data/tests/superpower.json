@@ -82,7 +82,9 @@
   },
   "resultBlocks": {
     "howToLoveMe": "Зови меня, когда…",
-    "howToLoveMeHint": "Скинь друзьям, пусть знают 😉"
+    "howToLoveMeHint": "Скинь друзьям, пусть знают 😉",
+    "howToLoveMeEmoji": "📣",
+    "howToLoveMeCopy": "Скопировать для друзей"
   },
   "questions": [
     {

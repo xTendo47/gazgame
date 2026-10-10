@@ -7,7 +7,7 @@ import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
-import { scalesConfig, scoringConfig, type TestBlend } from "@gazgame/engine";
+import { scalesConfig, scoringConfig, splitListLabel, type TestBlend } from "@gazgame/engine";
 import { Badge, buttonVariants, cn, DeepTeaser } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { DeeperButton } from "@/components/DeeperButton";
@@ -28,10 +28,7 @@ function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-/** Текст, который копирует кнопка «Скопировать для своего человека». */
-function howToLoveMeText(heading: string, result: TestResult, items: readonly string[]): string {
-  return [`${heading} (${result.emoji} ${result.title}):`, ...items.map((item) => `• ${item}`)].join("\n");
-}
+
 
 export function resultDescription(result: TestResult): string | undefined {
   return result.paragraphs?.[0] ?? result.text;
@@ -42,7 +39,10 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
   const hasScales = scalesConfig(test) !== null;
   const config = scoringConfig(test);
   const showRanking = config.type === "types" && config.showRanking === true;
-  const loveHeading = test.resultBlocks?.howToLoveMe ?? "Как меня любить";
+  // Блок списка: у «Языков любви» — 💌 и ♥, у других тестов свой эмодзи и своя надпись на кнопке (resultBlocks)
+  const blocks = test.resultBlocks;
+  const loveHeading = blocks?.howToLoveMe ?? "Как меня любить";
+  const listEmoji = blocks?.howToLoveMeEmoji;
 
   return (
     <>
@@ -128,21 +128,39 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         >
           <div className="flex flex-col gap-1">
             <h2 id="love-me-title" className="font-display text-xl font-bold">
-              {loveHeading} 💌
+              {loveHeading} {listEmoji ?? "💌"}
             </h2>
             {test.resultBlocks?.howToLoveMeHint && <p className="text-[15px] text-muted">{test.resultBlocks.howToLoveMeHint}</p>}
           </div>
           <ul className="flex flex-col gap-2.5">
-            {result.howToLoveMe.map((item) => (
-              <li key={item} className="flex gap-3 leading-relaxed">
-                <span aria-hidden="true" className="text-orange">
-                  ♥
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
+            {result.howToLoveMe.map((item) => {
+              const { label, text } = splitListLabel(item);
+              return (
+                <li key={item} className="flex gap-3 leading-relaxed">
+                  <span aria-hidden="true" className={listEmoji ? "shrink-0" : "text-orange"}>
+                    {listEmoji ?? "♥"}
+                  </span>
+                  <span>
+                    {label ? (
+                      <>
+                        <strong className="font-extrabold">{label}:</strong> {text}
+                      </>
+                    ) : (
+                      text
+                    )}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
-          <CopyListButton text={howToLoveMeText(loveHeading, result, result.howToLoveMe)} label="Скопировать для своего человека" />
+          <CopyListButton
+            heading={loveHeading}
+            result={`${result.emoji} ${result.title}`}
+            items={result.howToLoveMe}
+            marker={listEmoji}
+            label={blocks?.howToLoveMeCopy ?? "Скопировать для своего человека"}
+            linkPath={`/test/${test.slug}`}
+          />
         </section>
       )}
 

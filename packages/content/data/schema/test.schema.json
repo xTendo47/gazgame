@@ -518,6 +518,14 @@
         "howToLoveMeHint": {
           "type": "string",
           "minLength": 1
+        },
+        "howToLoveMeEmoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "howToLoveMeCopy": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "additionalProperties": false

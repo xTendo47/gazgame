@@ -3,6 +3,7 @@
 export * from "./random";
 export * from "./tiers";
 export * from "./test-runner";
+export * from "./result-list";
 export * from "./catalog";
 export * from "./storage";
 export * from "./mechanics/deck";
