@@ -40,7 +40,7 @@ export default async function LockedTestPage({ params }: Props) {
             <Badge tone="premium">
               <Lock aria-hidden="true" size={12} /> {test.locked.text}
             </Badge>
-            <Badge>Тест · {test.durationMin} мин</Badge>
+            <Badge>Тест</Badge>
           </span>
         }
       />

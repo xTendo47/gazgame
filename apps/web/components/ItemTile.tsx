@@ -3,11 +3,11 @@ import type { ContentItem } from "@gazgame/content";
 import { itemPath } from "@gazgame/engine";
 import { Badge, Tile, type TileAccent } from "@gazgame/ui";
 
-/** Плитка теста или игры со ссылкой на неё. */
+/** Плитка теста или игры со ссылкой на неё. У тестов ни числа вопросов, ни минут — только «Тест». */
 export function ItemTile({ item, accent = "orange", size = "lg" }: { item: ContentItem; accent?: TileAccent; size?: "lg" | "md" }) {
   const meta = [
     item.kind === "test" ? "Тест" : "Игра",
-    `${item.durationMin} мин`,
+    item.kind === "test" ? null : `${item.durationMin} мин`,
     item.players.max === 1 ? null : item.players.min === item.players.max ? `${item.players.min} игрока` : `${item.players.min}–${item.players.max} игроков`,
   ]
     .filter(Boolean)

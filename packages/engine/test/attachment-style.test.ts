@@ -6,11 +6,11 @@ import { scoreTest, seededRandom } from "../src/index";
 const test = testSchema.parse(attachmentJson);
 
 describe("«Тип привязанности» — на настоящем attachment-style.json", () => {
-  it("12 вопросов, 4 итога, бесплатный, в «Для пар» и «Познай себя», костюм «Профиль в мессенджере»", () => {
+  it("12 вопросов, 4 итога, бесплатный, в «Для пар», костюм «Профиль в мессенджере»", () => {
     expect(test.questions).toHaveLength(12);
     expect(test.results.map((r) => r.id)).toEqual(["secure", "anxious", "avoidant", "fearful"]);
     expect(test.tier).toBe("free");
-    expect(test.sections).toEqual(["pairs", "solo"]);
+    expect(test.sections).toEqual(["pairs"]);
     expect(test.share?.style).toBe("messenger");
     expect(test.compat?.button).toBe("Сравниться с партнёром 💎");
     for (const r of test.results) {

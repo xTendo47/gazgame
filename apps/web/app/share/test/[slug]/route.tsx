@@ -31,7 +31,7 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/share/test/[
       <TestCover
         emoji={test.emoji}
         title={test.title}
-        meta={`${test.questions.length} ситуаций · ${test.durationMin} мин · бесплатно`}
+        meta="Тест · бесплатно"
         hook={test.description}
         color={first ? glowColor(test.id, first.id) : "#FF5A1F"}
       />,

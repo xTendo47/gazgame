@@ -740,7 +740,7 @@ function Glow({ color, width, height, x, y }: { color: string; width: number; he
   );
 }
 
-/** Обложка теста для превью ссылки (1200×630): эмодзи, название, «12 ситуаций · 4 мин · бесплатно», крючок. */
+/** Обложка теста для превью ссылки (1200×630): эмодзи, название, «Тест · бесплатно», крючок. */
 export function TestCover({
   emoji,
   title,
@@ -750,7 +750,7 @@ export function TestCover({
 }: {
   emoji: string;
   title: string;
-  /** «12 ситуаций · 4 мин · бесплатно». */
+  /** «Тест · бесплатно» — без числа вопросов и минут. */
   meta: string;
   /** description теста. */
   hook: string;

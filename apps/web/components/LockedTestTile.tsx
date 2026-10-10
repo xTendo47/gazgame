@@ -19,7 +19,7 @@ export function LockedTestTile({ test }: { test: LockedTest }) {
       <Tile
         emoji={test.emoji}
         title={test.title}
-        subtitle={`${test.description}\nТест · ${test.durationMin} мин`}
+        subtitle={`${test.description}\nТест`}
         accent="none"
         className="whitespace-pre-line"
         badge={

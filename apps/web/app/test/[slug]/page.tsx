@@ -76,9 +76,7 @@ export default async function TestPage({ params, searchParams }: Props) {
         subtitle={test.description}
         badge={
           <span className="flex flex-wrap gap-2">
-            <Badge>
-              {test.questions.length} вопросов · {test.durationMin} мин
-            </Badge>
+            <Badge>Тест</Badge>
             {test.status === "draft" && <Badge tone="draft">черновик</Badge>}
           </span>
         }
