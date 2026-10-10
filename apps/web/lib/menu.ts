@@ -1,22 +1,31 @@
-// Кнопки главного меню — сверху вниз в этом порядке.
-// Названия разделов берутся из packages/content/src/sections.ts.
-import { SECTION_LABELS } from "@gazgame/content";
+// Главное меню. Два уровня:
+// 1) MAIN_CARDS — три большие цветные карточки разделов (названия — packages/content/src/sections.ts);
+// 2) SMALL_BUTTONS — маленькие кнопки по две в ряд.
+import type { Section } from "@gazgame/content";
 
-export interface MenuItem {
+export interface MainCard {
+  section: Section;
+  /** Фон карточки. Текст на всех — тёмный (text-bg): так он читается на ярком фоне. */
+  bg: string;
+}
+
+export const MAIN_CARDS: MainCard[] = [
+  { section: "pairs", bg: "bg-rose" },
+  { section: "company", bg: "bg-orange" },
+  { section: "solo", bg: "bg-lime" },
+];
+
+export interface SmallButton {
   href: string;
   emoji: string;
   title: string;
-  /** Голубое «алмазное» свечение позади кнопки. */
-  glow?: boolean;
+  /** Неоновый акцент на самой кнопке. */
+  neon?: boolean;
 }
 
-export const MENU: MenuItem[] = [
-  { href: "/pairs", ...SECTION_LABELS.pairs },
-  { href: "/company", ...SECTION_LABELS.company },
-  { href: "/solo", ...SECTION_LABELS.solo },
-  { href: "/ultimate", emoji: "🔱", title: "Ultimate" },
-  { href: "/soon/subscription", emoji: "💎", title: "Подписка", glow: true },
+export const SMALL_BUTTONS: SmallButton[] = [
+  { href: "/ultimate", emoji: "🔱", title: "Ultimate", neon: true },
+  { href: "/soon/subscription", emoji: "💎", title: "Подписка" },
   { href: "/soon/suggest", emoji: "💡", title: "Предложи своё" },
-  { href: "/soon/feedback", emoji: "📝", title: "Обратная связь" },
   { href: "/profile", emoji: "👤", title: "Профиль" },
 ];

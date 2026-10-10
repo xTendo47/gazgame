@@ -10,37 +10,14 @@
   --font-manrope: "Manrope Variable";
 }
 
-/* Голубое «алмазное» свечение позади кнопки «Подписка» (главное меню).
-   Отдельный слой под кнопкой: сама кнопка не меняет ни форму, ни размер. */
+/* Неоновый акцент на кнопке Ultimate в главном меню (в стиле экрана Ultimate) */
 @layer components {
-  .diamond-glow {
-    position: absolute;
-    inset: -6px;
-    border-radius: calc(var(--radius-card) + 6px);
-    background: radial-gradient(ellipse at center, rgb(110 225 255 / 0.95), rgb(70 150 255 / 0.5) 60%, transparent 85%);
-    filter: blur(16px);
-    pointer-events: none;
-    animation: diamond-pulse 2.8s ease-in-out infinite;
-  }
-}
-
-@keyframes diamond-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.03);
-  }
-}
-
-/* Кому мешает движение — свечение остаётся, но не пульсирует */
-@media (prefers-reduced-motion: reduce) {
-  .diamond-glow {
-    animation: none;
-    opacity: 0.65;
+  .neon-ultimate {
+    border: 1.5px solid rgb(255 90 31 / 0.75);
+    background-image: radial-gradient(circle at 50% 0%, rgb(255 90 31 / 0.28), transparent 70%);
+    box-shadow:
+      0 0 14px rgb(255 90 31 / 0.45),
+      inset 0 0 12px rgb(255 90 31 / 0.18);
   }
 }
 
