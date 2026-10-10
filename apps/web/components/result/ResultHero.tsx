@@ -30,6 +30,7 @@ export function ResultHero({
   blendEmoji,
   blendTitle,
   subtitle,
+  status,
   text,
 }: {
   /** «🌡️ Твой темперамент · твой результат». */
@@ -40,6 +41,8 @@ export function ResultHero({
   /** «с нотками холерика 🔥» — отдельной строкой под названием. */
   blendTitle?: string;
   subtitle?: string;
+  /** Плашка-статус «в сети» под подзаголовком, например «Режим: 100 уведомлений» (тесты с костюмом messenger). */
+  status?: string;
   text?: string;
 }) {
   return (
@@ -84,6 +87,19 @@ export function ResultHero({
             className="max-w-full rounded-full bg-bg px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-balance text-orange"
           >
             {subtitle}
+          </motion.p>
+        )}
+        {status && (
+          <motion.p
+            {...rise(0.24)}
+            className="flex max-w-full items-center gap-2 rounded-full bg-bg/85 px-3.5 py-1.5 text-left text-[15px] font-bold text-cream"
+          >
+            <span className="relative flex size-2.5 shrink-0" aria-hidden="true">
+              <span className="absolute inset-0 animate-ping rounded-full bg-[#3DDC84] opacity-60 motion-reduce:animate-none" />
+              <span className="relative size-2.5 rounded-full bg-[#3DDC84]" />
+            </span>
+            <span className="sr-only">В сети. </span>
+            {status}
           </motion.p>
         )}
         {text && (

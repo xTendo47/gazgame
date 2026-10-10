@@ -51,6 +51,10 @@ const GLOW: Record<string, string> = {
   "company-role/soul": "#D4FF3A",
   "company-role/observer": "#4D8BFF",
   "company-role/meme": "#2EE6A6",
+  "attachment-style/secure": "#2EE6A6",
+  "attachment-style/anxious": "#FF4D8D",
+  "attachment-style/avoidant": "#9B7BFF",
+  "attachment-style/fearful": "#FF5A1F",
 };
 
 export function glowColor(testId: string, resultId: string): string {
@@ -140,8 +144,10 @@ export interface ShareCard {
    * null — «Показатели: нет» или баллов в ссылке нет.
    */
   bars: CardBar[] | null;
-  /** До трёх пунктов со значком ✦ (первые strengths); у чека и игрока не нужны. */
+  /** До трёх пунктов со значком ✦ (первые strengths); у чека, игрока и мессенджера не нужны. */
   points: string[];
+  /** messenger: «📌 Закреплённые» — три первые strengths пузырями сообщений. */
+  pinned?: string[];
   /** composition: «холерик, сангвиник, флегматик, меланхолик». */
   ingredients?: string;
   /** batteries: «Моя опора: 💪 Вера в свои силы» или «Опора: всё ровно, без провалов». */
@@ -220,7 +226,8 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
     blendLine: blend ? `${result.title} ${result.emoji} × ${blend.title} ${blend.emoji}` : undefined,
     line: result.share?.line,
     bars,
-    points: style === "receipt" || style === "player" ? [] : (result.strengths ?? []).slice(0, 3),
+    points: style === "receipt" || style === "player" || style === "messenger" ? [] : (result.strengths ?? []).slice(0, 3),
+    pinned: style === "messenger" ? (result.strengths ?? []).slice(0, 3) : undefined,
     ingredients: style === "composition" ? ingredientsLine(test, p.scores, lead) : undefined,
     support:
       style === "batteries"

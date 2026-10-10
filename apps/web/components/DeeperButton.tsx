@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Lock } from "lucide-react";
 import { Button } from "@gazgame/ui";
 import { trackDeeperClick, type DeeperClickEvent } from "@/lib/analytics";
 
@@ -9,12 +10,15 @@ export function DeeperButton({
   label = "Глубже 💎",
   href = "/deeper",
   keepQuery = false,
+  locked = false,
   ...event
 }: DeeperClickEvent & {
   label?: string;
   href?: string;
   /** Передать дальше параметры текущего адреса (например, баллы шкал — для подстановки {weakestScale}). */
   keepQuery?: boolean;
+  /** Замок перед текстом — функция по подписке. */
+  locked?: boolean;
 }) {
   const router = useRouter();
 
@@ -27,6 +31,7 @@ export function DeeperButton({
         router.push(keepQuery ? href + window.location.search : href);
       }}
     >
+      {locked && <Lock aria-hidden="true" size={18} className="shrink-0" />}
       {label}
     </Button>
   );

@@ -20,7 +20,7 @@ export const CARD_SOURCES = ["official", "community"] as const;
 /** Цвет карточки и финала в игре раундами: салатовый, оранжевый или тёмный с голубым свечением (как «Подписка»). */
 export const DECK_ACCENTS = ["lime", "orange", "blue"] as const;
 /** «Костюмы» карточки для шеринга: средний блок картинки у каждого теста свой. */
-export const SHARE_STYLES = ["composition", "batteries", "receipt", "hero", "device", "player"] as const;
+export const SHARE_STYLES = ["composition", "batteries", "receipt", "hero", "device", "player", "messenger"] as const;
 
 const slug = z
   .string()
@@ -247,6 +247,8 @@ export const testSchema = itemBase
      * Плейсхолдеры: {title} {emoji} {pct} {scale} {link}. Нет share — «Пофлексить 🧊» и shareText результата.
      */
     share: z.strictObject({ button: text, text, style: z.enum(SHARE_STYLES).optional() }).optional(),
+    /** Выход на «Совместимость 💎» после блока «Как со мной встречаться»: заголовок, текст и кнопка с замком. */
+    compat: z.strictObject({ title: text, text, button: text }).optional(),
   })
   .superRefine((test, ctx) => {
     const ids = new Set<string>();

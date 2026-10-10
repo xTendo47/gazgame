@@ -1,7 +1,7 @@
 // Картинки для next/og (Satori): итог теста — карточка 4:5 (1080×1350) и превью ссылки 1200×630,
 // обложки 1200×630 для превью ссылки на тест и на главную.
 // У каждого теста свой «костюм» среднего блока (share.style): банка газировки, батарейки, чек,
-// карточка героя, «Об устройстве», карточка игрока. Фон общий: пятна цвета, зерно, огромный эмодзи и своя текстура.
+// карточка героя, «Об устройстве», карточка игрока, профиль в мессенджере. Фон общий: пятна цвета, зерно, огромный эмодзи и своя текстура.
 // Satori понимает только flexbox и часть CSS: у каждого блока с несколькими детьми — display: flex.
 import type { ReactNode } from "react";
 import { OG_BODY, OG_DISPLAY } from "@/lib/og-fonts";
@@ -13,6 +13,8 @@ const MUTED = "rgba(243,238,230,0.66)";
 const ORANGE = "#FF5A1F";
 const LIME = "#D4FF3A";
 const PANEL = "rgba(20,18,23,0.8)";
+/** Зелёная точка «в сети». */
+const ONLINE = "#3DDC84";
 const DISPLAY = OG_DISPLAY;
 const BODY = OG_BODY;
 /** Тень под текстом, который лежит прямо на фоне (заголовок): читается на любом пятне. */
@@ -104,6 +106,19 @@ function texture(style: CardStyle, w: number, h: number, color: string): string 
       return svg(
         `<defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><pattern id="s" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="18" height="46" fill="rgba(255,255,255,0.035)"/></pattern></defs><rect width="100%" height="100%" fill="url(#s)"/><polygon points="${w * 0.04},0 ${w * 0.16},0 ${w * 0.62},${h} ${w * 0.18},${h}" fill="url(#b)"/><polygon points="${w * 0.84},0 ${w * 0.96},0 ${w * 0.82},${h} ${w * 0.38},${h}" fill="url(#b)"/>`,
       );
+    }
+    case "messenger": {
+      // пузырьки сообщений, разбросанные по фону
+      let c = "";
+      for (let i = 0; i < 18; i++) {
+        const bw = 90 + r() * 150;
+        const bh = 44 + r() * 26;
+        const x = r() * (w - bw);
+        const y = r() * (h - bh);
+        const left = r() > 0.5;
+        c += `<rect x="${x.toFixed(0)}" y="${y.toFixed(0)}" width="${bw.toFixed(0)}" height="${bh.toFixed(0)}" rx="${(bh / 2).toFixed(0)}" fill="${left ? "rgba(255,255,255,0.035)" : color}" fill-opacity="${left ? 1 : 0.07}" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>`;
+      }
+      return svg(c);
     }
     default:
       return null;
@@ -332,6 +347,19 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
           )}
         </Panel>
       );
+    case "messenger":
+      // профиль контакта: закреплённые сообщения пузырями, как в чате
+      return (
+        <Panel s={s} background="rgba(24,22,28,0.9)">
+          <Caption s={s}>📌 Закреплённые</Caption>
+          <div style={{ display: "flex", flexDirection: "column", gap: s(12) }}>
+            {(card.pinned ?? []).map((text) => (
+              <Bubble key={text} text={text} color={card.color} s={s} />
+            ))}
+          </div>
+          {bars && <Bars bars={bars} s={s} color={card.color} />}
+        </Panel>
+      );
     default:
       return bars ? (
         <Panel s={s}>
@@ -339,6 +367,83 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
         </Panel>
       ) : null;
   }
+}
+
+/** Пузырь сообщения: входящий, хвостик слева внизу. */
+function Bubble({ text, color, s }: { text: string; color: string; s: Scale }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignSelf: "flex-start",
+        maxWidth: "92%",
+        padding: `${s(14)}px ${s(22)}px`,
+        borderRadius: `${s(26)}px ${s(26)}px ${s(26)}px ${s(8)}px`,
+        backgroundColor: `${color}2B`,
+        border: `2px solid ${color}66`,
+        fontWeight: 800,
+        fontSize: s(28),
+        lineHeight: 1.25,
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+/** Круглый аватар контакта: эмодзи результата и свечение его цвета. */
+function Avatar({ card, size }: { card: ShareCard; size: number }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: size,
+        height: size,
+        borderRadius: size,
+        backgroundImage: `radial-gradient(circle at 35% 30%, ${card.color}66, rgba(20,18,23,0.92) 75%)`,
+        border: `${Math.round(size * 0.03)}px solid ${card.color}`,
+        boxShadow: `0 0 ${Math.round(size * 0.35)}px ${card.color}AA`,
+        fontSize: Math.round(size * 0.52),
+        lineHeight: 1,
+      }}
+    >
+      {card.emoji}
+    </div>
+  );
+}
+
+/** Строка статуса с зелёной точкой «в сети»: «Режим: 100 уведомлений». */
+function StatusLine({ text, size }: { text: string; size: number }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: Math.round(size * 0.45),
+        padding: `${Math.round(size * 0.3)}px ${Math.round(size * 0.8)}px`,
+        borderRadius: 999,
+        backgroundColor: "rgba(20,18,23,0.75)",
+        fontWeight: 800,
+        fontSize: size,
+        lineHeight: 1.2,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexShrink: 0,
+          width: Math.round(size * 0.5),
+          height: Math.round(size * 0.5),
+          borderRadius: size,
+          backgroundColor: ONLINE,
+          boxShadow: `0 0 ${Math.round(size * 0.5)}px ${ONLINE}`,
+        }}
+      />
+      <span>{text}</span>
+    </div>
+  );
 }
 
 function Row({ s, label, value }: { s: Scale; label: string; value: string }) {
@@ -429,6 +534,7 @@ function Story({ card }: { card: ShareCard }) {
   const H = 1350;
   const tight = card.bars !== null;
   const s = tight ? dense : roomy;
+  const messenger = card.style === "messenger";
   return (
     <div
       style={{
@@ -465,16 +571,20 @@ function Story({ card }: { card: ShareCard }) {
 
       {/* Середина — по центру между шапкой и низом */}
       <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center" }}>
-      {/* Герой */}
+      {/* Герой: у мессенджера — аватар контакта, имя и статус «в сети» */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-        <div style={{ display: "flex", fontSize: tight ? 118 : 150, lineHeight: 1 }}>{card.emoji}</div>
+        {messenger ? (
+          <Avatar card={card} size={tight ? 170 : 210} />
+        ) : (
+          <div style={{ display: "flex", fontSize: tight ? 118 : 150, lineHeight: 1 }}>{card.emoji}</div>
+        )}
         <div
           style={{
             display: "flex",
             marginTop: 14,
             fontFamily: DISPLAY,
             fontWeight: 900,
-            fontSize: titleSize(card.title, tight ? 90 : 100),
+            fontSize: titleSize(card.title, messenger ? (tight ? 76 : 88) : tight ? 90 : 100),
             lineHeight: 1.05,
             letterSpacing: -2,
             textShadow: TEXT_SHADOW,
@@ -482,6 +592,11 @@ function Story({ card }: { card: ShareCard }) {
         >
           {card.title}
         </div>
+        {messenger && card.line && (
+          <div style={{ display: "flex", marginTop: 16 }}>
+            <StatusLine text={card.line} size={tight ? 30 : 34} />
+          </div>
+        )}
         {card.blendLine && (
           <div
             style={{
@@ -501,7 +616,7 @@ function Story({ card }: { card: ShareCard }) {
       </div>
 
       {/* Средний блок — костюм теста */}
-      <div style={{ display: "flex", flexDirection: "column", marginTop: 34 }}>
+      <div style={{ display: "flex", flexDirection: "column", marginTop: messenger ? 28 : 34 }}>
         <Costume card={card} s={s} />
       </div>
 
@@ -566,7 +681,13 @@ function Preview({ card }: { card: ShareCard }) {
           >
             {card.testTitle}
           </div>
-          <div style={{ display: "flex", marginTop: 16, fontSize: 104, lineHeight: 1 }}>{card.emoji}</div>
+          {card.style === "messenger" ? (
+            <div style={{ display: "flex", marginTop: 20 }}>
+              <Avatar card={card} size={120} />
+            </div>
+          ) : (
+            <div style={{ display: "flex", marginTop: 16, fontSize: 104, lineHeight: 1 }}>{card.emoji}</div>
+          )}
           <div
             style={{
               display: "flex",
@@ -580,6 +701,11 @@ function Preview({ card }: { card: ShareCard }) {
           >
             {card.title}
           </div>
+          {card.style === "messenger" && card.line && (
+            <div style={{ display: "flex", marginTop: 12 }}>
+              <StatusLine text={card.line} size={20} />
+            </div>
+          )}
           {card.blendLine && <div style={{ display: "flex", marginTop: 10, fontWeight: 800, fontSize: 24, color: card.color, textShadow: TEXT_SHADOW }}>{card.blendLine}</div>}
         </div>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center" }}>

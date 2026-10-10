@@ -667,13 +667,37 @@
             "receipt",
             "hero",
             "device",
-            "player"
+            "player",
+            "messenger"
           ]
         }
       },
       "required": [
         "button",
         "text"
+      ],
+      "additionalProperties": false
+    },
+    "compat": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "button": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "text",
+        "button"
       ],
       "additionalProperties": false
     }

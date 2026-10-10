@@ -63,6 +63,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         blendEmoji={blend?.result.emoji}
         blendTitle={blend?.note.title}
         subtitle={result.subtitle}
+        status={test.share?.style === "messenger" ? result.share?.line : undefined}
         text={result.text}
       />
       {/* Тест прислал друг — «Ты: … · Друг: …» и «Кинуть ответку 🔁» рядом с героем */}
@@ -160,6 +161,25 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
             marker={listEmoji}
             label={blocks?.howToLoveMeCopy ?? "Скопировать для своего человека"}
             linkPath={`/test/${test.slug}`}
+          />
+        </section>
+      )}
+
+      {/* «Сравниться с партнёром 💎» — сразу после «Как со мной встречаться», ведёт туда же, куда «Глубже 💎» */}
+      {test.compat && (
+        <section aria-labelledby="compat-title" className="diamond-glow flex flex-col gap-3 rounded-card bg-surface p-5">
+          <h2 id="compat-title" className="font-display text-xl font-bold text-balance">
+            {test.compat.title}
+          </h2>
+          <p className="leading-relaxed text-cream/85">{test.compat.text}</p>
+          <DeeperButton
+            id={test.id}
+            kind="test"
+            source="compat"
+            locked
+            label={test.compat.button}
+            href={test.upsell ? `/test/${test.slug}/deeper` : "/deeper"}
+            keepQuery={hasScales}
           />
         </section>
       )}
