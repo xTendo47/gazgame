@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { gameSchema, testSchema, type MafiaGame } from "@gazgame/content";
 import loveLanguagesJson from "@gazgame/content/data/tests/love-languages.json";
 import mafiaJson from "@gazgame/content/data/games/mafia.json";
+import companyRoleJson from "@gazgame/content/data/tests/company-role.json";
 import selfEsteemJson from "@gazgame/content/data/tests/self-esteem.json";
+import superpowerJson from "@gazgame/content/data/tests/superpower.json";
 import temperamentJson from "@gazgame/content/data/tests/temperament.json";
 import {
   castVote,
@@ -32,7 +34,13 @@ import {
   isExhausted,
   isVisible,
   findLockedTest,
+  afterWhen,
   answerBackMessage,
+  ingredientsLine,
+  partnerLabel,
+  receiptNumber,
+  supportScale,
+  topTwo,
   largestRemainderPercents,
   parseSharedResult,
   sharedResultMeta,
@@ -425,6 +433,51 @@ describe("шеринг: ссылка на итог, превью и «ответ
     store.saveTestResult("temperament", "choleric");
     expect(store.getFriendResult("temperament")).toMatchObject({ resultId: "sanguine", blendId: "choleric" });
     expect(store.getTestResult("temperament")?.resultId).toBe("choleric");
+  });
+});
+
+describe("шеринг: «костюмы» карточки", () => {
+  const company = testSchema.parse(companyRoleJson);
+  const temperament = testSchema.parse(temperamentJson);
+  const selfEsteem = testSchema.parse(selfEsteemJson);
+  const superpower = testSchema.parse(superpowerJson);
+  const role = (id: string) => company.results.find((r) => r.id === id)!;
+
+  it("дуэт и «опасно тусить»: другой результат или «ещё одна/ещё один» он же", () => {
+    expect(partnerLabel(company, role("mom"), "duo")).toBe("Босс 👑");
+    expect(partnerLabel(company, role("mom"), "danger")).toBe("ещё одна Мамочка 🍼");
+    expect(partnerLabel(company, role("observer"), "danger")).toBe("ещё один Наблюдатель 🕶️");
+    expect(partnerLabel(company, role("chaos"), "danger")).toBe("Юморист 😂"); // Мемолог переименован
+    expect(partnerLabel(temperament, temperament.results[0]!, "duo")).toBeUndefined();
+  });
+
+  it("«Зови, когда: …» без двойного «когда»", () => {
+    const spark = superpower.results.find((r) => r.id === "spark")!;
+    expect(afterWhen(spark.howToLoveMe![0]!)).toBe("нужно раскачать скучную тусовку");
+    expect(afterWhen("Говори прямо")).toBe("Говори прямо");
+  });
+
+  it("состав по убыванию и два первых результата с процентами", () => {
+    const scores = { choleric: 4, sanguine: 9, phlegmatic: 1, melancholic: 10 };
+    expect(ingredientsLine(temperament, scores)).toBe("меланхолик, сангвиник, холерик, флегматик");
+    expect(ingredientsLine(temperament, {})).toBe("холерик, сангвиник, флегматик, меланхолик");
+    const two = topTwo(temperament, scores, { resultId: "melancholic" });
+    expect(two.map((r) => [r.result.id, r.percent])).toEqual([
+      ["melancholic", 42],
+      ["sanguine", 37], // 10/9/4/1 из 24: лишние проценты — меланхолику и холерику (остатки 0,67), не сангвинику (0,5)
+    ]);
+  });
+
+  it("опора самооценки: самая высокая шкала или ровный профиль", () => {
+    expect(supportScale(selfEsteem, { acceptance: 3, confidence: 10, independence: 8 })).toEqual({ title: "Вера в свои силы", emoji: "💪" });
+    expect(supportScale(selfEsteem, { acceptance: 6, confidence: 6, independence: 7 })).toBeNull();
+    expect(supportScale(selfEsteem, {})).toBeUndefined();
+  });
+
+  it("номер чека — 4 цифры, один и тот же для одного итога", () => {
+    expect(receiptNumber("love-languages/words/6.4.6.4.6")).toMatch(/^\d{4}$/);
+    expect(receiptNumber("a")).toBe(receiptNumber("a"));
+    expect(receiptNumber("a")).not.toBe(receiptNumber("b"));
   });
 });
 

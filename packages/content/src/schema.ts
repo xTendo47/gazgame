@@ -17,6 +17,8 @@ export const MECHANICS = ["deck", "vote", "guess-partner", "mafia"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
+/** «Костюмы» карточки для шеринга: средний блок картинки у каждого теста свой. */
+export const SHARE_STYLES = ["composition", "batteries", "receipt", "hero", "device", "player"] as const;
 
 const slug = z
   .string()
@@ -113,6 +115,11 @@ export const testResultSchema = z
     howToLoveMe: z.array(text).min(1).optional(),
     /** Мягкая забота под советом, например «поговори с близким или психологом». */
     care: text.optional(),
+    /**
+     * Для карточки шеринга (костюм теста — share.style): line — фирменная строка результата,
+     * duo и danger — id других результатов («Идеальный дуэт», «Опасно тусить с»; danger может указывать на себя).
+     */
+    share: z.strictObject({ line: text.optional(), duo: z.string().optional(), danger: z.string().optional() }).optional(),
     /** Подсчёт "scales": при какой сумме баллов [от, до] показывается этот результат. */
     range: rangeSchema.optional(),
     /** Текст, который подставляется при «Поделиться». */
@@ -216,7 +223,7 @@ export const testSchema = itemBase
      * Шеринг итога: надпись на кнопке «Куда кидаем?» и текст сообщения в чат.
      * Плейсхолдеры: {title} {emoji} {pct} {scale} {link}. Нет share — «Пофлексить 🧊» и shareText результата.
      */
-    share: z.strictObject({ button: text, text }).optional(),
+    share: z.strictObject({ button: text, text, style: z.enum(SHARE_STYLES).optional() }).optional(),
   })
   .superRefine((test, ctx) => {
     const ids = new Set<string>();
@@ -227,6 +234,14 @@ export const testSchema = itemBase
       ids.add(r.id);
     });
     const known = `(есть: ${[...ids].join(", ")})`;
+    test.results.forEach((r, ri) => {
+      for (const key of ["duo", "danger"] as const) {
+        const ref = r.share?.[key];
+        if (ref !== undefined && !ids.has(ref)) {
+          ctx.addIssue({ code: "custom", path: ["results", ri, "share", key], message: `нет результата с id "${ref}" ${known}` });
+        }
+      }
+    });
     if (typeof test.scoring === "object" && test.scoring.type === "scales") {
       checkScales(test, test.scoring, ctx);
       return;
@@ -660,6 +675,7 @@ export type ScalesScoring = z.infer<typeof scalesScoringSchema>;
 export type Scale = ScalesScoring["scales"][number];
 export type Upsell = z.infer<typeof upsellSchema>;
 export type BlendNote = NonNullable<Test["blendNotes"]>[string];
+export type ShareStyle = (typeof SHARE_STYLES)[number];
 export type Card = z.infer<typeof cardSchema>;
 export type Deck = z.infer<typeof deckSchema>;
 export type Game = z.infer<typeof gameSchema>;

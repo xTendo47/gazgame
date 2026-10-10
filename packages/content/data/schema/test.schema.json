@@ -396,6 +396,22 @@
             "type": "string",
             "minLength": 1
           },
+          "share": {
+            "type": "object",
+            "properties": {
+              "line": {
+                "type": "string",
+                "minLength": 1
+              },
+              "duo": {
+                "type": "string"
+              },
+              "danger": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
           "range": {
             "type": "array",
             "prefixItems": [
@@ -580,6 +596,17 @@
         "text": {
           "type": "string",
           "minLength": 1
+        },
+        "style": {
+          "type": "string",
+          "enum": [
+            "composition",
+            "batteries",
+            "receipt",
+            "hero",
+            "device",
+            "player"
+          ]
         }
       },
       "required": [

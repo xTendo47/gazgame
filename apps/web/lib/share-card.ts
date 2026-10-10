@@ -1,7 +1,20 @@
 // Шеринг итога теста: что нарисовать на карточке, адрес картинки и ссылка в сообщении.
 // Общее для сервера (маршрут картинки) и браузера (меню «Куда кидаем?») — чтобы цифры и ссылки совпадали.
-import type { Test } from "@gazgame/content";
-import { findResult, scaleBreakdown, scalesConfig, sharedResultQuery, typeRanking, type SharedResult } from "@gazgame/engine";
+import type { ShareStyle, Test } from "@gazgame/content";
+import {
+  afterWhen,
+  findResult,
+  ingredientsLine,
+  partnerLabel,
+  receiptNumber,
+  scaleBreakdown,
+  scalesConfig,
+  sharedResultQuery,
+  supportScale,
+  topTwo,
+  typeRanking,
+  type SharedResult,
+} from "@gazgame/engine";
 
 /**
  * Цвет свечения за героем карточки — свой у каждого результата. Ключ: «тест/результат».
@@ -46,7 +59,8 @@ export function glowColor(testId: string, resultId: string): string {
 
 export type ShareFormat = "story" | "preview";
 export const SHARE_SIZE: Record<ShareFormat, { width: number; height: number }> = {
-  story: { width: 1080, height: 1920 },
+  // одна компактная картинка 4:5 — для сторис, чата и «Сохранить картинку»
+  story: { width: 1080, height: 1350 },
   preview: { width: 1200, height: 630 },
 };
 
@@ -107,7 +121,11 @@ export interface CardBar {
   main: boolean;
 }
 
+/** Средний блок карточки — свой у каждого теста (share.style); default — для тестов без костюма. */
+export type CardStyle = ShareStyle | "default";
+
 export interface ShareCard {
+  style: CardStyle;
   testTitle: string;
   durationMin: number;
   emoji: string;
@@ -115,10 +133,26 @@ export interface ShareCard {
   subtitle?: string;
   /** «Холерик 🔥 × Сангвиник ☀️». */
   blendLine?: string;
-  /** Полоски всех результатов по убыванию (или шкалы); null — показатели скрыты или баллов нет. */
+  /** Фирменная строка результата (share.line): «Не взбалтывать: вспыхивает за секунду». */
+  line?: string;
+  /**
+   * Показатели: два первых результата с процентами (у самооценки — три шкалы с баллами).
+   * null — «Показатели: нет» или баллов в ссылке нет.
+   */
   bars: CardBar[] | null;
-  /** До трёх пунктов со значком ✦ (первые strengths). */
+  /** До трёх пунктов со значком ✦ (первые strengths); у чека и игрока не нужны. */
   points: string[];
+  /** composition: «холерик, сангвиник, флегматик, меланхолик». */
+  ingredients?: string;
+  /** batteries: «Моя опора: 💪 Вера в свои силы» или «Опора: всё ровно, без провалов». */
+  support?: string;
+  /** receipt: номер, дата и позиции чека. */
+  receipt?: { number: string; date: string; items: string[] };
+  /** hero: «Зови, когда: …»; device: «Совет по эксплуатации: …». */
+  hint?: string;
+  /** player: «Идеальный дуэт» и «Опасно тусить с». */
+  duo?: string;
+  danger?: string;
   color: string;
   /** «gazgame.ru/test/temperament». */
   shortLink: string;
@@ -138,18 +172,23 @@ export function mainPercent(test: Test, p: Pick<ShareParams, "resultId" | "blend
     ?.percent;
 }
 
+const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+
 /** Всё, что рисуется на карточке. null — нет такого результата. */
-export function buildShareCard(test: Test, p: ShareParams, site: string): ShareCard | null {
+export function buildShareCard(test: Test, p: ShareParams, site: string, now = new Date()): ShareCard | null {
   const result = findResult(test, p.resultId);
   if (!result) return null;
   const blend = p.blendId && p.blendId !== p.resultId && test.blendNotes?.[p.blendId] ? findResult(test, p.blendId) : undefined;
+  const lead = { resultId: result.id, blendId: blend?.id };
+  const style: CardStyle = test.share?.style ?? "default";
+  const firstTip = result.howToLoveMe?.[0];
 
+  // Показатели: только два первых результата (проценты — от всех), у самооценки — три шкалы
   let bars: CardBar[] | null = null;
   if (p.stats) {
     if (scalesConfig(test)) {
-      const breakdown = scaleBreakdown(test, p.scores);
       bars =
-        breakdown?.scales.map((s) => ({
+        scaleBreakdown(test, p.scores)?.scales.map((s) => ({
           emoji: s.scale.emoji,
           label: s.scale.title,
           value: `${s.score}/${s.scale.max}`,
@@ -157,26 +196,56 @@ export function buildShareCard(test: Test, p: ShareParams, site: string): ShareC
           main: false,
         })) ?? null;
     } else {
-      bars =
-        typeRanking(test, p.scores, { resultId: result.id, blendId: blend?.id })?.map((r) => ({
-          emoji: r.result.emoji,
-          label: r.result.title,
-          value: `${r.percent}%`,
-          fill: r.max > 0 ? r.score / r.max : 0,
-          main: r.result.id === result.id,
-        })) ?? null;
+      const two = topTwo(test, p.scores, lead);
+      bars = two.length
+        ? two.map((r) => ({
+            emoji: r.result.emoji,
+            label: r.result.title,
+            value: `${r.percent}%`,
+            fill: r.max > 0 ? r.score / r.max : 0,
+            main: r.result.id === result.id,
+          }))
+        : null;
     }
   }
 
+  const support = supportScale(test, p.scores);
   return {
+    style,
     testTitle: test.title,
     durationMin: test.durationMin,
     emoji: result.emoji,
     title: result.title,
     subtitle: result.subtitle,
     blendLine: blend ? `${result.title} ${result.emoji} × ${blend.title} ${blend.emoji}` : undefined,
+    line: result.share?.line,
     bars,
-    points: (result.strengths ?? []).slice(0, 3),
+    points: style === "receipt" || style === "player" ? [] : (result.strengths ?? []).slice(0, 3),
+    ingredients: style === "composition" ? ingredientsLine(test, p.scores, lead) : undefined,
+    support:
+      style === "batteries"
+        ? support
+          ? `Моя опора: ${support.emoji} ${support.title}`
+          : support === null
+            ? "Опора: всё ровно, без провалов"
+            : undefined
+        : undefined,
+    receipt:
+      style === "receipt"
+        ? {
+            number: receiptNumber(`${test.id}/${result.id}/${blend?.id ?? ""}/${Object.values(p.scores).join(".")}`),
+            date: dateFormat.format(now),
+            items: (result.howToLoveMe ?? []).slice(0, 3),
+          }
+        : undefined,
+    hint:
+      style === "hero" && firstTip
+        ? `Зови, когда: ${afterWhen(firstTip)}`
+        : style === "device" && firstTip
+          ? `Совет по эксплуатации: ${firstTip}`
+          : undefined,
+    duo: style === "player" ? partnerLabel(test, result, "duo") : undefined,
+    danger: style === "player" ? partnerLabel(test, result, "danger") : undefined,
     color: glowColor(test.id, result.id),
     shortLink: `${site.replace(/^https?:\/\//, "")}/test/${test.slug}`,
   };

@@ -108,6 +108,12 @@ describe("проверка ошибок", () => {
     });
   });
 
+  it("ловит duo/danger на несуществующий результат", () => {
+    const broken = structuredClone(validTest) as { results: Record<string, unknown>[] };
+    broken.results[0]!.share = { line: "л", duo: "b", danger: "zzz" };
+    expect(() => buildCatalog([{ path: "demo.json", kind: "test", data: broken }])).toThrow(/нет результата с id "zzz"/);
+  });
+
   it("ловит ответ, ведущий к несуществующему результату", () => {
     const broken = structuredClone(validTest);
     broken.questions[0]!.options[0]!.type = "zzz";

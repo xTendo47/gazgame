@@ -93,8 +93,8 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
     const link = shareLink(siteUrl(window.location.origin), test, { resultId, blendId, scores });
     return { scores, link, desktop: isDesktop() };
   });
-  // У теста по шкалам (самооценка) показатели по умолчанию скрыты
-  const [stats, setStats] = useState(() => scalesConfig(test) === null);
+  // «Показатели» по умолчанию скрыты у всех: на картинке без процентов и полосок
+  const [stats, setStats] = useState(false);
   const [image, setImage] = useState<{ url: string; blob: Blob } | null>(null);
   const [status, setStatus] = useState<string>("");
   const [fullscreen, setFullscreen] = useState(false);
@@ -245,7 +245,7 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
 
         {/* Превью — настоящий PNG, который уйдёт в сторис */}
         <div className="flex justify-center">
-          <div className="relative aspect-[9/16] h-[min(44dvh,420px)] overflow-hidden rounded-2xl bg-bg">
+          <div className="relative aspect-[4/5] h-[min(46dvh,440px)] overflow-hidden rounded-2xl bg-bg">
             {image ? (
               // eslint-disable-next-line @next/next/no-img-element -- это blob из нашего же маршрута, оптимизатор не нужен
               <img src={image.url} alt="Картинка для сторис" className="size-full object-contain" />

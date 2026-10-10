@@ -6,6 +6,7 @@ export * from "./test-runner";
 export * from "./result-list";
 export * from "./percent";
 export * from "./share";
+export * from "./share-costume";
 export * from "./catalog";
 export * from "./storage";
 export * from "./mechanics/deck";
