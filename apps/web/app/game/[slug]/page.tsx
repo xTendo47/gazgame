@@ -24,8 +24,9 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
   const game = findGame(getCatalog(), (await params).slug, visibility);
   if (!game) notFound();
   const section = getSection(game.sections[0] ?? "company");
-  // Игра раундами и «Мафия» показывают правила отдельным экраном — здесь их не дублируем.
-  const rulesOnOwnScreen = (game.mechanic === "deck" && game.roundSize !== undefined) || game.mechanic === "mafia";
+  // Игра раундами, «Мафия» и «Шпион» показывают правила отдельным экраном — здесь их не дублируем.
+  const rulesOnOwnScreen =
+    (game.mechanic === "deck" && game.roundSize !== undefined) || game.mechanic === "mafia" || game.mechanic === "spy";
 
   return (
     <Screen>

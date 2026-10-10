@@ -20,14 +20,14 @@ export function faceStyle(role: MafiaRole): string {
   return role.auto ? FACE.civilian : FACE.city;
 }
 
-const CARD = "relative aspect-[5/7] w-full max-w-64 rounded-[22px] shadow-[0_18px_40px_rgb(0_0_0/0.45)]";
+export const CARD_SHAPE = "relative aspect-[5/7] w-full max-w-64 rounded-[22px] shadow-[0_18px_40px_rgb(0_0_0/0.45)]";
 
 export function CardBack({ label, className, style }: { label: string; className?: string; style?: CSSProperties }) {
   const [first, ...rest] = label.split(" ");
   return (
     <div
       aria-hidden="true"
-      className={cn(CARD, "flex items-center justify-center border-4 border-orange bg-bg", className)}
+      className={cn(CARD_SHAPE, "flex items-center justify-center border-4 border-orange bg-bg", className)}
       style={style}
     >
       <div className="absolute inset-3 rounded-[14px] border border-orange/40" />
@@ -41,7 +41,7 @@ export function CardBack({ label, className, style }: { label: string; className
 
 export function CardFace({ role, compact = false, className }: { role: MafiaRole; compact?: boolean; className?: string }) {
   return (
-    <div className={cn(CARD, "flex flex-col items-center justify-center gap-2 px-6 text-center", faceStyle(role), className)}>
+    <div className={cn(CARD_SHAPE, "flex flex-col items-center justify-center gap-2 px-6 text-center", faceStyle(role), className)}>
       <span aria-hidden="true" className="absolute top-3 left-4 text-xl">
         {role.emoji}
       </span>

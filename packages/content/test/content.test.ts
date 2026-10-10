@@ -197,7 +197,7 @@ describe("игра guess-partner: уровни и вопросы «про себ
       ]),
     );
     const know = games[0];
-    expect(know && "decks" in know ? know.decks[1]?.locked?.reason : null).toBe("subscription");
+    expect(know && know.mechanic !== "mafia" && know.mechanic !== "spy" ? know.decks[1]?.locked?.reason : null).toBe("subscription");
   });
 
   it("unlockAfter должен указывать на другую колоду этой игры", () => {
@@ -246,6 +246,31 @@ describe("игра «Мафия» (mechanic: mafia)", () => {
     const gap = mafiaFile();
     gap.defaults[0]!.to = 4;
     expect(() => build(gap)).toThrow(/для 5 игроков нет состава/);
+  });
+});
+
+describe("игра «Шпион» (mechanic: spy)", () => {
+  type SpyFile = Record<string, unknown> & { decks: { id: string; cards: { id: string }[] }[] };
+  const spyFile = () => JSON.parse(readFileSync(new URL("../data/games/spy.json", import.meta.url), "utf-8")) as SpyFile;
+  const build = (data: unknown) => buildCatalog([{ path: "spy.json", kind: "game", data: { ...(data as object), related: [] } }]);
+
+  it("настоящий файл проходит: три набора по 52 карты", () => {
+    const { games } = build(spyFile());
+    const spy = games[0];
+    expect(spy?.mechanic).toBe("spy");
+    expect(spy?.mechanic === "spy" && spy.decks.map((d) => d.cards.length)).toEqual([52, 52, 52]);
+  });
+
+  it("id наборов не повторяются", () => {
+    const data = spyFile();
+    data.decks[1]!.id = data.decks[0]!.id;
+    expect(() => build(data)).toThrow(/набор "places" повторяется/);
+  });
+
+  it("id карт внутри набора не повторяются", () => {
+    const data = spyFile();
+    data.decks[0]!.cards[1]!.id = data.decks[0]!.cards[0]!.id;
+    expect(() => build(data)).toThrow(/повторяется в наборе "places"/);
   });
 });
 

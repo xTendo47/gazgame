@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -632,11 +632,122 @@ function checkMafia(game: MafiaGameInput, ctx: z.RefinementCtx) {
   }
 }
 
+// ---------- Шпион ----------
+
+/** Карта «Шпиона»: слово, которое знают все, кроме шпиона. */
+export const spyCardSchema = z.strictObject({ id: slug, emoji: text, title: text });
+
+/** Набор карт «Шпиона», например «Места». examples — примеры вопросов мелко под плиткой. */
+export const spyDeckSchema = z.strictObject({
+  id: slug,
+  emoji: text,
+  title: text,
+  examples: z.array(text).default([]),
+  cards: z.array(spyCardSchema).min(1, "в наборе должна быть хотя бы одна карта"),
+});
+
+/**
+ * «Шпион»: у всех одна карта из выбранного набора, у шпиона (или двух) — «Ты шпион». Один телефон, имён нет.
+ * mix — режим «Всё вперемешку»: карта из любого набора.
+ */
+export const spyGameSchema = itemBase.extend({
+  kind: z.literal("game"),
+  mechanic: z.literal("spy"),
+  rules: z.array(text).default([]),
+  /** Подпись под выбором числа игроков. */
+  playersHint: text,
+  /** Шпионов 1 или max; с twoFrom игроков по умолчанию 2. */
+  spies: z.strictObject({ max: z.int().min(1).max(2), twoFrom: z.int().min(1), hint: text }),
+  /** Таймер: по умолчанию perPlayerSec × игроков в пределах minSec–maxSec, шаг stepSec. */
+  timer: z.strictObject({
+    perPlayerSec: z.int().min(10),
+    minSec: z.int().min(10),
+    maxSec: z.int().min(10),
+    stepSec: z.int().min(5),
+  }),
+  decks: z.array(spyDeckSchema).min(1),
+  mix: z.strictObject({ id: slug, emoji: text, title: text }),
+  /** Наборы под замком (по подписке). */
+  lockedExtras: z.array(z.strictObject({ emoji: text, title: text })).default([]),
+  lockedText: text,
+  texts: z.strictObject({
+    start: text,
+    pickDeck: text,
+    /** {n} — номер игрока, {total} — сколько всего. */
+    deal: text,
+    hide: text,
+    pass: text,
+    wordHint: text,
+    spyTitle: text,
+    spyHint: text,
+    /** {n} — кто начинает. */
+    dealt: text,
+    starts: text,
+    /** {title}, {emoji} — набор карты этой партии. */
+    deckLabel: text,
+    vote: text,
+    voteHint: text,
+    isSpy: text,
+    notSpy: text,
+    oneCaught: text,
+    reveal: text,
+    revealWho: text,
+    revealNotSpy: text,
+    revealSay: text,
+    guessed: text,
+    missed: text,
+    timeUp: text,
+    noVote: text,
+    cityWins: text,
+    spyWins: text,
+    wrongVote: text,
+    /** {emoji}, {title} — карта партии. */
+    finalCard: text,
+    /** {n} — номер шпиона. */
+    finalSpy: text,
+    /** {a}, {b} — номера двух шпионов. */
+    finalSpies: text,
+    again: text,
+    changeDeck: text,
+    flexCity: text,
+    flexSpy: text,
+    /** Надпись на рубашке карты. */
+    cardBack: text,
+  }),
+});
+
+type SpyGameInput = z.infer<typeof spyGameSchema>;
+
+/** Проверки «Шпиона»: id наборов (и mix) и id карт внутри набора не повторяются, таймер и шпионы в своих пределах. */
+function checkSpy(game: SpyGameInput, ctx: z.RefinementCtx) {
+  const deckIds = new Set<string>([game.mix.id]);
+  game.decks.forEach((deck, di) => {
+    if (deckIds.has(deck.id)) {
+      ctx.addIssue({ code: "custom", path: ["decks", di, "id"], message: `набор "${deck.id}" повторяется (или совпадает с mix)` });
+    }
+    deckIds.add(deck.id);
+    const cardIds = new Set<string>();
+    deck.cards.forEach((card, ci) => {
+      if (cardIds.has(card.id)) {
+        ctx.addIssue({ code: "custom", path: ["decks", di, "cards", ci, "id"], message: `карта "${card.id}" повторяется в наборе "${deck.id}"` });
+      }
+      cardIds.add(card.id);
+    });
+  });
+  const { minSec, maxSec } = game.timer;
+  if (minSec > maxSec) ctx.addIssue({ code: "custom", path: ["timer"], message: "minSec не может быть больше maxSec" });
+  if (game.players.min < 3) ctx.addIssue({ code: "custom", path: ["players", "min"], message: "в «Шпиона» играют минимум втроём" });
+}
+
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, mafiaGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, mafiaGameSchema, spyGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
+      return;
+    }
+    if (game.mechanic === "spy") {
+      checkSpy(game, ctx);
       return;
     }
     const deckIds = game.decks.map((d) => d.id);
@@ -730,8 +841,11 @@ export type VoteGame = z.infer<typeof voteGameSchema>;
 export type GuessPartnerGame = z.infer<typeof guessPartnerGameSchema>;
 export type MafiaGame = z.infer<typeof mafiaGameSchema>;
 export type MafiaRole = MafiaGame["roles"][number];
-/** Игры с колодами карточек (все механики, кроме «Мафии»). */
-export type DeckBasedGame = Exclude<Game, MafiaGame>;
+export type SpyGame = z.infer<typeof spyGameSchema>;
+export type SpyDeck = SpyGame["decks"][number];
+export type SpyCard = SpyDeck["cards"][number];
+/** Игры с колодами карточек (все механики, кроме «Мафии» и «Шпиона»). */
+export type DeckBasedGame = Exclude<Game, MafiaGame | SpyGame>;
 export type Mechanic = Game["mechanic"];
 export type LockedTest = z.infer<typeof lockedTestSchema>;
 export type ContentItem = Test | Game;

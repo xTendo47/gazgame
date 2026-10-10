@@ -12,6 +12,7 @@ import { DeckPicker } from "./DeckPicker";
 import { GuessPartnerGame } from "./GuessPartnerGame";
 import { MafiaGame } from "./MafiaGame";
 import { RoundDeckGame } from "./RoundDeckGame";
+import { SpyGame } from "./SpyGame";
 import { VoteGame } from "./VoteGame";
 
 function Mechanic({ game, deck, related }: { game: DeckBasedGame; deck: Deck; related?: ReactNode }) {
@@ -31,8 +32,9 @@ function Mechanic({ game, deck, related }: { game: DeckBasedGame; deck: Deck; re
 }
 
 export function GameScreen({ game, related }: { game: Game; related?: ReactNode }) {
-  // «Мафия» и «Насколько ты меня знаешь» ведут игру сами, у остальных сначала выбор колоды
+  // «Мафия», «Шпион» и «Насколько ты меня знаешь» ведут игру сами, у остальных сначала выбор колоды
   if (game.mechanic === "mafia") return <MafiaGame game={game} related={related} />;
+  if (game.mechanic === "spy") return <SpyGame game={game} related={related} />;
   if (game.mechanic === "guess-partner") return <GuessPartnerGame game={game} related={related} />;
   return <DecksScreen game={game} related={related} />;
 }

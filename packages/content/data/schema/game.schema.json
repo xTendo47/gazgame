@@ -1298,6 +1298,507 @@
         "texts"
       ],
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "_note": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pairs",
+              "company",
+              "solo"
+            ]
+          }
+        },
+        "tier": {
+          "default": "free",
+          "type": "string",
+          "enum": [
+            "free",
+            "premium"
+          ]
+        },
+        "ageRating": {
+          "default": "all",
+          "type": "string",
+          "enum": [
+            "all",
+            "16+",
+            "18+"
+          ]
+        },
+        "players": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        "durationMin": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tags": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "related": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "status": {
+          "default": "draft",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "const": "game"
+        },
+        "mechanic": {
+          "type": "string",
+          "const": "spy"
+        },
+        "rules": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "playersHint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spies": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2
+            },
+            "twoFrom": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "hint": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "max",
+            "twoFrom",
+            "hint"
+          ],
+          "additionalProperties": false
+        },
+        "timer": {
+          "type": "object",
+          "properties": {
+            "perPlayerSec": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 9007199254740991
+            },
+            "minSec": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 9007199254740991
+            },
+            "maxSec": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 9007199254740991
+            },
+            "stepSec": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "perPlayerSec",
+            "minSec",
+            "maxSec",
+            "stepSec"
+          ],
+          "additionalProperties": false
+        },
+        "decks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "examples": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "cards": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                    },
+                    "emoji": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "emoji",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "emoji",
+              "title",
+              "cards"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mix": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "emoji": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "emoji",
+            "title"
+          ],
+          "additionalProperties": false
+        },
+        "lockedExtras": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "emoji",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "lockedText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "texts": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pickDeck": {
+              "type": "string",
+              "minLength": 1
+            },
+            "deal": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hide": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pass": {
+              "type": "string",
+              "minLength": 1
+            },
+            "wordHint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "spyTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "spyHint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dealt": {
+              "type": "string",
+              "minLength": 1
+            },
+            "starts": {
+              "type": "string",
+              "minLength": 1
+            },
+            "deckLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "vote": {
+              "type": "string",
+              "minLength": 1
+            },
+            "voteHint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "isSpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "notSpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "oneCaught": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reveal": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revealWho": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revealNotSpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revealSay": {
+              "type": "string",
+              "minLength": 1
+            },
+            "guessed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "missed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timeUp": {
+              "type": "string",
+              "minLength": 1
+            },
+            "noVote": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cityWins": {
+              "type": "string",
+              "minLength": 1
+            },
+            "spyWins": {
+              "type": "string",
+              "minLength": 1
+            },
+            "wrongVote": {
+              "type": "string",
+              "minLength": 1
+            },
+            "finalCard": {
+              "type": "string",
+              "minLength": 1
+            },
+            "finalSpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "finalSpies": {
+              "type": "string",
+              "minLength": 1
+            },
+            "again": {
+              "type": "string",
+              "minLength": 1
+            },
+            "changeDeck": {
+              "type": "string",
+              "minLength": 1
+            },
+            "flexCity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "flexSpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cardBack": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "start",
+            "pickDeck",
+            "deal",
+            "hide",
+            "pass",
+            "wordHint",
+            "spyTitle",
+            "spyHint",
+            "dealt",
+            "starts",
+            "deckLabel",
+            "vote",
+            "voteHint",
+            "isSpy",
+            "notSpy",
+            "oneCaught",
+            "reveal",
+            "revealWho",
+            "revealNotSpy",
+            "revealSay",
+            "guessed",
+            "missed",
+            "timeUp",
+            "noVote",
+            "cityWins",
+            "spyWins",
+            "wrongVote",
+            "finalCard",
+            "finalSpy",
+            "finalSpies",
+            "again",
+            "changeDeck",
+            "flexCity",
+            "flexSpy",
+            "cardBack"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "slug",
+        "title",
+        "description",
+        "emoji",
+        "sections",
+        "players",
+        "durationMin",
+        "kind",
+        "mechanic",
+        "playersHint",
+        "spies",
+        "timer",
+        "decks",
+        "mix",
+        "lockedText",
+        "texts"
+      ],
+      "additionalProperties": false
     }
   ]
 }

@@ -4,14 +4,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@gazgame/ui";
 
-const format = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+export const formatTimer = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
 
-export function DiscussionTimer({ defaultSec, stepSec }: { defaultSec: number; stepSec: number }) {
-  const [duration, setDuration] = useState(defaultSec);
-  const [left, setLeft] = useState(defaultSec);
+/** Обратный отсчёт по секунде (общий для «Мафии» и «Шпиона»). По нулю останавливается и вибрирует. */
+export function useCountdown(initialSec: number) {
+  const [left, setLeft] = useState(initialSec);
   const [running, setRunning] = useState(false);
   /** Сколько осталось — для тика интервала (в функциях обновления состояния побочных эффектов быть не должно). */
-  const leftRef = useRef(defaultSec);
+  const leftRef = useRef(initialSec);
 
   function show(sec: number) {
     leftRef.current = sec;
@@ -35,10 +35,27 @@ export function DiscussionTimer({ defaultSec, stepSec }: { defaultSec: number; s
     return () => window.clearInterval(id);
   }, [running]);
 
+  return {
+    left,
+    running,
+    start: () => setRunning(leftRef.current > 0),
+    pause: () => setRunning(false),
+    /** Остановить и поставить заново. */
+    reset(sec: number) {
+      setRunning(false);
+      show(sec);
+    },
+  };
+}
+
+export function DiscussionTimer({ defaultSec, stepSec }: { defaultSec: number; stepSec: number }) {
+  const [duration, setDuration] = useState(defaultSec);
+  const { left, running, start, reset } = useCountdown(defaultSec);
+
   function change(delta: number) {
     const next = Math.max(stepSec, duration + delta);
     setDuration(next);
-    show(next);
+    reset(next);
   }
 
   return (
@@ -55,23 +72,20 @@ export function DiscussionTimer({ defaultSec, stepSec }: { defaultSec: number; s
           aria-live={left === 0 ? "assertive" : "off"}
           className={`font-display text-5xl font-black tabular-nums ${left === 0 ? "text-orange" : ""}`}
         >
-          {left === 0 ? "Время!" : format(left)}
+          {left === 0 ? "Время!" : formatTimer(left)}
         </div>
         <Button variant="ghost" size="md" className="w-14 bg-surface-2" aria-label={`Больше на ${stepSec} секунд`} disabled={running} onClick={() => change(stepSec)}>
           +
         </Button>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="primary" size="md" disabled={running || left === 0} onClick={() => setRunning(true)}>
+        <Button variant="primary" size="md" disabled={running || left === 0} onClick={start}>
           Старт
         </Button>
         <Button
           variant="outline"
           size="md"
-          onClick={() => {
-            setRunning(false);
-            show(duration);
-          }}
+          onClick={() => reset(duration)}
         >
           Ещё раз
         </Button>
