@@ -1,4 +1,4 @@
-// Премиум 💎: коды фокус-группы, проверка на устройстве и что открывается (пункты шторок экрана «Премиум»).
+// Premium 💎: коды фокус-группы, проверка на устройстве и что открывается (пункты шторок экрана «Premium»).
 // Код не хранится нигде, кроме premium-codes.txt у основателя: в контенте и на устройстве — только SHA-256.
 import { normalizePremiumCode, type Catalog, type PremiumRef } from "@gazgame/content";
 
@@ -93,7 +93,7 @@ export function checkPremiumCode(code: string, hashes: readonly string[]): strin
   return hashes.includes(hash) ? hash : null;
 }
 
-// ---------- Что открывает Премиум ----------
+// ---------- Что открывает Premium ----------
 
 /** Есть ли в контенте то, на что указывает пункт шторки. Нет ref или не нашли — «скоро». */
 export function premiumRefExists(catalog: Catalog, ref: PremiumRef | undefined): boolean {

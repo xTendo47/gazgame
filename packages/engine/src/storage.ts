@@ -36,7 +36,7 @@ export interface ProgressData {
   friendResults?: Record<string, FriendResult>;
   /** Выбранная версия теста («Кто проходит?»), по тестам. */
   audiences?: Record<string, string>;
-  /** Премиум включён кодом: хэш кода (не сам код) и когда. */
+  /** Premium включён кодом: хэш кода (не сам код) и когда. */
   premium?: { hash: string; activatedAt: string };
   /** Нажал «Хочу первым 🔔» в шторке оплаты — считаем один раз на устройство. */
   waitlist?: boolean;
@@ -68,7 +68,7 @@ export interface ProgressStore {
   saveFriendResult(testId: string, result: { resultId: string; blendId?: string }, now?: Date): void;
   markDeckCompleted(gameId: string, deckId: string): void;
   isPremium(): boolean;
-  /** Включить Премиум по хэшу верного кода. */
+  /** Включить Premium по хэшу верного кода. */
   activatePremium(hash: string, now?: Date): void;
   /** Отметить «Хочу первым»: true — впервые на этом устройстве (тогда шлём событие). */
   joinWaitlist(): boolean;

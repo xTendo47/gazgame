@@ -1,4 +1,4 @@
-// npm run premium:codes -- 30 — выдать N кодов Премиума для фокус-группы.
+// npm run premium:codes -- 30 — выдать N кодов Premium для фокус-группы.
 // Коды (GAZ-7K2M) дописываются в premium-codes.txt в корне репозитория — он в .gitignore, в git не попадает.
 // SHA-256 кодов дописываются в packages/content/data/premium-codes.json — это в git, по нему проверяет устройство.
 // Старые коды не теряются: новые добавляются к ним, повторов нет.
@@ -19,7 +19,7 @@ const repoRoot = path.resolve(dataDir, "..", "..", "..");
 const txtPath = path.join(repoRoot, "premium-codes.txt");
 const jsonPath = path.join(dataDir, "premium-codes.json");
 const NOTE =
-  "SHA-256 кодов Премиума 💎 (код без пробелов, большими буквами). Сами коды — в premium-codes.txt в корне, его нет в git. Новые коды: npm run premium:codes -- 30";
+  "SHA-256 кодов Premium 💎 (код без пробелов, большими буквами). Сами коды — в premium-codes.txt в корне, его нет в git. Новые коды: npm run premium:codes -- 30";
 
 const sha256 = (code: string) => createHash("sha256").update(normalizePremiumCode(code), "utf8").digest("hex");
 

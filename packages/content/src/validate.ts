@@ -63,9 +63,9 @@ export interface ContentReport {
   lockedTests: LockedTest[];
   /** «Карточные игры 🃏», если файл есть и прошёл проверку. */
   cardGames?: CardGamesFile;
-  /** Тексты экрана «Премиум». */
+  /** Тексты экрана «Premium». */
   premium?: PremiumFile;
-  /** SHA-256 кодов Премиума. */
+  /** SHA-256 кодов Premium. */
   premiumCodes?: string[];
   /** Тизер Ultimate. */
   ultimate?: UltimateFile;

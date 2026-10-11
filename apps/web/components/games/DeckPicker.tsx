@@ -65,7 +65,7 @@ export function DeckTile({
   onPick: (deck: Deck) => void;
 }) {
   const router = useRouter();
-  // С Премиумом замок «по подписке» снят (Бездна, Без тормозов, Глубоко…), уровни по очереди тоже
+  // С Premium замок «по подписке» снят (Бездна, Без тормозов, Глубоко…), уровни по очереди тоже
   const premium = usePremium();
   const access = deckAccess(deck, { completedDecks, decks: game.decks, userTier: tierFor(premium) });
   const subtitle = deck.description ?? `${deck.cards.length} карточек`;

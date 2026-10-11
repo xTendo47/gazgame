@@ -1,6 +1,6 @@
 "use client";
 
-// Маленькое «← Назад» в шапке экранов «Премиум» и Ultimate: по истории браузера, без истории — в меню.
+// Маленькое «← Назад» в шапке экранов «Premium» и Ultimate: по истории браузера, без истории — в меню.
 import { useRouter } from "next/navigation";
 
 export function HeaderBack() {

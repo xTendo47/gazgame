@@ -7,7 +7,10 @@ import { notFound } from "next/navigation";
 import { fillPlaceholders, findTest } from "@gazgame/engine";
 import { Badge, buttonVariants, Screen } from "@gazgame/ui";
 import { BackButton } from "@/components/BackButton";
+import { DotList } from "@/components/DotList";
+import { UpsellItems } from "@/components/result/UpsellItems";
 import { UpsellText } from "@/components/result/UpsellText";
+import { upsellItems } from "@/lib/upsell";
 import { getCatalog, visibility } from "@/lib/catalog";
 
 type Props = PageProps<"/test/[slug]/deeper">;
@@ -50,9 +53,15 @@ export default async function TestDeeperPage({ params }: Props) {
         </div>
         <h1 className="font-display text-3xl font-black leading-tight">{upsell.premium.headline ?? upsell.button}</h1>
         {/* {weakestScale} и другие подстановки берутся из адреса уже в браузере */}
-        <Suspense fallback={<p className={textClass}>{fillPlaceholders(upsell.premium.text, {})}</p>}>
-          <UpsellText test={test} text={upsell.premium.text} className={textClass} />
-        </Suspense>
+        {upsell.premium.items ? (
+          <Suspense fallback={<DotList items={upsellItems(upsell.premium.items)} className={textClass} />}>
+            <UpsellItems test={test} items={upsell.premium.items} className={textClass} />
+          </Suspense>
+        ) : (
+          <Suspense fallback={<p className={textClass}>{fillPlaceholders(upsell.premium.text, {})}</p>}>
+            <UpsellText test={test} text={upsell.premium.text} className={textClass} />
+          </Suspense>
+        )}
         <Link href="/premium" className={buttonVariants({ variant: "accent", className: "diamond-glow-ring" })}>
           Хочу Premium 💎
         </Link>

@@ -60,6 +60,7 @@ export default function Home() {
             <li key={item.href}>
               <Link
                 href={item.href}
+                {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className={cn(
                   "flex h-24 flex-col items-center justify-center gap-1.5 rounded-card bg-surface px-3 text-center transition",
                   "hover:bg-surface-2 active:scale-[0.97]",

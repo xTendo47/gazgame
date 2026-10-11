@@ -1,7 +1,7 @@
 "use client";
 
 // Платные тесты под замком 💎 в разделе. Тап — шторка с превью: зачем тест, что узнаешь, пример вопроса
-// (первый виден, второй размыт) и «Открыть с Премиумом 💎». С Премиумом вопросов у этих тестов пока нет —
+// (первый виден, второй размыт) и «Открыть с Premium 💎». С Premium вопросов у этих тестов пока нет —
 // без размытия и без кнопки, вместо неё плашка «Тест уже в работе».
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,10 +10,11 @@ import { Button, cn } from "@gazgame/ui";
 import { trackPreviewOpen, trackPreviewUnlockClick } from "@/lib/analytics";
 import { usePremium } from "@/lib/premium";
 import { BottomSheet } from "./BottomSheet";
+import { DotList } from "./DotList";
 import { LockedTestTile } from "./LockedTestTile";
 
-/** Плашка вместо кнопки, когда Премиум уже включён (текст из задания основателя). */
-const IN_WORK = "Тест уже в работе. С Премиумом откроется первым 💎";
+/** Плашка вместо кнопки, когда Premium уже включён (текст из задания основателя). */
+const IN_WORK = "Тест уже в работе. С Premium откроется первым 💎";
 
 export function LockedTestsList({
   tests,
@@ -82,16 +83,7 @@ export function LockedTestsList({
 
             <section className="flex flex-col gap-2 rounded-card bg-surface p-4">
               <h3 className="text-xs font-extrabold tracking-wide text-[#62D2FF] uppercase">{texts.learn}</h3>
-              <ul className="flex flex-col gap-1.5">
-                {test.learn.slice(0, 3).map((item) => (
-                  <li key={item} className="flex gap-2 leading-snug">
-                    <span aria-hidden="true" className="text-lime">
-                      ✓
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <DotList items={test.learn.slice(0, 3)} />
             </section>
 
             {test.preview && (

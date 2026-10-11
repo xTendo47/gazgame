@@ -101,7 +101,7 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
   const [fullscreen, setFullscreen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Значок 💎 в углу картинки у тех, у кого Премиум
+  // Значок 💎 в углу картинки у тех, у кого Premium
   const premium = usePremium();
   const params: ShareParams = useMemo(
     () => ({ slug: test.slug, resultId, blendId, scores: ctx.scores, stats, premium }),

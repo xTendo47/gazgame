@@ -20,7 +20,13 @@ import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/
 import { RankingPanel } from "./RankingPanel";
 import { ResultHero } from "./ResultHero";
 import { ScalesPanel } from "./ScalesPanel";
+import { upsellItems } from "@/lib/upsell";
+import { UpsellItems } from "./UpsellItems";
 import { UpsellText } from "./UpsellText";
+import { DotList } from "../DotList";
+
+/** Заголовок блока Premium после теста — одинаковый у всех тестов. */
+const UPSELL_TITLE = "Что ты получишь";
 
 /** Название для заголовка вкладки: «Холерик» или «Холерик (с нотками меланхолика 🌙)». */
 export function resultTitle(result: TestResult, blend?: Pick<TestBlend, "note">): string {
@@ -186,9 +192,9 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
               />
             }
           >
-            {/* С Премиумом замка нет, но самого разбора пары ещё нет — честно говорим, что он в работе */}
+            {/* С Premium замка нет, но самого разбора пары ещё нет — честно говорим, что он в работе */}
             <p className="rounded-card border border-[#62D2FF]/50 bg-[#62D2FF]/10 p-4 text-center font-semibold text-[#9BE4FF]">
-              Разбор пары уже в работе. С Премиумом откроется первым 💎
+              Разбор пары уже в работе. С Premium откроется первым 💎
             </p>
           </PremiumGate>
         </section>
@@ -214,18 +220,27 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       )}
 
       {test.upsell ? (
-        <section className="diamond-glow flex flex-col gap-4 rounded-card bg-surface p-5">
-          <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-lime">
-            <Lock aria-hidden="true" size={16} />
-            Premium
+        <section aria-labelledby="premium-get-title" className="diamond-glow flex flex-col gap-4 rounded-card bg-surface p-5">
+          {/* Над крупным заголовком — мелко голубым капсом headline теста («Твоё мышление в деталях») */}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wide text-[#62D2FF]">
+              <Lock aria-hidden="true" size={13} />
+              {test.upsell.premium.headline ?? "Premium"}
+            </div>
+            <h2 id="premium-get-title" className="font-display text-2xl font-bold">
+              {UPSELL_TITLE}
+            </h2>
           </div>
-          {test.upsell.premium.headline && (
-            <p className="-mt-2 font-display text-xl font-bold">{test.upsell.premium.headline}</p>
+          {/* Что человек получит в глубоком разборе; {weakestScale} подставится из шкал в адресе. Нет items — запасной текст */}
+          {test.upsell.premium.items ? (
+            <Suspense fallback={<DotList items={upsellItems(test.upsell.premium.items)} className={premiumTextClass} />}>
+              <UpsellItems test={test} items={test.upsell.premium.items} className={premiumTextClass} />
+            </Suspense>
+          ) : (
+            <Suspense fallback={<p className={premiumTextClass}>{fillPlaceholders(test.upsell.premium.text, {})}</p>}>
+              <UpsellText test={test} text={test.upsell.premium.text} className={premiumTextClass} />
+            </Suspense>
           )}
-          {/* Что человек узнает в глубоком разборе; {weakestScale} подставится из шкал в адресе */}
-          <Suspense fallback={<p className={premiumTextClass}>{fillPlaceholders(test.upsell.premium.text, {})}</p>}>
-            <UpsellText test={test} text={test.upsell.premium.text} className={premiumTextClass} />
-          </Suspense>
           <DeeperButton
             id={test.id}
             kind="test"

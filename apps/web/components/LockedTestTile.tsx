@@ -1,7 +1,7 @@
 "use client";
 
 // Карточка платного теста под замком (data/locked-tests.json) в разделе.
-// Нажатие открывает шторку с превью (LockedTestsList). С Премиумом замка в значке нет.
+// Нажатие открывает шторку с превью (LockedTestsList). С Premium замка в значке нет.
 import { Lock } from "lucide-react";
 import type { LockedTest } from "@gazgame/content";
 import { Badge, Tile } from "@gazgame/ui";

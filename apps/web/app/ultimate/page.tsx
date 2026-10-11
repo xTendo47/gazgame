@@ -1,5 +1,5 @@
 // Ultimate 🔱 — в будущем отдельное приложение. Здесь только витрина и «Хочу первым».
-// Тексты — packages/content/data/ultimate.json. Вид как у экрана «Премиум», только огонь вместо льда.
+// Тексты — packages/content/data/ultimate.json. Вид как у экрана «Premium», только огонь вместо льда.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Screen } from "@gazgame/ui";

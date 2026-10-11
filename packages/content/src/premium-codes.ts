@@ -1,4 +1,4 @@
-// Формат кодов Премиума 💎 — общий для скрипта npm run premium:codes и проверки на устройстве.
+// Формат кодов Premium 💎 — общий для скрипта npm run premium:codes и проверки на устройстве.
 // Сами коды в git не попадают: в data/premium-codes.json лежит только SHA-256 (см. packages/engine/src/premium.ts).
 
 /** Буквы и цифры кодов без похожих: нет 0/O и 1/I. */

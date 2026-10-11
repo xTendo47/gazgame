@@ -22,7 +22,7 @@ import {
   sha256Hex,
 } from "../src/index";
 
-/** Каталог из настоящих файлов, которые нужны Премиуму (related ведут на другие игры — их здесь не проверяем). */
+/** Каталог из настоящих файлов, которые нужны Premium (related ведут на другие игры — их здесь не проверяем). */
 const games = [knowJson, matchJson, whoJson, neverJson, mafiaJson, truthJson, spyJson];
 const loadCatalog = () =>
   buildCatalog(
@@ -37,7 +37,7 @@ const loadCatalog = () =>
     },
   );
 
-describe("Премиум — коды", () => {
+describe("Premium — коды", () => {
   it("SHA-256 совпадает с эталоном (пусто, латиница, кириллица, эмодзи, длинные строки)", () => {
     const vectors: [string, string][] = [
       ["", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"],
@@ -73,7 +73,7 @@ describe("Премиум — коды", () => {
   });
 });
 
-describe("Премиум — что открывается", () => {
+describe("Premium — что открывается", () => {
   const catalog = loadCatalog();
   const status = (sectionId: string) =>
     catalog.premium!.sections.find((s) => s.id === sectionId)!.items.map((i) => [i.label, premiumRefExists(catalog, i.ref) ? "💎" : "скоро"]);
@@ -100,7 +100,7 @@ describe("Премиум — что открывается", () => {
     ]);
   });
 
-  it("с Премиумом открываются закрытые колоды с карточками; без Премиума — замки; пустые с Премиумом — «Скоро»", () => {
+  it("с Premium открываются закрытые колоды с карточками; без Premium — замки; пустые с Premium — «Скоро»", () => {
     const deck = (game: string, id: string) => {
       const g = catalog.games.find((x) => x.id === game);
       return g && g.mechanic !== "spy" && g.mechanic !== "mafia" ? g.decks.find((d) => d.id === id) : undefined;
@@ -113,9 +113,9 @@ describe("Премиум — что открывается", () => {
     ] as const) {
       const d = deck(game, id);
       expect(d, `${game}/${id}`).toBeDefined();
-      expect(deckAccess(d!).open, `${game}/${id} без Премиума`).toBe(false);
+      expect(deckAccess(d!).open, `${game}/${id} без Premium`).toBe(false);
       const withPremium = deckAccess(d!, { userTier: "premium" });
-      if (d!.cards.length > 0) expect(withPremium.open, `${game}/${id} с Премиумом`).toBe(true);
+      if (d!.cards.length > 0) expect(withPremium.open, `${game}/${id} с Premium`).toBe(true);
       else expect(withPremium, `${game}/${id}: карточек ещё нет`).toEqual({ open: false, reason: "soon", text: "Скоро" });
     }
   });
@@ -128,7 +128,7 @@ describe("Премиум — что открывается", () => {
   });
 });
 
-describe("Премиум — на устройстве", () => {
+describe("Premium — на устройстве", () => {
   it("включается по хэшу и остаётся после перезапуска; «Хочу первым» считается один раз", () => {
     const kv = createMemoryKeyValueStore();
     const store = createProgressStore(kv);
@@ -140,7 +140,7 @@ describe("Премиум — на устройстве", () => {
     expect(createProgressStore(kv).hasJoinedWaitlist()).toBe(true);
   });
 
-  it("«Хочу первым» в Ultimate — отдельно от Премиума и тоже один раз", () => {
+  it("«Хочу первым» в Ultimate — отдельно от Premium и тоже один раз", () => {
     const kv = createMemoryKeyValueStore();
     const store = createProgressStore(kv);
     expect(store.hasJoinedUltimateWaitlist()).toBe(false);

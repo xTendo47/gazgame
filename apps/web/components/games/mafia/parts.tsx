@@ -42,7 +42,7 @@ export function Stepper({
 
 /**
  * Роли, темы или наборы по подписке: видно, нажатие ведёт на «Глубже 💎».
- * С Премиумом замка нет: строка с пометкой premiumText («Открыто ✓» у Мафии, «скоро» у Шпиона — там наборов ещё нет).
+ * С Premium замка нет: строка с пометкой premiumText («Открыто ✓» у Мафии, «скоро» у Шпиона — там наборов ещё нет).
  */
 export function LockedExtras({
   extras,
@@ -59,7 +59,7 @@ export function LockedExtras({
   if (extras.length === 0) return null;
   if (premium) {
     return (
-      <section aria-label="Открыто с Премиумом" className="flex flex-col gap-2">
+      <section aria-label="Открыто с Premium" className="flex flex-col gap-2">
         {extras.map((extra) => (
           <div key={extra.title} className="flex min-h-14 items-center gap-3 rounded-card bg-surface px-4 py-2">
             <span aria-hidden="true" className="w-8 text-center text-2xl">

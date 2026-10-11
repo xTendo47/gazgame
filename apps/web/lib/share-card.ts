@@ -91,7 +91,7 @@ export interface ShareParams {
   scores: Record<string, number>;
   /** Показывать полоски с процентами (переключатель «Показатели»). */
   stats: boolean;
-  /** У автора Премиум — маленький 💎 в углу картинки (p=1 в адресе). */
+  /** У автора Premium — маленький 💎 в углу картинки (p=1 в адресе). */
   premium?: boolean;
 }
 
@@ -165,7 +165,7 @@ export interface ShareCard {
   color: string;
   /** «gazgame.ru/test/temperament». */
   shortLink: string;
-  /** Значок Премиума 💎 в углу. */
+  /** Значок Premium 💎 в углу. */
   premium: boolean;
 }
 

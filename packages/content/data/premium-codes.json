@@ -1,5 +1,5 @@
 {
-  "_note": "SHA-256 кодов Премиума 💎 (код без пробелов, большими буквами). Сами коды — в premium-codes.txt в корне, его нет в git. Новые коды: npm run premium:codes -- 30",
+  "_note": "SHA-256 кодов Premium 💎 (код без пробелов, большими буквами). Сами коды — в premium-codes.txt в корне, его нет в git. Новые коды: npm run premium:codes -- 30",
   "hashes": [
     "7419afe24b87091a5d44889dce76f63dfdf805d11a694c13c347203219ed189b",
     "3c7330530a472fa3e817d7410d70543aac65a9aba2a9c84038310c9bd2a461c2",

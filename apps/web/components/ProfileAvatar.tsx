@@ -1,6 +1,6 @@
 "use client";
 
-// Аватарка в «Профиле». С Премиумом — голубое светящееся кольцо и подпись «💎 Премиум».
+// Аватарка в «Профиле». С Premium — голубое светящееся кольцо и подпись «💎 Premium».
 import Link from "next/link";
 import { cn } from "@gazgame/ui";
 import { usePremium } from "@/lib/premium";
@@ -20,7 +20,7 @@ export function ProfileAvatar() {
       </span>
       {premium && (
         <Link href="/premium" className="text-sm font-bold text-[#62D2FF]">
-          💎 Премиум включён
+          💎 Premium включён
         </Link>
       )}
     </div>

@@ -3,7 +3,7 @@
 // «Насколько ты меня знаешь» (механика guess-partner).
 // Имена (запоминаются на устройстве) → уровень → раунд 1: первый отвечает про себя, второй угадывает →
 // «меняемся» или «результат сейчас» → раунд 2 наоборот → проценты и звание. Правильные ответы не показываем.
-// ?deck=abyss в адресе — сразу этот уровень после имён, если он открыт («Пробовать закрытое 💎» с экрана Премиума).
+// ?deck=abyss в адресе — сразу этот уровень после имён, если он открыт («Пробовать закрытое 💎» с экрана Premium).
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { Deck, GuessPartnerGame as GuessPartnerGameData } from "@gazgame/content";

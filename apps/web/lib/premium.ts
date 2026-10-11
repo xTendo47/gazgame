@@ -1,6 +1,6 @@
 "use client";
 
-// Премиум 💎 — одно состояние на всё приложение. Включается кодом фокус-группы и хранится на устройстве
+// Premium 💎 — одно состояние на всё приложение. Включается кодом фокус-группы и хранится на устройстве
 // (ProgressStore). Пока нет оплаты и аккаунтов, это единственный способ снять замки.
 // Все экраны спрашивают только usePremium(): колоды, роли Мафии, Совместимость, превью платных тестов.
 import { useSyncExternalStore } from "react";
@@ -20,17 +20,17 @@ function subscribe(listener: () => void) {
   };
 }
 
-/** Включён ли Премиум. На сервере и до гидратации — false. */
+/** Включён ли Premium. На сервере и до гидратации — false. */
 export function usePremium(): boolean {
   return useSyncExternalStore(subscribe, () => getProgress().isPremium(), () => false);
 }
 
-/** Уровень доступа для deckAccess: с Премиумом замок «по подписке» не мешает. */
+/** Уровень доступа для deckAccess: с Premium замок «по подписке» не мешает. */
 export function tierFor(premium: boolean): Tier {
   return premium ? "premium" : "free";
 }
 
-/** Проверить код и включить Премиум. true — код верный. Само событие — без кода, только начало хэша. */
+/** Проверить код и включить Premium. true — код верный. Само событие — без кода, только начало хэша. */
 export function activatePremium(code: string, hashes: readonly string[]): boolean {
   const hash = checkPremiumCode(code, hashes);
   if (!hash) return false;

@@ -159,7 +159,7 @@ export function RoundDeckGame({
           card={{ label: game.title, emoji: finale?.emoji ?? game.emoji, title: finale?.title ?? game.title, text: finale?.flexText }}
         />
 
-        {/* «Слишком мило? Попробуйте Без тормозов 💎» — с Премиумом звать некуда, всё уже открыто */}
+        {/* «Слишком мило? Попробуйте Без тормозов 💎» — с Premium звать некуда, всё уже открыто */}
         {deck.upsellText && !premium && (
           <Link
             href="/deeper"

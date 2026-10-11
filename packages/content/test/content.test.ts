@@ -416,7 +416,7 @@ describe("«Карточные игры» (data/card-games.json)", () => {
   });
 });
 
-describe("превью платных тестов и Премиум", () => {
+describe("превью платных тестов и Premium", () => {
   const lockedTest = (preview?: unknown) => ({
     id: "dark",
     slug: "dark",
@@ -438,10 +438,10 @@ describe("превью платных тестов и Премиум", () => {
     expect(() => build(lockedTest({ why: "Зачем", questions: [q] }))).toThrow(/минимум 2 вопроса/);
   });
 
-  it("настоящие файлы: у трёх платных тестов превью, тексты Премиума и хэши кодов загружаются", () => {
+  it("настоящие файлы: у трёх платных тестов превью, тексты Premium и хэши кодов загружаются", () => {
     const catalog = loadCatalog();
     expect(catalog.lockedTests?.every((t) => (t.preview?.questions.length ?? 0) >= 2)).toBe(true);
-    expect(catalog.premium?.tile).toEqual({ title: "Премиум", subtitle: "без замков" });
+    expect(catalog.premium?.tile).toEqual({ title: "Premium", subtitle: "без ограничений" });
     expect(catalog.premiumCodes?.every((h) => /^[0-9a-f]{64}$/.test(h))).toBe(true);
   });
 
@@ -464,5 +464,15 @@ describe("Ultimate (data/ultimate.json)", () => {
     expect(() => build(ultimateFile())).not.toThrow();
     expect(() => build({ ...ultimateFile(), extra: 1 })).toThrow(ContentError);
     expect(() => build({ ...ultimateFile(), title: " " })).toThrow(ContentError);
+  });
+});
+
+describe("«Что ты получишь» (upsell.premium.items)", () => {
+  it("у всех 7 тестов с блоком Premium есть пункты списком; слова «Премиум» кириллицей нет", () => {
+    const catalog = loadCatalog();
+    const withUpsell = catalog.tests.filter((t) => t.upsell);
+    expect(withUpsell).toHaveLength(7);
+    for (const t of withUpsell) expect(t.upsell?.premium.items?.length, t.id).toBeGreaterThanOrEqual(3);
+    expect(JSON.stringify([catalog.tests, catalog.games, catalog.premium, catalog.lockedTests])).not.toMatch(/Премиум/);
   });
 });

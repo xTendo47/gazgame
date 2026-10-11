@@ -519,7 +519,7 @@ function Receipt({ card, s }: { card: ShareCard; s: Scale }) {
   );
 }
 
-/** Значок Премиума: голубой кружок с 💎 в углу карточки (Satori понимает только left/top). */
+/** Значок Premium: голубой кружок с 💎 в углу карточки (Satori понимает только left/top). */
 function PremiumMark({ left, top, size }: { left: number; top: number; size: number }) {
   return (
     <div

@@ -27,7 +27,7 @@ export interface DeeperClickEvent {
   source: "result" | "locked-deck" | "game-over" | "locked-test" | "compat";
 }
 
-/** Нажатие «Глубже 💎» — наш замер спроса на подписку. С включённым Премиумом не шлём: замков для него нет. */
+/** Нажатие «Глубже 💎» — наш замер спроса на подписку. С включённым Premium не шлём: замков для него нет. */
 export function trackDeeperClick(event: DeeperClickEvent) {
   if (getProgress().isPremium()) return;
   send("deeper_click", { ...event });
@@ -57,9 +57,9 @@ export function trackAnswerBack(event: { id: string }) {
   send("answer_back", { ...event });
 }
 
-// ---------- Премиум 💎 ----------
+// ---------- Premium 💎 ----------
 
-/** Нажатие «Оформить Премиум 💎» на экране /premium — спрос на подписку. */
+/** Нажатие «Оформить Premium 💎» на экране /premium — спрос на подписку. */
 export function trackSubscribeClick() {
   send("subscribe_click");
 }
@@ -69,7 +69,7 @@ export function trackSubscribeWaitlist() {
   send("subscribe_waitlist");
 }
 
-/** Премиум включён кодом. code — первые 6 символов SHA-256 кода (сам код не отправляем): видно, чей код сработал. */
+/** Premium включён кодом. code — первые 6 символов SHA-256 кода (сам код не отправляем): видно, чей код сработал. */
 export function trackPremiumActivate(event: { code: string }) {
   send("premium_activate", { ...event });
 }
@@ -79,7 +79,7 @@ export function trackPreviewOpen(event: { id: string }) {
   send("preview_open", { ...event });
 }
 
-/** «Открыть с Премиумом 💎» в превью платного теста. id — id теста. */
+/** «Открыть с Premium 💎» в превью платного теста. id — id теста. */
 export function trackPreviewUnlockClick(event: { id: string }) {
   send("preview_unlock_click", { ...event });
 }

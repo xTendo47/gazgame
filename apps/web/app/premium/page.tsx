@@ -1,4 +1,4 @@
-// Экран «Премиум» 💎: /premium. Тексты — packages/content/data/premium.json, хэши кодов — premium-codes.json.
+// Экран «Premium» 💎: /premium. Тексты — packages/content/data/premium.json, хэши кодов — premium-codes.json.
 // Что в шторках разделов уже есть (💎), а что «скоро», решаем здесь по контенту.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -7,7 +7,7 @@ import { Screen } from "@gazgame/ui";
 import { PremiumScreen } from "@/components/premium/PremiumScreen";
 import { getCatalog } from "@/lib/catalog";
 
-export const metadata: Metadata = { title: "Премиум", description: "Все замки 💎 сняты" };
+export const metadata: Metadata = { title: "Premium", description: "Без ограничений 💎" };
 
 export default function PremiumPage() {
   const catalog = getCatalog();

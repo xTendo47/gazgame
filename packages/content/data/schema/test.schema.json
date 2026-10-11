@@ -630,6 +630,14 @@
               "type": "string",
               "minLength": 1
             },
+            "items": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
             "primary": {
               "default": true,
               "type": "boolean"

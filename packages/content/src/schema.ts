@@ -196,7 +196,10 @@ export const upsellSchema = z.strictObject({
   premium: z.strictObject({
     tier: z.literal("premium"),
     headline: text.optional(),
+    /** Запасной текст одним абзацем — на экране показываем items, если они есть. */
     text,
+    /** «Что ты получишь»: пункты списком с голубыми точками. Плейсхолдеры как в text ({weakestScale}). */
+    items: z.array(text).min(1).optional(),
     primary: z.boolean().default(true),
   }),
 });
@@ -964,10 +967,10 @@ export const cardGamesFileSchema = z
     });
   });
 
-// ---------- Премиум ----------
+// ---------- Premium ----------
 
 /**
- * На что указывает пункт шторки раздела на экране «Премиум». Найден в контенте — 💎, нет — «скоро».
+ * На что указывает пункт шторки раздела на экране «Premium». Найден в контенте — 💎, нет — «скоро».
  * game + deck — колода игры; game + extras — роли и темы под замком; compat — «Совместимость» у теста;
  * lockedTests — платные тесты под замком; always — всегда есть.
  */
@@ -980,7 +983,7 @@ export const premiumRefSchema = z.strictObject({
   always: z.literal(true).optional(),
 });
 
-/** Файл data/premium.json: тексты экрана «Премиум» 💎. */
+/** Файл data/premium.json: тексты экрана «Premium» 💎. */
 export const premiumFileSchema = z.strictObject({
   _note: z.string().optional(),
   $schema: z.string().optional(),
@@ -1008,7 +1011,7 @@ export const premiumFileSchema = z.strictObject({
   paySheet: z.strictObject({ title: text, text, button: text, done: text }),
   code: z.strictObject({ link: text, title: text, placeholder: text, button: text, cancel: text, wrong: text }),
   fine: text,
-  /** Тексты, когда Премиум включён. */
+  /** Тексты, когда Premium включён. */
   on: z.strictObject({ title: text, lead: text, tileState: text, cta: text, fine: text }),
   /** Шторка превью платного теста. */
   preview: z.strictObject({ why: text, learn: text, example: text, unlock: text, close: text }),
@@ -1033,7 +1036,7 @@ export const ultimateFileSchema = z.strictObject({
   fine: text,
 });
 
-/** Файл data/premium-codes.json: SHA-256 кодов Премиума (сами коды в git не попадают). */
+/** Файл data/premium-codes.json: SHA-256 кодов Premium (сами коды в git не попадают). */
 export const premiumCodesFileSchema = z.strictObject({
   _note: z.string().optional(),
   hashes: z.array(z.string().regex(/^[0-9a-f]{64}$/, "SHA-256: 64 символа 0-9 a-f")),
@@ -1084,9 +1087,9 @@ export interface Catalog {
   lockedTests?: LockedTest[];
   /** Памятка «Карточные игры 🃏» (data/card-games.json). Нет файла — undefined. */
   cardGames?: CardGamesFile;
-  /** Тексты экрана «Премиум» (data/premium.json). */
+  /** Тексты экрана «Premium» (data/premium.json). */
   premium?: PremiumFile;
-  /** SHA-256 кодов Премиума (data/premium-codes.json). */
+  /** SHA-256 кодов Premium (data/premium-codes.json). */
   premiumCodes?: string[];
   /** Тизер Ultimate 🔱 (data/ultimate.json). */
   ultimate?: UltimateFile;
