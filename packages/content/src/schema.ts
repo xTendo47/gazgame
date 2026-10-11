@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -527,12 +527,42 @@ export const voteGameSchema = gameBase.extend({
 });
 
 /** «Насколько хорошо вы знаете друг друга»: отвечаешь про себя и угадываешь партнёра. */
+/** Звания по проценту совпадения. Берётся первое, где процент ≥ minPercent; нужно звание с minPercent: 0. */
+const ranksSchema = z.array(z.strictObject({ minPercent: z.number().min(0).max(100), title: text, emoji: text, text })).min(1);
+
 export const guessPartnerGameSchema = gameBase.extend({
   mechanic: z.literal("guess-partner"),
-  /** Звания по проценту совпадения. Берётся первое, где процент ≥ minPercent. */
-  ranks: z
-    .array(z.strictObject({ minPercent: z.number().min(0).max(100), title: text, emoji: text, text }))
-    .min(1),
+  ranks: ranksSchema,
+});
+
+/**
+ * «Совпадём?» (это или то): оба по очереди тайно отвечают на одни и те же questionsPerGame вопросов колоды.
+ * У карточки ровно 2 options — две половины экрана; text — короткий вопрос для «Где разошлись» / «Где совпали».
+ * Плейсхолдеры в texts: {a} — кто отвечает сейчас, {b} — второй игрок, {pct} — процент, {link} — ссылка.
+ */
+export const matchGameSchema = gameBase.extend({
+  mechanic: z.literal("match"),
+  ranks: ranksSchema,
+  texts: z.strictObject({
+    pickLevel: text,
+    turnTitle: text,
+    turnHint: text,
+    start: text,
+    /** Круглая плашка между половинами, «ИЛИ». */
+    or: text,
+    pass: text,
+    passHint: text,
+    passButton: text,
+    diverged: text,
+    divergedHint: text,
+    divergedEmpty: text,
+    matched: text,
+    show: text,
+    hide: text,
+    again: text,
+    next: text,
+    flexText: text,
+  }),
 });
 
 // ---------- Мафия ----------
@@ -748,7 +778,7 @@ function checkSpy(game: SpyGameInput, ctx: z.RefinementCtx) {
 }
 
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, mafiaGameSchema, spyGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
@@ -791,7 +821,27 @@ export const gameSchema = z
         }
       }),
     );
-    if (game.mechanic === "guess-partner" && !game.ranks.some((r) => r.minPercent === 0)) {
+    if (game.mechanic === "match") {
+      game.decks.forEach((deck, di) => {
+        deck.cards.forEach((card, ci) => {
+          if (card.options?.length !== 2) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["decks", di, "cards", ci, "options"],
+              message: `в «это или то» у карточки ровно 2 options, сейчас ${card.options?.length ?? 0}`,
+            });
+          }
+        });
+        if (deck.questionsPerGame !== undefined && deck.cards.length > 0 && deck.questionsPerGame > deck.cards.length) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["decks", di, "questionsPerGame"],
+            message: `questionsPerGame (${deck.questionsPerGame}) больше, чем карточек в колоде (${deck.cards.length})`,
+          });
+        }
+      });
+    }
+    if ((game.mechanic === "guess-partner" || game.mechanic === "match") && !game.ranks.some((r) => r.minPercent === 0)) {
       ctx.addIssue({ code: "custom", path: ["ranks"], message: "нужно звание с minPercent: 0 — на случай любого результата" });
     }
   });
@@ -847,6 +897,7 @@ export type Game = z.infer<typeof gameSchema>;
 export type DeckGame = z.infer<typeof deckGameSchema>;
 export type VoteGame = z.infer<typeof voteGameSchema>;
 export type GuessPartnerGame = z.infer<typeof guessPartnerGameSchema>;
+export type MatchGame = z.infer<typeof matchGameSchema>;
 export type MafiaGame = z.infer<typeof mafiaGameSchema>;
 export type MafiaRole = MafiaGame["roles"][number];
 export type SpyGame = z.infer<typeof spyGameSchema>;

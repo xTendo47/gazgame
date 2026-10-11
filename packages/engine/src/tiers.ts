@@ -30,13 +30,17 @@ export interface DeckAccessOptions {
 
 /**
  * Можно ли играть колодой. Закрыта, если:
- * в файле есть locked; уровень колоды выше подписки пользователя; есть unlockAfter, а ту колоду ещё не доиграли.
+ * в файле есть locked (замок «по подписке» подписчику не мешает); уровень колоды выше подписки пользователя;
+ * есть unlockAfter, а ту колоду ещё не доиграли.
  */
 export function deckAccess(
   deck: Deck,
   { userTier = DEFAULT_USER_TIER, completedDecks = [], decks = [] }: DeckAccessOptions = {},
 ): DeckAccess {
-  if (deck.locked) return { open: false, reason: deck.locked.reason, text: deck.locked.text };
+  const subscriber = hasAccess(userTier, "premium");
+  if (deck.locked && !(deck.locked.reason === "subscription" && subscriber)) {
+    return { open: false, reason: deck.locked.reason, text: deck.locked.text };
+  }
   if (!hasAccess(userTier, deck.tier)) return { open: false, reason: "subscription", text: `${TIER_LABELS[deck.tier]} 💎` };
   if (deck.unlockAfter && !completedDecks.includes(deck.unlockAfter)) {
     const before = decks.find((d) => d.id === deck.unlockAfter);

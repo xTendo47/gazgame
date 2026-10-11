@@ -356,3 +356,34 @@ describe("эмодзи, которых не видно на Windows 10 и ста
     expect(() => loadCatalog()).not.toThrow();
   });
 });
+
+describe("игра «Совпадём?» (mechanic: match)", () => {
+  type MatchFile = Record<string, unknown> & {
+    decks: { questionsPerGame?: number; cards: { options?: string[] }[] }[];
+    ranks: { minPercent: number }[];
+  };
+  const matchFile = () => JSON.parse(readFileSync(new URL("../data/games/match-us.json", import.meta.url), "utf-8")) as MatchFile;
+  const build = (data: unknown) => buildCatalog([{ path: "match-us.json", kind: "game", data: { ...(data as object), related: [] } }]);
+
+  it("настоящий файл проходит", () => {
+    expect(build(matchFile()).games[0]?.mechanic).toBe("match");
+  });
+
+  it("у карточки ровно 2 варианта", () => {
+    const data = matchFile();
+    data.decks[0]!.cards[0]!.options = ["А", "Б", "В"];
+    expect(() => build(data)).toThrow(/ровно 2 options/);
+  });
+
+  it("questionsPerGame не больше числа карточек колоды", () => {
+    const data = matchFile();
+    data.decks[0]!.questionsPerGame = 31;
+    expect(() => build(data)).toThrow(/questionsPerGame \(31\) больше, чем карточек в колоде \(30\)/);
+  });
+
+  it("нужно звание с minPercent: 0", () => {
+    const data = matchFile();
+    data.ranks = data.ranks.filter((r) => r.minPercent !== 0);
+    expect(() => build(data)).toThrow(/minPercent: 0/);
+  });
+});

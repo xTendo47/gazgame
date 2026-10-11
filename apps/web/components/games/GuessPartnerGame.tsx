@@ -29,7 +29,7 @@ import { PlayersForm } from "./PlayersForm";
 type Players = [string, string];
 
 /** Сохранённые имена: на сервере их нет (null), в браузере — из ProgressStore. Снимок — строка, чтобы не перерисовывать зря. */
-function useSavedPlayers(gameId: string): Players | null {
+export function useSavedPlayers(gameId: string): Players | null {
   const snapshot = useSyncExternalStore(
     noopSubscribe,
     () => JSON.stringify(getProgress().getPlayers(gameId)),
