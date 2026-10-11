@@ -522,8 +522,8 @@ describe("шеринг: «костюмы» карточки", () => {
     expect(ingredientsLine(temperament, {})).toBe("холерик, сангвиник, флегматик, меланхолик");
     const two = topTwo(temperament, scores, { resultId: "melancholic" });
     expect(two.map((r) => [r.result.id, r.percent])).toEqual([
-      ["melancholic", 42],
-      ["sanguine", 37], // 10/9/4/1 из 24: лишние проценты — меланхолику и холерику (остатки 0,67), не сангвинику (0,5)
+      ["melancholic", 41],
+      ["sanguine", 38], // 10/9/4/1 из 24: 42 + 38 + 17 + 4 = 101 — остаток от округления (−1) уходит главному типу
     ]);
   });
 

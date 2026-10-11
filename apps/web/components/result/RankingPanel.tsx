@@ -1,14 +1,17 @@
 "use client";
 
-// «Твой расклад»: два первых результата с полосками — «Твой итог: …» и «а ещё …».
+// «Твой расклад»: два первых результата с полосками — «Твой итог: …» и «а ещё …» (при ничьей — «поровну с …»
+// и плашка «Ничья: ты поровну A и B» над процентами).
 // Для любопытных — «Развернуть»: все результаты от сильного к слабому (scoring.showRanking).
 // Баллы берутся из адреса страницы — см. lib/result-query.ts.
 import { useId, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
+import { isTopTie } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { rankingFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
+import { TieNote } from "./TieBanner";
 
 export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId: string; blendId?: string }) {
   const ranking = rankingFromQuery(test, useSearchParams(), { resultId, blendId });
@@ -16,17 +19,19 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
   const listId = useId();
   if (!ranking) return null;
   const shown = expanded ? ranking : ranking.slice(0, 2);
+  const tie = isTopTie(ranking);
 
   return (
     <section aria-labelledby="ranking-title" className="flex flex-col gap-4 rounded-card bg-surface p-5">
       <h2 id="ranking-title" className="font-display text-xl font-bold">
         Твой расклад 📊
       </h2>
+      {tie && <TieNote ranking={ranking} />}
       <ol id={listId} className="flex flex-col gap-3.5">
         {shown.map(({ result, score, max, percent }, i) => {
           // подпись — доля в сумме 100 (как на карточке для шеринга), полоска — сколько набрано из возможного
           const fill = max > 0 ? Math.round((score / max) * 100) : 0;
-          const prefix = i === 0 ? "Твой итог:" : i === 1 ? "а ещё" : null;
+          const prefix = i === 0 ? "Твой итог:" : i === 1 ? (tie ? "поровну с" : "а ещё") : null;
           return (
             <li key={result.id} className="flex flex-col gap-1.5">
               <div className="flex items-baseline justify-between gap-3">

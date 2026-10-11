@@ -458,6 +458,10 @@
             "type": "string",
             "minLength": 1
           },
+          "heart": {
+            "type": "string",
+            "minLength": 1
+          },
           "share": {
             "type": "object",
             "properties": {

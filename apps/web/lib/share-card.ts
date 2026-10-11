@@ -4,6 +4,7 @@ import type { ShareStyle, Test } from "@gazgame/content";
 import {
   afterWhen,
   findResult,
+  isTopTie,
   ingredientsLine,
   partnerLabel,
   receiptNumber,
@@ -138,7 +139,7 @@ export interface ShareCard {
   emoji: string;
   title: string;
   subtitle?: string;
-  /** «Холерик 🔥 × Сангвиник ☀️». */
+  /** Второй тип мелко: «а ещё Сангвиник ☀️» или при ничьей «поровну с Сангвиник ☀️». */
   blendLine?: string;
   /** Фирменная строка результата (share.line): «Не взбалтывать: вспыхивает за секунду». */
   line?: string;
@@ -221,6 +222,7 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
   }
 
   const support = supportScale(test, p.scores);
+  const tie = isTopTie(typeRanking(test, p.scores, lead));
   return {
     style,
     testTitle: test.title,
@@ -228,7 +230,8 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
     emoji: result.emoji,
     title: result.title,
     subtitle: result.subtitle,
-    blendLine: blend ? `${result.title} ${result.emoji} × ${blend.title} ${blend.emoji}` : undefined,
+    // второй тип мелко: при точной ничьей — «поровну с», иначе «а ещё»
+    blendLine: blend ? `${tie ? "поровну с" : "а ещё"} ${blend.title} ${blend.emoji}` : undefined,
     line: result.share?.line,
     bars,
     points: style === "receipt" || style === "player" || style === "messenger" ? [] : (result.strengths ?? []).slice(0, 3),

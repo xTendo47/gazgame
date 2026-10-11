@@ -1,5 +1,5 @@
 // Подсчёт результата теста. Движок не знает конкретных тестов — всё берёт из данных.
-import { largestRemainderPercents } from "./percent";
+import { rankedPercents } from "./percent";
 import type {
   BlendNote,
   Scale,
@@ -235,10 +235,16 @@ export function typeRanking(
     id === lead.resultId ? -2 : id === lead.blendId ? -1 : order.includes(id) ? order.indexOf(id) : order.length + 1;
   ranked.sort((a, b) => b.score - a.score || priority(a.result.id) - priority(b.result.id));
   if (lead.resultId && ranked[0]?.result.id !== lead.resultId) return null;
-  // Проценты считаем уже по порядку показа: при равных баллах лишний процент получает тот, кто выше
-  const percents = largestRemainderPercents(ranked.map((r) => r.score));
+  // Проценты считаем уже по порядку показа: остаток от округления — главному типу (см. rankedPercents)
+  const percents = rankedPercents(ranked.map((r) => r.score));
   ranked.forEach((r, i) => (r.percent = percents[i] ?? 0));
   return ranked;
+}
+
+/** Точная ничья первых двух (одинаковые баллы): «Ничья: ты поровну {A} и {B}», второй тип показываем обязательно. */
+export function isTopTie(ranking: readonly RankedType[] | null | undefined): boolean {
+  const [first, second] = ranking ?? [];
+  return !!first && !!second && first.score > 0 && first.score === second.score;
 }
 
 export function findResult(test: Test, resultId: string): TestResult | undefined {

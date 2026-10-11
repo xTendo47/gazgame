@@ -20,3 +20,20 @@ export function largestRemainderPercents(values: readonly number[]): number[] {
   }
   return result;
 }
+
+/**
+ * Проценты типов в порядке показа (первый — главный тип): доля от суммы баллов, в сумме ровно 100.
+ * Каждый округляем обычным образом, остаток от округления отдаём главному типу — так одинаковые баллы
+ * дают одинаковые проценты. Если первые два поровну (ничья), остаток отдать главному нельзя (25/25 стало бы 24/25):
+ * тогда распределяем методом наибольшего остатка, равные баллы у первых двух всё равно дают равные проценты.
+ */
+export function rankedPercents(orderedScores: readonly number[]): number[] {
+  const safe = orderedScores.map((v) => (Number.isFinite(v) && v > 0 ? v : 0));
+  const total = safe.reduce((sum, v) => sum + v, 0);
+  if (total === 0) return safe.map(() => 0);
+  if (safe.length > 1 && safe[0] === safe[1]) return largestRemainderPercents(safe);
+  const rounded = safe.map((v) => Math.round((v / total) * 100));
+  const rest = rounded.slice(1).reduce((sum, v) => sum + v, 0);
+  rounded[0] = 100 - rest;
+  return rounded;
+}

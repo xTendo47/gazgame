@@ -18,6 +18,7 @@ import { PremiumGate } from "../PremiumGate";
 import { AnswerBack } from "@/components/share/AnswerBack";
 import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
 import { RankingPanel } from "./RankingPanel";
+import { TieBanner } from "./TieBanner";
 import { ResultHero } from "./ResultHero";
 import { ScalesPanel } from "./ScalesPanel";
 import { upsellItems } from "@/lib/upsell";
@@ -97,6 +98,12 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         // Полоски всех типов читаются из адреса уже в браузере; страница при этом остаётся статической.
         <Suspense fallback={null}>
           <RankingPanel test={test} resultId={result.id} blendId={blend?.resultId} />
+        </Suspense>
+      )}
+      {/* Тесты типа types без «Твоего расклада» (Темперамент): плашка ничьей отдельно */}
+      {!showRanking && config.type === "types" && (
+        <Suspense fallback={null}>
+          <TieBanner test={test} resultId={result.id} blendId={blend?.resultId} />
         </Suspense>
       )}
 
@@ -216,6 +223,15 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
             🤍
           </span>
           <p className="text-[15px] leading-relaxed text-cream/80">{result.care}</p>
+        </section>
+      )}
+      {/* Тёплая строка с ❤️ — последний блок итога, перед «Глубже 💎» и шерингом */}
+      {result.heart && (
+        <section className="flex items-center justify-center gap-3 rounded-card bg-surface-2/60 px-5 py-4 text-center">
+          <span aria-hidden="true" className="shrink-0 text-xl leading-none">
+            ❤️
+          </span>
+          <p className="text-[15px] leading-relaxed text-balance text-cream/80">{result.heart}</p>
         </section>
       )}
 
