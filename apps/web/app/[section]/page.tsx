@@ -1,8 +1,10 @@
-// Раздел: /pairs, /company, /solo — список тестов и игр из packages/content, после них — платные тесты под замком.
+// Раздел: /pairs, /company, /solo — список тестов и игр из packages/content, после них — «Карточные игры 🃏»
+// (если файл card-games.json указал этот раздел) и платные тесты под замком.
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { itemsForSection, lockedTestsForSection } from "@gazgame/engine";
-import { PageHeader, Screen } from "@gazgame/ui";
+import { PageHeader, Screen, Tile } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { ItemTile } from "@/components/ItemTile";
 import { LockedTestTile } from "@/components/LockedTestTile";
@@ -26,6 +28,8 @@ export default async function SectionPage({ params }: PageProps<"/[section]">) {
 
   const items = itemsForSection(getCatalog(), section.id, visibility);
   const locked = lockedTestsForSection(getCatalog(), section.id);
+  const cards = getCatalog().cardGames;
+  const showCards = cards?.sections.includes(section.id) ?? false;
 
   return (
     <Screen>
@@ -34,10 +38,15 @@ export default async function SectionPage({ params }: PageProps<"/[section]">) {
         {items.map((item, i) => (
           <ItemTile key={item.id} item={item} accent={i % 2 ? "lime" : "orange"} />
         ))}
+        {cards && showCards && (
+          <Link href={`/${cards.slug}`} className="group block rounded-card">
+            <Tile emoji={cards.emoji} title={cards.title} subtitle={cards.subtitle} accent={items.length % 2 ? "lime" : "orange"} />
+          </Link>
+        )}
         {locked.map((test) => (
           <LockedTestTile key={test.id} test={test} />
         ))}
-        {items.length === 0 && locked.length === 0 && <p className="text-muted">Здесь скоро что-то появится 👀</p>}
+        {items.length === 0 && locked.length === 0 && !showCards && <p className="text-muted">Здесь скоро что-то появится 👀</p>}
       </div>
     </Screen>
   );

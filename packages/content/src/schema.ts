@@ -877,6 +877,75 @@ export const lockedTestsFileSchema = z.strictObject({
   lockedTests: z.array(lockedTestSchema),
 });
 
+// ---------- Карточные игры (памятка правил) ----------
+
+/** Одна игра для обычной колоды: только тексты правил, механики нет. */
+export const cardGameSchema = z.strictObject({
+  id: slug,
+  emoji: text,
+  title: text,
+  /** «она же «Пьяница»» — мелко под названием. */
+  aka: text.optional(),
+  /** Для фильтра «Нас: N»: игра подходит, если min ≤ N ≤ max. */
+  players: z.strictObject({ min: z.int().min(1), max: z.int().min(1) }),
+  /** «15 мин», «10–30 мин». */
+  minutes: text,
+  /** Сколько карт в колоде: пояснение берётся из decks["36"] или decks["52"]. */
+  deck: z.union([z.literal(36), z.literal(52)]),
+  /** Мелко под названием, например «Играем на фишки, спички или конфеты». */
+  note: text.optional(),
+  intro: text.optional(),
+  goal: text,
+  deal: text,
+  moves: z.array(text).min(1),
+  /** Дополнительные блоки со своим заголовком, например «Комбинации». */
+  extra: z.array(z.strictObject({ title: text, items: z.array(text).min(1) })).optional(),
+  /** «Частые споры» — свёрнуты по умолчанию. */
+  disputes: z.array(text).optional(),
+});
+
+/** Файл data/card-games.json: плитка «Карточные игры 🃏» и правила 8 игр. */
+export const cardGamesFileSchema = z
+  .strictObject({
+    _note: z.string().optional(),
+    $schema: z.string().optional(),
+    id: slug,
+    /** Адрес списка: /<slug>. */
+    slug,
+    title: text,
+    emoji: text,
+    sections: z.array(sectionSchema).min(1, "укажи хотя бы один раздел"),
+    subtitle: text,
+    /** Чипсы «Нас: 1 · 2 · … · 6+». Последнее значение — «и больше» (игры, где max ≥ value). */
+    filter: z.strictObject({
+      label: text,
+      options: z.array(z.strictObject({ value: z.int().min(1), label: text })).min(1),
+    }),
+    decks: z.strictObject({ "36": text, "52": text }),
+    labels: z.strictObject({
+      players: text,
+      minutes: text,
+      deck: text,
+      goal: text,
+      deal: text,
+      moves: text,
+      disputes: text,
+      back: text,
+      empty: text,
+    }),
+    games: z.array(cardGameSchema).min(1),
+  })
+  .superRefine((file, ctx) => {
+    const ids = new Set<string>();
+    file.games.forEach((g, i) => {
+      if (ids.has(g.id)) ctx.addIssue({ code: "custom", path: ["games", i, "id"], message: `игра "${g.id}" повторяется` });
+      ids.add(g.id);
+      if (g.players.min > g.players.max) {
+        ctx.addIssue({ code: "custom", path: ["games", i, "players"], message: "min не может быть больше max" });
+      }
+    });
+  });
+
 export type Section = z.infer<typeof sectionSchema>;
 export type Tier = z.infer<typeof tierSchema>;
 export type AgeRating = z.infer<typeof ageRatingSchema>;
@@ -907,6 +976,8 @@ export type SpyCard = SpyDeck["cards"][number];
 export type DeckBasedGame = Exclude<Game, MafiaGame | SpyGame>;
 export type Mechanic = Game["mechanic"];
 export type LockedTest = z.infer<typeof lockedTestSchema>;
+export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;
+export type CardGame = CardGamesFile["games"][number];
 export type ContentItem = Test | Game;
 
 /** Весь контент приложения. */
@@ -915,4 +986,6 @@ export interface Catalog {
   games: Game[];
   /** Платные тесты под замком (data/locked-tests.json). Нет файла — пусто. */
   lockedTests?: LockedTest[];
+  /** Памятка «Карточные игры 🃏» (data/card-games.json). Нет файла — undefined. */
+  cardGames?: CardGamesFile;
 }

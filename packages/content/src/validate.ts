@@ -1,7 +1,16 @@
 // Проверка контента: по схемам и связей между файлами.
 // Чистая функция — без чтения диска, поэтому работает где угодно и легко тестируется.
 import { z } from "zod";
-import { gameSchema, lockedTestsFileSchema, testSchema, type Catalog, type ContentItem, type LockedTest } from "./schema";
+import {
+  cardGamesFileSchema,
+  gameSchema,
+  lockedTestsFileSchema,
+  testSchema,
+  type CardGamesFile,
+  type Catalog,
+  type ContentItem,
+  type LockedTest,
+} from "./schema";
 
 z.config(z.locales.ru());
 
@@ -14,12 +23,13 @@ export interface RawContentFile {
   parseError?: string;
 }
 
-/** Файл data/locked-tests.json (необязательный). */
-export interface RawLockedTestsFile {
+/** Необязательный файл с одним JSON: data/locked-tests.json, data/card-games.json. */
+export interface RawDataFile {
   path: string;
   data: unknown;
   parseError?: string;
 }
+export type RawLockedTestsFile = RawDataFile;
 
 /** Одна проблема в файле: какое поле и что не так. */
 export interface ContentIssue {
@@ -46,6 +56,14 @@ export interface ContentReport {
   problems: string[];
   /** Платные тесты под замком, если файл есть и прошёл проверку. */
   lockedTests: LockedTest[];
+  /** «Карточные игры 🃏», если файл есть и прошёл проверку. */
+  cardGames?: CardGamesFile;
+}
+
+/** Необязательные файлы помимо тестов и игр. */
+export interface ExtraContentFiles {
+  lockedTests?: RawDataFile;
+  cardGames?: RawDataFile;
 }
 
 export class ContentError extends Error {
@@ -120,7 +138,7 @@ export function hiddenEmojiMessage(path: string, emoji: string): string {
 }
 
 /** Проверяет все файлы и не падает на ошибках — возвращает отчёт. */
-export function inspectContent(files: RawContentFile[], lockedFile?: RawLockedTestsFile): ContentReport {
+export function inspectContent(files: RawContentFile[], extras: ExtraContentFiles = {}): ContentReport {
   const problems: string[] = [];
   const reports: FileReport[] = files.map((file) => {
     const report: FileReport = { path: file.path, kind: file.kind, data: file.data, issues: [], brokenRelated: [] };
@@ -190,12 +208,31 @@ export function inspectContent(files: RawContentFile[], lockedFile?: RawLockedTe
     });
   }
 
-  const lockedTests = inspectLockedTests(lockedFile, valid.map((r) => r.item), problems);
-  return { files: reports, problems, lockedTests };
+  const lockedTests = inspectLockedTests(extras.lockedTests, valid.map((r) => r.item), problems);
+  const cardGames = inspectCardGames(extras.cardGames, problems);
+  return { files: reports, problems, lockedTests, cardGames };
+}
+
+/** Проверяет card-games.json: схема (id игр не повторяются, min ≤ max) и эмодзи. */
+function inspectCardGames(file: RawDataFile | undefined, problems: string[]): CardGamesFile | undefined {
+  if (!file) return undefined;
+  if (file.parseError !== undefined) {
+    problems.push(`❌ ${file.path}: файл не читается как JSON — проверь запятые и кавычки.
+${file.parseError}`);
+    return undefined;
+  }
+  for (const emoji of findHiddenEmoji(file.data)) problems.push(`❌ ${hiddenEmojiMessage(file.path, emoji)}`);
+  const parsed = cardGamesFileSchema.safeParse(file.data);
+  if (!parsed.success) {
+    problems.push(`❌ ${file.path}
+${z.prettifyError(parsed.error)}`);
+    return undefined;
+  }
+  return parsed.data;
 }
 
 /** Проверяет locked-tests.json: схема, уникальные id/slug и что они не совпадают с обычными тестами и играми. */
-function inspectLockedTests(file: RawLockedTestsFile | undefined, items: ContentItem[], problems: string[]): LockedTest[] {
+function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[], problems: string[]): LockedTest[] {
   if (!file) return [];
   if (file.parseError !== undefined) {
     problems.push(`❌ ${file.path}: файл не читается как JSON — проверь запятые и кавычки.\n${file.parseError}`);
@@ -220,10 +257,10 @@ function inspectLockedTests(file: RawLockedTestsFile | undefined, items: Content
   return tests;
 }
 
-export function buildCatalog(files: RawContentFile[], lockedFile?: RawLockedTestsFile): Catalog {
-  const { files: reports, problems, lockedTests } = inspectContent(files, lockedFile);
+export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
+  const { files: reports, problems, lockedTests, cardGames } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
-  const catalog: Catalog = { tests: [], games: [], lockedTests };
+  const catalog: Catalog = { tests: [], games: [], lockedTests, ...(cardGames ? { cardGames } : {}) };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);
     else if (item?.kind === "game") catalog.games.push(item);

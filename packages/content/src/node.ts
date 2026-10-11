@@ -2,7 +2,7 @@
 // Новый файл в data/tests или data/games появляется в приложении сам — код менять не нужно.
 import fs from "node:fs";
 import path from "node:path";
-import { buildCatalog, inspectContent, type ContentReport, type RawContentFile, type RawLockedTestsFile } from "./validate";
+import { buildCatalog, inspectContent, type ContentReport, type ExtraContentFiles, type RawContentFile, type RawDataFile } from "./validate";
 import type { Catalog } from "./schema";
 
 const FOLDERS = { tests: "test", games: "game" } as const;
@@ -45,11 +45,11 @@ export function readContentFiles(contentDir = findContentDir()): RawContentFile[
   return files;
 }
 
-/** Платные тесты под замком: data/locked-tests.json. Файла нет — undefined (это не ошибка). */
-export function readLockedTestsFile(contentDir = findContentDir()): RawLockedTestsFile | undefined {
-  const filePath = path.join(contentDir, "locked-tests.json");
+/** Необязательный файл data/<name>. Файла нет — undefined (это не ошибка). */
+function readDataFile(contentDir: string, name: string): RawDataFile | undefined {
+  const filePath = path.join(contentDir, name);
   if (!fs.existsSync(filePath)) return undefined;
-  const shown = "packages/content/data/locked-tests.json";
+  const shown = `packages/content/data/${name}`;
   const raw = fs.readFileSync(filePath, "utf8");
   try {
     return { path: shown, data: JSON.parse(raw) as unknown };
@@ -58,14 +58,24 @@ export function readLockedTestsFile(contentDir = findContentDir()): RawLockedTes
   }
 }
 
+/** Платные тесты под замком: data/locked-tests.json. Файла нет — undefined (это не ошибка). */
+export function readLockedTestsFile(contentDir = findContentDir()): RawDataFile | undefined {
+  return readDataFile(contentDir, "locked-tests.json");
+}
+
+/** Необязательные файлы: платные тесты под замком и «Карточные игры». */
+function readExtraFiles(dir: string): ExtraContentFiles {
+  return { lockedTests: readLockedTestsFile(dir), cardGames: readDataFile(dir, "card-games.json") };
+}
+
 /** Загружает и проверяет весь контент. Бросает ContentError со списком проблем. */
 export function loadCatalog(contentDir?: string): Catalog {
   const dir = contentDir ?? findContentDir();
-  return buildCatalog(readContentFiles(dir), readLockedTestsFile(dir));
+  return buildCatalog(readContentFiles(dir), readExtraFiles(dir));
 }
 
 /** Отчёт по каждому файлу, без падения на ошибках. Для страницы /dev/content. */
 export function inspectContentDir(contentDir?: string): ContentReport {
   const dir = contentDir ?? findContentDir();
-  return inspectContent(readContentFiles(dir), readLockedTestsFile(dir));
+  return inspectContent(readContentFiles(dir), readExtraFiles(dir));
 }

@@ -290,7 +290,7 @@ describe("платные тесты под замком (locked-tests.json)", ()
   const build = (lockedTests: unknown[], tests = [validTest]) =>
     buildCatalog(
       tests.map((data, i) => ({ path: `t${i}.json`, kind: "test" as const, data })),
-      { path: "locked-tests.json", data: { lockedTests } },
+      { lockedTests: { path: "locked-tests.json", data: { lockedTests } } },
     );
 
   it("настоящий файл загружается вместе с каталогом", () => {
@@ -385,5 +385,33 @@ describe("игра «Совпадём?» (mechanic: match)", () => {
     const data = matchFile();
     data.ranks = data.ranks.filter((r) => r.minPercent !== 0);
     expect(() => build(data)).toThrow(/minPercent: 0/);
+  });
+});
+
+describe("«Карточные игры» (data/card-games.json)", () => {
+  const cardsFile = () =>
+    JSON.parse(readFileSync(new URL("../data/card-games.json", import.meta.url), "utf-8")) as { games: { id: string; players: { min: number; max: number } }[] };
+  const build = (data: unknown) => buildCatalog([], { cardGames: { path: "card-games.json", data } });
+
+  it("настоящий файл загружается вместе с каталогом: 8 игр", () => {
+    expect(loadCatalog().cardGames?.games).toHaveLength(8);
+  });
+
+  it("id игр не повторяются, min игроков не больше max", () => {
+    const dup = cardsFile();
+    dup.games[1]!.id = dup.games[0]!.id;
+    expect(() => build(dup)).toThrow(/повторяется/);
+    const range = cardsFile();
+    range.games[0]!.players = { min: 5, max: 2 };
+    expect(() => build(range)).toThrow(/min не может быть больше max/);
+  });
+
+  it("колода только 36 или 52, лишние поля нельзя", () => {
+    const deck = cardsFile() as unknown as { games: Record<string, unknown>[] };
+    deck.games[0]!.deck = 54;
+    expect(() => build(deck)).toThrow(ContentError);
+    const extra = cardsFile() as unknown as { games: Record<string, unknown>[] };
+    extra.games[0]!.rating = 5;
+    expect(() => build(extra)).toThrow(ContentError);
   });
 });

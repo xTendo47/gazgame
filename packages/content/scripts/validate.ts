@@ -13,6 +13,9 @@ try {
     console.log(`🔒 Платных тестов под замком: ${locked.length}`);
     for (const t of locked) console.log(`   ${t.emoji} ${t.title} (${t.locked.text})`);
   }
+  if (catalog.cardGames) {
+    console.log(`${catalog.cardGames.emoji} ${catalog.cardGames.title}: игр — ${catalog.cardGames.games.length}`);
+  }
 } catch (error) {
   console.error((error as Error).message);
   process.exit(1);
