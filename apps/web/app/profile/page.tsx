@@ -5,6 +5,7 @@ import { isVisible } from "@gazgame/engine";
 import { PageHeader, Screen } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { MyResults, type TestSummary } from "@/components/MyResults";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { getCatalog, visibility } from "@/lib/catalog";
 
 export const metadata: Metadata = { title: "Мои результаты" };
@@ -25,8 +26,8 @@ export default function ProfilePage() {
       <PageHeader
         back={<BackLink href="/">Меню</BackLink>}
         title="Мои результаты"
-        emoji="👤"
         subtitle="Тесты, которые ты прошёл. Хранятся только на этом устройстве."
+        badge={<ProfileAvatar />}
       />
       <MyResults tests={tests} emptyHref="/solo" />
     </Screen>

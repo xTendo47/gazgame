@@ -65,7 +65,12 @@ export function readLockedTestsFile(contentDir = findContentDir()): RawDataFile 
 
 /** Необязательные файлы: платные тесты под замком и «Карточные игры». */
 function readExtraFiles(dir: string): ExtraContentFiles {
-  return { lockedTests: readLockedTestsFile(dir), cardGames: readDataFile(dir, "card-games.json") };
+  return {
+    lockedTests: readLockedTestsFile(dir),
+    cardGames: readDataFile(dir, "card-games.json"),
+    premium: readDataFile(dir, "premium.json"),
+    premiumCodes: readDataFile(dir, "premium-codes.json"),
+  };
 }
 
 /** Загружает и проверяет весь контент. Бросает ContentError со списком проблем. */

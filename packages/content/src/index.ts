@@ -3,6 +3,7 @@
 // Загрузка с диска — в "@gazgame/content/node" (только для сервера и бота).
 export * from "./schema";
 export * from "./sections";
+export * from "./premium-codes";
 export {
   buildCatalog,
   findHiddenEmoji,

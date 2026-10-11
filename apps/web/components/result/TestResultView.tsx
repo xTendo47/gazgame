@@ -14,6 +14,7 @@ import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getSection } from "@/lib/sections";
 import { CopyListButton } from "./CopyListButton";
+import { PremiumGate } from "../PremiumGate";
 import { AnswerBack } from "@/components/share/AnswerBack";
 import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
 import { RankingPanel } from "./RankingPanel";
@@ -172,15 +173,24 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
             {test.compat.title}
           </h2>
           <p className="leading-relaxed text-cream/85">{test.compat.text}</p>
-          <DeeperButton
-            id={test.id}
-            kind="test"
-            source="compat"
-            locked
-            label={test.compat.button}
-            href={test.upsell ? `/test/${test.slug}/deeper` : "/deeper"}
-            keepQuery={hasScales}
-          />
+          <PremiumGate
+            locked={
+              <DeeperButton
+                id={test.id}
+                kind="test"
+                source="compat"
+                locked
+                label={test.compat.button}
+                href={test.upsell ? `/test/${test.slug}/deeper` : "/deeper"}
+                keepQuery={hasScales}
+              />
+            }
+          >
+            {/* С Премиумом замка нет, но самого разбора пары ещё нет — честно говорим, что он в работе */}
+            <p className="rounded-card border border-[#62D2FF]/50 bg-[#62D2FF]/10 p-4 text-center font-semibold text-[#9BE4FF]">
+              Разбор пары уже в работе. С Премиумом откроется первым 💎
+            </p>
+          </PremiumGate>
         </section>
       )}
 

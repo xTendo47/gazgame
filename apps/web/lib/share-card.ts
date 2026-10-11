@@ -91,12 +91,15 @@ export interface ShareParams {
   scores: Record<string, number>;
   /** Показывать полоски с процентами (переключатель «Показатели»). */
   stats: boolean;
+  /** У автора Премиум — маленький 💎 в углу картинки (p=1 в адресе). */
+  premium?: boolean;
 }
 
 /** Адрес PNG: один и тот же для превью в меню и для сторис. */
 export function shareImagePath(p: ShareParams, format: ShareFormat = "story"): string {
   const q = new URLSearchParams({ r: p.resultId, f: format, stats: p.stats ? "1" : "0" });
   if (p.blendId) q.set("b", p.blendId);
+  if (p.premium) q.set("p", "1");
   const s = encodeScores(p.scores);
   if (s) q.set("s", s);
   return `/share/test/${p.slug}?${q}`;
@@ -162,6 +165,8 @@ export interface ShareCard {
   color: string;
   /** «gazgame.ru/test/temperament». */
   shortLink: string;
+  /** Значок Премиума 💎 в углу. */
+  premium: boolean;
 }
 
 /** Самая высокая шкала (для {scale} в тексте сообщения). При равенстве — что раньше в списке. */
@@ -255,5 +260,6 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
     danger: style === "player" ? partnerLabel(test, result, "danger") : undefined,
     color: glowColor(test.id, result.id),
     shortLink: `${site.replace(/^https?:\/\//, "")}/test/${test.slug}`,
+    premium: p.premium === true,
   };
 }

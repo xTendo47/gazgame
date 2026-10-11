@@ -41,6 +41,8 @@ export function deckAccess(
   if (deck.locked && !(deck.locked.reason === "subscription" && subscriber)) {
     return { open: false, reason: deck.locked.reason, text: deck.locked.text };
   }
+  // Замок снят, а карточек ещё нет (колоду только готовим) — не открываем пустую игру
+  if (deck.locked && deck.cards.length === 0) return { open: false, reason: "soon", text: "Скоро" };
   if (!hasAccess(userTier, deck.tier)) return { open: false, reason: "subscription", text: `${TIER_LABELS[deck.tier]} 💎` };
   if (deck.unlockAfter && !completedDecks.includes(deck.unlockAfter)) {
     const before = decks.find((d) => d.id === deck.unlockAfter);

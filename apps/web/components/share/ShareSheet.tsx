@@ -9,6 +9,7 @@ import type { Test, TestResult } from "@gazgame/content";
 import { answerBackMessage, findResult, scalesConfig, shareMessage } from "@gazgame/engine";
 import { Button, cn } from "@gazgame/ui";
 import { trackShareClick, type ShareChannel } from "@/lib/analytics";
+import { usePremium } from "@/lib/premium";
 import { copyText } from "@/lib/clipboard";
 import { mainPercent, shareImagePath, shareLink, siteUrl, topScale, type ShareParams } from "@/lib/share-card";
 
@@ -100,9 +101,11 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
   const [fullscreen, setFullscreen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  // Значок 💎 в углу картинки у тех, у кого Премиум
+  const premium = usePremium();
   const params: ShareParams = useMemo(
-    () => ({ slug: test.slug, resultId, blendId, scores: ctx.scores, stats }),
-    [test.slug, resultId, blendId, ctx.scores, stats],
+    () => ({ slug: test.slug, resultId, blendId, scores: ctx.scores, stats, premium }),
+    [test.slug, resultId, blendId, ctx.scores, stats, premium],
   );
   const imagePath = shareImagePath(params);
   const message = !result

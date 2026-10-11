@@ -1,4 +1,5 @@
-// Картинка итога теста: /share/test/<slug>?r=<результат>&b=<второй тип>&s=<баллы>&f=story|preview&stats=1|0
+// Картинка итога теста: /share/test/<slug>?r=<результат>&b=<второй тип>&s=<баллы>&f=story|preview&stats=1|0&p=1
+// p=1 — у автора Премиум: маленький 💎 в углу.
 // PNG рисует сервер (next/og). Один и тот же PNG — и превью в меню «Куда кидаем?», и картинка в сторис.
 // Без r — обложка теста 1200×630 для превью ссылки на тест.
 import type { NextRequest } from "next/server";
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/share/test/[
   const format: ShareFormat = q.get("f") === "preview" ? "preview" : "story";
   const card = buildShareCard(
     test,
-    { slug, resultId: q.get("r") ?? "", blendId: q.get("b") ?? undefined, scores: decodeScores(q.get("s")), stats: q.get("stats") !== "0" },
+    { slug, resultId: q.get("r") ?? "", blendId: q.get("b") ?? undefined, scores: decodeScores(q.get("s")), stats: q.get("stats") !== "0", premium: q.get("p") === "1" },
     siteUrl(requestOrigin(request)),
   );
   if (!card) return new Response("Нет такого результата", { status: 404 });

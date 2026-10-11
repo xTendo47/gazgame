@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "validate": "tsx scripts/validate.ts",
-    "schema": "tsx scripts/json-schema.ts"
+    "schema": "tsx scripts/json-schema.ts",
+    "premium-codes": "tsx scripts/premium-codes.ts"
   },
   "dependencies": {
     "zod": "^4.6.5"

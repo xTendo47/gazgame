@@ -116,3 +116,142 @@
     cursor: pointer;
   }
 }
+
+/* ---------- Премиум 💎 (экран /premium, значок в профиле, шторки) ----------
+   breathe — голубое свечение карточки «дышит»; float — алмаз покачивается; glint — блик по граням раз в ~4,6 с;
+   flash и spark — вау-момент при верном коде; shake — неверный код; sheet-up — шторка снизу. */
+@layer components {
+  .premium-hero {
+    border: 1px solid rgb(98 210 255 / 0.45);
+    background: linear-gradient(180deg, #1b2430 0%, #221e27 70%);
+    box-shadow:
+      0 0 0 1px rgb(98 210 255 / 0.08),
+      0 0 38px rgb(98 210 255 / 0.22),
+      inset 0 0 40px rgb(98 210 255 / 0.08);
+    animation: premium-breathe 3.6s ease-in-out infinite;
+  }
+  .premium-gem {
+    filter: drop-shadow(0 0 18px rgb(98 210 255 / 0.7));
+    animation: premium-float 4s ease-in-out infinite;
+  }
+  .premium-gem-flash {
+    animation: premium-flash 1s ease-out both;
+  }
+  .premium-glint {
+    animation: premium-glint 4.6s ease-in-out infinite;
+  }
+  .premium-spark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    border-radius: 999px;
+    background: #9be4ff;
+    box-shadow: 0 0 10px #62d2ff;
+    animation: premium-spark 0.95s ease-out forwards;
+  }
+  .premium-shake {
+    animation: premium-shake 0.4s ease-in-out;
+  }
+  .premium-ring {
+    box-shadow:
+      0 0 0 3px #62d2ff,
+      0 0 22px rgb(98 210 255 / 0.65);
+    animation: premium-breathe-ring 3.6s ease-in-out infinite;
+  }
+  .sheet-up {
+    animation: sheet-up 0.22s ease-out;
+  }
+}
+
+@keyframes premium-breathe {
+  50% {
+    box-shadow:
+      0 0 0 1px rgb(98 210 255 / 0.16),
+      0 0 56px rgb(98 210 255 / 0.34),
+      inset 0 0 46px rgb(98 210 255 / 0.12);
+  }
+}
+@keyframes premium-breathe-ring {
+  50% {
+    box-shadow:
+      0 0 0 3px #9be4ff,
+      0 0 32px rgb(98 210 255 / 0.85);
+  }
+}
+@keyframes premium-float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes premium-flash {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 18px rgb(98 210 255 / 0.7)) brightness(1);
+  }
+  30% {
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 46px rgb(155 228 255 / 1)) brightness(1.9);
+  }
+  100% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 24px rgb(98 210 255 / 0.85)) brightness(1.1);
+  }
+}
+/* Полоса блика проходит по граням за 0,6 с (13% от 4,6 с), остальное время её нет */
+@keyframes premium-glint {
+  0% {
+    transform: translateX(-90px) skewX(-20deg);
+  }
+  13%,
+  100% {
+    transform: translateX(110px) skewX(-20deg);
+  }
+}
+@keyframes premium-spark {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.3);
+    opacity: 0;
+  }
+}
+@keyframes premium-shake {
+  20%,
+  60% {
+    transform: translateX(-8px);
+  }
+  40%,
+  80% {
+    transform: translateX(8px);
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+/* «Уменьшить движение»: все анимации Премиума выключены, свечение остаётся неподвижным */
+@media (prefers-reduced-motion: reduce) {
+  .premium-hero,
+  .premium-gem,
+  .premium-gem-flash,
+  .premium-glint,
+  .premium-shake,
+  .premium-ring,
+  .sheet-up {
+    animation: none;
+  }
+  .premium-glint {
+    opacity: 0;
+  }
+  .premium-spark {
+    display: none;
+  }
+}

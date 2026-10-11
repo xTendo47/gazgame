@@ -36,6 +36,10 @@ export interface ProgressData {
   friendResults?: Record<string, FriendResult>;
   /** Выбранная версия теста («Кто проходит?»), по тестам. */
   audiences?: Record<string, string>;
+  /** Премиум включён кодом: хэш кода (не сам код) и когда. */
+  premium?: { hash: string; activatedAt: string };
+  /** Нажал «Хочу первым 🔔» в шторке оплаты — считаем один раз на устройство. */
+  waitlist?: boolean;
 }
 
 export interface FriendResult {
@@ -59,6 +63,12 @@ export interface ProgressStore {
   saveAudience(testId: string, audienceId: string): void;
   saveFriendResult(testId: string, result: { resultId: string; blendId?: string }, now?: Date): void;
   markDeckCompleted(gameId: string, deckId: string): void;
+  isPremium(): boolean;
+  /** Включить Премиум по хэшу верного кода. */
+  activatePremium(hash: string, now?: Date): void;
+  /** Отметить «Хочу первым»: true — впервые на этом устройстве (тогда шлём событие). */
+  joinWaitlist(): boolean;
+  hasJoinedWaitlist(): boolean;
   clear(): void;
 }
 
@@ -94,6 +104,8 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.completedDecks ? { completedDecks: data.completedDecks } : {}),
         ...(data.friendResults ? { friendResults: data.friendResults } : {}),
         ...(data.audiences ? { audiences: data.audiences } : {}),
+        ...(data.premium ? { premium: data.premium } : {}),
+        ...(data.waitlist ? { waitlist: true } : {}),
       };
     } catch {
       return emptyProgress();
@@ -160,6 +172,20 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       data.audiences = { ...data.audiences, [testId]: audienceId };
       save(data);
     },
+    isPremium: () => load().premium !== undefined,
+    activatePremium(hash, now = new Date()) {
+      const data = load();
+      data.premium = { hash, activatedAt: now.toISOString() };
+      save(data);
+    },
+    joinWaitlist() {
+      const data = load();
+      if (data.waitlist) return false;
+      data.waitlist = true;
+      save(data);
+      return true;
+    },
+    hasJoinedWaitlist: () => load().waitlist === true,
     clear() {
       try {
         store.removeItem(key);

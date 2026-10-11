@@ -11,6 +11,7 @@ import type { Deck, DeckGame as DeckGameData } from "@gazgame/content";
 import { createRoundState, pickHint, pickRound, roundReducer } from "@gazgame/engine";
 import { Button, buttonVariants, cn } from "@gazgame/ui";
 import { trackDeeperClick } from "@/lib/analytics";
+import { usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { FlexMenu } from "../result/FlexMenu";
 
@@ -64,6 +65,7 @@ export function RoundDeckGame({
   const [peek, setPeek] = useState<number | null>(null);
   const finale = game.finale;
   const accent = ACCENT[deck.accent ?? "orange"];
+  const premium = usePremium();
 
   function showPeek() {
     const id = Date.now();
@@ -156,7 +158,8 @@ export function RoundDeckGame({
           card={{ label: game.title, emoji: finale?.emoji ?? game.emoji, title: finale?.title ?? game.title, text: finale?.flexText }}
         />
 
-        {deck.upsellText && (
+        {/* «Слишком мило? Попробуйте Без тормозов 💎» — с Премиумом звать некуда, всё уже открыто */}
+        {deck.upsellText && !premium && (
           <Link
             href="/deeper"
             onClick={() => trackDeeperClick({ id: game.id, kind: "game", source: "game-over" })}

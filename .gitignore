@@ -16,6 +16,9 @@ coverage/
 .env.*
 !.env.example
 
+# Коды Премиума для фокус-группы: только у основателя (хэши — в packages/content/data/premium-codes.json)
+premium-codes.txt
+
 # Система и редакторы
 .DS_Store
 Thumbs.db

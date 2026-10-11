@@ -12,11 +12,14 @@ export interface SmallButton {
   title: string;
   /** Голубое «алмазное» свечение на самой кнопке. */
   diamond?: boolean;
+  /** Мелкая подпись под названием. */
+  subtitle?: string;
 }
 
 export const SMALL_BUTTONS: SmallButton[] = [
   { href: "/ultimate", emoji: "🔱", title: "Ultimate" },
-  { href: "/soon/subscription", emoji: "💎", title: "Подписка", diamond: true },
+  // Название и подпись берутся из premium.json (tile) — здесь запасные
+  { href: "/premium", emoji: "💎", title: "Премиум", subtitle: "без замков", diamond: true },
   { href: "/soon/suggest", emoji: "💡", title: "Предложи своё" },
   { href: "/profile", emoji: "👤", title: "Профиль" },
 ];

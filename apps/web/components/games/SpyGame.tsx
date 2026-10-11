@@ -182,7 +182,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
             <Tile emoji={t.emoji} title={t.title} subtitle={t.subtitle} accent={t.id === game.mix.id ? "lime" : "orange"} size="md" />
           </button>
         ))}
-        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} onOpen={openDeeper} />
+        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="скоро" onOpen={openDeeper} />
         <Button variant="ghost" size="md" onClick={() => setStage("start")}>
           ← Назад
         </Button>

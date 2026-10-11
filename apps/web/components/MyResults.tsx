@@ -44,7 +44,7 @@ export function MyResults({ tests, emptyHref }: { tests: TestSummary[]; emptyHre
     return (
       <section className="flex flex-col items-center gap-4 rounded-card bg-surface p-6 text-center">
         <div aria-hidden="true" className="text-5xl">
-          🫥
+          📭
         </div>
         <p className="text-lg font-semibold">Пока пусто. Пройди первый тест — результат появится здесь.</p>
         <Link href={emptyHref} className={buttonVariants({ variant: "primary" })}>

@@ -5,17 +5,17 @@
 // "soon" и unlockAfter («Откроется после …») — просто замок, нажимать некуда.
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
-import type { Deck, DeckBasedGame, Tier } from "@gazgame/content";
+import type { Deck, DeckBasedGame } from "@gazgame/content";
 import { deckAccess } from "@gazgame/engine";
 import { Badge, Tile } from "@gazgame/ui";
 import { trackDeeperClick } from "@/lib/analytics";
+import { tierFor, usePremium } from "@/lib/premium";
 
 export function DeckPicker({
   game,
   decks = game.decks,
   title = "Выбери уровень",
   completedDecks = [],
-  userTier,
   onPick,
 }: {
   game: DeckBasedGame;
@@ -23,8 +23,6 @@ export function DeckPicker({
   title?: string;
   /** Колоды, которые уже доиграли до финала (для unlockAfter). */
   completedDecks?: readonly string[];
-  /** Уровень пользователя: подписчику замок «по подписке» не мешает. */
-  userTier?: Tier;
   onPick: (deck: Deck) => void;
 }) {
   return (
@@ -40,7 +38,6 @@ export function DeckPicker({
           // цвет полоски — как у карточек колоды (deck.accent), иначе по очереди
           accent={deck.accent === "lime" || deck.accent === "orange" ? deck.accent : i % 2 ? "lime" : "orange"}
           completedDecks={completedDecks}
-          userTier={userTier}
           onPick={onPick}
         />
       ))}
@@ -53,7 +50,6 @@ export function DeckTile({
   deck,
   accent = "orange",
   completedDecks = [],
-  userTier,
   source = "locked-deck",
   onPick,
 }: {
@@ -61,13 +57,14 @@ export function DeckTile({
   deck: Deck;
   accent?: "orange" | "lime";
   completedDecks?: readonly string[];
-  userTier?: Tier;
   /** Откуда нажали на закрытую колоду — для trackDeeperClick: выбор уровня или конец игры. */
   source?: "locked-deck" | "game-over";
   onPick: (deck: Deck) => void;
 }) {
   const router = useRouter();
-  const access = deckAccess(deck, { completedDecks, decks: game.decks, userTier });
+  // С Премиумом замок «по подписке» снят (Бездна, Без тормозов, Глубоко…)
+  const premium = usePremium();
+  const access = deckAccess(deck, { completedDecks, decks: game.decks, userTier: tierFor(premium) });
   const subtitle = deck.description ?? `${deck.cards.length} карточек`;
 
   if (access.open) {

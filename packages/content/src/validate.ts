@@ -5,8 +5,11 @@ import {
   cardGamesFileSchema,
   gameSchema,
   lockedTestsFileSchema,
+  premiumCodesFileSchema,
+  premiumFileSchema,
   testSchema,
   type CardGamesFile,
+  type PremiumFile,
   type Catalog,
   type ContentItem,
   type LockedTest,
@@ -58,12 +61,18 @@ export interface ContentReport {
   lockedTests: LockedTest[];
   /** «Карточные игры 🃏», если файл есть и прошёл проверку. */
   cardGames?: CardGamesFile;
+  /** Тексты экрана «Премиум». */
+  premium?: PremiumFile;
+  /** SHA-256 кодов Премиума. */
+  premiumCodes?: string[];
 }
 
 /** Необязательные файлы помимо тестов и игр. */
 export interface ExtraContentFiles {
   lockedTests?: RawDataFile;
   cardGames?: RawDataFile;
+  premium?: RawDataFile;
+  premiumCodes?: RawDataFile;
 }
 
 export class ContentError extends Error {
@@ -209,12 +218,17 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
   }
 
   const lockedTests = inspectLockedTests(extras.lockedTests, valid.map((r) => r.item), problems);
-  const cardGames = inspectCardGames(extras.cardGames, problems);
-  return { files: reports, problems, lockedTests, cardGames };
+  const cardGames = inspectDataFile(extras.cardGames, cardGamesFileSchema, problems);
+  const premium = inspectDataFile(extras.premium, premiumFileSchema, problems);
+  const codes = inspectDataFile(extras.premiumCodes, premiumCodesFileSchema, problems);
+  if (codes && new Set(codes.hashes).size !== codes.hashes.length) {
+    problems.push(`❌ ${extras.premiumCodes?.path}: хэши кодов повторяются`);
+  }
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes };
 }
 
-/** Проверяет card-games.json: схема (id игр не повторяются, min ≤ max) и эмодзи. */
-function inspectCardGames(file: RawDataFile | undefined, problems: string[]): CardGamesFile | undefined {
+/** Проверяет необязательный файл (card-games.json, premium.json…): JSON, эмодзи для Windows 10 и схема. */
+function inspectDataFile<T>(file: RawDataFile | undefined, schema: z.ZodType<T>, problems: string[]): T | undefined {
   if (!file) return undefined;
   if (file.parseError !== undefined) {
     problems.push(`❌ ${file.path}: файл не читается как JSON — проверь запятые и кавычки.
@@ -222,7 +236,7 @@ ${file.parseError}`);
     return undefined;
   }
   for (const emoji of findHiddenEmoji(file.data)) problems.push(`❌ ${hiddenEmojiMessage(file.path, emoji)}`);
-  const parsed = cardGamesFileSchema.safeParse(file.data);
+  const parsed = schema.safeParse(file.data);
   if (!parsed.success) {
     problems.push(`❌ ${file.path}
 ${z.prettifyError(parsed.error)}`);
@@ -258,9 +272,16 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
-  const catalog: Catalog = { tests: [], games: [], lockedTests, ...(cardGames ? { cardGames } : {}) };
+  const catalog: Catalog = {
+    tests: [],
+    games: [],
+    lockedTests,
+    ...(cardGames ? { cardGames } : {}),
+    ...(premium ? { premium } : {}),
+    ...(premiumCodes ? { premiumCodes } : {}),
+  };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);
     else if (item?.kind === "game") catalog.games.push(item);

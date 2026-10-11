@@ -415,3 +415,37 @@ describe("«Карточные игры» (data/card-games.json)", () => {
     expect(() => build(extra)).toThrow(ContentError);
   });
 });
+
+describe("превью платных тестов и Премиум", () => {
+  const lockedTest = (preview?: unknown) => ({
+    id: "dark",
+    slug: "dark",
+    title: "Тёмная триада",
+    emoji: "😈",
+    description: "Описание",
+    learn: ["Пункт"],
+    durationMin: 5,
+    sections: ["solo"],
+    locked: { reason: "subscription", text: "По подписке 💎" },
+    ...(preview ? { preview } : {}),
+  });
+  const build = (test: unknown) => buildCatalog([], { lockedTests: { path: "locked-tests.json", data: { lockedTests: [test] } } });
+  const q = { text: "Вопрос?", options: ["А", "Б"] };
+
+  it("превью необязательное; если есть — минимум 2 вопроса", () => {
+    expect(() => build(lockedTest())).not.toThrow();
+    expect(() => build(lockedTest({ why: "Зачем", questions: [q, q] }))).not.toThrow();
+    expect(() => build(lockedTest({ why: "Зачем", questions: [q] }))).toThrow(/минимум 2 вопроса/);
+  });
+
+  it("настоящие файлы: у трёх платных тестов превью, тексты Премиума и хэши кодов загружаются", () => {
+    const catalog = loadCatalog();
+    expect(catalog.lockedTests?.every((t) => (t.preview?.questions.length ?? 0) >= 2)).toBe(true);
+    expect(catalog.premium?.tile).toEqual({ title: "Премиум", subtitle: "без замков" });
+    expect(catalog.premiumCodes?.every((h) => /^[0-9a-f]{64}$/.test(h))).toBe(true);
+  });
+
+  it("хэш кода — 64 символа 0-9 a-f", () => {
+    expect(() => buildCatalog([], { premiumCodes: { path: "premium-codes.json", data: { hashes: ["GAZ-7K2M"] } } })).toThrow(ContentError);
+  });
+});

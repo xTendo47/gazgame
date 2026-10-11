@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import type { Deck, DeckBasedGame, Game } from "@gazgame/content";
 import { deckAccess } from "@gazgame/engine";
 import { Button } from "@gazgame/ui";
+import { tierFor, usePremium } from "@/lib/premium";
 import { DeckGame } from "./DeckGame";
 import { DeckPicker } from "./DeckPicker";
 import { GuessPartnerGame } from "./GuessPartnerGame";
@@ -54,6 +55,7 @@ export function GameScreen({ game, related }: { game: Game; related?: ReactNode 
 
 function DecksScreen({ game, related }: { game: DeckBasedGame; related?: ReactNode }) {
   const [deckId, setDeckId] = useState<string | null>(null);
+  const premium = usePremium();
   const deck = game.decks.find((d) => d.id === deckId);
 
   // «Сменить колоду» на финале игры раундами — только если колод больше одной
@@ -61,7 +63,7 @@ function DecksScreen({ game, related }: { game: DeckBasedGame; related?: ReactNo
   if (deck) return <Mechanic game={game} deck={deck} related={related} onChangeDeck={changeDeck} />;
 
   const single = game.decks.length === 1 && game.decks[0];
-  if (single && deckAccess(single).open) {
+  if (single && deckAccess(single, { userTier: tierFor(premium) }).open) {
     return (
       <Button variant="primary" onClick={() => setDeckId(single.id)}>
         Газ! 🔥

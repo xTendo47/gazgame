@@ -26,7 +26,7 @@ import {
 import { Button, buttonVariants, cn } from "@gazgame/ui";
 import { trackDeeperClick } from "@/lib/analytics";
 import { getProgress } from "@/lib/progress";
-import { useUserTier } from "@/lib/user-tier";
+import { tierFor, usePremium } from "@/lib/premium";
 import { FlexMenu } from "../result/FlexMenu";
 import { DeckPicker } from "./DeckPicker";
 import { useSavedPlayers } from "./GuessPartnerGame";
@@ -48,7 +48,8 @@ const usedKey = (game: MatchGameData, deck: Deck) => `${game.id}/${deck.id}`;
 
 export function MatchGame({ game, related }: { game: MatchGameData; related?: ReactNode }) {
   const router = useRouter();
-  const userTier = useUserTier();
+  const premium = usePremium();
+  const userTier = tierFor(premium);
   const saved = useSavedPlayers(NAMES_KEY);
   const [players, setPlayers] = useState<Players | null>(null);
   const [editingNames, setEditingNames] = useState(false);
@@ -121,7 +122,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
   if (!state || !deck) {
     return (
       <div className="flex flex-col gap-4">
-        <DeckPicker game={game} title={game.texts.pickLevel} userTier={userTier} onPick={(d) => start(d)} />
+        <DeckPicker game={game} title={game.texts.pickLevel} onPick={(d) => start(d)} />
         <Button variant="ghost" size="md" onClick={() => setPlayers(null)}>
           Играют {first} и {second} · Сменить
         </Button>
@@ -262,7 +263,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
           </section>
         )}
 
-        {deck.upsellText && (
+        {deck.upsellText && !premium && (
           <Link
             href="/deeper"
             onClick={() => trackDeeperClick({ id: game.id, kind: "game", source: "game-over" })}

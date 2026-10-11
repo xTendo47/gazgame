@@ -10,6 +10,7 @@ import { getSection } from "@/lib/sections";
 
 export default function Home() {
   const randomPaths = randomPool(getCatalog(), visibility).map(itemPath);
+  const premiumTile = getCatalog().premium?.tile;
 
   return (
     <Screen>
@@ -47,7 +48,7 @@ export default function Home() {
 
       <nav aria-label="Ещё">
         <ul className="grid grid-cols-2 gap-3">
-          {SMALL_BUTTONS.map((item) => (
+          {SMALL_BUTTONS.map((tile) => tile.href === "/premium" && premiumTile ? { ...tile, ...premiumTile } : tile).map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
@@ -61,6 +62,7 @@ export default function Home() {
                   {item.emoji}
                 </span>
                 <span className="text-[15px] font-bold leading-tight">{item.title}</span>
+                {item.subtitle && <span className="-mt-1 text-xs font-semibold text-muted">{item.subtitle}</span>}
               </Link>
             </li>
           ))}

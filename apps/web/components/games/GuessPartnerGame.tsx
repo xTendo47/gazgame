@@ -3,6 +3,7 @@
 // «Насколько ты меня знаешь» (механика guess-partner).
 // Имена (запоминаются на устройстве) → уровень → раунд 1: первый отвечает про себя, второй угадывает →
 // «меняемся» или «результат сейчас» → раунд 2 наоборот → проценты и звание. Правильные ответы не показываем.
+// ?deck=abyss в адресе — сразу этот уровень после имён, если он открыт («Пробовать закрытое 💎» с экрана Премиума).
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import type { Deck, GuessPartnerGame as GuessPartnerGameData } from "@gazgame/content";
@@ -20,6 +21,7 @@ import {
   type GuessPartnerState,
 } from "@gazgame/engine";
 import { Button, ProgressBar } from "@gazgame/ui";
+import { tierFor, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { ShareResult } from "../ShareResult";
 import { DeckPicker, DeckTile } from "./DeckPicker";
@@ -42,6 +44,12 @@ const noopSubscribe = () => () => {};
 
 export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData; related?: ReactNode }) {
   const saved = useSavedPlayers(game.id);
+  const premium = usePremium();
+  const preferredDeck = useSyncExternalStore(
+    noopSubscribe,
+    () => new URLSearchParams(window.location.search).get("deck") ?? "",
+    () => "",
+  );
   const [players, setPlayers] = useState<Players | null>(null);
   const [editingNames, setEditingNames] = useState(false);
   const [deck, setDeck] = useState<Deck | null>(null);
@@ -63,6 +71,13 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
     setDeck(d);
     setState(next);
     setIntroSeen([false, false]);
+  }
+
+  /** Имена есть: если в адресе нужный уровень и он открыт — сразу играем им, иначе выбор уровня. */
+  function choosePlayers(names: Players) {
+    setPlayers(names);
+    const d = game.decks.find((x) => x.id === preferredDeck);
+    if (d && deckAccess(d, { completedDecks, decks: game.decks, userTier: tierFor(premium) }).open) start(d, names);
   }
 
   function dispatch(action: GuessPartnerAction) {
@@ -89,7 +104,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
               {saved[0]} <span className="text-orange">+</span> {saved[1]}
             </div>
           </div>
-          <Button variant="primary" onClick={() => setPlayers(saved)}>
+          <Button variant="primary" onClick={() => choosePlayers(saved)}>
             Дальше 👉
           </Button>
           <Button variant="ghost" size="md" onClick={() => setEditingNames(true)}>
@@ -108,7 +123,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
         onSubmit={([a = "", b = ""]) => {
           const names: Players = [a, b];
           getProgress().savePlayers(game.id, names);
-          setPlayers(names);
+          choosePlayers(names);
           setEditingNames(false);
         }}
       />
@@ -216,7 +231,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
               Следующий уровень
             </h2>
             <DeckTile game={game} deck={next} completedDecks={completedDecks} onPick={(d) => start(d)} />
-            {deckAccess(next, { completedDecks, decks: game.decks }).open && (
+            {deckAccess(next, { completedDecks, decks: game.decks, userTier: tierFor(premium) }).open && (
               <p className="text-sm text-muted">Те же игроки, новые вопросы.</p>
             )}
           </section>

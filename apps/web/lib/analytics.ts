@@ -1,6 +1,23 @@
 // События аналитики (Vercel Analytics, custom events).
 // Все события описаны здесь — так видно, что мы собираем. Никаких личных данных.
+// При разработке ничего не отправляем: события только складываются в window.__gazgameEvents (видно в консоли).
 import { track } from "@vercel/analytics";
+import { getProgress } from "./progress";
+
+type EventProps = Record<string, string | number | boolean>;
+
+function send(name: string, props: EventProps = {}) {
+  try {
+    if (process.env.NODE_ENV !== "production") {
+      const w = window as unknown as { __gazgameEvents?: { name: string; props: EventProps }[] };
+      (w.__gazgameEvents ??= []).push({ name, props });
+      return;
+    }
+    track(name, props);
+  } catch {
+    // аналитика не должна ломать приложение
+  }
+}
 
 export interface DeeperClickEvent {
   /** id теста или игры */
@@ -10,14 +27,10 @@ export interface DeeperClickEvent {
   source: "result" | "locked-deck" | "game-over" | "locked-test" | "compat";
 }
 
-/** Нажатие «Глубже 💎» — наш замер спроса на подписку. */
+/** Нажатие «Глубже 💎» — наш замер спроса на подписку. С включённым Премиумом не шлём: замков для него нет. */
 export function trackDeeperClick(event: DeeperClickEvent) {
-  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
-  try {
-    track("deeper_click", { ...event });
-  } catch {
-    // аналитика не должна ломать приложение
-  }
+  if (getProgress().isPremium()) return;
+  send("deeper_click", { ...event });
 }
 
 /** Куда поделились итогом: сторис, Telegram, системное меню/текст другу, ссылка, сохранение картинки. */
@@ -31,30 +44,42 @@ export interface ShareClickEvent {
 
 /** Нажатие в меню «Куда кидаем?». */
 export function trackShareClick(event: ShareClickEvent) {
-  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
-  try {
-    track("share_click", { ...event });
-  } catch {
-    // аналитика не должна ломать приложение
-  }
+  send("share_click", { ...event });
 }
 
 /** Заход по ссылке из шеринга (?from=share). */
 export function trackShareOpen(event: { id: string }) {
-  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
-  try {
-    track("share_open", { ...event });
-  } catch {
-    // аналитика не должна ломать приложение
-  }
+  send("share_open", { ...event });
 }
 
 /** Нажатие «Кинуть ответку 🔁» — ответ другу, который прислал тест. */
 export function trackAnswerBack(event: { id: string }) {
-  if (process.env.NODE_ENV !== "production") return; // при разработке ничего не отправляем
-  try {
-    track("answer_back", { ...event });
-  } catch {
-    // аналитика не должна ломать приложение
-  }
+  send("answer_back", { ...event });
+}
+
+// ---------- Премиум 💎 ----------
+
+/** Нажатие «Оформить Премиум 💎» на экране /premium — спрос на подписку. */
+export function trackSubscribeClick() {
+  send("subscribe_click");
+}
+
+/** «Хочу первым 🔔» в шторке оплаты — лист ожидания. Шлём один раз на устройство. */
+export function trackSubscribeWaitlist() {
+  send("subscribe_waitlist");
+}
+
+/** Премиум включён кодом. code — первые 6 символов SHA-256 кода (сам код не отправляем): видно, чей код сработал. */
+export function trackPremiumActivate(event: { code: string }) {
+  send("premium_activate", { ...event });
+}
+
+/** Открыли превью платного теста (шторка). id — id теста. */
+export function trackPreviewOpen(event: { id: string }) {
+  send("preview_open", { ...event });
+}
+
+/** «Открыть с Премиумом 💎» в превью платного теста. id — id теста. */
+export function trackPreviewUnlockClick(event: { id: string }) {
+  send("preview_unlock_click", { ...event });
 }

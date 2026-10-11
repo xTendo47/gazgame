@@ -519,6 +519,31 @@ function Receipt({ card, s }: { card: ShareCard; s: Scale }) {
   );
 }
 
+/** Значок Премиума: голубой кружок с 💎 в углу карточки (Satori понимает только left/top). */
+function PremiumMark({ left, top, size }: { left: number; top: number; size: number }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left,
+        top,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: size,
+        height: size,
+        borderRadius: size,
+        backgroundColor: "rgba(20,18,23,0.85)",
+        border: "2px solid #62D2FF",
+        boxShadow: "0 0 18px rgba(98,210,255,0.7)",
+        fontSize: Math.round(size * 0.52),
+      }}
+    >
+      💎
+    </div>
+  );
+}
+
 // ---------- Карточка 4:5 и превью ссылки ----------
 
 export function ShareCardImage({ card, format }: { card: ShareCard; format: ShareFormat }) {
@@ -550,6 +575,8 @@ function Story({ card }: { card: ShareCard }) {
       }}
     >
       <Backdrop card={card} w={W} h={H} emojiSize={760} />
+      {/* правый нижний угол, правее логотипа в подвале */}
+      {card.premium && <PremiumMark left={W - 66} top={H - 66} size={50} />}
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Logo size={32} />
@@ -665,6 +692,8 @@ function Preview({ card }: { card: ShareCard }) {
       }}
     >
       <Backdrop card={card} w={W} h={H} emojiSize={460} />
+      {/* правый верхний угол: внизу справа логотип */}
+      {card.premium && <PremiumMark left={W - 58} top={14} size={44} />}
       <div style={{ display: "flex", flex: 1, gap: 40 }}>
         <div style={{ display: "flex", flexDirection: "column", width: 440, alignItems: "flex-start", justifyContent: "center" }}>
           <div

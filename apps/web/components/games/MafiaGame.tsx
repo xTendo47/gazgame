@@ -131,7 +131,7 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
             <CardFace key={r.id} role={r} compact className="max-w-none" />
           ))}
         </div>
-        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} onOpen={openDeeper} />
+        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="Открыто ✓" onOpen={openDeeper} />
         <Button variant="primary" onClick={() => setStage("players")}>
           Играть 🔪
         </Button>
@@ -213,7 +213,7 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
             </span>
           </div>
         </div>
-        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} onOpen={openDeeper} />
+        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="Открыто ✓" onOpen={openDeeper} />
         <p role="status" className={cn("min-h-6 text-center text-[15px] font-semibold", check.ok ? "text-muted" : "text-orange")}>
           {check.ok ? `🔪 ${check.mafia} против 🏠 ${check.others}` : PROBLEM_TEXT[check.problem as LineupProblem]}
         </p>

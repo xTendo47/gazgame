@@ -15,7 +15,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "check": "turbo run lint typecheck test build",
-    "content:check": "npm run validate --workspace=@gazgame/content"
+    "content:check": "npm run validate --workspace=@gazgame/content",
+    "premium:codes": "npm run premium-codes --workspace=@gazgame/content --"
   },
   "devDependencies": {
     "turbo": "^2.11.7",

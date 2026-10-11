@@ -868,6 +868,15 @@ export const lockedTestSchema = z.strictObject({
   sections: z.array(sectionSchema).min(1, "укажи хотя бы один раздел"),
   tier: tierSchema.default("premium"),
   locked: z.strictObject({ reason: z.enum(["soon", "subscription"]), text }),
+  /** Превью в шторке: «Зачем этот тест» и примеры вопросов (первый виден, второй размыт). */
+  preview: z
+    .strictObject({
+      why: text,
+      questions: z
+        .array(z.strictObject({ text, options: z.array(text).min(2) }))
+        .min(2, "в превью нужно минимум 2 вопроса: первый виден, второй размыт"),
+    })
+    .optional(),
 });
 
 /** Файл data/locked-tests.json. */
@@ -946,6 +955,62 @@ export const cardGamesFileSchema = z
     });
   });
 
+// ---------- Премиум ----------
+
+/**
+ * На что указывает пункт шторки раздела на экране «Премиум». Найден в контенте — 💎, нет — «скоро».
+ * game + deck — колода игры; game + extras — роли и темы под замком; compat — «Совместимость» у теста;
+ * lockedTests — платные тесты под замком; always — всегда есть.
+ */
+export const premiumRefSchema = z.strictObject({
+  game: slug.optional(),
+  deck: slug.optional(),
+  extras: z.literal(true).optional(),
+  compat: slug.optional(),
+  lockedTests: z.literal(true).optional(),
+  always: z.literal(true).optional(),
+});
+
+/** Файл data/premium.json: тексты экрана «Премиум» 💎. */
+export const premiumFileSchema = z.strictObject({
+  _note: z.string().optional(),
+  $schema: z.string().optional(),
+  /** Плитка на главной. */
+  tile: z.strictObject({ title: text, subtitle: text }),
+  header: text,
+  badge: text,
+  title: text,
+  lead: text,
+  sections: z
+    .array(
+      z.strictObject({
+        id: z.string().min(1),
+        emoji: text,
+        title: text,
+        line: text,
+        items: z.array(z.strictObject({ label: text, ref: premiumRefSchema.optional() })).min(1),
+      }),
+    )
+    .min(1),
+  soon: text,
+  sheetClose: text,
+  fresh: z.strictObject({ emoji: text, text, accent: text }),
+  cta: text,
+  paySheet: z.strictObject({ title: text, text, button: text, done: text }),
+  code: z.strictObject({ link: text, title: text, placeholder: text, button: text, cancel: text, wrong: text }),
+  fine: text,
+  /** Тексты, когда Премиум включён. */
+  on: z.strictObject({ title: text, lead: text, tileState: text, cta: text, fine: text }),
+  /** Шторка превью платного теста. */
+  preview: z.strictObject({ why: text, learn: text, example: text, unlock: text, close: text }),
+});
+
+/** Файл data/premium-codes.json: SHA-256 кодов Премиума (сами коды в git не попадают). */
+export const premiumCodesFileSchema = z.strictObject({
+  _note: z.string().optional(),
+  hashes: z.array(z.string().regex(/^[0-9a-f]{64}$/, "SHA-256: 64 символа 0-9 a-f")),
+});
+
 export type Section = z.infer<typeof sectionSchema>;
 export type Tier = z.infer<typeof tierSchema>;
 export type AgeRating = z.infer<typeof ageRatingSchema>;
@@ -977,6 +1042,8 @@ export type DeckBasedGame = Exclude<Game, MafiaGame | SpyGame>;
 export type Mechanic = Game["mechanic"];
 export type LockedTest = z.infer<typeof lockedTestSchema>;
 export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;
+export type PremiumFile = z.infer<typeof premiumFileSchema>;
+export type PremiumRef = z.infer<typeof premiumRefSchema>;
 export type CardGame = CardGamesFile["games"][number];
 export type ContentItem = Test | Game;
 
@@ -988,4 +1055,8 @@ export interface Catalog {
   lockedTests?: LockedTest[];
   /** Памятка «Карточные игры 🃏» (data/card-games.json). Нет файла — undefined. */
   cardGames?: CardGamesFile;
+  /** Тексты экрана «Премиум» (data/premium.json). */
+  premium?: PremiumFile;
+  /** SHA-256 кодов Премиума (data/premium-codes.json). */
+  premiumCodes?: string[];
 }
