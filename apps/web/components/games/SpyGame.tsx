@@ -19,6 +19,7 @@ import {
   pickSpyCard,
   pickStarter,
   spyGuess,
+  spyTimerLevel,
   spyTimeOut,
   spyVote,
   type SpyMatch,
@@ -34,6 +35,9 @@ import { formatTimer, useCountdown } from "./mafia/DiscussionTimer";
 import { CardBack } from "./mafia/RoleCard";
 import { LockedExtras, Stepper } from "./mafia/parts";
 import { SpyCardFace, WordCardFace } from "./spy/SpyCard";
+
+/** Подпись сложности под таймером. */
+const TIMER_HINT = { easy: "timerEasy", fair: "timerFair", hard: "timerHard" } as const;
 
 type Stage = "start" | "rules" | "deck" | "players" | "deal" | "play" | "vote" | "reveal" | "final";
 
@@ -239,6 +243,10 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
             format={formatTimer}
             onChange={setTimerSec}
           />
+          {/* Компания сама выбирает сложность временем */}
+          <p aria-live="polite" className="text-center text-sm text-muted">
+            {game.texts[TIMER_HINT[spyTimerLevel(timerSec)]]}
+          </p>
         </div>
         <Button variant="primary" onClick={() => deal()}>
           Раздать 🃏
@@ -251,7 +259,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
   }
 
   if (!card || !deckOfCard) return null;
-  const startsText = fill(game.texts.starts, { n: starter + 1 });
+  const startedHint = fill(game.texts.startedHint, { name: `Игрок ${starter + 1}` });
   const deckLabel = fill(game.texts.deckLabel, { title: deckOfCard.title, emoji: deckOfCard.emoji });
   const numbers = (onPick: (player: number) => void) => (
     <PlayerGrid players={players} disabled={match.caught} onPick={onPick} />
@@ -399,8 +407,10 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col items-center gap-1 text-center">
-        <p className="font-display text-xl font-bold">{startsText}</p>
+      {/* Один общий таймер на всю компанию, без очереди ходов */}
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <h2 className="font-display text-3xl font-black leading-tight">{game.texts.started}</h2>
+        <p className="font-semibold text-balance">{startedHint}</p>
         <p className="text-muted">{deckLabel}</p>
       </div>
       {notice && (

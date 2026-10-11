@@ -331,3 +331,29 @@
     display: none;
   }
 }
+
+/* Уровень открылся: плитка один раз мягко подсвечивается салатовым */
+@layer components {
+  .unlock-glow {
+    animation: unlock-glow 1.8s ease-out 1;
+  }
+}
+@keyframes unlock-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgb(212 255 58 / 0);
+  }
+  35% {
+    box-shadow:
+      0 0 0 2px rgb(212 255 58 / 0.9),
+      0 0 26px rgb(212 255 58 / 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(212 255 58 / 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .unlock-glow {
+    animation: none;
+    box-shadow: 0 0 0 2px rgb(212 255 58 / 0.8);
+  }
+}

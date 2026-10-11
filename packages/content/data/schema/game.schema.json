@@ -318,6 +318,10 @@
               "type": "string",
               "minLength": 1
             },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            },
             "hintButton": {
               "type": "string",
               "minLength": 1
@@ -2069,7 +2073,23 @@
               "type": "string",
               "minLength": 1
             },
-            "starts": {
+            "started": {
+              "type": "string",
+              "minLength": 1
+            },
+            "startedHint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timerEasy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timerFair": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timerHard": {
               "type": "string",
               "minLength": 1
             },
@@ -2184,7 +2204,11 @@
             "spyTitle",
             "spyHint",
             "dealt",
-            "starts",
+            "started",
+            "startedHint",
+            "timerEasy",
+            "timerFair",
+            "timerHard",
             "deckLabel",
             "vote",
             "voteHint",

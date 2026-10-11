@@ -40,6 +40,14 @@ describe("«Совпадём?» — на настоящем match-us.json", () =
     expect(deckAccess(soon, { userTier: "premium" }).open).toBe(false);
   });
 
+  it("уровни по очереди: Серьёзнее закрыт, пока не доиграли Лайт до итогов; с Premium открыт сразу", () => {
+    const [light, serious] = game.decks;
+    expect(deckAccess(serious!, { decks: game.decks })).toEqual({ open: false, reason: "after", text: "Сначала пройдите Лайт ☕" });
+    expect(deckAccess(serious!, { decks: game.decks, completedDecks: ["light"] }).open).toBe(true);
+    expect(deckAccess(serious!, { decks: game.decks, userTier: "premium" }).open).toBe(true);
+    expect(deckAccess(light!).open).toBe(true);
+  });
+
   it("следующий уровень: Лайт → Серьёзнее → Глубоко → нет", () => {
     expect(nextMatchDeck(game, "light")?.id).toBe("serious");
     expect(nextMatchDeck(game, "serious")?.id).toBe("deep");

@@ -2,13 +2,16 @@
 
 // Выбор уровня (колоды) игры. Закрытая колода — с замком и текстом:
 // locked.reason "subscription" (или уровень выше подписки) ведёт туда же, куда «Глубже 💎»;
-// "soon" и unlockAfter («Откроется после …») — просто замок, нажимать некуда.
+// "soon" — просто замок; unlockAfter («Сначала пройдите …») — уровни по очереди: тап трясёт плитку.
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 import type { Deck, DeckBasedGame } from "@gazgame/content";
 import { deckAccess } from "@gazgame/engine";
-import { Badge, Tile } from "@gazgame/ui";
+import { Badge, cn, Tile } from "@gazgame/ui";
 import { trackDeeperClick } from "@/lib/analytics";
+import { haptic } from "@/lib/haptics";
+import { getProgress } from "@/lib/progress";
 import { tierFor, usePremium } from "@/lib/premium";
 
 export function DeckPicker({
@@ -62,15 +65,59 @@ export function DeckTile({
   onPick: (deck: Deck) => void;
 }) {
   const router = useRouter();
-  // С Премиумом замок «по подписке» снят (Бездна, Без тормозов, Глубоко…)
+  // С Премиумом замок «по подписке» снят (Бездна, Без тормозов, Глубоко…), уровни по очереди тоже
   const premium = usePremium();
   const access = deckAccess(deck, { completedDecks, decks: game.decks, userTier: tierFor(premium) });
   const subtitle = deck.description ?? `${deck.cards.length} карточек`;
+  const [shake, setShake] = useState(0);
+  // Уровень только что открылся (первый пройден до итогов) — один раз мягко подсвечиваем плитку
+  const [justUnlocked] = useState(
+    () =>
+      access.open &&
+      !premium &&
+      !!deck.unlockAfter &&
+      completedDecks.includes(deck.unlockAfter) &&
+      !getProgress().isUnlockSeen(game.id, deck.id),
+  );
+  useEffect(() => {
+    if (!justUnlocked) return;
+    haptic("tick");
+    getProgress().markUnlockSeen(game.id, deck.id);
+  }, [justUnlocked, game.id, deck.id]);
 
   if (access.open) {
     return (
-      <button type="button" className="group block rounded-card text-left" onClick={() => onPick(deck)}>
+      <button type="button" className={cn("group block rounded-card text-left", justUnlocked && "unlock-glow")} onClick={() => onPick(deck)}>
         <Tile emoji={deck.emoji} title={deck.title} subtitle={subtitle} accent={accent} size="md" />
+      </button>
+    );
+  }
+
+  // Уровни по очереди: приглушённая плитка с 🔒 и «Сначала пройдите …». Тап — тряска и двойная вибрация.
+  if (access.reason === "after") {
+    return (
+      <button
+        key={shake}
+        type="button"
+        aria-disabled="true"
+        aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`}
+        onClick={() => {
+          setShake(shake + 1);
+          haptic("double");
+        }}
+        className={cn("group block rounded-card text-left", shake > 0 && "premium-shake")}
+      >
+        <Tile
+          emoji={deck.emoji}
+          title={deck.title}
+          subtitle={`${subtitle}
+${access.text}`}
+          accent="none"
+          size="md"
+          badge={<span aria-hidden="true" className="text-xl">🔒</span>}
+          className="whitespace-pre-line"
+          dimmed
+        />
       </button>
     );
   }
@@ -97,17 +144,15 @@ ${access.text}` : subtitle;
           router.push("/deeper");
         }}
       >
-        <Tile emoji={deck.emoji} title={deck.title} subtitle={lockedSubtitle} accent="none" size="md" badge={lock}
-          className="whitespace-pre-line" />
+        <Tile emoji={deck.emoji} title={deck.title} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" />
       </button>
     );
   }
 
-  // «Скоро» и «Откроется после …» — нажимать некуда, просто показываем замок.
+  // «Скоро» — нажимать некуда, просто показываем замок.
   return (
     <div role="group" aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`} aria-disabled="true">
-      <Tile emoji={deck.emoji} title={deck.title} subtitle={lockedSubtitle} accent="none" size="md" badge={lock}
-          className="whitespace-pre-line" dimmed />
+      <Tile emoji={deck.emoji} title={deck.title} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" dimmed />
     </div>
   );
 }

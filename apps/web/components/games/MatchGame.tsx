@@ -58,6 +58,8 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
   /** Правила показываем перед первой игрой, дальше — сразу ход. */
   const [rulesSeen, setRulesSeen] = useState(false);
   const [showMatched, setShowMatched] = useState(false);
+  /** Уровни, доигранные до итогов (с устройства): второй открывается после первого. */
+  const [completedDecks, setCompletedDecks] = useState<string[]>(() => getProgress().getCompletedDecks(game.id));
 
   /** Новая игра на уровне: 10 вопросов без повторов, пока не пройдена вся колода (с устройства). */
   function start(d: Deck, names: Players = players as Players) {
@@ -79,7 +81,11 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
     const next = matchReducer(state, action);
     if (next.phase === "result" && state.phase !== "result") {
       getProgress().recordGamePlayed(game.id, { score: scoreMatch(next).percent });
-      if (deck) getProgress().markDeckCompleted(game.id, deck.id);
+      if (deck) {
+        // Уровень доведён до итогов — следующий открывается (уровни по очереди), запоминаем на устройстве
+        getProgress().markDeckCompleted(game.id, deck.id);
+        setCompletedDecks(getProgress().getCompletedDecks(game.id));
+      }
     }
     setState(next);
   }
@@ -122,7 +128,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
   if (!state || !deck) {
     return (
       <div className="flex flex-col gap-4">
-        <DeckPicker game={game} title={game.texts.pickLevel} onPick={(d) => start(d)} />
+        <DeckPicker game={game} title={game.texts.pickLevel} completedDecks={completedDecks} onPick={(d) => start(d)} />
         <Button variant="ghost" size="md" onClick={() => setPlayers(null)}>
           Играют {first} и {second} · Сменить
         </Button>
@@ -186,7 +192,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
     const rank = rankFor(score.percent, game.ranks);
     const option = (card: number, i: number) => deck.cards[card]?.options?.[i] ?? "";
     const next = nextMatchDeck(game, deck.id);
-    const nextOpen = next ? deckAccess(next, { decks: game.decks, userTier }).open : false;
+    const nextOpen = next ? deckAccess(next, { decks: game.decks, userTier, completedDecks }).open : false;
     const link = `${window.location.origin}/game/${game.slug}`;
     const flex = fill(game.texts.flexText, { a: first, b: second, pct: score.percent, link });
 

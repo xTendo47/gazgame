@@ -42,6 +42,8 @@ export interface ProgressData {
   waitlist?: boolean;
   /** Нажал «Хочу первым 🔔» на экране Ultimate — тоже один раз на устройство. */
   ultimateWaitlist?: boolean;
+  /** Уровни, чьё открытие уже показали подсветкой, по играм — подсвечиваем один раз. */
+  unlocksSeen?: Record<string, string[]>;
 }
 
 export interface FriendResult {
@@ -74,6 +76,9 @@ export interface ProgressStore {
   /** «Хочу первым» в Ultimate: true — впервые на этом устройстве (тогда шлём событие). */
   joinUltimateWaitlist(): boolean;
   hasJoinedUltimateWaitlist(): boolean;
+  /** Подсветку «уровень открылся» уже показывали? */
+  isUnlockSeen(gameId: string, deckId: string): boolean;
+  markUnlockSeen(gameId: string, deckId: string): void;
   clear(): void;
 }
 
@@ -112,6 +117,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.premium ? { premium: data.premium } : {}),
         ...(data.waitlist ? { waitlist: true } : {}),
         ...(data.ultimateWaitlist ? { ultimateWaitlist: true } : {}),
+        ...(data.unlocksSeen ? { unlocksSeen: data.unlocksSeen } : {}),
       };
     } catch {
       return emptyProgress();
@@ -200,6 +206,14 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       return true;
     },
     hasJoinedUltimateWaitlist: () => load().ultimateWaitlist === true,
+    isUnlockSeen: (gameId, deckId) => load().unlocksSeen?.[gameId]?.includes(deckId) ?? false,
+    markUnlockSeen(gameId, deckId) {
+      const data = load();
+      const seen = data.unlocksSeen?.[gameId] ?? [];
+      if (seen.includes(deckId)) return;
+      data.unlocksSeen = { ...data.unlocksSeen, [gameId]: [...seen, deckId] };
+      save(data);
+    },
     clear() {
       try {
         store.removeItem(key);

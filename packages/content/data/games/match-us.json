@@ -309,6 +309,7 @@
     },
     {
       "id": "serious",
+      "unlockAfter": "light",
       "title": "Серьёзнее",
       "emoji": "🎯",
       "description": "Начать переписку или ждать? Тут уже интереснее",

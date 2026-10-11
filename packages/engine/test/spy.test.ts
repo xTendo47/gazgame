@@ -12,6 +12,7 @@ import {
   seededRandom,
   spiesLeft,
   spyDecksFor,
+  spyTimerLevel,
   spyGuess,
   spyTimeOut,
   spyVote,
@@ -38,10 +39,15 @@ describe("«Шпион» — настройки на настоящем spy.json
     expect(maxSpies(spy, 4)).toBe(2);
   });
 
-  it("таймер: минута на игрока в пределах 3–10 минут", () => {
+  it("таймер: от 1 до 10 минут с шагом в минуту, по умолчанию минута на игрока", () => {
+    expect(spy.timer).toMatchObject({ minSec: 60, maxSec: 600, stepSec: 60 });
     expect(defaultTimerSec(spy, 3)).toBe(180);
     expect(defaultTimerSec(spy, 7)).toBe(420);
     expect(defaultTimerSec(spy, 12)).toBe(600);
+  });
+
+  it("подпись сложности: 1–2 мин проще, 3–5 честно, 6–10 сложнее", () => {
+    expect([60, 120, 180, 300, 360, 600].map(spyTimerLevel)).toEqual(["easy", "easy", "fair", "fair", "hard", "hard"]);
   });
 });
 

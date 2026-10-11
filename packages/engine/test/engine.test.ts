@@ -922,9 +922,12 @@ describe("guess-partner — «Насколько ты меня знаешь»", 
   it("unlockAfter: закрыта, пока не доиграли указанную колоду", () => {
     const middle = knowEachOther.decks[1]!;
     const decks = knowEachOther.decks;
-    expect(deckAccess(middle, { decks })).toEqual({ open: false, reason: "after", text: "Откроется после уровня «Основы»" });
+    const basics = decks[0]!;
+    expect(deckAccess(middle, { decks })).toEqual({ open: false, reason: "after", text: `Сначала пройдите ${basics.title} ${basics.emoji}` });
     expect(deckAccess(middle, { decks, completedDecks: ["deep"] }).open).toBe(false);
     expect(deckAccess(middle, { decks, completedDecks: ["basics"] })).toEqual({ open: true });
+    // с Premium все уровни открыты сразу
+    expect(deckAccess(middle, { decks, userTier: "premium" })).toEqual({ open: true });
   });
 
   it("новая игра в колоде не повторяет прошлый набор целиком; варианты и вопросы перемешаны", () => {

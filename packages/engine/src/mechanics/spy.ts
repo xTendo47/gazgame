@@ -29,6 +29,13 @@ export function defaultTimerSec(game: SpyGame, players: number): number {
   return Math.min(maxSec, Math.max(minSec, stepped));
 }
 
+/** Сложность по таймеру (подпись под таймером): 1–2 мин — шпиону проще, 3–5 — честно, 6–10 — шпиону сложнее. */
+export function spyTimerLevel(sec: number): "easy" | "fair" | "hard" {
+  if (sec <= 120) return "easy";
+  if (sec <= 300) return "fair";
+  return "hard";
+}
+
 // ---------- Карта партии ----------
 
 /** Сыгранные карты по наборам: id набора → id карт (хранится на устройстве). */

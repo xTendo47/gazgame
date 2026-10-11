@@ -512,6 +512,8 @@ export const deckGameSchema = gameBase.extend({
       emoji: text,
       title: text,
       text,
+      /** Мелкая строка под текстом финала, например «Если у нескольких поровну больше всех: …». */
+      note: text.optional(),
       /** Кнопка, которая показывает случайную подсказку из hints, например «Нет идей? 🎲». */
       hintButton: text,
       hints: z.array(text).min(1, "нужна хотя бы одна подсказка"),
@@ -720,7 +722,14 @@ export const spyGameSchema = itemBase.extend({
     spyHint: text,
     /** {n} — кто начинает. */
     dealt: text,
-    starts: text,
+    /** Большой экран после раздачи: «Игра началась 🕵️». */
+    started: text,
+    /** Под ним: «Спрашивайте друг друга в любом порядке. Начинает {name}». */
+    startedHint: text,
+    /** Подпись под таймером — сложность: 1–2 мин, 3–5 мин, 6–10 мин. */
+    timerEasy: text,
+    timerFair: text,
+    timerHard: text,
     /** {title}, {emoji} — набор карты этой партии. */
     deckLabel: text,
     vote: text,
