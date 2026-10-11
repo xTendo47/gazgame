@@ -139,4 +139,14 @@ describe("Премиум — на устройстве", () => {
     expect(store.joinWaitlist()).toBe(false);
     expect(createProgressStore(kv).hasJoinedWaitlist()).toBe(true);
   });
+
+  it("«Хочу первым» в Ultimate — отдельно от Премиума и тоже один раз", () => {
+    const kv = createMemoryKeyValueStore();
+    const store = createProgressStore(kv);
+    expect(store.hasJoinedUltimateWaitlist()).toBe(false);
+    expect(store.joinUltimateWaitlist()).toBe(true);
+    expect(store.joinUltimateWaitlist()).toBe(false);
+    expect(createProgressStore(kv).hasJoinedUltimateWaitlist()).toBe(true);
+    expect(store.hasJoinedWaitlist()).toBe(false);
+  });
 });

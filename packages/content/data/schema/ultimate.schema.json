@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "_note": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "tile": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subtitle": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "subtitle"
+      ],
+      "additionalProperties": false
+    },
+    "header": {
+      "type": "string",
+      "minLength": 1
+    },
+    "badge": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lead": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tiles": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "emoji",
+          "title",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cta": {
+      "type": "string",
+      "minLength": 1
+    },
+    "done": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "fine": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "tile",
+    "header",
+    "badge",
+    "title",
+    "lead",
+    "tiles",
+    "cta",
+    "done",
+    "fine"
+  ],
+  "additionalProperties": false
+}

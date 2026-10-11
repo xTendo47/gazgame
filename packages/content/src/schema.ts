@@ -1005,6 +1005,25 @@ export const premiumFileSchema = z.strictObject({
   preview: z.strictObject({ why: text, learn: text, example: text, unlock: text, close: text }),
 });
 
+/** Файл data/ultimate.json: тизер Ultimate 🔱 — плитка на главной и экран /ultimate. */
+export const ultimateFileSchema = z.strictObject({
+  _note: z.string().optional(),
+  $schema: z.string().optional(),
+  /** Плитка на главной. */
+  tile: z.strictObject({ title: text, subtitle: text }),
+  header: text,
+  badge: text,
+  title: text,
+  lead: text,
+  /** Плитки 2×2: что будет в Ultimate. */
+  tiles: z.array(z.strictObject({ emoji: text, title: text, text })).min(1),
+  /** «Хочу первым 🔔». */
+  cta: text,
+  /** Плашка после нажатия. */
+  done: z.strictObject({ title: text, text }),
+  fine: text,
+});
+
 /** Файл data/premium-codes.json: SHA-256 кодов Премиума (сами коды в git не попадают). */
 export const premiumCodesFileSchema = z.strictObject({
   _note: z.string().optional(),
@@ -1044,6 +1063,7 @@ export type LockedTest = z.infer<typeof lockedTestSchema>;
 export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;
 export type PremiumFile = z.infer<typeof premiumFileSchema>;
 export type PremiumRef = z.infer<typeof premiumRefSchema>;
+export type UltimateFile = z.infer<typeof ultimateFileSchema>;
 export type CardGame = CardGamesFile["games"][number];
 export type ContentItem = Test | Game;
 
@@ -1059,4 +1079,6 @@ export interface Catalog {
   premium?: PremiumFile;
   /** SHA-256 кодов Премиума (data/premium-codes.json). */
   premiumCodes?: string[];
+  /** Тизер Ultimate 🔱 (data/ultimate.json). */
+  ultimate?: UltimateFile;
 }

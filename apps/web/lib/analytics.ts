@@ -83,3 +83,10 @@ export function trackPreviewOpen(event: { id: string }) {
 export function trackPreviewUnlockClick(event: { id: string }) {
   send("preview_unlock_click", { ...event });
 }
+
+// ---------- Ultimate 🔱 ----------
+
+/** «Хочу первым 🔔» на экране Ultimate — лист ожидания будущего приложения. Шлём один раз на устройство. */
+export function trackUltimateWaitlist() {
+  send("ultimate_waitlist");
+}

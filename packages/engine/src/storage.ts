@@ -40,6 +40,8 @@ export interface ProgressData {
   premium?: { hash: string; activatedAt: string };
   /** Нажал «Хочу первым 🔔» в шторке оплаты — считаем один раз на устройство. */
   waitlist?: boolean;
+  /** Нажал «Хочу первым 🔔» на экране Ultimate — тоже один раз на устройство. */
+  ultimateWaitlist?: boolean;
 }
 
 export interface FriendResult {
@@ -69,6 +71,9 @@ export interface ProgressStore {
   /** Отметить «Хочу первым»: true — впервые на этом устройстве (тогда шлём событие). */
   joinWaitlist(): boolean;
   hasJoinedWaitlist(): boolean;
+  /** «Хочу первым» в Ultimate: true — впервые на этом устройстве (тогда шлём событие). */
+  joinUltimateWaitlist(): boolean;
+  hasJoinedUltimateWaitlist(): boolean;
   clear(): void;
 }
 
@@ -106,6 +111,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.audiences ? { audiences: data.audiences } : {}),
         ...(data.premium ? { premium: data.premium } : {}),
         ...(data.waitlist ? { waitlist: true } : {}),
+        ...(data.ultimateWaitlist ? { ultimateWaitlist: true } : {}),
       };
     } catch {
       return emptyProgress();
@@ -186,6 +192,14 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       return true;
     },
     hasJoinedWaitlist: () => load().waitlist === true,
+    joinUltimateWaitlist() {
+      const data = load();
+      if (data.ultimateWaitlist) return false;
+      data.ultimateWaitlist = true;
+      save(data);
+      return true;
+    },
+    hasJoinedUltimateWaitlist: () => load().ultimateWaitlist === true,
     clear() {
       try {
         store.removeItem(key);

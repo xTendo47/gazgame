@@ -449,3 +449,20 @@ describe("превью платных тестов и Премиум", () => {
     expect(() => buildCatalog([], { premiumCodes: { path: "premium-codes.json", data: { hashes: ["GAZ-7K2M"] } } })).toThrow(ContentError);
   });
 });
+
+describe("Ultimate (data/ultimate.json)", () => {
+  it("настоящий файл загружается: плитка, 4 плитки экрана, «Хочу первым»", () => {
+    const u = loadCatalog().ultimate;
+    expect(u?.tile).toEqual({ title: "Ultimate", subtitle: "скоро 🔥" });
+    expect(u?.tiles).toHaveLength(4);
+    expect(u?.cta).toBe("Хочу первым 🔔");
+  });
+
+  it("лишние поля и пустые тексты не проходят", () => {
+    const ultimateFile = () => JSON.parse(readFileSync(new URL("../data/ultimate.json", import.meta.url), "utf-8")) as Record<string, unknown>;
+    const build = (data: unknown) => buildCatalog([], { ultimate: { path: "ultimate.json", data } });
+    expect(() => build(ultimateFile())).not.toThrow();
+    expect(() => build({ ...ultimateFile(), extra: 1 })).toThrow(ContentError);
+    expect(() => build({ ...ultimateFile(), title: " " })).toThrow(ContentError);
+  });
+});

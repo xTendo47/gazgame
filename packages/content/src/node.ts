@@ -70,6 +70,7 @@ function readExtraFiles(dir: string): ExtraContentFiles {
     cardGames: readDataFile(dir, "card-games.json"),
     premium: readDataFile(dir, "premium.json"),
     premiumCodes: readDataFile(dir, "premium-codes.json"),
+    ultimate: readDataFile(dir, "ultimate.json"),
   };
 }
 

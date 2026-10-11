@@ -14,10 +14,13 @@ export interface SmallButton {
   diamond?: boolean;
   /** Мелкая подпись под названием. */
   subtitle?: string;
+  /** Живая «огненная» плитка Ultimate: оранжевое дышащее свечение и искры. */
+  fire?: boolean;
 }
 
 export const SMALL_BUTTONS: SmallButton[] = [
-  { href: "/ultimate", emoji: "🔱", title: "Ultimate" },
+  // Название и подпись берутся из ultimate.json (tile) — здесь запасные
+  { href: "/ultimate", emoji: "🔱", title: "Ultimate", subtitle: "скоро 🔥", fire: true },
   // Название и подпись берутся из premium.json (tile) — здесь запасные
   { href: "/premium", emoji: "💎", title: "Премиум", subtitle: "без замков", diamond: true },
   { href: "/soon/suggest", emoji: "💡", title: "Предложи своё" },

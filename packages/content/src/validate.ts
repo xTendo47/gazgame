@@ -8,8 +8,10 @@ import {
   premiumCodesFileSchema,
   premiumFileSchema,
   testSchema,
+  ultimateFileSchema,
   type CardGamesFile,
   type PremiumFile,
+  type UltimateFile,
   type Catalog,
   type ContentItem,
   type LockedTest,
@@ -65,6 +67,8 @@ export interface ContentReport {
   premium?: PremiumFile;
   /** SHA-256 кодов Премиума. */
   premiumCodes?: string[];
+  /** Тизер Ultimate. */
+  ultimate?: UltimateFile;
 }
 
 /** Необязательные файлы помимо тестов и игр. */
@@ -73,6 +77,7 @@ export interface ExtraContentFiles {
   cardGames?: RawDataFile;
   premium?: RawDataFile;
   premiumCodes?: RawDataFile;
+  ultimate?: RawDataFile;
 }
 
 export class ContentError extends Error {
@@ -224,7 +229,8 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
   if (codes && new Set(codes.hashes).size !== codes.hashes.length) {
     problems.push(`❌ ${extras.premiumCodes?.path}: хэши кодов повторяются`);
   }
-  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes };
+  const ultimate = inspectDataFile(extras.ultimate, ultimateFileSchema, problems);
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate };
 }
 
 /** Проверяет необязательный файл (card-games.json, premium.json…): JSON, эмодзи для Windows 10 и схема. */
@@ -272,7 +278,7 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
   const catalog: Catalog = {
     tests: [],
@@ -281,6 +287,7 @@ export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles 
     ...(cardGames ? { cardGames } : {}),
     ...(premium ? { premium } : {}),
     ...(premiumCodes ? { premiumCodes } : {}),
+    ...(ultimate ? { ultimate } : {}),
   };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);

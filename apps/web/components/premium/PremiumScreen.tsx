@@ -5,13 +5,13 @@
 // Верный код: алмаз вспыхивает, разлетаются искры, длинная вибрация, потом экран перестраивается в «Премиум включён».
 import { useState, type CSSProperties } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type { PremiumFile } from "@gazgame/content";
 import { cn } from "@gazgame/ui";
 import { trackSubscribeClick, trackSubscribeWaitlist } from "@/lib/analytics";
 import { activatePremium, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { BottomSheet } from "../BottomSheet";
+import { HeaderBack } from "../HeaderBack";
 import { Gem } from "./Gem";
 
 type Sheet = { kind: "section"; id: string } | { kind: "pay" } | { kind: "code" } | null;
@@ -38,7 +38,6 @@ export function PremiumScreen({
   found: Record<string, boolean[]>;
   hashes: string[];
 }) {
-  const router = useRouter();
   const premium = usePremium();
   const [sheet, setSheet] = useState<Sheet>(null);
   const [waitDone, setWaitDone] = useState(false);
@@ -73,13 +72,7 @@ export function PremiumScreen({
   return (
     <div className="flex flex-col gap-[18px]">
       <div className="flex items-center justify-between text-[13px] text-muted">
-        <button
-          type="button"
-          onClick={() => (window.history.length > 1 ? router.back() : router.push("/"))}
-          className="min-h-11 py-1 text-[15px] font-medium text-cream"
-        >
-          ← Назад
-        </button>
+        <HeaderBack />
         <span>{texts.header}</span>
       </div>
 
