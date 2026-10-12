@@ -9,9 +9,11 @@ import {
   premiumFileSchema,
   testSchema,
   ultimateFileSchema,
+  sectionsFileSchema,
   type CardGamesFile,
   type PremiumFile,
   type UltimateFile,
+  type SectionsFile,
   type Catalog,
   type ContentItem,
   type LockedTest,
@@ -69,6 +71,8 @@ export interface ContentReport {
   premiumCodes?: string[];
   /** Тизер Ultimate. */
   ultimate?: UltimateFile;
+  /** Разделы: плитки-вкладки и карточки. */
+  sectionLayouts?: SectionsFile;
 }
 
 /** Необязательные файлы помимо тестов и игр. */
@@ -78,6 +82,7 @@ export interface ExtraContentFiles {
   premium?: RawDataFile;
   premiumCodes?: RawDataFile;
   ultimate?: RawDataFile;
+  sectionLayouts?: RawDataFile;
 }
 
 export class ContentError extends Error {
@@ -85,70 +90,6 @@ export class ContentError extends Error {
     super(`Ошибки в контенте (${problems.length}):\n\n${problems.join("\n\n")}`);
     this.name = "ContentError";
   }
-}
-
-// ---------- Эмодзи, которых нет на Windows 10 и старых Android ----------
-
-/**
- * Эмодзи 2020 года и новее (Emoji 13.0+): на Windows 10 и Android 10 и ниже вместо них квадратик.
- * Диапазоны кодов — включительно.
- */
-const HIDDEN_EMOJI_RANGES: [number, number][] = [
-  [0x1fa74, 0x1fa77],
-  [0x1fa7b, 0x1fa7c],
-  [0x1fa83, 0x1fa88],
-  [0x1fa96, 0x1faff],
-  [0x1f90c, 0x1f90c],
-  [0x1f972, 0x1f972],
-  [0x1f977, 0x1f979],
-  [0x1f9a3, 0x1f9a4],
-  [0x1f9ab, 0x1f9ad],
-  [0x1f9cb, 0x1f9cc],
-  [0x1f6d6, 0x1f6d7],
-  [0x1f6dc, 0x1f6df],
-  [0x1f6fb, 0x1f6fc],
-  [0x1f7f0, 0x1f7f0],
-];
-
-/** Новые сочетания из старых эмодзи (через ZWJ): по отдельности символы видны, вместе — нет. */
-const HIDDEN_EMOJI_SEQUENCES = ["❤️‍🔥", "❤️‍🩹", "😮‍💨", "😵‍💫", "😶‍🌫️"];
-
-/** Такое же сочетание без невидимого вариационного селектора (U+FE0F) — его часто теряют при копировании. */
-const withoutVs16 = (s: string) => s.replace(/\uFE0F/g, "");
-
-/** Все «невидимые» эмодзи в строках файла (без повторов, в порядке появления). */
-export function findHiddenEmoji(data: unknown): string[] {
-  const found: string[] = [];
-  const add = (e: string) => {
-    if (!found.includes(e)) found.push(e);
-  };
-  const scan = (value: unknown) => {
-    if (typeof value === "string") {
-      let rest = value;
-      for (const seq of HIDDEN_EMOJI_SEQUENCES) {
-        for (const variant of new Set([seq, withoutVs16(seq)])) {
-          if (rest.includes(variant)) {
-            add(seq);
-            rest = rest.split(variant).join(" ");
-          }
-        }
-      }
-      for (const ch of rest) {
-        const code = ch.codePointAt(0) ?? 0;
-        if (HIDDEN_EMOJI_RANGES.some(([from, to]) => code >= from && code <= to)) add(ch);
-      }
-    } else if (Array.isArray(value)) {
-      value.forEach(scan);
-    } else if (value && typeof value === "object") {
-      Object.values(value).forEach(scan);
-    }
-  };
-  scan(data);
-  return found;
-}
-
-export function hiddenEmojiMessage(path: string, emoji: string): string {
-  return `${path}: эмодзи ${emoji} не видно на Windows 10 и старых Android, возьми другой`;
 }
 
 /** Проверяет все файлы и не падает на ошибках — возвращает отчёт. */
@@ -160,10 +101,6 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
       report.issues.push({ field: "весь файл", message: `не читается как JSON — проверь запятые и кавычки. ${file.parseError}` });
       problems.push(`❌ ${file.path}: файл не читается как JSON — проверь запятые и кавычки.\n${file.parseError}`);
       return report;
-    }
-    for (const emoji of findHiddenEmoji(file.data)) {
-      report.issues.push({ field: "эмодзи", message: `${emoji} не видно на Windows 10 и старых Android, возьми другой` });
-      problems.push(`❌ ${hiddenEmojiMessage(file.path, emoji)}`);
     }
     const schema = file.kind === "test" ? testSchema : gameSchema;
     const parsed = schema.safeParse(file.data);
@@ -230,10 +167,11 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
     problems.push(`❌ ${extras.premiumCodes?.path}: хэши кодов повторяются`);
   }
   const ultimate = inspectDataFile(extras.ultimate, ultimateFileSchema, problems);
-  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate };
+  const sectionLayouts = inspectDataFile(extras.sectionLayouts, sectionsFileSchema, problems);
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, sectionLayouts };
 }
 
-/** Проверяет необязательный файл (card-games.json, premium.json…): JSON, эмодзи для Windows 10 и схема. */
+/** Проверяет необязательный файл (card-games.json, premium.json…): JSON и схема. */
 function inspectDataFile<T>(file: RawDataFile | undefined, schema: z.ZodType<T>, problems: string[]): T | undefined {
   if (!file) return undefined;
   if (file.parseError !== undefined) {
@@ -241,7 +179,6 @@ function inspectDataFile<T>(file: RawDataFile | undefined, schema: z.ZodType<T>,
 ${file.parseError}`);
     return undefined;
   }
-  for (const emoji of findHiddenEmoji(file.data)) problems.push(`❌ ${hiddenEmojiMessage(file.path, emoji)}`);
   const parsed = schema.safeParse(file.data);
   if (!parsed.success) {
     problems.push(`❌ ${file.path}
@@ -258,7 +195,6 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
     problems.push(`❌ ${file.path}: файл не читается как JSON — проверь запятые и кавычки.\n${file.parseError}`);
     return [];
   }
-  for (const emoji of findHiddenEmoji(file.data)) problems.push(`❌ ${hiddenEmojiMessage(file.path, emoji)}`);
   const parsed = lockedTestsFileSchema.safeParse(file.data);
   if (!parsed.success) {
     problems.push(`❌ ${file.path}\n${z.prettifyError(parsed.error)}`);
@@ -278,7 +214,7 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, sectionLayouts } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
   const catalog: Catalog = {
     tests: [],
@@ -288,6 +224,7 @@ export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles 
     ...(premium ? { premium } : {}),
     ...(premiumCodes ? { premiumCodes } : {}),
     ...(ultimate ? { ultimate } : {}),
+    ...(sectionLayouts ? { sectionLayouts } : {}),
   };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);

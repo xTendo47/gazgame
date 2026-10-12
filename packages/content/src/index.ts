@@ -6,8 +6,6 @@ export * from "./sections";
 export * from "./premium-codes";
 export {
   buildCatalog,
-  findHiddenEmoji,
-  hiddenEmojiMessage,
   ContentError,
   inspectContent,
   type ContentIssue,

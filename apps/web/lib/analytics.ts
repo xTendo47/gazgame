@@ -62,6 +62,11 @@ export function trackAnswerBack(event: { id: string }) {
   send("answer_back", { ...event });
 }
 
+/** Тап по карточке «скоро» в разделе — считаем, чего ждут больше. id — «раздел:название». */
+export function trackSoonClick(event: { id: string }) {
+  send("soon_click", { ...event });
+}
+
 // ---------- Premium 💎 ----------
 
 /** Нажатие «Оформить Premium 💎» на экране /premium — спрос на подписку. */

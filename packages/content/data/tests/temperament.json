@@ -4,7 +4,7 @@
   "slug": "temperament",
   "title": "Твой темперамент",
   "description": "Огонь, лёд или солнце? Узнай свой состав",
-  "emoji": "🌡️",
+  "emoji": "🌋",
   "sections": ["solo"],
   "kind": "test",
   "tier": "free",

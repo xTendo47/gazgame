@@ -254,8 +254,8 @@ export const testSchema = itemBase
      * Плейсхолдеры: {title} {emoji} {pct} {scale} {link}. Нет share — «Пофлексить 🧊» и shareText результата.
      */
     share: z.strictObject({ button: text, text, style: z.enum(SHARE_STYLES).optional() }).optional(),
-    /** Выход на «Совместимость 💎» после блока «Как со мной встречаться»: заголовок, текст и кнопка с замком. */
-    compat: z.strictObject({ title: text, text, button: text }).optional(),
+    /** «Сравниться с партнёром 💎» после списка для партнёра: кнопка ведёт в «Для пар» → «Совместимость». Заголовок и текст по желанию. */
+    compat: z.strictObject({ title: text.optional(), text: text.optional(), button: text }).optional(),
   })
   .superRefine((test, ctx) => {
     const ids = new Set<string>();
@@ -1040,6 +1040,117 @@ export const ultimateFileSchema = z.strictObject({
   fine: text,
 });
 
+// ---------- Разделы: три плитки-вкладки и карточки (data/sections.json) ----------
+
+/** Куда ведёт карточка: игра, тест, платный тест (шторка превью) или «Карточные игры». Нет такого — «скоро». */
+export const sectionRefSchema = z.strictObject({
+  game: slug.optional(),
+  test: slug.optional(),
+  lockedTest: slug.optional(),
+  cards: z.literal(true).optional(),
+});
+
+/** Карточка в списке раздела: эмодзи, название, подпись, уровни чипами. */
+export const sectionItemSchema = z.strictObject({
+  emoji: text,
+  title: text,
+  text,
+  /** Уровни чипами; premium — голубой чип с 💎. */
+  levels: z.array(z.strictObject({ label: text, premium: z.boolean().optional() })).optional(),
+  /** «скоро» салатовой плашкой: тап — «Скоро! Тап засчитан 🔥», считаем. */
+  soon: z.boolean().optional(),
+  /** Premium-карточка (голубая рамка): тап как замки 💎. */
+  premium: z.boolean().optional(),
+  /** От скольки человек (фильтр «Сколько вас?»). */
+  min: z.int().min(1).optional(),
+  ref: sectionRefSchema.optional(),
+});
+
+const blurBlock = z.strictObject({ title: text, text });
+const pairPerson = z.strictObject({ emoji: text, title: text, name: text });
+
+/** Вкладка раздела: плитка сверху и список под ней. */
+export const sectionTabSchema = z.strictObject({
+  id: slug,
+  emoji: text,
+  name: text,
+  /** Третья плитка — Premium с голубым свечением. */
+  premium: z.boolean().optional(),
+  /** Заголовок списка и подпись серым справа. */
+  head: text,
+  side: text,
+  /** Большая карточка-герой над списком (например, «Пазл личности»): тап — «Скоро в Premium 🔥». */
+  hero: z.strictObject({ emoji: text, title: text, text }).optional(),
+  /** «Совместимость»: три шага, карточка-пример с размытыми блоками, подпись и заголовок «Что внутри». */
+  compat: z
+    .strictObject({
+      steps: z.array(text).length(3),
+      exampleLabel: text,
+      example: z.strictObject({
+        left: pairPerson,
+        right: pairPerson,
+        percent: text,
+        caption: text,
+        free: text,
+        blurred: z.array(blurBlock).min(1),
+        button: text,
+      }),
+      hint: text,
+      insideTitle: text,
+      insideSide: text,
+    })
+    .optional(),
+  items: z.array(sectionItemSchema).min(1),
+  /** Плашка под списком; **жирный** — выделение. */
+  note: text.optional(),
+});
+
+export const sectionLayoutSchema = z.strictObject({
+  id: sectionSchema,
+  title: text,
+  /** Строка под заголовком; **жирный** — выделение. */
+  lead: text,
+  /** «Сколько вас?» (Для компании): max — верхняя граница варианта; игры с min больше неё бледнеют. */
+  people: z
+    .strictObject({
+      question: text,
+      options: z.array(z.strictObject({ id: z.string().min(1), label: text, max: z.int().min(1) })).min(2),
+      default: z.string().min(1),
+    })
+    .optional(),
+  tabs: z.array(sectionTabSchema).length(3, "в разделе три плитки: две бесплатные и Premium"),
+});
+
+/** Файл data/sections.json: один формат для всех разделов. */
+export const sectionsFileSchema = z
+  .strictObject({
+    _note: z.string().optional(),
+    $schema: z.string().optional(),
+    texts: z.strictObject({
+      free: text,
+      premium: text,
+      soon: text,
+      soonToast: text,
+      heroToast: text,
+      fewPeople: text,
+      /** {n} — сколько человек нужно. */
+      needPeople: text,
+    }),
+    sections: z.array(sectionLayoutSchema).min(1),
+  })
+  .superRefine((file, ctx) => {
+    file.sections.forEach((s, si) => {
+      if (s.people && !s.people.options.some((o) => o.id === s.people?.default)) {
+        ctx.addIssue({ code: "custom", path: ["sections", si, "people", "default"], message: "default должен быть id одного из options" });
+      }
+      const ids = new Set<string>();
+      s.tabs.forEach((t, ti) => {
+        if (ids.has(t.id)) ctx.addIssue({ code: "custom", path: ["sections", si, "tabs", ti, "id"], message: `вкладка "${t.id}" повторяется` });
+        ids.add(t.id);
+      });
+    });
+  });
+
 /** Файл data/premium-codes.json: SHA-256 кодов Premium (сами коды в git не попадают). */
 export const premiumCodesFileSchema = z.strictObject({
   _note: z.string().optional(),
@@ -1080,6 +1191,10 @@ export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;
 export type PremiumFile = z.infer<typeof premiumFileSchema>;
 export type PremiumRef = z.infer<typeof premiumRefSchema>;
 export type UltimateFile = z.infer<typeof ultimateFileSchema>;
+export type SectionsFile = z.infer<typeof sectionsFileSchema>;
+export type SectionLayout = SectionsFile["sections"][number];
+export type SectionTab = SectionLayout["tabs"][number];
+export type SectionItem = SectionTab["items"][number];
 export type CardGame = CardGamesFile["games"][number];
 export type ContentItem = Test | Game;
 
@@ -1097,4 +1212,6 @@ export interface Catalog {
   premiumCodes?: string[];
   /** Тизер Ultimate 🔱 (data/ultimate.json). */
   ultimate?: UltimateFile;
+  /** Разделы: плитки-вкладки и карточки (data/sections.json). */
+  sectionLayouts?: SectionsFile;
 }

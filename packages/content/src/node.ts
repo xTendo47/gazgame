@@ -71,6 +71,7 @@ function readExtraFiles(dir: string): ExtraContentFiles {
     premium: readDataFile(dir, "premium.json"),
     premiumCodes: readDataFile(dir, "premium-codes.json"),
     ultimate: readDataFile(dir, "ultimate.json"),
+    sectionLayouts: readDataFile(dir, "sections.json"),
   };
 }
 

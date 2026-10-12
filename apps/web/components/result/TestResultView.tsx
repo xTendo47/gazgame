@@ -14,7 +14,7 @@ import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getSection } from "@/lib/sections";
 import { CopyListButton } from "./CopyListButton";
-import { PremiumGate } from "../PremiumGate";
+import { CompatLink } from "./CompatLink";
 import { AnswerBack } from "@/components/share/AnswerBack";
 import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
 import { RankingPanel } from "./RankingPanel";
@@ -179,31 +179,12 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </section>
       )}
 
-      {/* «Сравниться с партнёром 💎» — сразу после «Как со мной встречаться», ведёт туда же, куда «Глубже 💎» */}
+      {/* «Сравниться с партнёром 💎» — сразу после списка для партнёра, ведёт в «Для пар» → «Совместимость» */}
       {test.compat && (
-        <section aria-labelledby="compat-title" className="diamond-glow flex flex-col gap-3 rounded-card bg-surface p-5">
-          <h2 id="compat-title" className="font-display text-xl font-bold text-balance">
-            {test.compat.title}
-          </h2>
-          <p className="leading-relaxed text-cream/85">{test.compat.text}</p>
-          <PremiumGate
-            locked={
-              <DeeperButton
-                id={test.id}
-                kind="test"
-                source="compat"
-                locked
-                label={test.compat.button}
-                href={test.upsell ? `/test/${test.slug}/deeper` : "/deeper"}
-                keepQuery={hasScales}
-              />
-            }
-          >
-            {/* С Premium замка нет, но самого разбора пары ещё нет — честно говорим, что он в работе */}
-            <p className="rounded-card border border-[#62D2FF]/50 bg-[#62D2FF]/10 p-4 text-center font-semibold text-[#9BE4FF]">
-              Разбор пары уже в работе. С Premium откроется первым 💎
-            </p>
-          </PremiumGate>
+        <section aria-label={test.compat.title ?? test.compat.button} className="diamond-glow flex flex-col gap-3 rounded-card bg-surface p-5">
+          {test.compat.title && <h2 className="font-display text-xl font-bold text-balance">{test.compat.title}</h2>}
+          {test.compat.text && <p className="leading-relaxed text-cream/85">{test.compat.text}</p>}
+          <CompatLink testId={test.id} label={test.compat.button} />
         </section>
       )}
 

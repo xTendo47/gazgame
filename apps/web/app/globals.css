@@ -357,3 +357,21 @@
     box-shadow: 0 0 0 2px rgb(212 255 58 / 0.8);
   }
 }
+
+/* Список вкладки раздела появляется мягко снизу (как в макете разделов) */
+@layer components {
+  .section-pop {
+    animation: section-pop 0.3s ease-out;
+  }
+}
+@keyframes section-pop {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-pop {
+    animation: none;
+  }
+}

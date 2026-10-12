@@ -1,7 +1,7 @@
-// Раздел: /pairs, /company, /solo. Сам список — components/SectionView.tsx.
+// Раздел: /pairs, /company, /solo. Один формат на все разделы — components/sections/SectionPage.tsx.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SectionView } from "@/components/SectionView";
+import { SectionPage as SectionLayoutPage } from "@/components/sections/SectionPage";
 import { getSection, SECTIONS } from "@/lib/sections";
 
 export const dynamicParams = false;
@@ -18,5 +18,5 @@ export async function generateMetadata({ params }: PageProps<"/[section]">): Pro
 export default async function SectionPage({ params }: PageProps<"/[section]">) {
   const section = getSection((await params).section);
   if (!section) notFound();
-  return <SectionView sectionId={section.id} />;
+  return <SectionLayoutPage sectionId={section.id} />;
 }

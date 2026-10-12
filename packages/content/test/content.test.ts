@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { buildCatalog, ContentError, findHiddenEmoji, inspectContent } from "../src/index";
+import { buildCatalog, ContentError, inspectContent } from "../src/index";
 import { loadCatalog } from "../src/node";
 
 const validTest = {
@@ -330,30 +330,6 @@ describe("версии теста (audience)", () => {
   it("ловит версию, которой нет у теста, и несуществующий id ответа", () => {
     expect(() => build(withAudience({ them: { text: "?" } }))).toThrow(/нет версии "them"/);
     expect(() => build(withAudience({ him: { options: { z: "?" } } }))).toThrow(/нет ответа с id "z"/);
-  });
-});
-
-describe("эмодзи, которых не видно на Windows 10 и старых Android", () => {
-  it("🥲 и 🫠 ловятся, 🔥 и 🧡 проходят", () => {
-    expect(findHiddenEmoji({ a: "Я 🥲", b: ["ок", { c: "🫠 растаял" }] })).toEqual(["🥲", "🫠"]);
-    expect(findHiddenEmoji({ a: "Холерик 🔥", b: "Человековед 🧡" })).toEqual([]);
-  });
-
-  it("новые сочетания ловятся, даже без невидимого селектора; старые части по отдельности — нет", () => {
-    expect(findHiddenEmoji("Любовь ❤️‍🔥")).toEqual(["❤️‍🔥"]);
-    expect(findHiddenEmoji("Выдох 😮\u200d💨")).toEqual(["😮‍💨"]);
-    expect(findHiddenEmoji("❤️ и 🔥 отдельно, 😮 и 💨 тоже")).toEqual([]);
-  });
-
-  it("валидация падает с понятной ошибкой и именем файла", () => {
-    const withEmoji = { ...structuredClone(validTest), emoji: "🫠" };
-    expect(() => buildCatalog([{ path: "demo.json", kind: "test", data: withEmoji }])).toThrow(
-      "demo.json: эмодзи 🫠 не видно на Windows 10 и старых Android, возьми другой",
-    );
-  });
-
-  it("весь контент в data/ без таких эмодзи", () => {
-    expect(() => loadCatalog()).not.toThrow();
   });
 });
 

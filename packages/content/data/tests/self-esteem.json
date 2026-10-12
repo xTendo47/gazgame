@@ -4,7 +4,7 @@
   "slug": "self-esteem",
   "title": "Анализ самооценки",
   "description": "Кто громче в твоей голове: фанат или критик?",
-  "emoji": "🌟",
+  "emoji": "🪞",
   "sections": [
     "solo"
   ],
@@ -32,7 +32,7 @@
       {
         "id": "acceptance",
         "title": "Принятие себя",
-        "emoji": "💛",
+        "emoji": "🫶",
         "max": 12
       },
       {

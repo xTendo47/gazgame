@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "_note": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "texts": {
+      "type": "object",
+      "properties": {
+        "free": {
+          "type": "string",
+          "minLength": 1
+        },
+        "premium": {
+          "type": "string",
+          "minLength": 1
+        },
+        "soon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "soonToast": {
+          "type": "string",
+          "minLength": 1
+        },
+        "heroToast": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fewPeople": {
+          "type": "string",
+          "minLength": 1
+        },
+        "needPeople": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "free",
+        "premium",
+        "soon",
+        "soonToast",
+        "heroToast",
+        "fewPeople",
+        "needPeople"
+      ],
+      "additionalProperties": false
+    },
+    "sections": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "pairs",
+              "company",
+              "solo"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lead": {
+            "type": "string",
+            "minLength": 1
+          },
+          "people": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1
+              },
+              "options": {
+                "minItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "label": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "max": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "default": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "question",
+              "options",
+              "default"
+            ],
+            "additionalProperties": false
+          },
+          "tabs": {
+            "minItems": 3,
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                },
+                "emoji": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "premium": {
+                  "type": "boolean"
+                },
+                "head": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "side": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "hero": {
+                  "type": "object",
+                  "properties": {
+                    "emoji": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "emoji",
+                    "title",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                },
+                "compat": {
+                  "type": "object",
+                  "properties": {
+                    "steps": {
+                      "minItems": 3,
+                      "maxItems": 3,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "exampleLabel": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "example": {
+                      "type": "object",
+                      "properties": {
+                        "left": {
+                          "type": "object",
+                          "properties": {
+                            "emoji": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "title": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "name": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "emoji",
+                            "title",
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "right": {
+                          "type": "object",
+                          "properties": {
+                            "emoji": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "title": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "name": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "emoji",
+                            "title",
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "percent": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "caption": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "free": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "blurred": {
+                          "minItems": 1,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "text": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "title",
+                              "text"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "button": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "left",
+                        "right",
+                        "percent",
+                        "caption",
+                        "free",
+                        "blurred",
+                        "button"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "hint": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "insideTitle": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "insideSide": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "steps",
+                    "exampleLabel",
+                    "example",
+                    "hint",
+                    "insideTitle",
+                    "insideSide"
+                  ],
+                  "additionalProperties": false
+                },
+                "items": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "emoji": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "levels": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "premium": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "label"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "soon": {
+                        "type": "boolean"
+                      },
+                      "premium": {
+                        "type": "boolean"
+                      },
+                      "min": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "ref": {
+                        "type": "object",
+                        "properties": {
+                          "game": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                          },
+                          "test": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                          },
+                          "lockedTest": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                          },
+                          "cards": {
+                            "type": "boolean",
+                            "const": true
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "emoji",
+                      "title",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "id",
+                "emoji",
+                "name",
+                "head",
+                "side",
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "lead",
+          "tabs"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "texts",
+    "sections"
+  ],
+  "additionalProperties": false
+}

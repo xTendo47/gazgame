@@ -44,6 +44,8 @@ export interface ProgressData {
   ultimateWaitlist?: boolean;
   /** Уровни, чьё открытие уже показали подсветкой, по играм — подсвечиваем один раз. */
   unlocksSeen?: Record<string, string[]>;
+  /** «Сколько вас?» в «Для компании»: id выбранного варианта. */
+  companySize?: string;
 }
 
 export interface FriendResult {
@@ -79,6 +81,8 @@ export interface ProgressStore {
   /** Подсветку «уровень открылся» уже показывали? */
   isUnlockSeen(gameId: string, deckId: string): boolean;
   markUnlockSeen(gameId: string, deckId: string): void;
+  getCompanySize(): string | null;
+  saveCompanySize(id: string): void;
   clear(): void;
 }
 
@@ -118,6 +122,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.waitlist ? { waitlist: true } : {}),
         ...(data.ultimateWaitlist ? { ultimateWaitlist: true } : {}),
         ...(data.unlocksSeen ? { unlocksSeen: data.unlocksSeen } : {}),
+        ...(data.companySize ? { companySize: data.companySize } : {}),
       };
     } catch {
       return emptyProgress();
@@ -207,6 +212,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     },
     hasJoinedUltimateWaitlist: () => load().ultimateWaitlist === true,
     isUnlockSeen: (gameId, deckId) => load().unlocksSeen?.[gameId]?.includes(deckId) ?? false,
+    getCompanySize: () => load().companySize ?? null,
+    saveCompanySize(id) {
+      const data = load();
+      data.companySize = id;
+      save(data);
+    },
     markUnlockSeen(gameId, deckId) {
       const data = load();
       const seen = data.unlocksSeen?.[gameId] ?? [];

@@ -1,8 +1,8 @@
-// Платный тест под замком по старому адресу /locked/<slug>: список раздела, поверх — шторка с превью теста.
+// Платный тест под замком по старому адресу /locked/<slug>: раздел (вкладка с этим тестом), поверх — шторка с превью.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findLockedTest } from "@gazgame/engine";
-import { SectionView } from "@/components/SectionView";
+import { SectionPage } from "@/components/sections/SectionPage";
 import { getCatalog } from "@/lib/catalog";
 
 type Props = PageProps<"/locked/[slug]">;
@@ -21,5 +21,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LockedTestPage({ params }: Props) {
   const test = findLockedTest(getCatalog(), (await params).slug);
   if (!test) notFound();
-  return <SectionView sectionId={test.sections[0] ?? "solo"} openLocked={test.slug} />;
+  return <SectionPage sectionId={test.sections[0] ?? "solo"} openLocked={test.slug} />;
 }
