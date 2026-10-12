@@ -83,6 +83,11 @@ describe("тёплая строка ❤️ (heart)", () => {
     for (const test of allTests) for (const r of test.results) expect(r.heart, `${test.id}/${r.id}`).toBeTruthy();
   });
 
+  it("строка Swag 😎 для шеринга есть у каждого результата; у «Типа привязанности» — та же, что share.line", () => {
+    for (const test of allTests) for (const r of test.results) expect(r.swag, `${test.id}/${r.id}`).toBeTruthy();
+    for (const r of testSchema.parse(attachmentJson).results) expect(r.swag).toBe(r.share?.line);
+  });
+
   it("«Тип привязанности»: care переехал в heart, отдельного care нет; у «Строгого к себе» care остался", () => {
     const attachment = testSchema.parse(attachmentJson);
     for (const r of attachment.results) {

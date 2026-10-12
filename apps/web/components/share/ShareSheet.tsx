@@ -8,10 +8,10 @@ import { Share2, X } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
 import { answerBackMessage, findResult, scalesConfig, shareMessage } from "@gazgame/engine";
 import { Button, cn } from "@gazgame/ui";
-import { trackShareClick, type ShareChannel } from "@/lib/analytics";
+import { trackShareClick, trackShareKind, type ShareChannel } from "@/lib/analytics";
 import { usePremium } from "@/lib/premium";
 import { copyText } from "@/lib/clipboard";
-import { mainPercent, shareImagePath, shareLink, siteUrl, topScale, type ShareParams } from "@/lib/share-card";
+import { mainPercent, shareImagePath, shareLink, siteUrl, topScale, type ShareKind, type ShareParams } from "@/lib/share-card";
 
 interface ShareTarget {
   test: Test;
@@ -86,6 +86,12 @@ function isDesktop(): boolean {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
 
+/** Swag 😎 — чтобы выпендриться, Facts 📋 — факты о себе. */
+const KINDS: { value: ShareKind; label: string }[] = [
+  { value: "swag", label: "Swag 😎" },
+  { value: "facts", label: "Facts 📋" },
+];
+
 function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget & ShareOpenOptions & { onClose: () => void }) {
   const result = findResult(test, resultId);
   // Всё, что зависит от адреса страницы, считаем один раз при открытии
@@ -94,8 +100,8 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
     const link = shareLink(siteUrl(window.location.origin), test, { resultId, blendId, scores });
     return { scores, link, desktop: isDesktop() };
   });
-  // «Показатели» по умолчанию скрыты у всех: на картинке без процентов и полосок
-  const [stats, setStats] = useState(false);
+  // Какая карточка над картинкой: Swag 😎 (по умолчанию) или Facts 📋 — с процентами и сильными сторонами
+  const [kind, setKind] = useState<ShareKind>("swag");
   const [image, setImage] = useState<{ url: string; blob: Blob } | null>(null);
   const [status, setStatus] = useState<string>("");
   const [fullscreen, setFullscreen] = useState(false);
@@ -104,8 +110,8 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
   // Значок 💎 в углу картинки у тех, у кого Premium
   const premium = usePremium();
   const params: ShareParams = useMemo(
-    () => ({ slug: test.slug, resultId, blendId, scores: ctx.scores, stats, premium }),
-    [test.slug, resultId, blendId, ctx.scores, stats, premium],
+    () => ({ slug: test.slug, resultId, blendId, scores: ctx.scores, stats: kind === "facts", premium, kind }),
+    [test.slug, resultId, blendId, ctx.scores, kind, premium],
   );
   const imagePath = shareImagePath(params);
   const message = !result
@@ -146,7 +152,11 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
   }, [onClose]);
 
   const fileName = `gazgame-${test.slug}-${resultId}.png`;
-  const track = (channel: ShareChannel) => trackShareClick({ id: test.id, channel });
+  // Куда поделились и какую карточку выбрали (share_swag / share_facts)
+  const track = (channel: ShareChannel) => {
+    trackShareClick({ id: test.id, channel });
+    trackShareKind({ id: test.id, kind });
+  };
 
   function shareStory() {
     track("story");
@@ -258,30 +268,25 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
           </div>
         </div>
 
-        <div role="group" aria-label="Показатели" className="flex items-center justify-between gap-3">
-          <span className="font-semibold">Показатели</span>
-          <div className="flex rounded-full bg-surface-2 p-1">
-            {[
-              { value: true, label: "да" },
-              { value: false, label: "нет" },
-            ].map((o) => (
-              <button
-                key={o.label}
-                type="button"
-                aria-pressed={stats === o.value}
-                onClick={() => {
-                  setImage(null);
-                  setStats(o.value);
-                }}
-                className={cn(
-                  "min-h-10 min-w-14 rounded-full px-4 text-[15px] font-bold transition",
-                  stats === o.value ? "bg-lime text-bg" : "text-muted",
-                )}
-              >
-                {o.label}
-              </button>
-            ))}
-          </div>
+        <div role="group" aria-label="Какая карточка" className="grid grid-cols-2 gap-1 rounded-full bg-surface-2 p-1">
+          {KINDS.map((o) => (
+            <button
+              key={o.value}
+              type="button"
+              aria-pressed={kind === o.value}
+              onClick={() => {
+                if (kind === o.value) return;
+                setImage(null);
+                setKind(o.value);
+              }}
+              className={cn(
+                "min-h-11 rounded-full px-4 text-[15px] font-bold transition",
+                kind === o.value ? "bg-lime text-bg" : "text-muted",
+              )}
+            >
+              {o.label}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-2 gap-3">

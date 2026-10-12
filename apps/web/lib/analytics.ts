@@ -47,6 +47,11 @@ export function trackShareClick(event: ShareClickEvent) {
   send("share_click", { ...event });
 }
 
+/** Какую карточку выбрали, когда поделились итогом: share_swag (Swag 😎) или share_facts (Facts 📋). id — id теста. */
+export function trackShareKind(event: { id: string; kind: "swag" | "facts" }) {
+  send(event.kind === "swag" ? "share_swag" : "share_facts", { id: event.id });
+}
+
 /** Заход по ссылке из шеринга (?from=share). */
 export function trackShareOpen(event: { id: string }) {
   send("share_open", { ...event });

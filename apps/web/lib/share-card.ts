@@ -85,6 +85,9 @@ export function decodeScores(raw: string | null): Record<string, number> {
   return scores;
 }
 
+/** Какую карточку выбрали над картинкой: Swag 😎 (выпендриться) или Facts 📋 (факты о себе). */
+export type ShareKind = "swag" | "facts";
+
 export interface ShareParams {
   slug: string;
   resultId: string;
@@ -94,11 +97,14 @@ export interface ShareParams {
   stats: boolean;
   /** У автора Premium — маленький 💎 в углу картинки (p=1 в адресе). */
   premium?: boolean;
+  /** Swag или Facts (k= в адресе). Нет — старая карточка (превью ссылки, старые адреса). */
+  kind?: ShareKind;
 }
 
 /** Адрес PNG: один и тот же для превью в меню и для сторис. */
 export function shareImagePath(p: ShareParams, format: ShareFormat = "story"): string {
   const q = new URLSearchParams({ r: p.resultId, f: format, stats: p.stats ? "1" : "0" });
+  if (p.kind) q.set("k", p.kind);
   if (p.blendId) q.set("b", p.blendId);
   if (p.premium) q.set("p", "1");
   const s = encodeScores(p.scores);
@@ -166,6 +172,12 @@ export interface ShareCard {
   color: string;
   /** «gazgame.ru/test/temperament». */
   shortLink: string;
+  /** Swag 😎 или Facts 📋; нет — старая карточка. */
+  kind?: ShareKind;
+  /** Swag: строка-крючок результата (swag), запасная — share.line. */
+  swag?: string;
+  /** Facts у шкал (Самооценка): «Зона роста: 💛 Принятие себя». */
+  growth?: string;
   /** Значок Premium 💎 в углу. */
   premium: boolean;
 }
@@ -223,6 +235,11 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
 
   const support = supportScale(test, p.scores);
   const tie = isTopTie(typeRanking(test, p.scores, lead));
+  const facts = p.kind === "facts";
+  const breakdown = scaleBreakdown(test, p.scores);
+  const weakest = breakdown?.profile.kind === "peaks" ? breakdown.profile.weakest.scale : undefined;
+  // Facts — две сильные стороны у любого костюма; обычная карточка — до трёх (у чека и игрока не нужны)
+  const strengths = (result.strengths ?? []).slice(0, facts ? 2 : 3);
   return {
     style,
     testTitle: test.title,
@@ -234,13 +251,13 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
     blendLine: blend ? `${tie ? "поровну с" : "а ещё"} ${blend.title} ${blend.emoji}` : undefined,
     line: result.share?.line,
     bars,
-    points: style === "receipt" || style === "player" || style === "messenger" ? [] : (result.strengths ?? []).slice(0, 3),
-    pinned: style === "messenger" ? (result.strengths ?? []).slice(0, 3) : undefined,
+    points: style === "messenger" || (!facts && (style === "receipt" || style === "player")) ? [] : strengths,
+    pinned: style === "messenger" ? strengths : undefined,
     ingredients: style === "composition" ? ingredientsLine(test, p.scores, lead) : undefined,
     support:
       style === "batteries"
         ? support
-          ? `Моя опора: ${support.emoji} ${support.title}`
+          ? `${facts ? "Опора" : "Моя опора"}: ${support.emoji} ${support.title}`
           : support === null
             ? "Опора: всё ровно, без провалов"
             : undefined
@@ -264,5 +281,8 @@ export function buildShareCard(test: Test, p: ShareParams, site: string, now = n
     color: glowColor(test.id, result.id),
     shortLink: `${site.replace(/^https?:\/\//, "")}/test/${test.slug}`,
     premium: p.premium === true,
+    kind: p.kind,
+    swag: result.swag ?? result.share?.line,
+    growth: facts && style === "batteries" && weakest ? `Зона роста: ${weakest.emoji} ${weakest.title}` : undefined,
   };
 }

@@ -462,6 +462,10 @@
             "type": "string",
             "minLength": 1
           },
+          "swag": {
+            "type": "string",
+            "minLength": 1
+          },
           "share": {
             "type": "object",
             "properties": {

@@ -296,6 +296,9 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
           {card.support && (
             <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(40), lineHeight: 1.15 }}>{card.support}</div>
           )}
+          {card.growth && (
+            <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(34), lineHeight: 1.15, color: MUTED }}>{card.growth}</div>
+          )}
           {card.line && <Text s={s} color={card.color}>{card.line}</Text>}
           {bars && (
             <div style={{ display: "flex", flexDirection: "column", gap: s(14) }}>
@@ -547,7 +550,113 @@ function PremiumMark({ left, top, size }: { left: number; top: number; size: num
 // ---------- Карточка 4:5 и превью ссылки ----------
 
 export function ShareCardImage({ card, format }: { card: ShareCard; format: ShareFormat }) {
-  return format === "story" ? <Story card={card} /> : <Preview card={card} />;
+  if (format === "preview") return <Preview card={card} />;
+  return card.kind === "swag" ? <SwagStory card={card} /> : <Story card={card} />;
+}
+
+/** «Я Холерик» — на карточках Swag и Facts. */
+const heroTitle = (card: ShareCard) => (card.kind ? `Я ${card.title}` : card.title);
+
+/** Подвал карточки 4:5: призыв, ссылка и логотип. */
+function StoryFooter({ card }: { card: ShareCard }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", paddingTop: 24, gap: 10 }}>
+      <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 38, lineHeight: 1.15, textShadow: TEXT_SHADOW }}>
+        {card.kind ? "А ты кто? Пройди в GAZ" : `А ты кто? Пройди за ${card.durationMin} мин`}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", fontWeight: 800, fontSize: 28, color: LIME }}>{card.shortLink}</div>
+        <Logo size={28} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Swag 😎 — чтобы выпендриться: огромный эмодзи, «Я {title}», одна строка-крючок, внизу «А ты кто? Пройди в GAZ».
+ * Без процентов и костюма; фон и текстура — те же, что у теста.
+ */
+function SwagStory({ card }: { card: ShareCard }) {
+  const W = 1080;
+  const H = 1350;
+  const title = heroTitle(card);
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        width: W,
+        height: H,
+        padding: "60px 72px 56px",
+        backgroundColor: BG,
+        color: CREAM,
+        fontFamily: BODY,
+      }}
+    >
+      <Backdrop card={card} w={W} h={H} emojiSize={760} />
+      {card.premium && <PremiumMark left={W - 66} top={H - 66} size={50} />}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Logo size={32} />
+        <div
+          style={{
+            display: "flex",
+            padding: "9px 20px",
+            borderRadius: 999,
+            backgroundColor: "rgba(20,18,23,0.6)",
+            fontWeight: 800,
+            fontSize: 24,
+            letterSpacing: 2,
+            textTransform: "uppercase",
+          }}
+        >
+          {card.testTitle}
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+        {card.style === "messenger" ? (
+          <Avatar card={card} size={300} />
+        ) : (
+          <div style={{ display: "flex", fontSize: 330, lineHeight: 1 }}>{card.emoji}</div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 36,
+            fontFamily: DISPLAY,
+            fontWeight: 900,
+            fontSize: titleSize(title, 104),
+            lineHeight: 1.05,
+            letterSpacing: -2,
+            textShadow: TEXT_SHADOW,
+          }}
+        >
+          {title}
+        </div>
+        {card.swag && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              maxWidth: 880,
+              marginTop: 34,
+              padding: "22px 36px",
+              borderRadius: 32,
+              backgroundColor: "rgba(20,18,23,0.72)",
+              border: `3px solid ${card.color}`,
+              fontWeight: 800,
+              fontSize: card.swag.length > 40 ? 40 : 46,
+              lineHeight: 1.25,
+            }}
+          >
+            {card.swag}
+          </div>
+        )}
+      </div>
+      <StoryFooter card={card} />
+    </div>
+  );
 }
 
 /** На карточке 4:5 средний блок крупнее базовых размеров; с «Показателями» строк больше — чуть компактнее. */
@@ -611,13 +720,13 @@ function Story({ card }: { card: ShareCard }) {
             marginTop: 14,
             fontFamily: DISPLAY,
             fontWeight: 900,
-            fontSize: titleSize(card.title, messenger ? (tight ? 76 : 88) : tight ? 90 : 100),
+            fontSize: titleSize(heroTitle(card), messenger ? (tight ? 76 : 88) : tight ? 90 : 100),
             lineHeight: 1.05,
             letterSpacing: -2,
             textShadow: TEXT_SHADOW,
           }}
         >
-          {card.title}
+          {heroTitle(card)}
         </div>
         {messenger && card.line && (
           <div style={{ display: "flex", marginTop: 16 }}>
@@ -659,15 +768,7 @@ function Story({ card }: { card: ShareCard }) {
       )}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", paddingTop: 24, gap: 10 }}>
-        <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 38, lineHeight: 1.15, textShadow: TEXT_SHADOW }}>
-          {`А ты кто? Пройди за ${card.durationMin} мин`}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", fontWeight: 800, fontSize: 28, color: LIME }}>{card.shortLink}</div>
-          <Logo size={28} />
-        </div>
-      </div>
+      <StoryFooter card={card} />
     </div>
   );
 }

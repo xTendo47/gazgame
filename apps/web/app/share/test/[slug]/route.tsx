@@ -1,5 +1,5 @@
 // Картинка итога теста: /share/test/<slug>?r=<результат>&b=<второй тип>&s=<баллы>&f=story|preview&stats=1|0&p=1
-// p=1 — у автора Premium: маленький 💎 в углу.
+// p=1 — у автора Premium: маленький 💎 в углу. k=swag|facts — карточка Swag 😎 или Facts 📋 (вместо stats).
 // PNG рисует сервер (next/og). Один и тот же PNG — и превью в меню «Куда кидаем?», и картинка в сторис.
 // Без r — обложка теста 1200×630 для превью ссылки на тест.
 import type { NextRequest } from "next/server";
@@ -8,7 +8,7 @@ import { findTest } from "@gazgame/engine";
 import { ShareCardImage, TestCover } from "@/components/share/ShareCardImage";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { ogFonts } from "@/lib/og-fonts";
-import { buildShareCard, decodeScores, glowColor, SHARE_SIZE, siteUrl, type ShareFormat } from "@/lib/share-card";
+import { buildShareCard, decodeScores, glowColor, SHARE_SIZE, siteUrl, type ShareFormat, type ShareKind } from "@/lib/share-card";
 
 /** Адрес, с которого пришли (в dev nextUrl.origin бывает 0.0.0.0 — берём из заголовков). */
 function requestOrigin(request: NextRequest): string {
@@ -41,9 +41,20 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/share/test/[
   }
 
   const format: ShareFormat = q.get("f") === "preview" ? "preview" : "story";
+  const k = q.get("k");
+  const kind: ShareKind | undefined = k === "swag" || k === "facts" ? k : undefined;
   const card = buildShareCard(
     test,
-    { slug, resultId: q.get("r") ?? "", blendId: q.get("b") ?? undefined, scores: decodeScores(q.get("s")), stats: q.get("stats") !== "0", premium: q.get("p") === "1" },
+    {
+      slug,
+      resultId: q.get("r") ?? "",
+      blendId: q.get("b") ?? undefined,
+      scores: decodeScores(q.get("s")),
+      // Facts — с процентами, Swag — без; старые адреса без k — по stats
+      stats: kind ? kind === "facts" : q.get("stats") !== "0",
+      premium: q.get("p") === "1",
+      kind,
+    },
     siteUrl(requestOrigin(request)),
   );
   if (!card) return new Response("Нет такого результата", { status: 404 });
