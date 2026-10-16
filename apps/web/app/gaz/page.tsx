@@ -44,10 +44,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function GazPage({ searchParams }: Props) {
-  const gaz = getCatalog().gaz;
-  if (!gaz) notFound();
+  const { gaz, today } = getCatalog();
+  if (!gaz || !today) notFound();
   const id = first((await searchParams).dare);
   const dare = id ? findGazTask(gaz, id) : undefined;
 
-  return <Screen>{dare ? <GazDare task={dare} /> : <GazScreen gaz={gaz} serverMs={serverNowMs()} />}</Screen>;
+  return <Screen>{dare ? <GazDare task={dare} /> : <GazScreen gaz={gaz} today={today} serverMs={serverNowMs()} />}</Screen>;
 }

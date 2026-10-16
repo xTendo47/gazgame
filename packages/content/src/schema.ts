@@ -1108,6 +1108,53 @@ export const gazFileSchema = z
     }
   });
 
+// ---------- «Сегодня 🔥» (data/today.json) ----------
+
+const todayId = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id: маленькие латинские буквы, цифры и дефис, например: bt01");
+const todayOption = z.strictObject({ emoji: text, label: text });
+
+/**
+ * Файл data/today.json. battles и questions идут по кругу: индекс дня = число дней от 13.10.2026 по МСК, % длина.
+ * Задание дня берётся из колоды «Мне скучно» (gaz.json). ladder — награды за серию дней.
+ */
+export const todayFileSchema = z
+  .strictObject({
+    _note: z.string().optional(),
+    $schema: z.string().optional(),
+    battles: z.array(z.strictObject({ id: todayId, question: text, a: todayOption, b: todayOption })).min(1),
+    questions: z.array(z.strictObject({ id: todayId, text })).min(1),
+    ladder: z
+      .array(
+        z.strictObject({
+          /** Сколько дней серии. */
+          days: z.number().int().positive(),
+          emoji: text,
+          text,
+          /** Карта, которая выдаётся сразу и уходит в Коллекцию. */
+          card: z.strictObject({ id: todayId, title: text }).optional(),
+          /** +1 заморозка (копится максимум до 2). */
+          freeze: z.boolean().optional(),
+          /** Premium-ступень: пока только показываем, не выдаём (начисление — вместе с сервером). */
+          premium: z.boolean().optional(),
+        }),
+      )
+      .min(1),
+  })
+  .superRefine((file, ctx) => {
+    for (const list of ["battles", "questions"] as const) {
+      const ids = new Set<string>();
+      file[list].forEach((item, i) => {
+        if (ids.has(item.id)) ctx.addIssue({ code: "custom", path: [list, i, "id"], message: `id "${item.id}" повторяется` });
+        ids.add(item.id);
+      });
+    }
+    file.ladder.forEach((step, i) => {
+      if (i > 0 && step.days <= (file.ladder[i - 1]?.days ?? 0)) {
+        ctx.addIssue({ code: "custom", path: ["ladder", i, "days"], message: "ступеньки должны идти по возрастанию дней" });
+      }
+    });
+  });
+
 // ---------- Разделы: три плитки-вкладки и карточки (data/sections.json) ----------
 
 /** Куда ведёт карточка: игра, тест, платный тест (шторка превью) или «Карточные игры». Нет такого — «скоро». */
@@ -1260,6 +1307,9 @@ export type PremiumFile = z.infer<typeof premiumFileSchema>;
 export type PremiumRef = z.infer<typeof premiumRefSchema>;
 export type UltimateFile = z.infer<typeof ultimateFileSchema>;
 export type GazFile = z.infer<typeof gazFileSchema>;
+export type TodayFile = z.infer<typeof todayFileSchema>;
+export type TodayBattle = TodayFile["battles"][number];
+export type TodayLadderStep = TodayFile["ladder"][number];
 export type GazBoredTask = GazFile["bored"][number];
 export type GazRouletteTask = GazFile["roulette"][number];
 export type GazTask = GazBoredTask | GazRouletteTask;
@@ -1286,6 +1336,8 @@ export interface Catalog {
   ultimate?: UltimateFile;
   /** Раздел GAZ 🚀: задания, рулетка, челленджи, наборы (data/gaz.json). */
   gaz?: GazFile;
+  /** «Сегодня 🔥»: батлы, вопросы, награды за серию (data/today.json). */
+  today?: TodayFile;
   /** Разделы: плитки-вкладки и карточки (data/sections.json). */
   sectionLayouts?: SectionsFile;
 }

@@ -71,7 +71,7 @@ const DAY_MS = 86_400_000;
 const MSK_OFFSET_MS = 3 * 3_600_000;
 
 /** Номер дня по Москве от 1970-01-01. */
-function mskDayNumber(now: Date): number {
+export function mskDayNumber(now: Date): number {
   return Math.floor((now.getTime() + MSK_OFFSET_MS) / DAY_MS);
 }
 

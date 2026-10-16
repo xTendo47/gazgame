@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "_note": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "battles": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "a": {
+            "type": "object",
+            "properties": {
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "emoji",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          "b": {
+            "type": "object",
+            "properties": {
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "emoji",
+              "label"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "a",
+          "b"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "questions": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ladder": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "card": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "freeze": {
+            "type": "boolean"
+          },
+          "premium": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "days",
+          "emoji",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "battles",
+    "questions",
+    "ladder"
+  ],
+  "additionalProperties": false
+}

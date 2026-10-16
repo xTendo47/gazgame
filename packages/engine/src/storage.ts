@@ -3,6 +3,7 @@
 // Сейчас — localStorage на устройстве; позже можно подставить хранилище на сервере (apps/api)
 // без переписывания экранов.
 import { normalizeGaz, type GazData } from "./gaz";
+import { normalizeToday, type TodayData } from "./today";
 
 /** Минимальное «хранилище ключ-значение». localStorage подходит под этот интерфейс. */
 export interface KeyValueStore {
@@ -49,6 +50,8 @@ export interface ProgressData {
   companySize?: string;
   /** Раздел GAZ 🚀: сделанные задания, «в процессе», рулетка, челлендж недели. */
   gaz?: GazData;
+  /** «Сегодня 🔥»: серия, заморозка, голоса, дневник ответов, карты за серию. */
+  today?: TodayData;
 }
 
 export interface FriendResult {
@@ -90,6 +93,9 @@ export interface ProgressStore {
   getGaz(): GazData;
   /** Изменить данные GAZ: функция получает текущие и возвращает новые. */
   updateGaz(update: (data: GazData) => GazData): void;
+  /** «Сегодня 🔥»: всё, что хранится на устройстве. */
+  getToday(): TodayData;
+  updateToday(update: (data: TodayData) => TodayData): void;
   clear(): void;
 }
 
@@ -131,6 +137,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.unlocksSeen ? { unlocksSeen: data.unlocksSeen } : {}),
         ...(data.companySize ? { companySize: data.companySize } : {}),
         ...(data.gaz ? { gaz: data.gaz } : {}),
+        ...(data.today ? { today: data.today } : {}),
       };
     } catch {
       return emptyProgress();
@@ -230,6 +237,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     updateGaz(update) {
       const data = load();
       data.gaz = update(normalizeGaz(data.gaz));
+      save(data);
+    },
+    getToday: () => normalizeToday(load().today),
+    updateToday(update) {
+      const data = load();
+      data.today = update(normalizeToday(data.today));
       save(data);
     },
     markUnlockSeen(gameId, deckId) {

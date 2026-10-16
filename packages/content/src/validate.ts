@@ -10,11 +10,13 @@ import {
   testSchema,
   ultimateFileSchema,
   gazFileSchema,
+  todayFileSchema,
   sectionsFileSchema,
   type CardGamesFile,
   type PremiumFile,
   type UltimateFile,
   type GazFile,
+  type TodayFile,
   type SectionsFile,
   type Catalog,
   type ContentItem,
@@ -75,6 +77,8 @@ export interface ContentReport {
   ultimate?: UltimateFile;
   /** Раздел GAZ 🚀. */
   gaz?: GazFile;
+  /** «Сегодня 🔥». */
+  today?: TodayFile;
   /** Разделы: плитки-вкладки и карточки. */
   sectionLayouts?: SectionsFile;
 }
@@ -87,6 +91,7 @@ export interface ExtraContentFiles {
   premiumCodes?: RawDataFile;
   ultimate?: RawDataFile;
   gaz?: RawDataFile;
+  today?: RawDataFile;
   sectionLayouts?: RawDataFile;
 }
 
@@ -173,8 +178,11 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
   }
   const ultimate = inspectDataFile(extras.ultimate, ultimateFileSchema, problems);
   const gaz = inspectDataFile(extras.gaz, gazFileSchema, problems);
+  const today = inspectDataFile(extras.today, todayFileSchema, problems);
+  // Задание дня берётся из колоды «Мне скучно»: без gaz.json «Сегодня» работать не сможет
+  if (today && !gaz) problems.push(`❌ ${extras.today?.path}: задание дня берётся из gaz.json, а такого файла нет`);
   const sectionLayouts = inspectDataFile(extras.sectionLayouts, sectionsFileSchema, problems);
-  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, sectionLayouts };
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, today, sectionLayouts };
 }
 
 /** Проверяет необязательный файл (card-games.json, premium.json…): JSON и схема. */
@@ -220,7 +228,7 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, sectionLayouts } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, today, sectionLayouts } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
   const catalog: Catalog = {
     tests: [],
@@ -231,6 +239,7 @@ export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles 
     ...(premiumCodes ? { premiumCodes } : {}),
     ...(ultimate ? { ultimate } : {}),
     ...(gaz ? { gaz } : {}),
+    ...(today ? { today } : {}),
     ...(sectionLayouts ? { sectionLayouts } : {}),
   };
   for (const { item } of reports) {

@@ -483,6 +483,36 @@ describe("GAZ 🚀 (data/gaz.json)", () => {
   });
 });
 
+describe("Сегодня 🔥 (data/today.json)", () => {
+  const todayFile = () => JSON.parse(readFileSync(new URL("../data/today.json", import.meta.url), "utf-8")) as {
+    battles: Record<string, unknown>[];
+    ladder: Record<string, unknown>[];
+    [key: string]: unknown;
+  };
+  const gazFile = () => JSON.parse(readFileSync(new URL("../data/gaz.json", import.meta.url), "utf-8")) as unknown;
+  const build = (today: unknown, gaz: unknown = gazFile()) =>
+    buildCatalog([], { gaz: { path: "gaz.json", data: gaz }, today: { path: "today.json", data: today } });
+
+  it("настоящий файл загружается: 30 батлов, 30 вопросов, 4 ступеньки 3/7/30/100", () => {
+    const t = loadCatalog().today;
+    expect(t?.battles).toHaveLength(30);
+    expect(t?.questions).toHaveLength(30);
+    expect(t?.ladder.map((s) => s.days)).toEqual([3, 7, 30, 100]);
+  });
+
+  it("лишние поля, повторы id, неупорядоченная лесенка и отсутствие gaz.json не проходят", () => {
+    expect(() => build(todayFile())).not.toThrow();
+    expect(() => build({ ...todayFile(), extra: 1 })).toThrow(ContentError);
+    const dup = todayFile();
+    dup.battles[1] = { ...dup.battles[1], id: "bt01" };
+    expect(() => build(dup)).toThrow(ContentError);
+    const order = todayFile();
+    order.ladder = [...order.ladder].reverse();
+    expect(() => build(order)).toThrow(/по возрастанию/);
+    expect(() => buildCatalog([], { today: { path: "today.json", data: todayFile() } })).toThrow(/gaz.json/);
+  });
+});
+
 describe("«Что ты получишь» (upsell.premium.items)", () => {
   it("у всех 7 тестов с блоком Premium есть пункты списком; слова «Премиум» кириллицей нет", () => {
     const catalog = loadCatalog();

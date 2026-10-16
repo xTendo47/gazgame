@@ -4,7 +4,7 @@
 // Газ-рулетка (3 прокрутки), карта задания, челлендж недели, наборы 💎, «Мои задания».
 // Вид — по макету gaz-section (тёмная карта, оранжевая рамка, лаймовая рулетка). Всё хранится на устройстве (lib/gaz.ts).
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import type { GazFile, GazTask } from "@gazgame/content";
+import type { GazFile, GazTask, TodayFile } from "@gazgame/content";
 import {
   activeCard,
   DEFAULT_CHIPS,
@@ -41,7 +41,9 @@ import { copyText } from "@/lib/clipboard";
 import { isDesktop, prefersReducedMotion, updateGaz, useGazData, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { siteUrl } from "@/lib/share-card";
+import { countDay } from "@/lib/today";
 import { BackLink } from "../BackLink";
+import { RewardFlash } from "../today/RewardFlash";
 import { DoneCard } from "./DoneCard";
 import { BTN, BTN_GHOST, TaskCard, twistOf } from "./TaskCard";
 
@@ -83,7 +85,7 @@ function scrollTo(ref: RefObject<HTMLElement | null>, block: ScrollLogicalPositi
   requestAnimationFrame(() => ref.current?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block }));
 }
 
-export function GazScreen({ gaz, serverMs }: { gaz: GazFile; serverMs: number }) {
+export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: TodayFile; serverMs: number }) {
   const data = useGazData();
   const now = useNow(serverMs);
   const chips = data.lastChips ?? DEFAULT_CHIPS;
@@ -167,6 +169,8 @@ export function GazScreen({ gaz, serverMs }: { gaz: GazFile; serverMs: number })
     haptic("fanfare");
     trackGazDone({ id: task.id, source, gold });
     updateGaz((d) => finishCard(d, task.id, gold, new Date()));
+    // любое сделанное задание GAZ засчитывает день в «Сегодня 🔥»
+    countDay(today.ladder);
     setWon({ task, gold });
     scrollTo(resultRef, "center");
   }
@@ -417,6 +421,8 @@ export function GazScreen({ gaz, serverMs }: { gaz: GazFile; serverMs: number })
           </li>
         </ul>
       </section>
+
+      <RewardFlash ladder={today.ladder} />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { cn, Logo, Screen, Tile } from "@gazgame/ui";
 import { RandomDice } from "@/components/RandomDice";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { Embers } from "@/components/ultimate/Embers";
+import { TodayStrip } from "@/components/today/TodayStrip";
 import { MAIN_CARDS, SMALL_BUTTONS } from "@/lib/menu";
 import { getSection } from "@/lib/sections";
 
@@ -25,6 +26,9 @@ export default function Home() {
           Не сиди. Не тупи. <span className="text-lime">Газ!</span>
         </p>
       </header>
+
+      {/* Полоска «Сегодня 🔥»: серия дней подряд, тап открывает /today */}
+      <TodayStrip />
 
       <nav aria-label="Разделы">
         <ul className="flex flex-col gap-3">

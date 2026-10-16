@@ -145,3 +145,35 @@ export function trackGazChallengeMark(event: { id: string; day: number }) {
 export function trackGazPackClick(event: { id: string }) {
   send("gaz_pack_click", { ...event });
 }
+
+// ---------- Сегодня 🔥 ----------
+
+/** Открыли экран «Сегодня» (раз за заход). */
+export function trackTodayOpen() {
+  send("today_open");
+}
+
+/** Голос в батле дня. id — id батла (bt01…), choice — левая (a) или правая (b) половина. */
+export function trackTodayBattleVote(event: { id: string; choice: "a" | "b" }) {
+  send("today_battle_vote", { ...event });
+}
+
+/** «Спросить друзей 🫵» после голоса в батле: поделились карточкой. id — id батла. */
+export function trackTodayBattleShare(event: { id: string }) {
+  send("today_battle_share", { ...event });
+}
+
+/** Сохранили ответ в дневник «Вопрос дня 💭». Только id вопроса: сам ответ никуда не уходит. */
+export function trackTodayQuestionAnswer(event: { id: string }) {
+  send("today_question_answer", { ...event });
+}
+
+/** «Сделано 🔥» у задания дня ⚡. id — id задания из колоды «Мне скучно». */
+export function trackTodayTaskDone(event: { id: string }) {
+  send("today_task_done", { ...event });
+}
+
+/** Получили награду за серию (карту и/или заморозку). days — ступенька лесенки: 3, 7… */
+export function trackTodayStreakReward(event: { days: number }) {
+  send("today_streak_reward", { ...event });
+}

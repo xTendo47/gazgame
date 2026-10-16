@@ -20,6 +20,10 @@ if (catalog.gaz) {
     const g = catalog.gaz;
     console.log(`🚀 GAZ: «Мне скучно» — ${g.bored.length}, рулетка — ${g.roulette.length}, челленджей — ${g.challenges.length}, наборов — ${g.packs.length}`);
   }
+if (catalog.today) {
+    const t = catalog.today;
+    console.log(`🔥 Сегодня: батлов — ${t.battles.length}, вопросов — ${t.questions.length}, ступенек наград — ${t.ladder.length}`);
+  }
 } catch (error) {
   console.error((error as Error).message);
   process.exit(1);

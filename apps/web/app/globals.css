@@ -450,3 +450,48 @@
     transform: none;
   }
 }
+
+/* ---------- Сегодня 🔥 (полоска на главной и экран /today) ----------
+   today-breathe — серый огонёк тихо «дышит» (масштаб 1 → 1,15, цикл 2,4 с); today-pop — блок появляется снизу;
+   today-flame — огонёк загорается при засчитывании дня. */
+@layer components {
+  .today-breathe {
+    display: inline-block;
+    animation: today-breathe 2.4s ease-in-out infinite;
+  }
+  .today-pop {
+    animation: today-pop 0.35s ease-out;
+  }
+  .today-flame {
+    animation: today-flame 0.5s ease-out;
+  }
+}
+@keyframes today-breathe {
+  50% {
+    transform: scale(1.15);
+  }
+}
+@keyframes today-pop {
+  from {
+    transform: translateY(10px) scale(0.95);
+    opacity: 0;
+  }
+}
+@keyframes today-flame {
+  from {
+    transform: translateY(10px) scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* «Уменьшить движение»: огонёк не дышит, блоки не прыгают, полоса и огонёк меняются без перехода */
+@media (prefers-reduced-motion: reduce) {
+  .today-breathe,
+  .today-pop,
+  .today-flame {
+    animation: none;
+  }
+  .today-smooth {
+    transition: none !important;
+  }
+}

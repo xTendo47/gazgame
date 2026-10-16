@@ -938,6 +938,100 @@ export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; t
   );
 }
 
+// ---------- Батл дня ⚔️ («Сегодня 🔥») ----------
+
+/**
+ * Карточка 4:5 батла: огромный эмодзи выбранной половины, вопрос и «Я за {вариант}. А ты?».
+ * Цвет — как у половины в приложении: левая оранжевая, правая салатовая.
+ */
+export function TodayBattleCard({
+  question,
+  pick,
+  lime,
+  shortLink,
+}: {
+  question: string;
+  pick: { emoji: string; label: string };
+  lime: boolean;
+  shortLink: string;
+}) {
+  const W = 1080;
+  const H = 1350;
+  const color = lime ? LIME : ORANGE;
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        width: W,
+        height: H,
+        padding: "60px 72px 56px",
+        backgroundColor: BG,
+        color: CREAM,
+        fontFamily: BODY,
+      }}
+    >
+      <Backdrop card={{ color, style: "default", emoji: pick.emoji }} w={W} h={H} emojiSize={760} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Logo size={32} />
+        <div
+          style={{
+            display: "flex",
+            padding: "9px 20px",
+            borderRadius: 999,
+            backgroundColor: "rgba(20,18,23,0.6)",
+            fontWeight: 800,
+            fontSize: 24,
+            letterSpacing: 2,
+            textTransform: "uppercase",
+          }}
+        >
+          Батл дня ⚔️
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+        <div style={{ display: "flex", fontSize: 300, lineHeight: 1 }}>{pick.emoji}</div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            maxWidth: 900,
+            marginTop: 36,
+            fontFamily: DISPLAY,
+            fontWeight: 900,
+            fontSize: question.length <= 36 ? 70 : 56,
+            lineHeight: 1.15,
+            textShadow: TEXT_SHADOW,
+          }}
+        >
+          {question}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 34,
+            padding: "22px 40px",
+            borderRadius: 32,
+            backgroundColor: "rgba(20,18,23,0.72)",
+            border: `3px solid ${color}`,
+            fontWeight: 800,
+            fontSize: 50,
+            lineHeight: 1.2,
+          }}
+        >
+          {`Я за ${pick.label}. А ты?`}
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 24 }}>
+        <div style={{ display: "flex", fontWeight: 800, fontSize: 30, color: LIME }}>{shortLink}</div>
+        <Logo size={28} />
+      </div>
+    </div>
+  );
+}
+
 // ---------- Обложки для превью ссылок на тест и главную ----------
 
 /** Мягкое свечение для обложек. */

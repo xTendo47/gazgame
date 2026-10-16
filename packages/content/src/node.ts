@@ -72,6 +72,7 @@ function readExtraFiles(dir: string): ExtraContentFiles {
     premiumCodes: readDataFile(dir, "premium-codes.json"),
     ultimate: readDataFile(dir, "ultimate.json"),
     gaz: readDataFile(dir, "gaz.json"),
+    today: readDataFile(dir, "today.json"),
     sectionLayouts: readDataFile(dir, "sections.json"),
   };
 }
