@@ -197,7 +197,7 @@ describe("игра guess-partner: уровни и вопросы «про себ
       ]),
     );
     const know = games[0];
-    expect(know && know.mechanic !== "mafia" && know.mechanic !== "spy" ? know.decks[1]?.locked?.reason : null).toBe("subscription");
+    expect(know && know.mechanic !== "mafia" && know.mechanic !== "spy" && know.mechanic !== "explain" ? know.decks[1]?.locked?.reason : null).toBe("subscription");
   });
 
   it("unlockAfter должен указывать на другую колоду этой игры", () => {
@@ -510,6 +510,43 @@ describe("Сегодня 🔥 (data/today.json)", () => {
     order.ladder = [...order.ladder].reverse();
     expect(() => build(order)).toThrow(/по возрастанию/);
     expect(() => buildCatalog([], { today: { path: "today.json", data: todayFile() } })).toThrow(/gaz.json/);
+  });
+});
+
+describe("Объясни 🪧 (data/games/explain.json)", () => {
+  const explainFile = () => ({ ...JSON.parse(readFileSync(new URL("../data/games/explain.json", import.meta.url), "utf-8")), related: [] }) as {
+    levels: { id: string; words: string[]; tier?: string }[];
+    teamNames: string[];
+    [key: string]: unknown;
+  };
+  const build = (data: unknown) => buildCatalog([{ path: "explain.json", kind: "game", data }]);
+
+  it("настоящий файл загружается: 120 / 120 / 70 слов, Тяжёлый — Premium, 12 имён для 🎲", () => {
+    const game = loadCatalog().games.find((g) => g.mechanic === "explain");
+    if (game?.mechanic !== "explain") throw new Error("нет игры «Объясни»");
+    expect(game.levels.map((l) => [l.id, l.words.length, l.tier])).toEqual([
+      ["easy", 120, "free"],
+      ["mid", 120, "free"],
+      ["hard", 70, "premium"],
+    ]);
+    expect(game.teamNames).toHaveLength(12);
+    expect(game.teamNames.slice(0, 2)).toEqual(["Газ", "Тормоза"]);
+    expect(game.players.min).toBe(4);
+  });
+
+  it("повтор слова в уровне, повтор уровня, мало имён и платный первый уровень не проходят", () => {
+    expect(() => build(explainFile())).not.toThrow();
+    const dup = explainFile();
+    dup.levels[0] = { ...dup.levels[0], words: [...(dup.levels[0]?.words ?? []), "ЗАМОК"] } as (typeof dup.levels)[number];
+    expect(() => build(dup)).toThrow(/повторяется в уровне "easy"/);
+    const sameLevel = explainFile();
+    sameLevel.levels[1] = { ...sameLevel.levels[1], id: "easy" } as (typeof sameLevel.levels)[number];
+    expect(() => build(sameLevel)).toThrow(/уровень "easy" повторяется/);
+    expect(() => build({ ...explainFile(), teamNames: ["Газ", "Тормоза"] })).toThrow(ContentError);
+    const paid = explainFile();
+    paid.levels[0] = { ...paid.levels[0], tier: "premium" } as (typeof paid.levels)[number];
+    expect(() => build(paid)).toThrow(/первый уровень должен быть бесплатным/);
+    expect(() => build({ ...explainFile(), extra: 1 })).toThrow(ContentError);
   });
 });
 

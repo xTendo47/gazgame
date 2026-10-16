@@ -17,6 +17,7 @@ export * from "./mechanics/guess-partner";
 export * from "./mechanics/match";
 export * from "./mechanics/mafia";
 export * from "./mechanics/spy";
+export * from "./mechanics/explain";
 export * from "./card-games";
 export * from "./premium";
 export * from "./sections";

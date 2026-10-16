@@ -24,11 +24,12 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
   const game = findGame(getCatalog(), (await params).slug, visibility);
   if (!game) notFound();
   const section = getSection(game.sections[0] ?? "company");
-  // Игра раундами, «Мафия», «Шпион» и «Совпадём?» показывают правила отдельным экраном — здесь их не дублируем.
+  // Игра раундами, «Мафия», «Шпион», «Объясни» и «Совпадём?» показывают правила отдельным экраном — здесь их не дублируем.
   const rulesOnOwnScreen =
     (game.mechanic === "deck" && game.roundSize !== undefined) ||
     game.mechanic === "mafia" ||
     game.mechanic === "spy" ||
+    game.mechanic === "explain" ||
     game.mechanic === "match";
 
   return (

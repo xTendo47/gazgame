@@ -90,6 +90,10 @@ function rawStrings(data: unknown, key: string): string[] {
 function countLabel(item: ContentItem): string {
   if (item.kind === "test") return `${item.questions.length} вопр. · ${item.results.length} результ.`;
   if (item.mechanic === "mafia") return `${item.roles.length} ролей · ${item.mechanic}`;
+  if (item.mechanic === "explain") {
+    const words = item.levels.reduce((sum, l) => sum + l.words.length, 0);
+    return `${words} слов в ${item.levels.length} уровнях · ${item.mechanic}`;
+  }
   if (item.mechanic === "spy") {
     const words = item.decks.reduce((sum, d) => sum + d.cards.length, 0);
     return `${words} карт в ${item.decks.length} наборах · ${item.mechanic}`;

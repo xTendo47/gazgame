@@ -550,3 +550,43 @@
     animation: none;
   }
 }
+
+/* ---------- Объясни 🪧 ----------
+   explain-rise — новая карта выезжает из колоды снизу; explain-pulse — в последние 5 секунд таймер оранжевый и пульсирует;
+   explain-bob — корона на победе покачивается. */
+@layer components {
+  .explain-rise {
+    animation: explain-rise 0.28s ease-out;
+  }
+  .explain-pulse {
+    animation: explain-pulse 0.5s ease-in-out infinite alternate;
+  }
+  .explain-bob {
+    animation: explain-bob 1.6s ease-in-out infinite;
+  }
+}
+@keyframes explain-rise {
+  from {
+    transform: translateY(24px) scale(0.94);
+    opacity: 0.4;
+  }
+}
+@keyframes explain-pulse {
+  to {
+    transform: scale(1.12);
+  }
+}
+@keyframes explain-bob {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* «Уменьшить движение»: ни выезда карты, ни пульса таймера, ни покачивания короны */
+@media (prefers-reduced-motion: reduce) {
+  .explain-rise,
+  .explain-pulse,
+  .explain-bob {
+    animation: none;
+  }
+}

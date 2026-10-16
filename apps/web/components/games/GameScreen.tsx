@@ -10,6 +10,7 @@ import { Button } from "@gazgame/ui";
 import { tierFor, usePremium } from "@/lib/premium";
 import { DeckGame } from "./DeckGame";
 import { DeckPicker } from "./DeckPicker";
+import { ExplainGame } from "./ExplainGame";
 import { GuessPartnerGame } from "./GuessPartnerGame";
 import { MafiaGame } from "./MafiaGame";
 import { MatchGame } from "./MatchGame";
@@ -45,9 +46,10 @@ function Mechanic({
 }
 
 export function GameScreen({ game, related }: { game: Game; related?: ReactNode }) {
-  // «Мафия», «Шпион» и «Насколько ты меня знаешь» ведут игру сами, у остальных сначала выбор колоды
+  // «Мафия», «Шпион», «Объясни» и «Насколько ты меня знаешь» ведут игру сами, у остальных сначала выбор колоды
   if (game.mechanic === "mafia") return <MafiaGame game={game} related={related} />;
   if (game.mechanic === "spy") return <SpyGame game={game} related={related} />;
+  if (game.mechanic === "explain") return <ExplainGame game={game} related={related} />;
   if (game.mechanic === "guess-partner") return <GuessPartnerGame game={game} related={related} />;
   if (game.mechanic === "match") return <MatchGame game={game} related={related} />;
   return <DecksScreen game={game} related={related} />;

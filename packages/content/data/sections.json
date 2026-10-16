@@ -35,7 +35,7 @@
             { "emoji": "🫵", "title": "Кто из нас?", "text": "Голосуем пальцем, кто тут главный хаос", "min": 3, "ref": { "game": "who-of-us" }, "levels": [{ "label": "С огоньком" }, { "label": "Без тормозов 💎", "premium": true }] },
             { "emoji": "🫣", "title": "Я никогда не…", "text": "Загибай палец, если было", "min": 3, "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" }, { "label": "С перчинкой" }, { "label": "Без тормозов 💎", "premium": true }] },
             { "emoji": "🎯", "title": "Правда или действие", "text": "Крути! Отвечай или делай", "min": 2, "soon": true, "levels": [{ "label": "Лайт" }, { "label": "Жёстко 💎", "premium": true }] },
-            { "emoji": "🎭", "title": "Крокодил", "text": "Покажи слово без слов", "min": 3, "soon": true }
+            { "emoji": "🪧", "title": "Объясни", "text": "Объясни слово, не называя его", "min": 4, "ref": { "game": "explain" }, "levels": [{ "label": "Лёгкий" }, { "label": "Средний" }, { "label": "Тяжёлый 💎", "premium": true }] }
           ]
         },
         {

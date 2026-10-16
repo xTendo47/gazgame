@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -793,8 +793,56 @@ function checkSpy(game: SpyGameInput, ctx: z.RefinementCtx) {
   if (game.players.min < 3) ctx.addIssue({ code: "custom", path: ["players", "min"], message: "в «Шпиона» играют минимум втроём" });
 }
 
+
+// ---------- Объясни 🪧 (Alias + Крокодил) ----------
+
+/** Уровень «Объясни»: название и слова. Тяжёлый — Premium 💎 (замок: тап считается как «Глубже 💎»). */
+export const explainLevelSchema = z.strictObject({
+  id: slug,
+  title: text,
+  emoji: text,
+  tier: tierSchema.default("free"),
+  words: z.array(text).min(1, "в уровне должно быть хотя бы одно слово"),
+});
+
+/**
+ * «Объясни»: колода слов, один объясняет слово, не называя его, своя команда угадывает. Режимы Словами и Жестами —
+ * на одной базе слов. Один телефон, 2–4 команды. teamNames — имена для кнопки 🎲, первые два — команды по умолчанию.
+ */
+export const explainGameSchema = itemBase.extend({
+  kind: z.literal("game"),
+  mechanic: z.literal("explain"),
+  rules: z.array(text).default([]),
+  teamNames: z.array(text).min(4, "для 🎲 нужно минимум 4 имени команд (команд до четырёх)"),
+  levels: z.array(explainLevelSchema).min(1),
+});
+
+type ExplainGameInput = z.infer<typeof explainGameSchema>;
+
+/** Проверки «Объясни»: id уровней, повторы слов внутри уровня (без учёта регистра) и имён команд, от 4 человек. */
+function checkExplain(game: ExplainGameInput, ctx: z.RefinementCtx) {
+  const levelIds = new Set<string>();
+  game.levels.forEach((level, li) => {
+    if (levelIds.has(level.id)) ctx.addIssue({ code: "custom", path: ["levels", li, "id"], message: `уровень "${level.id}" повторяется` });
+    levelIds.add(level.id);
+    const seen = new Set<string>();
+    level.words.forEach((word, wi) => {
+      const key = word.toLowerCase();
+      if (seen.has(key)) ctx.addIssue({ code: "custom", path: ["levels", li, "words", wi], message: `слово "${word}" повторяется в уровне "${level.id}"` });
+      seen.add(key);
+    });
+  });
+  const names = new Set<string>();
+  game.teamNames.forEach((name, i) => {
+    if (names.has(name.toLowerCase())) ctx.addIssue({ code: "custom", path: ["teamNames", i], message: `имя команды "${name}" повторяется` });
+    names.add(name.toLowerCase());
+  });
+  if (game.players.min < 4) ctx.addIssue({ code: "custom", path: ["players", "min"], message: "в «Объясни» играют минимум вчетвером (2 команды по 2)" });
+  if (game.levels[0]?.tier === "premium") ctx.addIssue({ code: "custom", path: ["levels", 0, "tier"], message: "первый уровень должен быть бесплатным: он открыт по умолчанию" });
+}
+
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
@@ -802,6 +850,10 @@ export const gameSchema = z
     }
     if (game.mechanic === "spy") {
       checkSpy(game, ctx);
+      return;
+    }
+    if (game.mechanic === "explain") {
+      checkExplain(game, ctx);
       return;
     }
     const deckIds = game.decks.map((d) => d.id);
@@ -1299,7 +1351,9 @@ export type SpyGame = z.infer<typeof spyGameSchema>;
 export type SpyDeck = SpyGame["decks"][number];
 export type SpyCard = SpyDeck["cards"][number];
 /** Игры с колодами карточек (все механики, кроме «Мафии» и «Шпиона»). */
-export type DeckBasedGame = Exclude<Game, MafiaGame | SpyGame>;
+export type ExplainGame = z.infer<typeof explainGameSchema>;
+export type ExplainLevel = ExplainGame["levels"][number];
+export type DeckBasedGame = Exclude<Game, MafiaGame | SpyGame | ExplainGame>;
 export type Mechanic = Game["mechanic"];
 export type LockedTest = z.infer<typeof lockedTestSchema>;
 export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;

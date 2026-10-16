@@ -199,3 +199,25 @@ export function trackCollectionCardShare(event: { key: string }) {
 export function trackCollectionPuzzleClick() {
   send("collection_puzzle_click");
 }
+
+// ---------- Объясни 🪧 ----------
+
+/** Старт игры «Объясни» («Погнали 🔥»): режим (words/gestures), уровень, число команд, секунд на ход, цель (0 — без лимита), штраф. Имена команд не отправляем. */
+export function trackExplainStart(event: { mode: string; level: string; teams: number; time: number; goal: number; penalty: boolean }) {
+  send("explain_start", { ...event });
+}
+
+/** Раунд команды закончен (после исправлений в итоге): уровень, сколько слов угадали и сколько пропустили. */
+export function trackExplainRoundEnd(event: { level: string; guessed: number; skipped: number }) {
+  send("explain_round_end", { ...event });
+}
+
+/** Игра дошла до победы: режим, уровень, число команд и сколько раундов сыграно. */
+export function trackExplainFinish(event: { mode: string; level: string; teams: number; rounds: number }) {
+  send("explain_finish", { ...event });
+}
+
+/** Тап по закрытому уровню «Тяжёлый 💎» (замок): замер интереса к Premium. Заодно идёт как «Глубже 💎» (deeper_click). */
+export function trackExplainHardClick() {
+  send("explain_hard_click");
+}

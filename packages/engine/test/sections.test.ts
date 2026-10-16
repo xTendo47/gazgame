@@ -9,6 +9,7 @@ import whoJson from "@gazgame/content/data/games/who-of-us.json";
 import neverJson from "@gazgame/content/data/games/never-have-i-ever.json";
 import mafiaJson from "@gazgame/content/data/games/mafia.json";
 import spyJson from "@gazgame/content/data/games/spy.json";
+import explainJson from "@gazgame/content/data/games/explain.json";
 import truthJson from "@gazgame/content/data/games/truth-or-dare.json";
 import temperamentJson from "@gazgame/content/data/tests/temperament.json";
 import superpowerJson from "@gazgame/content/data/tests/superpower.json";
@@ -19,7 +20,7 @@ import loveJson from "@gazgame/content/data/tests/love-languages.json";
 import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
 import { boldParts, createMemoryKeyValueStore, createProgressStore, peopleOption, sectionTarget, tooFewPeople } from "../src/index";
 
-const games = [knowJson, matchJson, whoJson, neverJson, mafiaJson, spyJson, truthJson];
+const games = [knowJson, matchJson, whoJson, neverJson, mafiaJson, spyJson, explainJson, truthJson];
 const tests = [temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
 const catalog = buildCatalog(
   [
@@ -48,10 +49,12 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(sectionTarget(catalog, item("solo", "Темперамент"))).toEqual({ kind: "link", href: "/test/temperament" });
     expect(sectionTarget(catalog, item("solo", "Тёмная триада"))).toEqual({ kind: "locked-test", slug: "dark-triad" });
     expect(sectionTarget(catalog, item("pairs", "Совпадём?"))).toEqual({ kind: "link", href: "/game/match-us" });
+    // «Объясни 🪧» стала на место «Крокодила (скоро)»: от 4 человек
+    expect(sectionTarget(catalog, item("company", "Объясни"))).toEqual({ kind: "link", href: "/game/explain" });
+    expect(item("company", "Объясни").min).toBe(4);
   });
 
   it("«скоро» — если помечено или такого в контенте нет", () => {
-    expect(sectionTarget(catalog, item("company", "Крокодил"))).toEqual({ kind: "soon" });
     expect(sectionTarget(catalog, item("company", "Правда или действие"))).toEqual({ kind: "soon" }); // помечено «скоро», хоть игра и есть
     expect(sectionTarget(catalog, { emoji: "🧪", title: "Нет такой", text: "-", ref: { game: "nope" } })).toEqual({ kind: "soon" });
   });

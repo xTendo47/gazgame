@@ -103,7 +103,7 @@ describe("Premium — что открывается", () => {
   it("с Premium открываются закрытые колоды с карточками; без Premium — замки; пустые с Premium — «Скоро»", () => {
     const deck = (game: string, id: string) => {
       const g = catalog.games.find((x) => x.id === game);
-      return g && g.mechanic !== "spy" && g.mechanic !== "mafia" ? g.decks.find((d) => d.id === id) : undefined;
+      return g && g.mechanic !== "spy" && g.mechanic !== "mafia" && g.mechanic !== "explain" ? g.decks.find((d) => d.id === id) : undefined;
     };
     for (const [game, id] of [
       ["know-each-other", "abyss"],
