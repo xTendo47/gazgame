@@ -495,3 +495,58 @@
     transition: none !important;
   }
 }
+
+/* ---------- Коллекция 🃏 (экран /collection, вспышка новой карты) ----------
+   coll-back — рубашка пустого слота (тёмная, узор в полоску); coll-lock — то же с голубой кромкой у платных тестов;
+   coll-shine — по золотой рамке раз в несколько секунд пробегает блик; coll-flip — карта выезжает на весь экран
+   с переворотом (рубашка → лицо, 0,4 с). */
+@layer components {
+  .coll-back {
+    background: repeating-linear-gradient(45deg, #1b181f 0 8px, #201c24 8px 16px);
+  }
+  .coll-lock {
+    background: repeating-linear-gradient(45deg, #1b1a22 0 8px, #1f1e28 8px 16px);
+  }
+  .coll-shine::after {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 42%, rgb(255 235 170 / 0.35) 50%, transparent 58%);
+    animation: coll-shine 4.5s ease-in-out infinite;
+  }
+  .coll-flip {
+    transform-style: preserve-3d;
+    animation: coll-flip 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+  }
+  .coll-flip > * {
+    backface-visibility: hidden;
+  }
+}
+@keyframes coll-shine {
+  0%,
+  60% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(60%);
+  }
+}
+@keyframes coll-flip {
+  from {
+    transform: rotateY(180deg) scale(0.7);
+  }
+  to {
+    transform: rotateY(0) scale(1);
+  }
+}
+
+/* «Уменьшить движение»: без блика и переворота — карта просто появляется */
+@media (prefers-reduced-motion: reduce) {
+  .coll-shine::after {
+    display: none;
+  }
+  .coll-flip {
+    animation: none;
+  }
+}

@@ -22,3 +22,4 @@ export * from "./premium";
 export * from "./sections";
 export * from "./gaz";
 export * from "./today";
+export * from "./collection";

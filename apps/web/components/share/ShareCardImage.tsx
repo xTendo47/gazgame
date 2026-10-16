@@ -1032,6 +1032,93 @@ export function TodayBattleCard({
   );
 }
 
+// ---------- Карта Коллекции 🃏 ----------
+
+const RARITY_COLOR = { common: "#8E869A", rare: ORANGE, gold: GOLD } as const;
+
+/**
+ * Карточка 4:5 для «В сторис»: карта 2:3 по центру (рамка по редкости), «Моя коллекция в GAZ 🃏» и ссылка.
+ * Эмодзи, название и подпись те же, что на карте в приложении.
+ */
+export function CollectionShareCard({
+  card,
+  shortLink,
+}: {
+  card: { emoji: string; emoji2?: string; title: string; caption: string; rarity: "common" | "rare" | "gold" };
+  shortLink: string;
+}) {
+  const W = 1080;
+  const H = 1350;
+  const color = RARITY_COLOR[card.rarity];
+  const long = card.title.length > 28;
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        width: W,
+        height: H,
+        padding: "60px 72px 56px",
+        backgroundColor: BG,
+        color: CREAM,
+        fontFamily: BODY,
+      }}
+    >
+      <Backdrop card={{ color, style: "default", emoji: card.emoji }} w={W} h={H} emojiSize={760} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Logo size={32} />
+      </div>
+      <div style={{ display: "flex", flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 540,
+            height: 810,
+            padding: "36px 36px 60px",
+            borderRadius: 44,
+            backgroundImage: "linear-gradient(165deg, #30293A, #1D1A21)",
+            border: `6px solid ${color}`,
+            boxShadow: card.rarity === "common" ? "none" : `0 0 70px ${color}88`,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ display: "flex", fontSize: card.emoji2 ? 150 : 240, lineHeight: 1 }}>
+            {card.emoji}
+            {card.emoji2}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 36,
+              fontFamily: DISPLAY,
+              fontWeight: 900,
+              fontSize: long ? 36 : 50,
+              lineHeight: 1.15,
+            }}
+          >
+            {card.title}
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 22, fontWeight: 600, fontSize: 28, color: MUTED }}>{card.caption}</div>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", paddingTop: 24, gap: 10 }}>
+        <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 46, lineHeight: 1.1, textShadow: TEXT_SHADOW }}>
+          Моя коллекция в GAZ 🃏
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", fontWeight: 800, fontSize: 28, color: LIME }}>{shortLink}</div>
+          <Logo size={28} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ---------- Обложки для превью ссылок на тест и главную ----------
 
 /** Мягкое свечение для обложек. */

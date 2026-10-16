@@ -119,6 +119,15 @@
               "title": {
                 "type": "string",
                 "minLength": 1
+              },
+              "rarity": {
+                "default": "common",
+                "type": "string",
+                "enum": [
+                  "common",
+                  "rare",
+                  "gold"
+                ]
               }
             },
             "required": [

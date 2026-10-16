@@ -7,7 +7,6 @@ import {
   createMemoryKeyValueStore,
   createProgressStore,
   dayIndex,
-  dismissReward,
   emptyToday,
   isDayCounted,
   ladderProgress,
@@ -110,8 +109,6 @@ describe("награды за серию", () => {
     expect(streakTo(2).cards).toEqual([]);
     const three = streakTo(3);
     expect(three.cards).toEqual([{ id: "streak-3", date: "2026-10-15", gold: false }]);
-    expect(three.pendingReward).toBe("streak-3");
-    expect(dismissReward(three).pendingReward).toBeUndefined();
     const seven = streakTo(7);
     expect(seven.cards.map((c) => c.id)).toEqual(["streak-3", "streak-7"]);
     expect(seven.freezes).toBe(2); // недельная + за 7 дней

@@ -8,8 +8,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import type { Test } from "@gazgame/content";
-import { audienceForLabel, isAudience, questionTexts, scoreTest } from "@gazgame/engine";
+import { audienceForLabel, isAudience, isTopTie, questionTexts, scoreTest, testCard, typeRanking } from "@gazgame/engine";
 import { Button, ProgressBar } from "@gazgame/ui";
+import { announceCard } from "@/lib/collection";
 import { getProgress } from "@/lib/progress";
 import { needsScoresInQuery, scoreQuery } from "@/lib/result-query";
 
@@ -30,7 +31,13 @@ export function TestRunner({ test }: { test: Test }) {
     setAnswers(next);
     if (next.length === total) {
       const { resultId, blend, scores } = scoreTest(test, next);
-      getProgress().saveTestResult(test.id, resultId);
+      // Последний итог теста лежит на устройстве: из него собирается карта Коллекции. Ничья: второй итог тоже на карте
+      const ranking = typeRanking(test, scores, { resultId, blendId: blend?.resultId });
+      const tieId = isTopTie(ranking) ? ranking?.[1]?.result.id : undefined;
+      const previous = getProgress().getTestResult(test.id);
+      getProgress().saveTestResult(test.id, resultId, new Date(), tieId);
+      // новый итог (первое прохождение или другой результат) — «Новая карта в Коллекции 🃏»
+      if (!previous || previous.resultId !== resultId || previous.tieId !== tieId) announceCard(testCard(test, resultId, tieId));
       const path = `/test/${test.slug}/result/${resultId}${blend ? `/${blend.resultId}` : ""}`;
       router.push(needsScoresInQuery(test) ? path + scoreQuery(scores) : path);
     }

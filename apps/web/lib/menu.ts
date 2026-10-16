@@ -17,6 +17,8 @@ export interface SmallButton {
   subtitle?: string;
   /** Живая «огненная» плитка Ultimate: оранжевое дышащее свечение и искры. */
   fire?: boolean;
+  /** Оранжевая точка, пока есть новая карта (плитка «Коллекция»). */
+  dot?: boolean;
   /** Внешняя ссылка: открывается в новой вкладке (t.me — сразу в приложении Telegram). */
   external?: boolean;
 }
@@ -28,5 +30,6 @@ export const SMALL_BUTTONS: SmallButton[] = [
   { href: "/premium", emoji: "💎", title: "Premium", subtitle: "без ограничений", diamond: true },
   // «Предложи своё» — сразу в Telegram-канал GAZ (ссылка — в lib/links.ts)
   { href: TELEGRAM_CHANNEL_URL, emoji: "💡", title: "Предложи своё", external: true },
-  { href: "/profile", emoji: "👤", title: "Профиль" },
+  // Бывший «Профиль»: альбом карт. Точка горит, пока новую карту не открыли
+  { href: "/collection", emoji: "🃏", title: "Коллекция", dot: true },
 ];

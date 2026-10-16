@@ -10,6 +10,7 @@ import type { Test, TestResult } from "@gazgame/content";
 import { fillPlaceholders, scalesConfig, scoringConfig, shareButtonLabel, splitListLabel, type TestBlend } from "@gazgame/engine";
 import { Badge, buttonVariants, cn, DeepTeaser } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
+import { CollectionFlash } from "@/components/collection/CollectionFlash";
 import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getSection } from "@/lib/sections";
@@ -59,6 +60,8 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
 
   return (
     <ShareProvider test={test} resultId={result.id} blendId={blend?.resultId}>
+      {/* Новый итог — «Новая карта в Коллекции 🃏» */}
+      <CollectionFlash />
       <div className="flex items-center justify-between gap-3">
         <BackLink href={`/${test.sections[0] ?? ""}`}>Все тесты</BackLink>
         <ShareIconButton />

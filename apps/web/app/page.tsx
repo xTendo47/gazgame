@@ -6,6 +6,7 @@ import { cn, Logo, Screen, Tile } from "@gazgame/ui";
 import { RandomDice } from "@/components/RandomDice";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { Embers } from "@/components/ultimate/Embers";
+import { CollectionDot } from "@/components/collection/CollectionDot";
 import { TodayStrip } from "@/components/today/TodayStrip";
 import { MAIN_CARDS, SMALL_BUTTONS } from "@/lib/menu";
 import { getSection } from "@/lib/sections";
@@ -84,8 +85,10 @@ export default function Home() {
                   "hover:bg-surface-2 active:scale-[0.97]",
                   item.diamond && "diamond-glow",
                   item.fire && "fire-tile relative overflow-hidden",
+                  item.dot && "relative",
                 )}
               >
+                {item.dot && <CollectionDot />}
                 {/* Искры летят снизу вверх под текстом — текст остаётся читаемым */}
                 {item.fire && <Embers count={9} seed={7} rise={[50, 110]} />}
                 <span aria-hidden="true" className="relative z-10 text-3xl leading-none">

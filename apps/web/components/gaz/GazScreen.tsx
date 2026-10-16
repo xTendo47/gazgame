@@ -9,6 +9,8 @@ import {
   activeCard,
   DEFAULT_CHIPS,
   finishCard,
+  gazTaskCard,
+  mskDay,
   findGazTask,
   GAZ_SPINS,
   isTodayMarked,
@@ -41,9 +43,10 @@ import { copyText } from "@/lib/clipboard";
 import { isDesktop, prefersReducedMotion, updateGaz, useGazData, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { siteUrl } from "@/lib/share-card";
+import { announceCard } from "@/lib/collection";
 import { countDay } from "@/lib/today";
 import { BackLink } from "../BackLink";
-import { RewardFlash } from "../today/RewardFlash";
+import { CollectionFlash } from "../collection/CollectionFlash";
 import { DoneCard } from "./DoneCard";
 import { BTN, BTN_GHOST, TaskCard, twistOf } from "./TaskCard";
 
@@ -168,7 +171,10 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
   function done(task: GazTask, source: GazSource, gold: boolean) {
     haptic("fanfare");
     trackGazDone({ id: task.id, source, gold });
+    const first = !data.done.some((x) => x.id === task.id);
     updateGaz((d) => finishCard(d, task.id, gold, new Date()));
+    // первое такое задание — новая карта в Коллекции (повтор только «×2»)
+    if (first) announceCard(gazTaskCard(task, { count: 1, gold, date: mskDay(new Date()) }));
     // любое сделанное задание GAZ засчитывает день в «Сегодня 🔥»
     countDay(today.ladder);
     setWon({ task, gold });
@@ -422,7 +428,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
         </ul>
       </section>
 
-      <RewardFlash ladder={today.ladder} />
+      <CollectionFlash />
     </div>
   );
 }

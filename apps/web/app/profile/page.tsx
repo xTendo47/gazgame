@@ -24,7 +24,7 @@ export default function ProfilePage() {
   return (
     <Screen>
       <PageHeader
-        back={<BackLink href="/">Меню</BackLink>}
+        back={<BackLink href="/collection">Коллекция</BackLink>}
         title="Мои результаты"
         subtitle="Тесты, которые ты прошёл. Хранятся только на этом устройстве."
         badge={<ProfileAvatar />}

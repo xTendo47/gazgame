@@ -9,6 +9,7 @@ import type { GazFile, TodayFile } from "@gazgame/content";
 import {
   answerFor,
   finishCard,
+  gazTaskCard,
   isDayCounted,
   ladderProgress,
   mskDay,
@@ -36,9 +37,10 @@ import { updateGaz, useGazData, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { shareImage } from "@/lib/share";
 import { siteUrl } from "@/lib/share-card";
+import { announceCard } from "@/lib/collection";
 import { countDay, updateToday, useTodayData } from "@/lib/today";
 import { BackLink } from "../BackLink";
-import { RewardFlash } from "./RewardFlash";
+import { CollectionFlash } from "../collection/CollectionFlash";
 
 const BLOCK = "flex flex-col gap-3 rounded-[22px] border bg-surface p-4";
 const BTN = "gaz-press min-h-12 rounded-[14px] px-2 py-3 text-center text-sm font-extrabold";
@@ -180,7 +182,7 @@ export function TodayScreen({ today, gaz, serverMs }: { today: TodayFile; gaz: G
         Мои ответы 📖
       </Link>
 
-      <RewardFlash ladder={today.ladder} />
+      <CollectionFlash />
     </div>
   );
 }
@@ -375,12 +377,15 @@ function Question({ today, question, now }: { today: TodayFile; question: TodayF
 
 function TaskBlock({ today, task, day, done }: { today: TodayFile; task: GazFile["bored"][number]; day: string; done: boolean }) {
   const data = useTodayData();
+  const gazData = useGazData();
   const skipped = !done && data.skipped === day;
 
   /** То же, что «Сделано 🔥» в разделе GAZ: +1 к «Сделано», карта в Коллекцию. Заодно засчитывает день. */
   function finish() {
     trackTodayTaskDone({ id: task.id });
     trackGazDone({ id: task.id, source: "daily", gold: false });
+    // первое такое задание — новая карта в Коллекции
+    if (!gazData.done.some((x) => x.id === task.id)) announceCard(gazTaskCard(task, { count: 1, gold: false, date: day }));
     updateGaz((g) => {
       const result = finishCard(g, task.id, false, new Date());
       // «в процессе» другого задания не трогаем

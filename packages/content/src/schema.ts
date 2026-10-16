@@ -1131,7 +1131,7 @@ export const todayFileSchema = z
           emoji: text,
           text,
           /** Карта, которая выдаётся сразу и уходит в Коллекцию. */
-          card: z.strictObject({ id: todayId, title: text }).optional(),
+          card: z.strictObject({ id: todayId, title: text, /** Редкость рамки карты в Коллекции. */ rarity: z.enum(["common", "rare", "gold"]).default("common") }).optional(),
           /** +1 заморозка (копится максимум до 2). */
           freeze: z.boolean().optional(),
           /** Premium-ступень: пока только показываем, не выдаём (начисление — вместе с сервером). */

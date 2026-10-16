@@ -50,8 +50,6 @@ export interface TodayData {
   skipped?: string;
   /** Полученные карты за серию. */
   cards: TodayCard[];
-  /** id карты, о которой ещё не показали «Новая карта в Коллекции 🃏». */
-  pendingReward?: string;
   notice?: TodayNotice;
 }
 
@@ -148,7 +146,6 @@ export function countToday(
   if (step && !step.premium) {
     if (step.card && !d.cards.some((c) => c.id === step.card?.id)) {
       d.cards = [...d.cards, { id: step.card.id, date: today, gold: false }];
-      d.pendingReward = step.card.id;
       reward = step.days;
     }
     if (step.freeze) {
@@ -184,11 +181,6 @@ export function saveAnswer(data: TodayData, question: string, text: string, now:
 export const answerFor = (data: TodayData, now: Date): TodayAnswer | undefined => data.answers.find((a) => a.day === mskDay(now));
 
 export const skipTask = (data: TodayData, now: Date): TodayData => ({ ...data, skipped: mskDay(now) });
-
-export function dismissReward(data: TodayData): TodayData {
-  const { pendingReward: _gone, ...rest } = data;
-  return rest;
-}
 
 /** Выборы за неделю (понедельник … воскресенье) для строки эмодзи «Твоя неделя в батлах»; undefined — не голосовали. */
 export function weekChoices(data: TodayData, file: Pick<TodayFile, "battles">, now: Date, weekday: number) {

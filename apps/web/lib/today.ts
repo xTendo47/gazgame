@@ -4,8 +4,9 @@
 // Засчитывает день всё, что делает человек: голос в батле, ответ, «Сделано» у задания дня и у любого задания раздела GAZ.
 import { useMemo, useSyncExternalStore } from "react";
 import type { TodayLadderStep } from "@gazgame/content";
-import { countToday, emptyToday, type TodayData } from "@gazgame/engine";
+import { countToday, emptyToday, streakCard, type TodayData } from "@gazgame/engine";
 import { trackTodayStreakReward } from "./analytics";
+import { announceCard } from "./collection";
 import { haptic } from "./haptics";
 import { getProgress } from "./progress";
 
@@ -47,5 +48,10 @@ export function countDay(ladder: readonly TodayLadderStep[]) {
     return r.data;
   });
   if (counted) haptic("fanfare");
-  if (reward !== undefined) trackTodayStreakReward({ days: reward });
+  if (reward !== undefined) {
+    trackTodayStreakReward({ days: reward });
+    // карта за серию (3 и 7 дней) — «Новая карта в Коллекции 🃏»
+    const step = ladder.find((s) => s.days === reward);
+    announceCard(step ? streakCard(step) : null);
+  }
 }

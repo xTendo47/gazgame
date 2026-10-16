@@ -192,8 +192,13 @@ export function finishCard(data: GazData, id: string, gold: boolean, now: Date):
 
 /** Челлендж этой недели: по номеру недели, по кругу. */
 export function weeklyChallenge<T>(challenges: readonly T[], now: Date): T | undefined {
+  return challengeForWeek(challenges, mskWeekNumber(now));
+}
+
+/** Челлендж недели с данным номером (для карт за прошлые недели в Коллекции). */
+export function challengeForWeek<T>(challenges: readonly T[], weekNumber: number): T | undefined {
   if (challenges.length === 0) return undefined;
-  return challenges[((mskWeekNumber(now) % challenges.length) + challenges.length) % challenges.length];
+  return challenges[((weekNumber % challenges.length) + challenges.length) % challenges.length];
 }
 
 /** Дни этой недели, которые отмечены. */

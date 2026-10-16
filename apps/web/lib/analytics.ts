@@ -22,9 +22,9 @@ function send(name: string, props: EventProps = {}) {
 export interface DeeperClickEvent {
   /** id теста или игры */
   id: string;
-  kind: "test" | "game" | "gaz";
+  kind: "test" | "game" | "gaz" | "collection";
   /** Где нажали: результат теста, закрытая колода, конец игры, платный тест под замком, «Сравниться с партнёром» (совместимость), набор в разделе GAZ */
-  source: "result" | "locked-deck" | "game-over" | "locked-test" | "compat" | "gaz-pack";
+  source: "result" | "locked-deck" | "game-over" | "locked-test" | "compat" | "gaz-pack" | "collection-puzzle";
 }
 
 /** Нажатие «Глубже 💎» — наш замер спроса на подписку. С включённым Premium не шлём: замков для него нет. */
@@ -176,4 +176,26 @@ export function trackTodayTaskDone(event: { id: string }) {
 /** Получили награду за серию (карту и/или заморозку). days — ступенька лесенки: 3, 7… */
 export function trackTodayStreakReward(event: { days: number }) {
   send("today_streak_reward", { ...event });
+}
+
+// ---------- Коллекция 🃏 ----------
+
+/** Открыли экран «Коллекция» (раз за заход). */
+export function trackCollectionOpen() {
+  send("collection_open");
+}
+
+/** Открыли карту на весь экран. key — ключ карты: test:<id теста>, gaz:<id задания>, award:<id награды>. */
+export function trackCollectionCardOpen(event: { key: string }) {
+  send("collection_card_open", { ...event });
+}
+
+/** «В сторис» под открытой картой. key — ключ карты. */
+export function trackCollectionCardShare(event: { key: string }) {
+  send("collection_card_share", { ...event });
+}
+
+/** Тап по плитке «Пазл личности 💎» (в MVP «Скоро в Premium»): замер интереса. Заодно идёт как «Глубже 💎» (deeper_click). */
+export function trackCollectionPuzzleClick() {
+  send("collection_puzzle_click");
 }

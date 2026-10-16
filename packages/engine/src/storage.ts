@@ -4,6 +4,7 @@
 // без переписывания экранов.
 import { normalizeGaz, type GazData } from "./gaz";
 import { normalizeToday, type TodayData } from "./today";
+import { normalizeCollection, type CollectionData } from "./collection";
 
 /** Минимальное «хранилище ключ-значение». localStorage подходит под этот интерфейс. */
 export interface KeyValueStore {
@@ -15,6 +16,8 @@ export interface KeyValueStore {
 export interface TestRecord {
   resultId: string;
   completedAt: string;
+  /** Ничья в тесте: второй итог с теми же баллами. На карте Коллекции показываются оба. */
+  tieId?: string;
 }
 
 export interface GameRecord {
@@ -52,6 +55,8 @@ export interface ProgressData {
   gaz?: GazData;
   /** «Сегодня 🔥»: серия, заморозка, голоса, дневник ответов, карты за серию. */
   today?: TodayData;
+  /** «Коллекция 🃏»: какие карты новые и очередь вспышек. Сами карты собираются из остального прогресса. */
+  collection?: CollectionData;
 }
 
 export interface FriendResult {
@@ -63,7 +68,8 @@ export interface FriendResult {
 export interface ProgressStore {
   load(): ProgressData;
   getTestResult(testId: string): TestRecord | null;
-  saveTestResult(testId: string, resultId: string, now?: Date): void;
+  /** Последний итог теста (его берёт Коллекция). tieId — второй итог при ничьей. */
+  saveTestResult(testId: string, resultId: string, now?: Date, tieId?: string): void;
   recordGamePlayed(gameId: string, options?: { score?: number; now?: Date }): void;
   getPlayers(gameId: string): string[] | null;
   savePlayers(gameId: string, names: readonly string[]): void;
@@ -96,6 +102,9 @@ export interface ProgressStore {
   /** «Сегодня 🔥»: всё, что хранится на устройстве. */
   getToday(): TodayData;
   updateToday(update: (data: TodayData) => TodayData): void;
+  /** «Коллекция 🃏»: новые карты и вспышки. */
+  getCollection(): CollectionData;
+  updateCollection(update: (data: CollectionData) => CollectionData): void;
   clear(): void;
 }
 
@@ -138,6 +147,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.companySize ? { companySize: data.companySize } : {}),
         ...(data.gaz ? { gaz: data.gaz } : {}),
         ...(data.today ? { today: data.today } : {}),
+        ...(data.collection ? { collection: data.collection } : {}),
       };
     } catch {
       return emptyProgress();
@@ -155,9 +165,9 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
   return {
     load,
     getTestResult: (testId) => load().tests[testId] ?? null,
-    saveTestResult(testId, resultId, now = new Date()) {
+    saveTestResult(testId, resultId, now = new Date(), tieId) {
       const data = load();
-      data.tests[testId] = { resultId, completedAt: now.toISOString() };
+      data.tests[testId] = { resultId, completedAt: now.toISOString(), ...(tieId ? { tieId } : {}) };
       save(data);
     },
     recordGamePlayed(gameId, { score, now = new Date() } = {}) {
@@ -237,6 +247,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     updateGaz(update) {
       const data = load();
       data.gaz = update(normalizeGaz(data.gaz));
+      save(data);
+    },
+    getCollection: () => normalizeCollection(load().collection),
+    updateCollection(update) {
+      const data = load();
+      data.collection = update(normalizeCollection(data.collection));
       save(data);
     },
     getToday: () => normalizeToday(load().today),
