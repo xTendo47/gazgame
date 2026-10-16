@@ -147,7 +147,7 @@ function Blob({ color, w, h, x, y, size, alpha = "88" }: { color: string; w: num
 }
 
 /** Общая основа: #141217, 2–3 пятна (цвет результата + оранжевый или салатовый), огромный эмодзи, текстура, зерно. */
-function Backdrop({ card, w, h, emojiSize }: { card: ShareCard; w: number; h: number; emojiSize: number }) {
+function Backdrop({ card, w, h, emojiSize }: { card: Pick<ShareCard, "color" | "style" | "emoji">; w: number; h: number; emojiSize: number }) {
   // Satori не понимает right/bottom у абсолютных блоков — считаем left/top так, чтобы эмодзи срезался правым нижним углом
   const emojiLeft = Math.round(w - emojiSize * 0.74);
   const emojiTop = Math.round(h - emojiSize * 0.8);
@@ -847,6 +847,92 @@ function Preview({ card }: { card: ShareCard }) {
           {`А ты кто? Пройди за ${card.durationMin} мин`}
         </div>
         <Logo size={24} />
+      </div>
+    </div>
+  );
+}
+
+// ---------- Сторис «Сделано в GAZ 🔥» (раздел GAZ 🚀) ----------
+
+const GOLD = "#FFC83A";
+
+/** Размер текста задания по длине: длинное не должно вылезать за карточку. */
+const taskTextSize = (text: string) => (text.length <= 60 ? 68 : text.length <= 100 ? 58 : 50);
+
+/**
+ * Карточка 4:5 «Сделано в GAZ 🔥»: огромный эмодзи, текст задания, «Сделано в GAZ 🔥» и ссылка на сайт.
+ * Золотая (gold) — задание с усложнением: золотая рамка и плашка. Фон и зерно те же, что у карточек тестов.
+ */
+export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; text: string; gold: boolean; shortLink: string }) {
+  const W = 1080;
+  const H = 1350;
+  const color = gold ? GOLD : ORANGE;
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        width: W,
+        height: H,
+        padding: "60px 72px 56px",
+        backgroundColor: BG,
+        color: CREAM,
+        fontFamily: BODY,
+      }}
+    >
+      <Backdrop card={{ color, style: "default", emoji }} w={W} h={H} emojiSize={760} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Logo size={32} />
+        {gold && (
+          <div
+            style={{
+              display: "flex",
+              padding: "9px 20px",
+              borderRadius: 999,
+              backgroundColor: "rgba(20,18,23,0.6)",
+              border: `3px solid ${GOLD}`,
+              color: GOLD,
+              fontWeight: 800,
+              fontSize: 24,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+            }}
+          >
+            Золотая карта 🌶️
+          </div>
+        )}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+        <div style={{ display: "flex", fontSize: 300, lineHeight: 1 }}>{emoji}</div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            maxWidth: 900,
+            marginTop: 40,
+            padding: "28px 40px",
+            borderRadius: 36,
+            backgroundColor: "rgba(20,18,23,0.72)",
+            border: `3px solid ${color}`,
+            fontFamily: DISPLAY,
+            fontWeight: 900,
+            fontSize: taskTextSize(text),
+            lineHeight: 1.2,
+            textShadow: TEXT_SHADOW,
+          }}
+        >
+          {text}
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", paddingTop: 24, gap: 10 }}>
+        <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 52, lineHeight: 1.1, textShadow: TEXT_SHADOW }}>
+          Сделано в GAZ 🔥
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", fontWeight: 800, fontSize: 28, color: LIME }}>{shortLink}</div>
+          <Logo size={28} />
+        </div>
       </div>
     </div>
   );

@@ -20,3 +20,4 @@ export * from "./mechanics/spy";
 export * from "./card-games";
 export * from "./premium";
 export * from "./sections";
+export * from "./gaz";

@@ -16,6 +16,10 @@ try {
   if (catalog.cardGames) {
     console.log(`${catalog.cardGames.emoji} ${catalog.cardGames.title}: игр — ${catalog.cardGames.games.length}`);
   }
+if (catalog.gaz) {
+    const g = catalog.gaz;
+    console.log(`🚀 GAZ: «Мне скучно» — ${g.bored.length}, рулетка — ${g.roulette.length}, челленджей — ${g.challenges.length}, наборов — ${g.packs.length}`);
+  }
 } catch (error) {
   console.error((error as Error).message);
   process.exit(1);

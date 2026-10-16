@@ -9,10 +9,12 @@ import {
   premiumFileSchema,
   testSchema,
   ultimateFileSchema,
+  gazFileSchema,
   sectionsFileSchema,
   type CardGamesFile,
   type PremiumFile,
   type UltimateFile,
+  type GazFile,
   type SectionsFile,
   type Catalog,
   type ContentItem,
@@ -71,6 +73,8 @@ export interface ContentReport {
   premiumCodes?: string[];
   /** Тизер Ultimate. */
   ultimate?: UltimateFile;
+  /** Раздел GAZ 🚀. */
+  gaz?: GazFile;
   /** Разделы: плитки-вкладки и карточки. */
   sectionLayouts?: SectionsFile;
 }
@@ -82,6 +86,7 @@ export interface ExtraContentFiles {
   premium?: RawDataFile;
   premiumCodes?: RawDataFile;
   ultimate?: RawDataFile;
+  gaz?: RawDataFile;
   sectionLayouts?: RawDataFile;
 }
 
@@ -167,8 +172,9 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
     problems.push(`❌ ${extras.premiumCodes?.path}: хэши кодов повторяются`);
   }
   const ultimate = inspectDataFile(extras.ultimate, ultimateFileSchema, problems);
+  const gaz = inspectDataFile(extras.gaz, gazFileSchema, problems);
   const sectionLayouts = inspectDataFile(extras.sectionLayouts, sectionsFileSchema, problems);
-  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, sectionLayouts };
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, sectionLayouts };
 }
 
 /** Проверяет необязательный файл (card-games.json, premium.json…): JSON и схема. */
@@ -214,7 +220,7 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, sectionLayouts } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, sectionLayouts } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
   const catalog: Catalog = {
     tests: [],
@@ -224,6 +230,7 @@ export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles 
     ...(premium ? { premium } : {}),
     ...(premiumCodes ? { premiumCodes } : {}),
     ...(ultimate ? { ultimate } : {}),
+    ...(gaz ? { gaz } : {}),
     ...(sectionLayouts ? { sectionLayouts } : {}),
   };
   for (const { item } of reports) {

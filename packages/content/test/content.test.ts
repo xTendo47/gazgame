@@ -443,6 +443,46 @@ describe("Ultimate (data/ultimate.json)", () => {
   });
 });
 
+describe("GAZ 🚀 (data/gaz.json)", () => {
+  const gazFile = () => JSON.parse(readFileSync(new URL("../data/gaz.json", import.meta.url), "utf-8")) as {
+    bored: Record<string, unknown>[];
+    roulette: Record<string, unknown>[];
+    [key: string]: unknown;
+  };
+  const build = (data: unknown) => buildCatalog([], { gaz: { path: "gaz.json", data } });
+
+  it("настоящий файл загружается: 30 «Мне скучно», 54 рулетки, 8 челленджей, 4 набора", () => {
+    const g = loadCatalog().gaz;
+    expect(g?.bored).toHaveLength(30);
+    expect(g?.roulette).toHaveLength(54);
+    expect(g?.challenges).toHaveLength(8);
+    expect(g?.packs).toHaveLength(4);
+  });
+
+  it("лишние поля, повторы id и дыры в сочетаниях рулетки не проходят", () => {
+    expect(() => build(gazFile())).not.toThrow();
+    expect(() => build({ ...gazFile(), extra: 1 })).toThrow(ContentError);
+    const dup = gazFile();
+    dup.bored[1] = { ...dup.bored[1], id: "b01" };
+    expect(() => build(dup)).toThrow(ContentError);
+    const clash = gazFile();
+    clash.roulette[0] = { ...clash.roulette[0], id: "b01" };
+    expect(() => build(clash)).toThrow(ContentError);
+    const hole = gazFile();
+    hole.roulette = hole.roulette.filter((t) => !(t.who === "duo" && t.time === "eve" && t.where === "home"));
+    expect(() => build(hole)).toThrow(/duo · eve · home/);
+    const wrongWho = gazFile();
+    wrongWho.roulette[0] = { ...wrongWho.roulette[0], who: "all" };
+    expect(() => build(wrongWho)).toThrow(ContentError);
+  });
+
+  it("длина колоды «Мне скучно» не делится на 7 (иначе «Задание дня» зациклится)", () => {
+    const g = gazFile();
+    g.bored = [...g.bored, ...[31, 32, 33, 34, 35].map((n) => ({ id: `b${n}`, emoji: "🙂", text: "Тест" }))];
+    expect(() => build(g)).toThrow(/делится на 7/);
+  });
+});
+
 describe("«Что ты получишь» (upsell.premium.items)", () => {
   it("у всех 7 тестов с блоком Premium есть пункты списком; слова «Премиум» кириллицей нет", () => {
     const catalog = loadCatalog();

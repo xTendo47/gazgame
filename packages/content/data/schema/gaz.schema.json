@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "_note": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "bored": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "emoji",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "roulette": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "who": {
+            "type": "string",
+            "enum": [
+              "solo",
+              "duo",
+              "crew"
+            ]
+          },
+          "time": {
+            "type": "string",
+            "enum": [
+              "15",
+              "eve",
+              "wk"
+            ]
+          },
+          "where": {
+            "type": "string",
+            "enum": [
+              "home",
+              "out"
+            ]
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "twist": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "who",
+          "time",
+          "where",
+          "emoji",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "challenges": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "emoji",
+          "title",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "packs": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "emoji": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "emoji",
+          "title",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "bored",
+    "roulette",
+    "challenges",
+    "packs"
+  ],
+  "additionalProperties": false
+}

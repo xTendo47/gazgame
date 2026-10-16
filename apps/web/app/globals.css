@@ -375,3 +375,78 @@
     animation: none;
   }
 }
+
+/* ---------- GAZ 🚀 (карточка на главной и экран /gaz) ----------
+   gaz-glow — оранжевое свечение карточки на главной «дышит» (2,8 с); gaz-pop — карта выпрыгивает снизу с лёгким поворотом;
+   gaz-blink — мигающая точка «в процессе»; gaz-spark — огоньки после «Сделано»; gaz-press — нажатие кнопки. */
+@layer components {
+  .gaz-glow {
+    animation: gaz-glow 2.8s ease-in-out infinite;
+  }
+  .gaz-pop {
+    animation: gaz-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+  }
+  .gaz-blink {
+    animation: gaz-blink 1s infinite;
+  }
+  .gaz-spark {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    width: 7px;
+    height: 7px;
+    margin: -3px 0 0 -3px;
+    border-radius: 999px;
+    pointer-events: none;
+    animation: gaz-spark 0.9s ease-out forwards;
+  }
+  .gaz-press {
+    transition: transform 0.12s;
+  }
+  .gaz-press:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+@keyframes gaz-glow {
+  50% {
+    box-shadow: 0 0 26px 2px rgb(255 90 31 / 0.35);
+  }
+}
+@keyframes gaz-pop {
+  from {
+    transform: translateY(14px) scale(0.94) rotate(-2deg);
+    opacity: 0;
+  }
+}
+@keyframes gaz-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes gaz-spark {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* «Уменьшить движение»: без пульса, прыжка карты, огоньков и нажатия-«пружинки» */
+@media (prefers-reduced-motion: reduce) {
+  .gaz-glow,
+  .gaz-pop,
+  .gaz-blink {
+    animation: none;
+  }
+  .gaz-spark {
+    display: none;
+  }
+  .gaz-press,
+  .gaz-press:active:not(:disabled) {
+    transition: none;
+    transform: none;
+  }
+}

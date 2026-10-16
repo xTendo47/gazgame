@@ -45,6 +45,20 @@ export default function Home() {
               </li>
             );
           })}
+          {/* 4-я большая карточка: раздел GAZ 🚀 — оранжевая рамка, тёплое свечение «дышит» (gaz-glow) */}
+          <li>
+            <Link href="/gaz" className="group block rounded-card">
+              <div className="gaz-glow flex min-h-28 items-center gap-4 rounded-card border border-orange/55 bg-surface p-5 transition group-hover:bg-surface-2 group-active:scale-[0.98]">
+                <span aria-hidden="true" className="text-4xl leading-none">
+                  🚀
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="font-display text-xl leading-tight font-bold">GAZ</span>
+                  <span className="text-[15px] leading-snug text-muted">Что делаем прямо сейчас?</span>
+                </span>
+              </div>
+            </Link>
+          </li>
         </ul>
       </nav>
 

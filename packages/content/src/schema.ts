@@ -1040,6 +1040,74 @@ export const ultimateFileSchema = z.strictObject({
   fine: text,
 });
 
+// ---------- Раздел GAZ 🚀 (data/gaz.json) ----------
+
+export const GAZ_WHO = ["solo", "duo", "crew"] as const;
+export const GAZ_TIME = ["15", "eve", "wk"] as const;
+export const GAZ_WHERE = ["home", "out"] as const;
+
+const gazId = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id: маленькие латинские буквы, цифры и дефис, например: b01 или s-15-h-1");
+
+/**
+ * Файл data/gaz.json. bored — колода «Мне скучно» (отдельный список: из неё же берётся «Задание дня» в «Сегодня»,
+ * индекс (i×7)%длина колоды). roulette — Газ-рулетка: у каждого из 18 сочетаний (кто × время × где) минимум 2 задания.
+ */
+export const gazFileSchema = z
+  .strictObject({
+    _note: z.string().optional(),
+    $schema: z.string().optional(),
+    bored: z.array(z.strictObject({ id: gazId, emoji: text, text })).min(1),
+    roulette: z
+      .array(
+        z.strictObject({
+          id: gazId,
+          who: z.enum(GAZ_WHO),
+          time: z.enum(GAZ_TIME),
+          where: z.enum(GAZ_WHERE),
+          emoji: text,
+          text,
+          /** «Усложнение 🌶️»: с ним карта золотая. */
+          twist: text.optional(),
+        }),
+      )
+      .min(1),
+    challenges: z.array(z.strictObject({ id: gazId, emoji: text, title: text, text })).min(1),
+    /** Наборы 💎: в MVP у всех «Скоро». */
+    packs: z.array(z.strictObject({ id: gazId, emoji: text, title: text, text })).min(1),
+  })
+  .superRefine((file, ctx) => {
+    // id заданий уникальны сразу в двух списках: по id работают «Вызов» и сохранённые задания
+    const seen = new Set<string>();
+    for (const list of ["bored", "roulette"] as const) {
+      file[list].forEach((task, i) => {
+        if (seen.has(task.id)) ctx.addIssue({ code: "custom", path: [list, i, "id"], message: `id "${task.id}" повторяется` });
+        seen.add(task.id);
+      });
+    }
+    for (const list of ["challenges", "packs"] as const) {
+      const ids = new Set<string>();
+      file[list].forEach((item, i) => {
+        if (ids.has(item.id)) ctx.addIssue({ code: "custom", path: [list, i, "id"], message: `id "${item.id}" повторяется` });
+        ids.add(item.id);
+      });
+    }
+    // Задание дня = индекс (i×7)%длина: колода должна обходиться целиком, поэтому длина не кратна 7
+    if (file.bored.length % 7 === 0) {
+      ctx.addIssue({ code: "custom", path: ["bored"], message: `в колоде ${file.bored.length} заданий, число делится на 7: «Задание дня» будет повторяться. Добавь или убери задание` });
+    }
+    // Рулетке нужно хотя бы 2 задания в каждом сочетании: иначе «без повтора подряд» не сработает
+    for (const who of GAZ_WHO) {
+      for (const time of GAZ_TIME) {
+        for (const where of GAZ_WHERE) {
+          const count = file.roulette.filter((t) => t.who === who && t.time === time && t.where === where).length;
+          if (count < 2) {
+            ctx.addIssue({ code: "custom", path: ["roulette"], message: `для сочетания «${who} · ${time} · ${where}» заданий ${count}, нужно минимум 2 (в спеке 3)` });
+          }
+        }
+      }
+    }
+  });
+
 // ---------- Разделы: три плитки-вкладки и карточки (data/sections.json) ----------
 
 /** Куда ведёт карточка: игра, тест, платный тест (шторка превью) или «Карточные игры». Нет такого — «скоро». */
@@ -1191,6 +1259,10 @@ export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;
 export type PremiumFile = z.infer<typeof premiumFileSchema>;
 export type PremiumRef = z.infer<typeof premiumRefSchema>;
 export type UltimateFile = z.infer<typeof ultimateFileSchema>;
+export type GazFile = z.infer<typeof gazFileSchema>;
+export type GazBoredTask = GazFile["bored"][number];
+export type GazRouletteTask = GazFile["roulette"][number];
+export type GazTask = GazBoredTask | GazRouletteTask;
 export type SectionsFile = z.infer<typeof sectionsFileSchema>;
 export type SectionLayout = SectionsFile["sections"][number];
 export type SectionTab = SectionLayout["tabs"][number];
@@ -1212,6 +1284,8 @@ export interface Catalog {
   premiumCodes?: string[];
   /** Тизер Ultimate 🔱 (data/ultimate.json). */
   ultimate?: UltimateFile;
+  /** Раздел GAZ 🚀: задания, рулетка, челленджи, наборы (data/gaz.json). */
+  gaz?: GazFile;
   /** Разделы: плитки-вкладки и карточки (data/sections.json). */
   sectionLayouts?: SectionsFile;
 }

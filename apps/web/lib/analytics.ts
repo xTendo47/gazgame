@@ -22,9 +22,9 @@ function send(name: string, props: EventProps = {}) {
 export interface DeeperClickEvent {
   /** id теста или игры */
   id: string;
-  kind: "test" | "game";
-  /** Где нажали: результат теста, закрытая колода, конец игры, платный тест под замком, «Сравниться с партнёром» (совместимость) */
-  source: "result" | "locked-deck" | "game-over" | "locked-test" | "compat";
+  kind: "test" | "game" | "gaz";
+  /** Где нажали: результат теста, закрытая колода, конец игры, платный тест под замком, «Сравниться с партнёром» (совместимость), набор в разделе GAZ */
+  source: "result" | "locked-deck" | "game-over" | "locked-test" | "compat" | "gaz-pack";
 }
 
 /** Нажатие «Глубже 💎» — наш замер спроса на подписку. С включённым Premium не шлём: замков для него нет. */
@@ -99,4 +99,49 @@ export function trackPreviewUnlockClick(event: { id: string }) {
 /** «Хочу первым 🔔» на экране Ultimate — лист ожидания будущего приложения. Шлём один раз на устройство. */
 export function trackUltimateWaitlist() {
   send("ultimate_waitlist");
+}
+
+// ---------- GAZ 🚀 ----------
+
+/** Откуда карта: «Мне скучно», рулетка, вызов друга, «Задание дня». */
+type GazSourceProp = "bored" | "roulette" | "dare" | "daily";
+
+/** Тап «Мне скучно 😩». id — id показанного задания (b01…b30). */
+export function trackGazBored(event: { id: string }) {
+  send("gaz_bored", { ...event });
+}
+
+/** Прокрутка Газ-рулетки: какое сочетание выбрали (кто / время / где). */
+export function trackGazSpin(event: { who: string; time: string; where: string }) {
+  send("gaz_spin", { ...event });
+}
+
+/** «Беру! 🔥» (или «Принимаю 🔥» у вызова): задание стало «в процессе». id — id задания. */
+export function trackGazTake(event: { id: string; source: GazSourceProp }) {
+  send("gaz_take", { ...event });
+}
+
+/** «Сделано 🔥» / «Сделано с усложнением 🌶️». gold — с усложнением (золотая карта). */
+export function trackGazDone(event: { id: string; source: GazSourceProp; gold: boolean }) {
+  send("gaz_done", { ...event });
+}
+
+/** «Слабо другу? 🫵»: задание отправляют другу ссылкой. id — id задания. */
+export function trackGazDare(event: { id: string }) {
+  send("gaz_dare", { ...event });
+}
+
+/** «Принимаю 🔥» на экране «Вызов 🫵» — друг открыл ссылку и принял. id — id задания. */
+export function trackGazDareAccept(event: { id: string }) {
+  send("gaz_dare_accept", { ...event });
+}
+
+/** «Отметить день N ✓» в челлендже недели. id — id челленджа, day — день недели (1–7). */
+export function trackGazChallengeMark(event: { id: string; day: number }) {
+  send("gaz_challenge_mark", { ...event });
+}
+
+/** Тап по набору 💎 (в MVP «Скоро»): считаем интерес. id — id набора. Заодно идёт как «Глубже 💎» (deeper_click). */
+export function trackGazPackClick(event: { id: string }) {
+  send("gaz_pack_click", { ...event });
 }

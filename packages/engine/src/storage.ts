@@ -2,6 +2,7 @@
 // Экраны работают только с интерфейсом ProgressStore и не знают, где лежат данные.
 // Сейчас — localStorage на устройстве; позже можно подставить хранилище на сервере (apps/api)
 // без переписывания экранов.
+import { normalizeGaz, type GazData } from "./gaz";
 
 /** Минимальное «хранилище ключ-значение». localStorage подходит под этот интерфейс. */
 export interface KeyValueStore {
@@ -46,6 +47,8 @@ export interface ProgressData {
   unlocksSeen?: Record<string, string[]>;
   /** «Сколько вас?» в «Для компании»: id выбранного варианта. */
   companySize?: string;
+  /** Раздел GAZ 🚀: сделанные задания, «в процессе», рулетка, челлендж недели. */
+  gaz?: GazData;
 }
 
 export interface FriendResult {
@@ -83,6 +86,10 @@ export interface ProgressStore {
   markUnlockSeen(gameId: string, deckId: string): void;
   getCompanySize(): string | null;
   saveCompanySize(id: string): void;
+  /** Раздел GAZ 🚀: всё, что хранится на устройстве. */
+  getGaz(): GazData;
+  /** Изменить данные GAZ: функция получает текущие и возвращает новые. */
+  updateGaz(update: (data: GazData) => GazData): void;
   clear(): void;
 }
 
@@ -123,6 +130,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.ultimateWaitlist ? { ultimateWaitlist: true } : {}),
         ...(data.unlocksSeen ? { unlocksSeen: data.unlocksSeen } : {}),
         ...(data.companySize ? { companySize: data.companySize } : {}),
+        ...(data.gaz ? { gaz: data.gaz } : {}),
       };
     } catch {
       return emptyProgress();
@@ -216,6 +224,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     saveCompanySize(id) {
       const data = load();
       data.companySize = id;
+      save(data);
+    },
+    getGaz: () => normalizeGaz(load().gaz),
+    updateGaz(update) {
+      const data = load();
+      data.gaz = update(normalizeGaz(data.gaz));
       save(data);
     },
     markUnlockSeen(gameId, deckId) {
