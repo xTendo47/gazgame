@@ -1,35 +1,42 @@
-// Главное меню. Два уровня:
-// 1) MAIN_CARDS — три большие тёмные карточки разделов (названия — packages/content/src/sections.ts);
-// 2) SMALL_BUTTONS — маленькие кнопки по две в ряд.
-import type { Section } from "@gazgame/content";
+// Главная: три большие карточки «С кем ты сейчас?» и мини-ряд. Тексты и цвета — по спеке главной (16.10).
+// Разделы пока ведут на текущие экраны (/company, /pairs, /solo): их переделываем отдельными шагами.
 import { TELEGRAM_CHANNEL_URL } from "./links";
 
-/** Разделы сверху вниз. Цвет полоски слева — accent в lib/sections.ts. */
-export const MAIN_CARDS: Section[] = ["pairs", "company", "solo"];
-
-export interface SmallButton {
+export interface HomeSection {
+  /** Для аналитики: party / love / solo. */
+  id: "party" | "love" | "solo";
   href: string;
   emoji: string;
   title: string;
-  /** Голубое «алмазное» свечение на самой кнопке. */
-  diamond?: boolean;
-  /** Мелкая подпись под названием. */
-  subtitle?: string;
-  /** Живая «огненная» плитка Ultimate: оранжевое дышащее свечение и искры. */
-  fire?: boolean;
-  /** Оранжевая точка, пока есть новая карта (плитка «Коллекция»). */
+  /** Чип справа сверху: с кем. */
+  who: string;
+  subtitle: string;
+  /** Цвет рамки, свечения, чипа и стрелки. */
+  color: string;
+}
+
+export const HOME_SECTIONS: HomeSection[] = [
+  { id: "party", href: "/company", emoji: "🎉", title: "Тусовка", who: "2+ ЧЕЛОВЕКА", subtitle: "Кто из нас, Шпион, Мафия, Объясни и другие", color: "#FF5A1F" },
+  { id: "love", href: "/pairs", emoji: "💞", title: "Романтика", who: "ВДВОЁМ", subtitle: "Игры, тесты и разбор вашей пары", color: "#FF6FAE" },
+  { id: "solo", href: "/solo", emoji: "🧠", title: "Соло", who: "ТОЛЬКО ТЫ", subtitle: "Кто ты, психотесты и сравнения", color: "#B58CFF" },
+];
+
+export interface MiniButton {
+  id: "collection" | "ultimate" | "suggest";
+  href: string;
+  emoji: string;
+  title: string;
+  /** Салатовая метка на углу. */
+  badge?: string;
+  /** Оранжевая точка, пока есть новая карта (Коллекция). */
   dot?: boolean;
   /** Внешняя ссылка: открывается в новой вкладке (t.me — сразу в приложении Telegram). */
   external?: boolean;
 }
 
-export const SMALL_BUTTONS: SmallButton[] = [
-  // Название и подпись берутся из ultimate.json (tile) — здесь запасные
-  { href: "/ultimate", emoji: "🔱", title: "Ultimate", subtitle: "скоро 🔥", fire: true },
-  // Название и подпись берутся из premium.json (tile) — здесь запасные
-  { href: "/premium", emoji: "💎", title: "Premium", subtitle: "без ограничений", diamond: true },
-  // «Предложи своё» — сразу в Telegram-канал GAZ (ссылка — в lib/links.ts)
-  { href: TELEGRAM_CHANNEL_URL, emoji: "💡", title: "Предложи своё", external: true },
-  // Бывший «Профиль»: альбом карт. Точка горит, пока новую карту не открыли
-  { href: "/collection", emoji: "🃏", title: "Коллекция", dot: true },
+export const MINI_BUTTONS: MiniButton[] = [
+  { id: "collection", href: "/collection", emoji: "🃏", title: "Коллекция", dot: true },
+  { id: "ultimate", href: "/ultimate", emoji: "🔱", title: "Ultimate", badge: "скоро" },
+  // «Предложить» — сразу в Telegram-канал GAZ (ссылка — в lib/links.ts)
+  { id: "suggest", href: TELEGRAM_CHANNEL_URL, emoji: "💡", title: "Предложить", external: true },
 ];

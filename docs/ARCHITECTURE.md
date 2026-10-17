@@ -136,3 +136,9 @@ grammY, long polling. Команды `/start` (меню разделов) и `/g
 - Контент — `packages/content/data/games/explain.json` (схема `explainGameSchema`): `levels` (Лёгкий, Средний, Тяжёлый 💎 со словами), `teamNames` (имена для 🎲, первые два — команды по умолчанию). Проверка в валидаторе: повторы слов в уровне, id уровней, первый уровень бесплатный.
 - Логика — `packages/engine/src/mechanics/explain.ts`: слова без повторов (использованные хранятся на устройстве по уровню, `ProgressStore.saveLastCards("explain/<уровень>")`), свайпы +1/−1 (штраф вкл/выкл), «Последнее слово» любой команде, исправление раунда тапом, победа после полного круга, ничья — ещё круг, «Закончить» в игре без лимита.
 - Экран — `apps/web/components/games/ExplainGame.tsx` и `explain/`. Карточка стоит в «Для компании» → «Разогрев» на месте «Крокодила» (от 4 человек).
+
+## Главная (`/`)
+
+- Порядок и тексты — `apps/web/app/page.tsx`, карточки разделов и мини-ряд — `apps/web/lib/menu.ts` (`HOME_SECTIONS`, `MINI_BUTTONS`). Разделы пока ведут на `/company`, `/pairs`, `/solo`.
+- «Продолжить»: незаконченный тест. Ответы пишет `TestRunner` в `ProgressStore.saveTestProgress` (по одному на ответ, на итоге запись удаляется), карточку выбирает `pickContinue` (`packages/engine/src/continue.ts`); тест открывается с того же вопроса.
+- Клики главной считаются событиями `home_click` и `home_section_click` (`TrackedLink`).

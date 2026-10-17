@@ -24,3 +24,4 @@ export * from "./sections";
 export * from "./gaz";
 export * from "./today";
 export * from "./collection";
+export * from "./continue";

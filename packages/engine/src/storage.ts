@@ -20,6 +20,12 @@ export interface TestRecord {
   tieId?: string;
 }
 
+/** Незаконченный тест: ответы по порядку (индексы вариантов) и когда ответили последний раз. Из него собирается «Продолжить» на главной. */
+export interface TestProgress {
+  answers: number[];
+  at: string;
+}
+
 export interface GameRecord {
   playedCount: number;
   lastPlayedAt: string;
@@ -57,6 +63,8 @@ export interface ProgressData {
   today?: TodayData;
   /** «Коллекция 🃏»: какие карты новые и очередь вспышек. Сами карты собираются из остального прогресса. */
   collection?: CollectionData;
+  /** Незаконченные тесты по id теста. */
+  testProgress?: Record<string, TestProgress>;
 }
 
 export interface FriendResult {
@@ -68,6 +76,12 @@ export interface FriendResult {
 export interface ProgressStore {
   load(): ProgressData;
   getTestResult(testId: string): TestRecord | null;
+  /** Незаконченный тест: ответы (null — нет). Тест дошёл до итога — запись удаляется. */
+  getTestProgress(testId: string): TestProgress | null;
+  /** Все незаконченные тесты (для «Продолжить»). */
+  listTestProgress(): Record<string, TestProgress>;
+  saveTestProgress(testId: string, answers: readonly number[], now?: Date): void;
+  clearTestProgress(testId: string): void;
   /** Последний итог теста (его берёт Коллекция). tieId — второй итог при ничьей. */
   saveTestResult(testId: string, resultId: string, now?: Date, tieId?: string): void;
   recordGamePlayed(gameId: string, options?: { score?: number; now?: Date }): void;
@@ -148,6 +162,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.gaz ? { gaz: data.gaz } : {}),
         ...(data.today ? { today: data.today } : {}),
         ...(data.collection ? { collection: data.collection } : {}),
+        ...(data.testProgress ? { testProgress: data.testProgress } : {}),
       };
     } catch {
       return emptyProgress();
@@ -164,6 +179,23 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
 
   return {
     load,
+    getTestProgress: (testId) => load().testProgress?.[testId] ?? null,
+    listTestProgress: () => load().testProgress ?? {},
+    saveTestProgress(testId, answers, now = new Date()) {
+      const data = load();
+      if (answers.length === 0) {
+        if (data.testProgress) delete data.testProgress[testId];
+      } else {
+        data.testProgress = { ...data.testProgress, [testId]: { answers: [...answers], at: now.toISOString() } };
+      }
+      save(data);
+    },
+    clearTestProgress(testId) {
+      const data = load();
+      if (!data.testProgress?.[testId]) return;
+      delete data.testProgress[testId];
+      save(data);
+    },
     getTestResult: (testId) => load().tests[testId] ?? null,
     saveTestResult(testId, resultId, now = new Date(), tieId) {
       const data = load();

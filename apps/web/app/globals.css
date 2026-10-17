@@ -49,13 +49,13 @@
   }
 }
 
-/* Кости «Случайная игра» на главном экране: покачивание раз в ~5 с и бросок по нажатию */
+/* Кубик 🎲 «Случайная игра» на главном экране: покачивание раз в ~5 с и бросок по нажатию */
 @layer components {
-  .dice-button svg {
+  .dice-button .dice-emoji {
     transform-origin: 50% 55%;
     animation: dice-wobble 5s ease-in-out infinite;
   }
-  .dice-button.is-rolling svg {
+  .dice-button.is-rolling .dice-emoji {
     animation: dice-roll 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
   }
 }
@@ -92,7 +92,7 @@
 /* Кому мешает движение — кости стоят на месте */
 @media (prefers-reduced-motion: reduce) {
   .dice-button svg,
-  .dice-button.is-rolling svg {
+  .dice-button.is-rolling .dice-emoji {
     animation: none;
   }
 }
@@ -587,6 +587,41 @@
   .explain-rise,
   .explain-pulse,
   .explain-bob {
+    animation: none;
+  }
+}
+
+/* ---------- Главная: большие карточки разделов, полоса GAZ, полоса Premium ----------
+   home-sec — карточка раздела: рамка и свечение цвета раздела (--c); home-gaz — оранжевая полоса GAZ, «дышит» только она (home-breathe);
+   home-prem — Premium: голубая рамка и РОВНОЕ свечение, без пульса. */
+@layer components {
+  .home-sec {
+    border: 1.5px solid var(--c);
+    background:
+      radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--c) 28%, transparent), transparent 60%),
+      var(--color-surface);
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--c) 18%, transparent);
+  }
+  .home-gaz {
+    background: linear-gradient(100deg, #ff5a1f, #ff8a3d);
+    box-shadow: 0 8px 26px rgb(255 90 31 / 0.35);
+    animation: home-breathe 2.8s ease-in-out infinite;
+  }
+  .home-prem {
+    border: 1.5px solid #62d2ff;
+    background: linear-gradient(160deg, #1c2a36, #1b1822);
+    box-shadow: 0 0 28px rgb(98 210 255 / 0.4);
+  }
+}
+@keyframes home-breathe {
+  50% {
+    box-shadow: 0 8px 34px rgb(255 90 31 / 0.6);
+  }
+}
+
+/* «Уменьшить движение»: полоса GAZ светится ровно */
+@media (prefers-reduced-motion: reduce) {
+  .home-gaz {
     animation: none;
   }
 }

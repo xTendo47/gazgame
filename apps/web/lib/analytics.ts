@@ -221,3 +221,17 @@ export function trackExplainFinish(event: { mode: string; level: string; teams: 
 export function trackExplainHardClick() {
   send("explain_hard_click");
 }
+
+// ---------- Главная ----------
+
+/** Куда нажали на главной (кроме трёх разделов): полоса «Сегодня», 🎲, 👤 Профиль, «Продолжить», GAZ / «Мне скучно», Premium, мини-ряд. */
+export type HomeTarget = "today" | "dice" | "profile" | "continue" | "gaz" | "premium" | "collection" | "ultimate" | "suggest";
+
+export function trackHomeClick(event: { target: HomeTarget }) {
+  send("home_click", { ...event });
+}
+
+/** Нажали на большую карточку раздела: party — «Тусовка», love — «Романтика», solo — «Соло». Видно, с кем люди приходят. */
+export function trackHomeSection(event: { section: "party" | "love" | "solo" }) {
+  send("home_section_click", { ...event });
+}

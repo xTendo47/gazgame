@@ -1,106 +1,132 @@
-// Главное меню GAZ Game: три большие тёмные карточки разделов + маленькие кнопки по две в ряд.
-// Что и в каком порядке — в lib/menu.ts, названия разделов — в packages/content/src/sections.ts.
-import Link from "next/link";
-import { itemPath, randomPool } from "@gazgame/engine";
-import { cn, Logo, Screen, Tile } from "@gazgame/ui";
-import { RandomDice } from "@/components/RandomDice";
-import { getCatalog, visibility } from "@/lib/catalog";
-import { Embers } from "@/components/ultimate/Embers";
+// Главная GAZ Game (спека 16.10): логотип, 🎲 и 👤, слоган, полоса «Сегодня», «Продолжить» (если есть незаконченный тест),
+// «С кем ты сейчас?» с тремя разделами, полоса GAZ, полоса Premium, мини-ряд. Что и в каком порядке — в lib/menu.ts.
+import type { CSSProperties } from "react";
+import { isVisible, itemPath, randomPool } from "@gazgame/engine";
+import { Screen } from "@gazgame/ui";
 import { CollectionDot } from "@/components/collection/CollectionDot";
+import { ContinueCard, type ContinueTestSummary } from "@/components/home/ContinueCard";
+import { TrackedLink } from "@/components/home/TrackedLink";
+import { RandomDice } from "@/components/RandomDice";
 import { TodayStrip } from "@/components/today/TodayStrip";
-import { MAIN_CARDS, SMALL_BUTTONS } from "@/lib/menu";
-import { getSection } from "@/lib/sections";
+import { getCatalog, visibility } from "@/lib/catalog";
+import { HOME_SECTIONS, MINI_BUTTONS } from "@/lib/menu";
 
 export default function Home() {
-  const randomPaths = randomPool(getCatalog(), visibility).map(itemPath);
-  const premiumTile = getCatalog().premium?.tile;
-  const ultimateTile = getCatalog().ultimate?.tile;
+  const catalog = getCatalog();
+  const randomPaths = randomPool(catalog, visibility).map(itemPath);
+  // Для «Продолжить» нужны только название, эмодзи и число вариантов у вопросов
+  const tests: ContinueTestSummary[] = catalog.tests
+    .filter((t) => isVisible(t, visibility))
+    .map((t) => ({ id: t.id, slug: t.slug, title: t.title, emoji: t.emoji, options: t.questions.map((q) => q.options.length) }));
 
   return (
-    <Screen>
-      <header className="pt-4">
-        <div className="flex items-start justify-between gap-3">
-          <Logo className="text-5xl" />
-          <RandomDice paths={randomPaths} className="-mt-1 -mr-1" />
+    <Screen className="gap-3.5">
+      <header className="flex items-center justify-between gap-3 pt-4">
+        <h1 className="font-display text-[34px] leading-none font-extrabold tracking-[-0.02em] whitespace-nowrap max-[380px]:text-[28px]">
+          GAZ <span className="text-orange">GAME</span>
+        </h1>
+        <div className="flex gap-2">
+          <RandomDice paths={randomPaths} />
+          <TrackedLink
+            href="/profile"
+            track={{ kind: "home", target: "profile" }}
+            aria-label="Профиль"
+            className="grid size-[46px] place-items-center rounded-[14px] border border-line bg-surface text-2xl transition hover:bg-surface-2 max-[380px]:size-[42px] max-[380px]:text-[21px]"
+          >
+            <span aria-hidden="true">👤</span>
+          </TrackedLink>
         </div>
-        <p className="mt-3 text-lg font-bold text-muted">
-          Не сиди. Не тупи. <span className="text-lime">Газ!</span>
-        </p>
       </header>
+      <p className="-mt-1.5 font-bold text-muted">Не сиди. Не тупи. Играй!</p>
 
-      {/* Полоска «Сегодня 🔥»: серия дней подряд, тап открывает /today */}
       <TodayStrip />
+      <ContinueCard tests={tests} />
 
+      <h2 className="mt-0.5 -mb-1 font-display text-[15px] font-semibold">С кем ты сейчас?</h2>
       <nav aria-label="Разделы">
         <ul className="flex flex-col gap-3">
-          {MAIN_CARDS.map((id) => {
-            const section = getSection(id);
-            if (!section) return null;
-            return (
-              <li key={id}>
-                <Link href={`/${id}`} className="group block rounded-card">
-                  <Tile
-                    emoji={section.emoji}
-                    title={section.title}
-                    subtitle={section.subtitle}
-                    accent={section.accent}
-                    className="min-h-28"
-                  />
-                </Link>
-              </li>
-            );
-          })}
-          {/* 4-я большая карточка: раздел GAZ 🚀 — оранжевая рамка, тёплое свечение «дышит» (gaz-glow) */}
-          <li>
-            <Link href="/gaz" className="group block rounded-card">
-              <div className="gaz-glow flex min-h-28 items-center gap-4 rounded-card border border-orange/55 bg-surface p-5 transition group-hover:bg-surface-2 group-active:scale-[0.98]">
-                <span aria-hidden="true" className="text-4xl leading-none">
-                  🚀
+          {HOME_SECTIONS.map((s) => (
+            <li key={s.id}>
+              <TrackedLink
+                href={s.href}
+                track={{ kind: "section", section: s.id }}
+                style={{ "--c": s.color } as CSSProperties}
+                className="home-sec gaz-press relative flex min-h-24 w-full items-center gap-4 overflow-hidden rounded-3xl p-4 text-left"
+              >
+                <span
+                  className="absolute top-3 right-3 rounded-full px-[9px] py-[3px] text-[11px] font-extrabold tracking-[0.06em] max-[380px]:px-2 max-[380px]:text-[10px]"
+                  style={{ color: s.color, background: `color-mix(in srgb, ${s.color} 14%, transparent)` }}
+                >
+                  {s.who}
                 </span>
-                <span className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="font-display text-xl leading-tight font-bold">GAZ</span>
-                  <span className="text-[15px] leading-snug text-muted">Что делаем прямо сейчас?</span>
+                <span aria-hidden="true" className="w-[50px] flex-none text-center text-[44px] leading-none drop-shadow-[0_6px_14px_rgb(0_0_0/0.4)]">
+                  {s.emoji}
                 </span>
-              </div>
-            </Link>
-          </li>
+                <span className="min-w-0 flex-1 pr-2">
+                  <b className="block font-display text-[21px] leading-[1.1] font-extrabold max-[380px]:text-[19px]">{s.title}</b>
+                  <small className="mt-1 block text-[13.5px] text-[#D9D1DE]">{s.subtitle}</small>
+                </span>
+                <span aria-hidden="true" className="ml-auto font-display text-xl font-extrabold opacity-80" style={{ color: s.color }}>
+                  →
+                </span>
+              </TrackedLink>
+            </li>
+          ))}
         </ul>
       </nav>
 
+      {/* Полоса GAZ: оранжевая, мягко «дышит» (пульсирующая тень), дышит только она */}
+      <TrackedLink
+        href="/gaz"
+        track={{ kind: "home", target: "gaz" }}
+        className="home-gaz gaz-press flex w-full items-center justify-between gap-2.5 rounded-[20px] px-4 py-3.5 text-left text-bg"
+      >
+        <span>
+          <b className="font-display text-[17px] font-extrabold">🚀 GAZ</b>
+          <small className="block text-[12.5px] font-bold opacity-80">Задания в реальной жизни</small>
+        </span>
+        <span className="rounded-xl bg-bg px-3 py-3 font-display text-[13px] font-extrabold whitespace-nowrap text-cream">Мне скучно 😩</span>
+      </TrackedLink>
+
+      {/* Полоса Premium: голубая рамка и ровное свечение (без пульса) */}
+      <TrackedLink
+        href="/premium"
+        track={{ kind: "home", target: "premium" }}
+        className="home-prem gaz-press flex w-full items-center gap-3 rounded-[20px] px-4 py-3.5 text-left"
+      >
+        <span aria-hidden="true" className="text-[28px] leading-none">
+          💎
+        </span>
+        <span>
+          <b className="block font-display text-base font-extrabold text-[#62D2FF]">Premium</b>
+          <small className="block text-[12.5px] text-muted">Всё открыто, без ограничений</small>
+        </span>
+        <span aria-hidden="true" className="ml-auto font-display text-lg font-extrabold text-[#62D2FF]">
+          →
+        </span>
+      </TrackedLink>
+
       <nav aria-label="Ещё">
-        <ul className="grid grid-cols-2 gap-3">
-          {SMALL_BUTTONS.map((tile) =>
-            tile.href === "/premium" && premiumTile
-              ? { ...tile, ...premiumTile }
-              : tile.href === "/ultimate" && ultimateTile
-                ? { ...tile, ...ultimateTile }
-                : tile,
-          ).map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className={cn(
-                  "flex h-24 flex-col items-center justify-center gap-1.5 rounded-card bg-surface px-3 text-center transition",
-                  "hover:bg-surface-2 active:scale-[0.97]",
-                  item.diamond && "diamond-glow",
-                  item.fire && "fire-tile relative overflow-hidden",
-                  item.dot && "relative",
-                )}
+        <ul className="grid grid-cols-3 gap-1.5">
+          {MINI_BUTTONS.map((m) => (
+            <li key={m.id}>
+              <TrackedLink
+                href={m.href}
+                external={m.external}
+                track={{ kind: "home", target: m.id }}
+                className="gaz-press relative flex min-h-16 flex-col items-center gap-1 rounded-2xl border border-line px-0.5 py-2.5 text-[11px] font-bold text-muted transition hover:bg-surface"
               >
-                {item.dot && <CollectionDot />}
-                {/* Искры летят снизу вверх под текстом — текст остаётся читаемым */}
-                {item.fire && <Embers count={9} seed={7} rise={[50, 110]} />}
-                <span aria-hidden="true" className="relative z-10 text-3xl leading-none">
-                  {item.emoji}
-                </span>
-                <span className="relative z-10 text-[15px] font-bold leading-tight">{item.title}</span>
-                {item.subtitle && (
-                  <span className={cn("relative z-10 -mt-1 text-xs font-semibold", item.fire ? "text-[#FFB23F]" : "text-muted")}>
-                    {item.subtitle}
-                  </span>
+                {m.badge && (
+                  <em className="absolute -top-[7px] right-1.5 rounded-full border border-lime/40 bg-bg px-1.5 py-px text-[9px] font-extrabold text-lime not-italic">
+                    {m.badge}
+                  </em>
                 )}
-              </Link>
+                {m.dot && <CollectionDot />}
+                <span aria-hidden="true" className="text-xl leading-none">
+                  {m.emoji}
+                </span>
+                {m.title}
+              </TrackedLink>
             </li>
           ))}
         </ul>

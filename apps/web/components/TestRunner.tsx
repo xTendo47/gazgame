@@ -4,23 +4,39 @@
 // Работает с любым тестом из packages/content — сам ничего о тестах не знает.
 // Если у теста есть версии (audience: «Парень» / «Девушка»), перед первым вопросом спрашиваем «Кто проходит?»;
 // выбор запоминается на устройстве, тексты вопросов берутся для версии, а баллы и подсчёт общие.
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import type { Test } from "@gazgame/content";
-import { audienceForLabel, isAudience, isTopTie, questionTexts, scoreTest, testCard, typeRanking } from "@gazgame/engine";
+import { audienceForLabel, isAudience, isTopTie, questionTexts, resumeAnswers, scoreTest, testCard, typeRanking } from "@gazgame/engine";
 import { Button, ProgressBar } from "@gazgame/ui";
 import { announceCard } from "@/lib/collection";
 import { getProgress } from "@/lib/progress";
 import { needsScoresInQuery, scoreQuery } from "@/lib/result-query";
 
+const noSubscribe = () => () => {};
+
+/**
+ * Незаконченный тест продолжается с того же вопроса («Продолжить» на главной). Ответы лежат на устройстве, поэтому читаем их
+ * только после гидратации: сначала рисуем чистый тест (как на сервере), потом он пересоздаётся уже с сохранёнными ответами.
+ */
 export function TestRunner({ test }: { test: Test }) {
+  const client = useSyncExternalStore(noSubscribe, () => true, () => false);
+  return <Runner key={client ? "client" : "server"} test={test} restore={client} />;
+}
+
+function Runner({ test, restore }: { test: Test; restore: boolean }) {
   const router = useRouter();
-  const [started, setStarted] = useState(false);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [saved] = useState(() => (restore ? resumeAnswers(test, getProgress().getTestProgress(test.id)) : null));
+  const [started, setStarted] = useState(saved !== null);
+  const [answers, setAnswers] = useState<number[]>(saved ?? []);
   /** Версия теста («Кто проходит?»); null — у теста версий нет или ещё не выбрали. */
-  const [audience, setAudience] = useState<string | null>(null);
-  const [picking, setPicking] = useState(false);
+  const [audience, setAudience] = useState<string | null>(() => {
+    if (saved === null || !test.audience) return null;
+    const chosen = getProgress().getAudience(test.id);
+    return isAudience(test, chosen) ? chosen : null;
+  });
+  const [picking, setPicking] = useState(saved !== null && !!test.audience && audience === null);
 
   const index = answers.length;
   const total = test.questions.length;
@@ -29,6 +45,9 @@ export function TestRunner({ test }: { test: Test }) {
   function choose(optionIndex: number) {
     const next = [...answers, optionIndex];
     setAnswers(next);
+    // ответы на устройстве: тест можно закрыть и продолжить с главной; дошёл до итога — запись удаляется
+    if (next.length < total) getProgress().saveTestProgress(test.id, next);
+    else getProgress().clearTestProgress(test.id);
     if (next.length === total) {
       const { resultId, blend, scores } = scoreTest(test, next);
       // Последний итог теста лежит на устройстве: из него собирается карта Коллекции. Ничья: второй итог тоже на карте
@@ -128,7 +147,11 @@ export function TestRunner({ test }: { test: Test }) {
       {index > 0 && (
         <button
           type="button"
-          onClick={() => setAnswers(answers.slice(0, -1))}
+          onClick={() => {
+            const back = answers.slice(0, -1);
+            setAnswers(back);
+            getProgress().saveTestProgress(test.id, back);
+          }}
           className="min-h-11 self-center rounded-full px-4 text-[15px] font-semibold text-muted hover:text-cream"
         >
           ← Предыдущий вопрос
