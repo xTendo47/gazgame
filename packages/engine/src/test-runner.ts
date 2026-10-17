@@ -97,6 +97,7 @@ export function scoreTest(test: Test, answers: readonly number[]): TestScore {
       }
       const scales = scaleBreakdown(test, scores) as ScalesBreakdown;
       const result = resultForTotal(test, scales.total);
+      addSideScores(test, chosen, scores);
       return { resultId: result.id, result, scores, scales };
     }
     default: {
@@ -107,6 +108,37 @@ export function scoreTest(test: Test, answers: readonly number[]): TestScore {
 }
 
 type Chosen = { question: Test["questions"][number]; option: TestOption; optionIndex: number }[];
+
+/** Служебные ключи в scores: сумма «красных» баллов Флаг-метра и номер «языка романтики». Едут в адресе результата, как и остальные баллы. */
+export const FLAG_KEY = "flag";
+export const LANG_KEY = "lang";
+
+/** Флаг-метр (test.flagMeter) и язык (test.languages): считаются по тем же ответам и кладутся в scores. */
+function addSideScores(test: Test, chosen: Chosen, scores: Record<string, number>): void {
+  if (test.flagMeter) scores[FLAG_KEY] = chosen.reduce((sum, c) => sum + (c.option.flag ?? 0), 0);
+  if (test.languages) {
+    const items = test.languages.items;
+    const counts = items.map((l) => chosen.filter((c) => c.option.type === l.id).length);
+    const top = Math.max(...counts);
+    const tied = counts.flatMap((n, i) => (n === top ? [i] : []));
+    // ничья языков — по хэшу ответов (как у типов): одинаковые ответы дают один и тот же язык
+    scores[LANG_KEY] = tied[answersHash(chosen.map((c) => c.optionIndex)) % tied.length] as number;
+  }
+}
+
+/** Флаг-метр из суммы: красный и зелёный проценты (в сумме 100) и подпись по диапазону. */
+export function flagMeterOf(test: Test, sum: number): { red: number; green: number; band: NonNullable<Test["flagMeter"]>["bands"][number] } | null {
+  const meter = test.flagMeter;
+  if (!meter || !Number.isFinite(sum) || sum < 0 || sum > meter.max) return null;
+  const red = Math.round((sum / meter.max) * 100);
+  const band = meter.bands.find((b) => red <= b.upTo) ?? meter.bands[meter.bands.length - 1];
+  return band ? { red, green: 100 - red, band } : null;
+}
+
+/** «Язык романтики» по номеру из scores. */
+export function languageOf(test: Test, index: number): NonNullable<Test["languages"]>["items"][number] | null {
+  return test.languages?.items[index] ?? null;
+}
 
 /** Хэш ответов для ничьей: сумма (номер_варианта+1)×(номер_вопроса+7). Номера считаются по порядку в файле, а не на экране. */
 export function answersHash(answers: readonly number[]): number {
@@ -151,6 +183,7 @@ function scoreTypes(test: Test, config: TypesScoring, chosen: Chosen): TestScore
     ranked.splice(0, ranked.length, ...turned);
   }
   const [best, second] = ranked as [TestResult, TestResult | undefined];
+  addSideScores(test, chosen, scores);
   const score: TestScore = { resultId: best.id, result: best, scores };
 
   const note = second && test.blendNotes?.[second.id];

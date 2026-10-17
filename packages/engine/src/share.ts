@@ -10,6 +10,8 @@ export interface ShareValues {
   pct?: number;
   /** Самая высокая шкала — для тестов по шкалам ({scale} и {emoji}). */
   topScale?: { title: string; emoji: string };
+  /** «Язык романтики» из адреса результата ({language}: «🎁 Сюрпризы»). */
+  language?: { title: string; emoji: string };
 }
 
 /** Надпись на большой кнопке «Куда кидаем?». Нет share у теста — «Пофлексить 🧊». */
@@ -29,6 +31,7 @@ export function shareMessage(test: Test, result: TestResult, values: ShareValues
     emoji: values.topScale?.emoji ?? result.emoji,
     pct: values.pct === undefined ? undefined : String(values.pct),
     scale: values.topScale?.title,
+    language: values.language ? `${values.language.emoji} ${values.language.title}` : undefined,
     link: values.link,
   };
   return test.share.text

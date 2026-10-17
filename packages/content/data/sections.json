@@ -191,6 +191,11 @@
           "items": [
             { "emoji": "🧲", "title": "Тип привязанности", "text": "Как ты любишь и чего боишься", "kind": "love", "ref": { "test": "attachment-style" }, "levels": [{ "label": "Сравниться 💎", "premium": true, "compare": true }] },
             { "emoji": "🫶", "title": "Языки любви", "text": "Как тебя любить", "kind": "love", "ref": { "test": "love-languages" }, "levels": [{ "label": "Сравниться 💎", "premium": true, "compare": true }] },
+            { "emoji": "💚", "title": "Насколько ты ревнуешь", "text": "Лайки, бывшие, сторис: где кольнёт", "kind": "love", "ref": { "test": "jealousy" } },
+            { "emoji": "🌹", "title": "Сколько в тебе романтики", "text": "Свечи и признания или «а зачем»?", "kind": "love", "ref": { "test": "romance-level" } },
+            { "emoji": "🚩", "title": "Красный флаг, зелёный флаг", "text": "Твой главный флаг в отношениях", "kind": "love", "ref": { "test": "flags" } },
+            { "emoji": "💌", "title": "Что тебе нужно в любви", "text": "Не как ты любишь, а что нужно в ответ", "kind": "love", "ref": { "test": "love-needs" } },
+            { "emoji": "💔", "title": "Как ты переживаешь расставания", "text": "Грустный плейлист, glow-up или сталкер-режим?", "kind": "love", "ref": { "test": "breakup" } },
             { "emoji": "🗝️", "title": "36 вопросов", "text": "Знаменитые вопросы, после которых становятся ближе", "kind": "talk", "soon": true, "levels": [{ "label": "Знакомство" }, { "label": "Глубже" }, { "label": "Совсем близко" }] },
             { "emoji": "🚦", "title": "Здоровые ли у вас отношения?", "text": "Честный чек без диагнозов", "kind": "check", "soon": true, "levels": [{ "label": "Всегда бесплатно", "free": true }] }
           ]

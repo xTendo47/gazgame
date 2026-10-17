@@ -18,7 +18,10 @@ import { CopyListButton } from "./CopyListButton";
 import { CompatLink } from "./CompatLink";
 import { AnswerBack } from "@/components/share/AnswerBack";
 import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
+import { FlagMeter } from "./FlagMeter";
+import { LanguagePanel } from "./LanguagePanel";
 import { RankingPanel } from "./RankingPanel";
+import { ResultButton } from "./ResultButton";
 import { TieBanner } from "./TieBanner";
 import { ResultHero } from "./ResultHero";
 import { ScalesPanel } from "./ScalesPanel";
@@ -126,6 +129,18 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </InsightCard>
       )}
 
+      {test.flagMeter && (
+        // Сумма Флаг-метра читается из адреса уже в браузере; страница при этом остаётся статической.
+        <Suspense fallback={null}>
+          <FlagMeter test={test} />
+        </Suspense>
+      )}
+      {test.languages && (
+        <Suspense fallback={null}>
+          <LanguagePanel test={test} resultId={result.id} />
+        </Suspense>
+      )}
+
       <Extras extras={extrasBefore} />
 
       {result.strengths && result.strengths.length > 0 && (
@@ -224,6 +239,8 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           <p className="text-[15px] leading-relaxed text-balance text-cream/80">{result.heart}</p>
         </section>
       )}
+
+      {result.button && <ResultButton label={result.button.label} test={result.button.test} soon={result.button.soon} from={test.id} />}
 
       {test.upsell ? (
         <section aria-labelledby="premium-get-title" className="diamond-glow flex flex-col gap-4 rounded-card bg-surface p-5">

@@ -6,7 +6,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { AnimatePresence, motion } from "motion/react";
 import { Share2, X } from "lucide-react";
 import type { Test, TestResult } from "@gazgame/content";
-import { answerBackMessage, findResult, scalesConfig, shareMessage } from "@gazgame/engine";
+import { answerBackMessage, findResult, LANG_KEY, languageOf, scalesConfig, shareMessage } from "@gazgame/engine";
 import { Button, cn } from "@gazgame/ui";
 import { trackShareClick, trackShareKind, type ShareChannel } from "@/lib/analytics";
 import { usePremium } from "@/lib/premium";
@@ -98,7 +98,10 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
   const [ctx] = useState(() => {
     const scores = scoresFromLocation(test);
     const link = shareLink(siteUrl(window.location.origin), test, { resultId, blendId, scores });
-    return { scores, link, desktop: isDesktop() };
+    // «Язык романтики» едет в адресе результата (?lang=N), в баллы для картинки не входит
+    const lang = new URLSearchParams(window.location.search).get(LANG_KEY);
+    const language = lang !== null && /^\d+$/.test(lang) ? (languageOf(test, Number(lang)) ?? undefined) : undefined;
+    return { scores, link, desktop: isDesktop(), language };
   });
   // Какая карточка над картинкой: Swag 😎 (по умолчанию) или Facts 📋 — с процентами и сильными сторонами
   const [kind, setKind] = useState<ShareKind>("swag");
@@ -118,7 +121,7 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
     ? ctx.link
     : answerTo
       ? answerBackMessage(result, answerTo, ctx.link)
-      : shareMessage(test, result, { link: ctx.link, pct: mainPercent(test, params), topScale: topScale(test, ctx.scores) });
+      : shareMessage(test, result, { link: ctx.link, pct: mainPercent(test, params), topScale: topScale(test, ctx.scores), language: ctx.language });
 
   // Картинку грузим заранее: делиться файлом нужно сразу по нажатию, пока телефон считает это действием человека
   useEffect(() => {

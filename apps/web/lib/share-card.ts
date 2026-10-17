@@ -185,7 +185,8 @@ export interface ShareCard {
 /** Самая высокая шкала (для {scale} в тексте сообщения). При равенстве — что раньше в списке. */
 export function topScale(test: Test, scores: Readonly<Record<string, number>>) {
   const breakdown = scaleBreakdown(test, scores);
-  if (!breakdown) return undefined;
+  // одна шкала (она только считает сумму) — «самой высокой» нет, в {emoji} остаётся эмодзи результата
+  if (!breakdown || breakdown.scales.length < 2) return undefined;
   const top = breakdown.scales.reduce((best, s) => (s.score > best.score ? s : best));
   return { title: top.scale.title, emoji: top.scale.emoji };
 }

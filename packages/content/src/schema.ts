@@ -70,6 +70,8 @@ export const testOptionSchema = z
     scores: z.record(z.string(), z.number()).optional(),
     /** Подсчёт "scales": сколько баллов вариант даёт шкале своего вопроса (обычно 0–3). */
     score: z.number().min(0).optional(),
+    /** Для «Флаг-метра» (test.flagMeter): насколько ответ «красный», 0–3. На подсчёт итога не влияет. */
+    flag: z.number().min(0).optional(),
   })
   .refine(
     (o) => o.type !== undefined || o.scores !== undefined || o.score !== undefined,
@@ -128,6 +130,14 @@ export const testResultSchema = z
     howToLoveMe: z.array(text).min(1).optional(),
     /** Мягкая забота под советом, например «поговори с близким или психологом». */
     care: text.optional(),
+    /**
+     * Кнопка-ссылка в конце итога, например «Пройти «Здоровые ли у вас отношения? 🚦» →».
+     * test — slug теста, куда ведёт кнопка; пока теста нет, ставь soon: true (тап считается как «скоро»).
+     */
+    button: z
+      .strictObject({ label: text, test: slug.optional(), soon: z.boolean().optional() })
+      .refine((b) => b.test !== undefined || b.soon === true, "у кнопки должен быть test или soon: true")
+      .optional(),
     /** Тёплая строка с ❤️ последним блоком итога, например «Рядом с тобой людям становится светлее». */
     heart: text.optional(),
     /** Строка-крючок для карточки Swag 😎 при шеринге, от первого лица: «Паника? Не мой жанр». */
@@ -231,6 +241,13 @@ export const upsellSchema = z.strictObject({
   }),
 });
 
+const languagesSchema = z.strictObject({
+  title: text,
+  datesTitle: text.optional(),
+  items: z.array(z.strictObject({ id: slug, emoji: text, title: text, text })).min(2),
+  dates: z.record(z.string(), z.record(z.string(), text)).optional(),
+});
+
 export const testSchema = itemBase
   .extend({
     kind: z.literal("test"),
@@ -258,6 +275,37 @@ export const testSchema = itemBase
     zones: z.record(z.string(), z.record(z.string(), text)).optional(),
     /** Подсчёт "scales": заголовки «Твоя опора» / «Твоя зона роста» и текст для ровного профиля. */
     profileBlocks: z.strictObject({ strongest: text, weakest: text, flatProfile: text }).optional(),
+    /**
+     * Как показать шкалы (подсчёт "scales"): hidden — не показывать вовсе (шкала одна и служит только суммой);
+     * title — заголовок блока; levels — подписи и цвет уровней (tone: good — зелёный, warn — жёлтый, bad — красный);
+     * tips — «Что помогает именно тебе»: советы для шкалы с самой большой суммой (при равенстве первая по порядку).
+     */
+    scalesPanel: z
+      .strictObject({
+        hidden: z.boolean().optional(),
+        title: text.optional(),
+        levels: z
+          .record(z.string(), z.strictObject({ label: text, emoji: text.optional(), tone: z.enum(["good", "warn", "bad"]) }))
+          .optional(),
+        tips: z.strictObject({ title: text, byScale: z.record(z.string(), z.array(text).min(1)) }).optional(),
+      })
+      .optional(),
+    /**
+     * «Флаг-метр» 🚩💚: сумма flag у выбранных вариантов (максимум max) → красный процент и подпись по bands.
+     * bands — по возрастанию верхней границы красного (30, 50, 70, 100): первая, куда попал процент.
+     */
+    flagMeter: z
+      .strictObject({
+        title: text,
+        max: z.number().min(1),
+        bands: z.array(z.strictObject({ upTo: z.number().min(0).max(100), emoji: text, title: text, text })).min(1),
+      })
+      .optional(),
+    /**
+     * Второй набор типов к подсчёту "scales": «язык романтики». У вариантов type — id языка; выигрывает чаще выбранный
+     * (ничья — по хэшу ответов). dates[id результата][id языка] — «Идеальное свидание для тебя».
+     */
+    languages: languagesSchema.optional(),
     /** Заголовки дополнительных блоков результата. */
     resultBlocks: z
       .strictObject({
@@ -324,6 +372,7 @@ export const testSchema = itemBase
         }
       }
     });
+    if (test.languages) checkLanguages(test, test.languages, ids, ctx);
     if (typeof test.scoring === "object" && test.scoring.type === "scales") {
       checkScales(test, test.scoring, ctx);
       return;
@@ -380,6 +429,33 @@ export const testSchema = itemBase
       }
     }
   });
+
+/** «Язык романтики»: у вариантов type из languages, в dates известные результаты и языки. */
+function checkLanguages(
+  test: { questions: TestQuestion[] },
+  languages: z.infer<typeof languagesSchema>,
+  resultIds: Set<string>,
+  ctx: z.RefinementCtx,
+) {
+  const langIds = new Set(languages.items.map((l) => l.id));
+  test.questions.forEach((q, qi) =>
+    q.options.forEach((o, oi) => {
+      if (o.type === undefined || !langIds.has(o.type)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["questions", qi, "options", oi, "type"],
+          message: `у варианта должен быть type — язык (есть: ${[...langIds].join(", ")})`,
+        });
+      }
+    }),
+  );
+  for (const [resultId, byLang] of Object.entries(languages.dates ?? {})) {
+    if (!resultIds.has(resultId)) ctx.addIssue({ code: "custom", path: ["languages", "dates", resultId], message: `нет результата с id "${resultId}"` });
+    for (const lang of Object.keys(byLang)) {
+      if (!langIds.has(lang)) ctx.addIssue({ code: "custom", path: ["languages", "dates", resultId, lang], message: `нет языка "${lang}"` });
+    }
+  }
+}
 
 interface ScalesTestInput {
   questions: TestQuestion[];

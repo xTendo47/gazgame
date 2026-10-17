@@ -27,10 +27,15 @@ import companyJson from "@gazgame/content/data/tests/company-role.json";
 import selfEsteemJson from "@gazgame/content/data/tests/self-esteem.json";
 import loveJson from "@gazgame/content/data/tests/love-languages.json";
 import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
+import jealousyJson from "@gazgame/content/data/tests/jealousy.json";
+import romanceJson from "@gazgame/content/data/tests/romance-level.json";
+import flagsJson from "@gazgame/content/data/tests/flags.json";
+import loveNeedsJson from "@gazgame/content/data/tests/love-needs.json";
+import breakupJson from "@gazgame/content/data/tests/breakup.json";
 import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
 const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
-const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
+const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson, jealousyJson, romanceJson, flagsJson, loveNeedsJson, breakupJson];
 const catalog = buildCatalog(
   [
     ...games.map((data, i): RawContentFile => ({ path: `g${i}.json`, kind: "game", data: { ...data, related: [] } })),
@@ -115,7 +120,7 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(s.tabs[0]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "Знаешь меня?", "Вдвоём вечером"]);
     expect(s.tabs[1]?.kinds?.map((k) => k.name)).toEqual(["Ты в любви", "Разговоры", "Чек пары"]);
     expect(s.tabs[2]?.kinds).toBeUndefined();
-    expect(s.tabs.map((t) => t.items.length)).toEqual([6, 4, 5]);
+    expect(s.tabs.map((t) => t.items.length)).toEqual([6, 9, 5]);
     expect(s.tabs[2]?.note).toBe("Процент и одна строка бесплатно, чтобы второму захотелось пройти тест. Полный разбор вашей пары в Premium.");
     // чипы «Сравниться 💎» у тестов Близости и «Всегда бесплатно» у чека пары
     expect(item("pairs", "Тип привязанности").levels).toEqual([{ label: "Сравниться 💎", premium: true, compare: true }]);

@@ -381,6 +381,10 @@
                 "score": {
                   "type": "number",
                   "minimum": 0
+                },
+                "flag": {
+                  "type": "number",
+                  "minimum": 0
                 }
               },
               "required": [
@@ -457,6 +461,26 @@
           "care": {
             "type": "string",
             "minLength": 1
+          },
+          "button": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "test": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "soon": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": false
           },
           "heart": {
             "type": "string",
@@ -630,6 +654,197 @@
         "strongest",
         "weakest",
         "flatProfile"
+      ],
+      "additionalProperties": false
+    },
+    "scalesPanel": {
+      "type": "object",
+      "properties": {
+        "hidden": {
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "levels": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tone": {
+                "type": "string",
+                "enum": [
+                  "good",
+                  "warn",
+                  "bad"
+                ]
+              }
+            },
+            "required": [
+              "label",
+              "tone"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tips": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "byScale": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "required": [
+            "title",
+            "byScale"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "flagMeter": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max": {
+          "type": "number",
+          "minimum": 1
+        },
+        "bands": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "upTo": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "upTo",
+              "emoji",
+              "title",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "title",
+        "max",
+        "bands"
+      ],
+      "additionalProperties": false
+    },
+    "languages": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "datesTitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "items": {
+          "minItems": 2,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "emoji",
+              "title",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "dates": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "required": [
+        "title",
+        "items"
       ],
       "additionalProperties": false
     },
