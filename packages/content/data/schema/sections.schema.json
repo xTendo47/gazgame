@@ -31,11 +31,11 @@
           "type": "string",
           "minLength": 1
         },
-        "fewPeople": {
+        "kindsAll": {
           "type": "string",
           "minLength": 1
         },
-        "needPeople": {
+        "kindsOne": {
           "type": "string",
           "minLength": 1
         }
@@ -46,8 +46,8 @@
         "soon",
         "soonToast",
         "heroToast",
-        "fewPeople",
-        "needPeople"
+        "kindsAll",
+        "kindsOne"
       ],
       "additionalProperties": false
     },
@@ -73,53 +73,6 @@
             "type": "string",
             "minLength": 1
           },
-          "people": {
-            "type": "object",
-            "properties": {
-              "question": {
-                "type": "string",
-                "minLength": 1
-              },
-              "options": {
-                "minItems": 2,
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "label": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "max": {
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 9007199254740991
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "label",
-                    "max"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "default": {
-                "type": "string",
-                "minLength": 1
-              }
-            },
-            "required": [
-              "question",
-              "options",
-              "default"
-            ],
-            "additionalProperties": false
-          },
           "tabs": {
             "minItems": 3,
             "maxItems": 3,
@@ -141,6 +94,37 @@
                 },
                 "premium": {
                   "type": "boolean"
+                },
+                "tag": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "kinds": {
+                  "minItems": 2,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                      },
+                      "emoji": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "emoji",
+                      "name"
+                    ],
+                    "additionalProperties": false
+                  }
                 },
                 "head": {
                   "type": "string",
@@ -354,10 +338,9 @@
                       "premium": {
                         "type": "boolean"
                       },
-                      "min": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 9007199254740991
+                      "kind": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
                       },
                       "ref": {
                         "type": "object",
@@ -399,8 +382,6 @@
                 "id",
                 "emoji",
                 "name",
-                "head",
-                "side",
                 "items"
               ],
               "additionalProperties": false

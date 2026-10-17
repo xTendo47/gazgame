@@ -1,53 +1,50 @@
 {
   "$schema": "./schema/sections.schema.json",
-  "_note": "Один формат для всех разделов (plan/sections-format.md, plan/pairs-section.md, 12.10). У каждого раздела три плитки-вкладки: две бесплатные и третья Premium. ref ведёт карточку в игру, тест, платный тест или «Карточные игры»; если такого нет или soon: true, карточка «скоро». **жирный** в lead и note — выделение. min — от скольки человек игра (фильтр «Сколько вас?»).",
+  "_note": "Один формат для всех разделов (plan/sections-format.md, plan/pairs-section.md, 12.10). У каждого раздела три плитки-вкладки: две бесплатные и третья Premium. ref ведёт карточку в игру, тест, платный тест или «Карточные игры»; если такого нет или soon: true, карточка «скоро». **жирный** в lead и note — выделение. Тусовка в новом шаблоне (дальше Романтика и Соло): tag — подпись плитки, kinds — три мини-кнопки «во что» под бесплатными плитками, kind у карточки — её группа; без kinds список идёт целиком.",
   "texts": {
     "free": "бесплатно",
     "premium": "Premium",
     "soon": "скоро",
     "soonToast": "Скоро! Тап засчитан 🔥",
     "heroToast": "Скоро в Premium 🔥",
-    "fewPeople": "Вас пока мало для этой игры",
-    "needPeople": "от {n} человек"
+    "kindsAll": "Тапни, чтобы оставить один тип",
+    "kindsOne": "Тапни ещё раз, чтобы показать все"
   },
   "sections": [
     {
       "id": "company",
-      "title": "Для компании 🎉",
-      "lead": "Сверху выбираешь, **сколько вас**, и сразу видно, во что играть. Колоды без тормозов в Premium.",
-      "people": {
-        "question": "Сколько вас?",
-        "options": [
-          { "id": "3-4", "label": "3–4", "max": 4 },
-          { "id": "5-7", "label": "5–7", "max": 7 },
-          { "id": "8+", "label": "8+", "max": 99 }
-        ],
-        "default": "3-4"
-      },
+      "title": "Тусовка 🎉",
+      "lead": "Выбери, с кем ты, и во что играем",
       "tabs": [
         {
-          "id": "quick",
-          "emoji": "⚡",
-          "name": "Разогрев",
-          "head": "Разогрев ⚡",
-          "side": "без подготовки, сразу в бой",
+          "id": "own",
+          "emoji": "🫂",
+          "name": "Для своих",
+          "tag": "2–3 человека",
+          "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "know", "emoji": "🫶", "name": "Узнать друг друга" }, { "id": "guess", "emoji": "🧩", "name": "Угадайки" }],
           "items": [
-            { "emoji": "🫵", "title": "Кто из нас?", "text": "Голосуем пальцем, кто тут главный хаос", "min": 3, "ref": { "game": "who-of-us" }, "levels": [{ "label": "С огоньком" }, { "label": "Без тормозов 💎", "premium": true }] },
-            { "emoji": "🫣", "title": "Я никогда не…", "text": "Загибай палец, если было", "min": 3, "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" }, { "label": "С перчинкой" }, { "label": "Без тормозов 💎", "premium": true }] },
-            { "emoji": "🎯", "title": "Правда или действие", "text": "Крути! Отвечай или делай", "min": 2, "soon": true, "levels": [{ "label": "Лайт" }, { "label": "Жёстко 💎", "premium": true }] },
-            { "emoji": "🪧", "title": "Объясни", "text": "Объясни слово, не называя его", "min": 4, "ref": { "game": "explain" }, "levels": [{ "label": "Лёгкий" }, { "label": "Средний" }, { "label": "Тяжёлый 💎", "premium": true }] }
+              { "emoji": "🎯", "title": "Правда или действие", "text": "Крути! Отвечай или делай", "kind": "warm", "soon": true, "levels": [{ "label": "Лайт" },{ "label": "Жёстко 💎", "premium": true }] },
+              { "emoji": "🫣", "title": "Я никогда не…", "text": "Загибай палец, если было", "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" },{ "label": "С перчинкой" },{ "label": "Без тормозов 💎", "premium": true }], "kind": "warm" },
+              { "emoji": "🫨", "title": "Дилеммы", "text": "Что выберешь? Спорим до хрипоты", "kind": "warm", "soon": true },
+              { "emoji": "🫂", "title": "Насколько ты знаешь друга", "text": "Вдвоём: один отвечает, второй угадывает", "kind": "know", "soon": true },
+              { "emoji": "🫰", "title": "Совпадём? Друзья", "text": "Это или то: насколько вы похожи", "kind": "know", "soon": true },
+              { "emoji": "🫥", "title": "Данетки", "text": "Мрачные загадки, ответ только да или нет", "kind": "guess", "soon": true },
+              { "emoji": "🪪", "title": "Кто я?", "text": "Телефон ко лбу, друзья объясняют", "kind": "guess", "soon": true }
           ]
         },
         {
-          "id": "roles",
-          "emoji": "🕵️",
-          "name": "С ролями",
-          "head": "Игры с ролями 🕵️",
-          "side": "телефон по кругу",
+          "id": "band",
+          "emoji": "🪩",
+          "name": "Банда в сборе",
+          "tag": "от 4",
+          "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "roles", "emoji": "🕵️", "name": "С ролями" }, { "id": "points", "emoji": "🏆", "name": "На очки" }],
           "items": [
-            { "emoji": "🕵️", "title": "Шпион", "text": "Все знают место, кроме одного", "min": 3, "ref": { "game": "spy" }, "levels": [{ "label": "Места" }, { "label": "Профессии" }, { "label": "Страны" }, { "label": "Кино 💎", "premium": true }] },
-            { "emoji": "🔪", "title": "Мафия", "text": "Город засыпает", "min": 5, "ref": { "game": "mafia" }, "levels": [{ "label": "Классика" }, { "label": "Темы и роли 💎", "premium": true }] },
-            { "emoji": "🃏", "title": "Карточные игры", "text": "Правила под рукой", "min": 2, "ref": { "cards": true } }
+              { "emoji": "🫵", "title": "Кто из нас?", "text": "Голосуем пальцем, кто тут главный хаос", "kind": "warm", "ref": { "game": "who-of-us" }, "levels": [{ "label": "С огоньком" },{ "label": "Без тормозов 💎", "premium": true }] },
+              { "emoji": "🫣", "title": "Я никогда не…", "text": "Загибай палец, если было", "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" },{ "label": "С перчинкой" },{ "label": "Без тормозов 💎", "premium": true }], "kind": "warm" },
+              { "emoji": "🕵️", "title": "Шпион", "text": "Все знают место, кроме одного", "kind": "roles", "ref": { "game": "spy" }, "levels": [{ "label": "Места" },{ "label": "Профессии" },{ "label": "Страны" },{ "label": "Кино 💎", "premium": true }] },
+              { "emoji": "🔪", "title": "Мафия", "text": "Город засыпает. От 5 человек", "kind": "roles", "ref": { "game": "mafia" }, "levels": [{ "label": "Классика" },{ "label": "Темы и роли 💎", "premium": true }] },
+              { "emoji": "🪧", "title": "Объясни", "text": "Наш Alias: словами или жестами", "kind": "points", "ref": { "game": "explain" }, "levels": [{ "label": "Лёгкий" },{ "label": "Средний" },{ "label": "Тяжёлый 💎", "premium": true }] },
+              { "emoji": "🃏", "title": "Карточные игры", "text": "Правила под рукой", "kind": "points", "ref": { "cards": true } }
           ]
         },
         {
@@ -55,15 +52,13 @@
           "emoji": "💎",
           "name": "Без тормозов",
           "premium": true,
-          "head": "Без тормозов 💎",
-          "side": "колоды и режимы",
+          "tag": "Premium",
           "items": [
-            { "emoji": "🫵", "title": "Кто из нас? Без тормозов", "text": "Вопросы, после которых все смотрят на одного", "min": 3, "premium": true, "ref": { "game": "who-of-us" } },
-            { "emoji": "🫣", "title": "Я никогда не… Без тормозов", "text": "Самая честная колода", "min": 3, "premium": true, "ref": { "game": "never-have-i-ever" } },
-            { "emoji": "🎯", "title": "Правда или действие: Жёстко", "text": "Дерзко, но без 18+", "min": 2, "premium": true, "soon": true },
-            { "emoji": "🎬", "title": "Шпион: Кино, Сериалы, Знаменитости", "text": "Три набора для тех, кто смотрит всё", "min": 3, "premium": true, "ref": { "game": "spy" } },
-            { "emoji": "🎙️", "title": "Мафия с ботом-ведущим", "text": "Телефон сам ведёт ночь, играют все", "min": 5, "premium": true, "soon": true },
-            { "emoji": "🏯", "title": "Мафия: Якудза, Космос, Тусовка", "text": "Темы с новыми ролями и атмосферой", "min": 5, "premium": true, "soon": true }
+              { "emoji": "🫵", "title": "Кто из нас? Без тормозов", "text": "Вопросы, после которых все смотрят на одного", "premium": true, "ref": { "game": "who-of-us" } },
+              { "emoji": "🫣", "title": "Я никогда не… Без тормозов", "text": "Самая честная колода", "premium": true, "ref": { "game": "never-have-i-ever" } },
+              { "emoji": "🪧", "title": "Объясни: Тяжёлый", "text": "Ностальгия, дежавю, испанский стыд", "premium": true, "ref": { "game": "explain" } },
+              { "emoji": "🎬", "title": "Шпион: Кино, Сериалы, Знаменитости", "text": "Три набора для тех, кто смотрит всё", "premium": true, "ref": { "game": "spy" } },
+              { "emoji": "🎙️", "title": "Мафия с ботом-ведущим", "text": "Телефон сам ведёт ночь", "premium": true, "soon": true }
           ]
         }
       ]

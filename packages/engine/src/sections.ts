@@ -1,5 +1,5 @@
 // Разделы в одном формате (data/sections.json): куда ведёт карточка и фильтр «Сколько вас?».
-import type { Catalog, SectionItem, SectionLayout } from "@gazgame/content";
+import type { Catalog, SectionItem, SectionTab } from "@gazgame/content";
 import { findGame, findTest, type VisibilityOptions } from "./catalog";
 
 /** Куда ведёт карточка: адрес, шторка превью платного теста или «скоро» (нет в контенте или soon). */
@@ -24,17 +24,31 @@ export function sectionTarget(catalog: Catalog, item: SectionItem, options?: Vis
   return { kind: "soon" };
 }
 
-/** Выбранный вариант «Сколько вас?»: сохранённый, если он есть среди вариантов, иначе по умолчанию. */
-export function peopleOption(section: SectionLayout, saved: string | null | undefined) {
-  const people = section.people;
-  if (!people) return undefined;
-  return people.options.find((o) => o.id === saved) ?? people.options.find((o) => o.id === people.default) ?? people.options[0];
+/** Группа карточек вкладки: заголовок мини-кнопки и карточки с номерами в tab.items (по номеру считается цель тапа). */
+export interface SectionGroup {
+  id: string;
+  emoji: string;
+  name: string;
+  items: { item: SectionItem; index: number }[];
 }
 
-/** Игре не хватает людей: ей нужно больше, чем верхняя граница выбранного варианта. */
-export function tooFewPeople(item: SectionItem, max: number | undefined): boolean {
-  return max !== undefined && item.min !== undefined && item.min > max;
+/**
+ * Список вкладки по группам. selected — выбранная мини-кнопка («Тапни, чтобы оставить один тип»): остаётся одна группа;
+ * нет такой или null — все группы подряд. Вкладка без kinds (Premium) групп не имеет — null, список идёт целиком.
+ */
+export function sectionGroups(tab: SectionTab, selected: string | null): SectionGroup[] | null {
+  if (!tab.kinds) return null;
+  const only = tab.kinds.some((k) => k.id === selected) ? selected : null;
+  return tab.kinds
+    .filter((k) => only === null || k.id === only)
+    .map((k) => ({
+      ...k,
+      items: tab.items.flatMap((item, index) => (item.kind === k.id ? [{ item, index }] : [])),
+    }));
 }
+
+/** Тап по мини-кнопке: выбрана другая — оставляем её, та же самая — возвращаем все. */
+export const toggleKind = (current: string | null, tapped: string): string | null => (current === tapped ? null : tapped);
 
 /** «**сколько вас**» → куски текста с флагом жирного. */
 export function boldParts(text: string): { text: string; bold: boolean }[] {

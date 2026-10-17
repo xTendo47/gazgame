@@ -1,28 +1,23 @@
 "use client";
 
-// Раздел в одном формате для всех (data/sections.json, макет drafts sections.html / pairs.html):
-// шапка, три плитки-вкладки (две бесплатные + Premium с голубым свечением, при входе открыта первая),
-// «Сколько вас?» в «Для компании», заголовок списка с подписью справа и карточки с чипами уровней.
+// Раздел в одном формате для всех (data/sections.json, спека главной и разделов 16.10): «← Главная», заголовок с подписью,
+// три плитки-вкладки (две бесплатные + Premium с голубым свечением, при входе открыта первая), под бесплатными три мини-кнопки
+// «во что» (тап оставляет одну группу, повторный возвращает все), список по группам с заголовками и карточки с чипами уровней.
+// Разделы без мини-кнопок (пока Романтика и Соло) показывают список целиком с заголовком и подписью справа.
 // Тапы: обычная карточка — игра или тест; «скоро» — «Скоро! Тап засчитан 🔥» и счёт; Premium — как замки 💎
-// (с Premium открывает то, что уже есть); игре не хватает людей — «Вас пока мало для этой игры».
+// (с Premium открывает то, что уже есть). Экрана «Сколько вас?» больше нет: если игре нужно больше людей, это в подписи.
 import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { LockedTest, PremiumFile, SectionItem, SectionLayout, SectionsFile, SectionTab } from "@gazgame/content";
-import { boldParts, peopleOption, tooFewPeople, type SectionTarget } from "@gazgame/engine";
+import { boldParts, sectionGroups, toggleKind, type SectionTarget } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
 import { trackDeeperClick, trackPreviewOpen, trackSoonClick } from "@/lib/analytics";
 import { haptic } from "@/lib/haptics";
 import { usePremium } from "@/lib/premium";
-import { getProgress } from "@/lib/progress";
 
 const noopSubscribe = () => () => {};
-const SIZE_EVENT = "gazgame:company-size";
-const subscribeSize = (cb: () => void) => {
-  window.addEventListener(SIZE_EVENT, cb);
-  return () => window.removeEventListener(SIZE_EVENT, cb);
-};
 
 /** «**жирный**» → <b>. */
 function Rich({ text }: { text: string }) {
@@ -67,9 +62,10 @@ export function SectionScreen({
   const tabId = picked ?? (section.tabs.some((t) => t.id === urlTab) ? urlTab : section.tabs[0]!.id);
   const tab = section.tabs.find((t) => t.id === tabId) ?? section.tabs[0]!;
 
-  // «Сколько вас?» — с устройства
-  const savedSize = useSyncExternalStore(subscribeSize, () => getProgress().getCompanySize() ?? "", () => "");
-  const people = peopleOption(section, savedSize);
+  // Мини-кнопка «во что»: выбранная группа этой вкладки (при смене вкладки показываем все группы)
+  const [kindSel, setKindSel] = useState<{ tab: string; kind: string | null }>({ tab: "", kind: null });
+  const selKind = kindSel.tab === tab.id ? kindSel.kind : null;
+  const groups = sectionGroups(tab, selKind);
 
   const [sheet, setSheet] = useState<string | null>(openLocked ?? null);
   const [toast, setToast] = useState<{ text: string; id: number } | null>(null);
@@ -101,12 +97,7 @@ export function SectionScreen({
     }
   }
 
-  function tap(item: SectionItem, target: SectionTarget, off: boolean) {
-    if (off) {
-      haptic("double");
-      say(texts.fewPeople);
-      return;
-    }
+  function tap(item: SectionItem, target: SectionTarget) {
     if (target.kind === "soon") return countSoon(item.title);
     // Платные тесты открывают своё превью (как раньше), остальные Premium-карточки — как замки 💎
     if (item.premium && !premium && target.kind !== "locked-test") return lockedTap(target, item.title);
@@ -116,12 +107,59 @@ export function SectionScreen({
   function pickTab(t: SectionTab) {
     haptic("tick");
     setPicked(t.id);
+    setKindSel({ tab: "", kind: null }); // новая плитка — снова все группы
   }
 
-  function pickSize(id: string) {
+  function pickKind(id: string) {
     haptic("tick");
-    getProgress().saveCompanySize(id);
-    window.dispatchEvent(new Event(SIZE_EVENT));
+    setKindSel({ tab: tab.id, kind: toggleKind(selKind, id) });
+  }
+
+  /** Карточка игры или теста. index — номер в tab.items: по нему посчитана цель тапа. */
+  function renderItem(item: SectionItem, i: number) {
+    const target = targets[tab.id]?.[i] ?? ({ kind: "soon" } as SectionTarget);
+    const soon = target.kind === "soon";
+    return (
+      <button
+        key={`${item.title}-${i}`}
+        type="button"
+        onClick={() => tap(item, target)}
+        className={cn(
+          "relative flex w-full items-center gap-3.5 rounded-[20px] border bg-surface px-4 py-3.5 text-left transition",
+          item.premium ? "border-[#62D2FF]/35" : "border-line",
+        )}
+      >
+        {soon && (
+          <span
+            className={cn(
+              "absolute top-2.5 right-3 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-[0.04em]",
+              item.premium ? "border-[#62D2FF]/40 bg-[#62D2FF]/10 text-[#62D2FF]" : "border-lime/35 bg-lime/8 text-lime",
+            )}
+          >
+            {texts.soon}
+          </span>
+        )}
+        <span aria-hidden="true" className="shrink-0 text-[32px] leading-none">
+          {item.emoji}
+        </span>
+        <span className="min-w-0">
+          <b className={cn("block font-display text-[14.5px] leading-[1.25] font-bold", soon && "pr-14")}>{item.title}</b>
+          <small className="mt-0.5 block text-[12.5px] text-muted">{item.text}</small>
+          {item.levels && (
+            <span className="mt-[7px] flex flex-wrap gap-[5px]">
+              {item.levels.map((l) => (
+                <span
+                  key={l.label}
+                  className={cn("rounded-full px-2 py-[3px] text-[10.5px] font-bold", l.premium ? "bg-[#62D2FF]/10 text-[#62D2FF]" : "bg-cream/7 text-muted")}
+                >
+                  {l.label}
+                </span>
+              ))}
+            </span>
+          )}
+        </span>
+      </button>
+    );
   }
 
   const sheetTest = lockedTests.find((t) => t.slug === sheet);
@@ -129,8 +167,8 @@ export function SectionScreen({
   return (
     <div className="flex flex-col gap-[18px]">
       <header className="flex flex-col gap-1">
-        <BackLink href="/">Меню</BackLink>
-        <h1 className="mt-1 font-display text-[32px] leading-[1.05] font-black">{section.title}</h1>
+        <BackLink href="/">Главная</BackLink>
+        <h1 className="mt-1 font-display text-[26px] leading-[1.1] font-extrabold">{section.title}</h1>
         <p className="text-[15px] leading-[1.45] text-muted">
           <Rich text={section.lead} />
         </p>
@@ -168,42 +206,42 @@ export function SectionScreen({
                 {t.name}
               </b>
               <small className={cn("text-[10.5px] font-bold", t.premium ? "text-[#62D2FF]" : "text-muted")}>
-                {t.premium ? texts.premium : texts.free}
+                {t.tag ?? (t.premium ? texts.premium : texts.free)}
               </small>
             </button>
           );
         })}
       </div>
 
-      {/* «Сколько вас?» */}
-      {section.people && people && (
-        <div className="flex items-center gap-2.5 rounded-[18px] border border-line bg-surface px-3 py-2.5">
-          <span className="font-display text-[13px] font-bold whitespace-nowrap">{section.people.question}</span>
-          <div role="group" aria-label={section.people.question} className="grid flex-1 grid-cols-3 gap-1.5">
-            {section.people.options.map((o) => {
-              const on = o.id === people.id;
-              return (
-                <button
-                  key={o.id}
-                  type="button"
-                  aria-pressed={on}
-                  onClick={() => pickSize(o.id)}
-                  className={cn(
-                    "min-h-10 rounded-xl border px-1 text-[13px] font-extrabold tabular-nums",
-                    on ? "border-lime bg-lime/12 text-lime" : "border-line bg-surface-2",
-                  )}
-                >
-                  {o.label}
-                </button>
-              );
-            })}
+      {/* Три мини-кнопки «во что»: тап оставляет одну группу, повторный тап возвращает все (у Premium-плитки их нет) */}
+      {tab.kinds && (
+        <div className="flex flex-col gap-2">
+          <div role="group" aria-label="Во что играем" className="grid grid-cols-3 gap-1.5">
+            {tab.kinds.map((k) => (
+              <button
+                key={k.id}
+                type="button"
+                aria-pressed={selKind === k.id}
+                onClick={() => pickKind(k.id)}
+                className={cn(
+                  "flex min-h-[58px] flex-col items-center justify-center gap-[3px] rounded-[14px] border px-1 py-2 text-center text-[11.5px] leading-[1.15] font-bold transition-colors",
+                  selKind === k.id ? "border-orange bg-orange/14" : "border-line",
+                )}
+              >
+                <span aria-hidden="true" className="text-lg leading-none">
+                  {k.emoji}
+                </span>
+                {k.name}
+              </button>
+            ))}
           </div>
+          <p className="text-xs text-muted">{selKind ? texts.kindsOne : texts.kindsAll}</p>
         </div>
       )}
 
       {/* Список выбранной вкладки */}
       <section id="section-panel" role="tabpanel" aria-labelledby={`tab-${tab.id}`} key={tab.id} className="section-pop flex flex-col gap-2.5">
-        <PanelHead title={tab.head} side={tab.side} />
+        {tab.head && tab.side && <PanelHead title={tab.head} side={tab.side} />}
 
         {tab.hero && (
           <button
@@ -235,60 +273,16 @@ export function SectionScreen({
           />
         )}
 
-        {tab.items.map((item, i) => {
-          const target = targets[tab.id]?.[i] ?? ({ kind: "soon" } as SectionTarget);
-          const soon = target.kind === "soon";
-          const off = tooFewPeople(item, people?.max);
-          return (
-            <button
-              key={`${item.title}-${i}`}
-              type="button"
-              aria-disabled={off || undefined}
-              onClick={() => tap(item, target, off)}
-              className={cn(
-                "relative flex w-full items-center gap-3.5 rounded-[20px] border bg-surface px-4 py-3.5 text-left transition",
-                item.premium ? "border-[#62D2FF]/35" : "border-line",
-                off && "opacity-40 grayscale-[0.7]",
-              )}
-            >
-              {soon && (
-                <span
-                  className={cn(
-                    "absolute top-2.5 right-3 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-[0.04em]",
-                    item.premium ? "border-[#62D2FF]/40 bg-[#62D2FF]/10 text-[#62D2FF]" : "border-lime/35 bg-lime/8 text-lime",
-                  )}
-                >
-                  {texts.soon}
-                </span>
-              )}
-              <span aria-hidden="true" className="shrink-0 text-[32px] leading-none">
-                {item.emoji}
-              </span>
-              <span className="min-w-0">
-                <b className={cn("block font-display text-[14.5px] leading-[1.25] font-bold", soon && "pr-14")}>{item.title}</b>
-                <small className="mt-0.5 block text-[12.5px] text-muted">{item.text}</small>
-                {item.levels && (
-                  <span className="mt-[7px] flex flex-wrap gap-[5px]">
-                    {item.levels.map((l) => (
-                      <span
-                        key={l.label}
-                        className={cn(
-                          "rounded-full px-2 py-[3px] text-[10.5px] font-bold",
-                          l.premium ? "bg-[#62D2FF]/10 text-[#62D2FF]" : "bg-cream/7 text-muted",
-                        )}
-                      >
-                        {l.label}
-                      </span>
-                    ))}
-                  </span>
-                )}
-                {off && item.min && (
-                  <span className="mt-1.5 block text-[11px] font-extrabold text-orange">{texts.needPeople.replace("{n}", String(item.min))}</span>
-                )}
-              </span>
-            </button>
-          );
-        })}
+        {groups
+          ? groups.map((g) => (
+              <div key={g.id} className="flex flex-col gap-2.5">
+                <h3 className="mt-2 text-xs font-extrabold tracking-[0.08em] text-muted uppercase">
+                  <span aria-hidden="true">{g.emoji}</span> {g.name}
+                </h3>
+                {g.items.map(({ item, index }) => renderItem(item, index))}
+              </div>
+            ))
+          : tab.items.map((item, i) => renderItem(item, i))}
 
         {tab.note && (
           <p className="rounded-2xl bg-surface-2 px-3.5 py-3 text-[13px] text-muted">

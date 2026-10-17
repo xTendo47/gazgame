@@ -18,7 +18,7 @@ import companyJson from "@gazgame/content/data/tests/company-role.json";
 import selfEsteemJson from "@gazgame/content/data/tests/self-esteem.json";
 import loveJson from "@gazgame/content/data/tests/love-languages.json";
 import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
-import { boldParts, createMemoryKeyValueStore, createProgressStore, peopleOption, sectionTarget, tooFewPeople } from "../src/index";
+import { boldParts, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
 const games = [knowJson, matchJson, whoJson, neverJson, mafiaJson, spyJson, explainJson, truthJson];
 const tests = [temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
@@ -49,9 +49,9 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(sectionTarget(catalog, item("solo", "Темперамент"))).toEqual({ kind: "link", href: "/test/temperament" });
     expect(sectionTarget(catalog, item("solo", "Тёмная триада"))).toEqual({ kind: "locked-test", slug: "dark-triad" });
     expect(sectionTarget(catalog, item("pairs", "Совпадём?"))).toEqual({ kind: "link", href: "/game/match-us" });
-    // «Объясни 🪧» стала на место «Крокодила (скоро)»: от 4 человек
+    // «Объясни 🪧» — в «Банде в сборе», группа «На очки»
     expect(sectionTarget(catalog, item("company", "Объясни"))).toEqual({ kind: "link", href: "/game/explain" });
-    expect(item("company", "Объясни").min).toBe(4);
+    expect(item("company", "Объясни").kind).toBe("points");
   });
 
   it("«скоро» — если помечено или такого в контенте нет", () => {
@@ -67,21 +67,39 @@ describe("разделы в одном формате (sections.json)", () => {
     }
   });
 
-  it("«Сколько вас?»: по умолчанию 3–4; Мафия (от 5) бледнеет при 3–4 и доступна при 5–7", () => {
-    const company = section("company");
-    expect(peopleOption(company, null)?.label).toBe("3–4");
-    expect(peopleOption(company, "nope")?.label).toBe("3–4");
-    const mafia = item("company", "Мафия");
-    expect(tooFewPeople(mafia, peopleOption(company, "3-4")?.max)).toBe(true);
-    expect(tooFewPeople(mafia, peopleOption(company, "5-7")?.max)).toBe(false);
-    expect(tooFewPeople(item("company", "Шпион"), peopleOption(company, "3-4")?.max)).toBe(false);
-    expect(peopleOption(section("solo"), null)).toBeUndefined();
+  it("Тусовка в новом шаблоне: Для своих / Банда в сборе / Без тормозов 💎, у бесплатных по 3 мини-кнопки, у Premium их нет", () => {
+    const tabs = section("company").tabs;
+    expect(section("company").title).toBe("Тусовка 🎉");
+    expect(tabs.map((t) => [t.name, t.tag])).toEqual([
+      ["Для своих", "2–3 человека"],
+      ["Банда в сборе", "от 4"],
+      ["Без тормозов", "Premium"],
+    ]);
+    expect(tabs[0]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "Узнать друг друга", "Угадайки"]);
+    expect(tabs[1]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "С ролями", "На очки"]);
+    expect(tabs[2]?.kinds).toBeUndefined();
+    expect(tabs.map((t) => t.items.length)).toEqual([7, 6, 5]);
+    expect(tabs[2]?.items.every((i) => i.premium)).toBe(true);
   });
 
-  it("выбор «Сколько вас?» запоминается на устройстве", () => {
-    const kv = createMemoryKeyValueStore();
-    createProgressStore(kv).saveCompanySize("8+");
-    expect(createProgressStore(kv).getCompanySize()).toBe("8+");
+  it("мини-кнопка «во что» оставляет одну группу, повторный тап возвращает все; номера карточек сохраняются", () => {
+    const band = section("company").tabs[1]!;
+    const all = sectionGroups(band, null)!;
+    expect(all.map((g) => [g.name, g.items.length])).toEqual([["На разогрев", 2], ["С ролями", 2], ["На очки", 2]]);
+    expect(all.reduce((n, g) => n + g.items.length, 0)).toBe(band.items.length);
+    const roles = sectionGroups(band, "roles")!;
+    expect(roles.map((g) => g.id)).toEqual(["roles"]);
+    expect(roles[0]?.items.map((x) => x.item.title)).toEqual(["Шпион", "Мафия"]);
+    expect(roles[0]?.items.map((x) => x.index)).toEqual([2, 3]); // по номеру считается, куда ведёт тап
+    expect(sectionGroups(band, "нет-такой")!).toHaveLength(3);
+    expect(toggleKind(null, "roles")).toBe("roles");
+    expect(toggleKind("roles", "points")).toBe("points");
+    expect(toggleKind("roles", "roles")).toBeNull();
+    expect(sectionGroups(section("company").tabs[2]!, null)).toBeNull(); // Premium: без групп
+  });
+
+  it("«Сколько вас?» больше нет: ни в данных, ни в тексте", () => {
+    expect(JSON.stringify(sectionsJson)).not.toMatch(/Сколько вас|fewPeople|needPeople|"people"/);
   });
 
   it("**жирный** в подписи", () => {

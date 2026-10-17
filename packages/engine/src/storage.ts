@@ -55,8 +55,6 @@ export interface ProgressData {
   ultimateWaitlist?: boolean;
   /** Уровни, чьё открытие уже показали подсветкой, по играм — подсвечиваем один раз. */
   unlocksSeen?: Record<string, string[]>;
-  /** «Сколько вас?» в «Для компании»: id выбранного варианта. */
-  companySize?: string;
   /** Раздел GAZ 🚀: сделанные задания, «в процессе», рулетка, челлендж недели. */
   gaz?: GazData;
   /** «Сегодня 🔥»: серия, заморозка, голоса, дневник ответов, карты за серию. */
@@ -107,8 +105,6 @@ export interface ProgressStore {
   /** Подсветку «уровень открылся» уже показывали? */
   isUnlockSeen(gameId: string, deckId: string): boolean;
   markUnlockSeen(gameId: string, deckId: string): void;
-  getCompanySize(): string | null;
-  saveCompanySize(id: string): void;
   /** Раздел GAZ 🚀: всё, что хранится на устройстве. */
   getGaz(): GazData;
   /** Изменить данные GAZ: функция получает текущие и возвращает новые. */
@@ -158,7 +154,6 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.waitlist ? { waitlist: true } : {}),
         ...(data.ultimateWaitlist ? { ultimateWaitlist: true } : {}),
         ...(data.unlocksSeen ? { unlocksSeen: data.unlocksSeen } : {}),
-        ...(data.companySize ? { companySize: data.companySize } : {}),
         ...(data.gaz ? { gaz: data.gaz } : {}),
         ...(data.today ? { today: data.today } : {}),
         ...(data.collection ? { collection: data.collection } : {}),
@@ -269,12 +264,6 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     },
     hasJoinedUltimateWaitlist: () => load().ultimateWaitlist === true,
     isUnlockSeen: (gameId, deckId) => load().unlocksSeen?.[gameId]?.includes(deckId) ?? false,
-    getCompanySize: () => load().companySize ?? null,
-    saveCompanySize(id) {
-      const data = load();
-      data.companySize = id;
-      save(data);
-    },
     getGaz: () => normalizeGaz(load().gaz),
     updateGaz(update) {
       const data = load();

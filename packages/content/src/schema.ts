@@ -1228,8 +1228,8 @@ export const sectionItemSchema = z.strictObject({
   soon: z.boolean().optional(),
   /** Premium-карточка (голубая рамка): тап как замки 💎. */
   premium: z.boolean().optional(),
-  /** От скольки человек (фильтр «Сколько вас?»). */
-  min: z.int().min(1).optional(),
+  /** Группа внутри плитки (id из kinds вкладки): список разбит на группы с заголовками, мини-кнопка оставляет одну. */
+  kind: slug.optional(),
   ref: sectionRefSchema.optional(),
 });
 
@@ -1243,9 +1243,13 @@ export const sectionTabSchema = z.strictObject({
   name: text,
   /** Третья плитка — Premium с голубым свечением. */
   premium: z.boolean().optional(),
-  /** Заголовок списка и подпись серым справа. */
-  head: text,
-  side: text,
+  /** Подпись под названием плитки: «2–3 человека», «от 4». Нет — «бесплатно» (у Premium — «Premium»). */
+  tag: text.optional(),
+  /** Три мини-кнопки «во что» под плитками: тап оставляет одну группу, повторный возвращает все. Карточки привязаны через kind. */
+  kinds: z.array(z.strictObject({ id: slug, emoji: text, name: text })).min(2).optional(),
+  /** Заголовок списка и подпись серым справа (если нужны; в формате с группами не нужны). */
+  head: text.optional(),
+  side: text.optional(),
   /** Большая карточка-герой над списком (например, «Пазл личности»): тап — «Скоро в Premium 🔥». */
   hero: z.strictObject({ emoji: text, title: text, text }).optional(),
   /** «Совместимость»: три шага, карточка-пример с размытыми блоками, подпись и заголовок «Что внутри». */
@@ -1277,14 +1281,6 @@ export const sectionLayoutSchema = z.strictObject({
   title: text,
   /** Строка под заголовком; **жирный** — выделение. */
   lead: text,
-  /** «Сколько вас?» (Для компании): max — верхняя граница варианта; игры с min больше неё бледнеют. */
-  people: z
-    .strictObject({
-      question: text,
-      options: z.array(z.strictObject({ id: z.string().min(1), label: text, max: z.int().min(1) })).min(2),
-      default: z.string().min(1),
-    })
-    .optional(),
   tabs: z.array(sectionTabSchema).length(3, "в разделе три плитки: две бесплатные и Premium"),
 });
 
@@ -1299,21 +1295,30 @@ export const sectionsFileSchema = z
       soon: text,
       soonToast: text,
       heroToast: text,
-      fewPeople: text,
-      /** {n} — сколько человек нужно. */
-      needPeople: text,
+      /** Подсказка под мини-кнопками: ничего не выбрано / выбрана одна группа. */
+      kindsAll: text,
+      kindsOne: text,
     }),
     sections: z.array(sectionLayoutSchema).min(1),
   })
   .superRefine((file, ctx) => {
     file.sections.forEach((s, si) => {
-      if (s.people && !s.people.options.some((o) => o.id === s.people?.default)) {
-        ctx.addIssue({ code: "custom", path: ["sections", si, "people", "default"], message: "default должен быть id одного из options" });
-      }
       const ids = new Set<string>();
       s.tabs.forEach((t, ti) => {
         if (ids.has(t.id)) ctx.addIssue({ code: "custom", path: ["sections", si, "tabs", ti, "id"], message: `вкладка "${t.id}" повторяется` });
         ids.add(t.id);
+        // Мини-кнопки «во что»: карточка вкладки с kinds обязана быть в одной из групп, без kinds групп нет
+        const kindIds = new Set((t.kinds ?? []).map((k) => k.id));
+        if (t.kinds && kindIds.size !== t.kinds.length) {
+          ctx.addIssue({ code: "custom", path: ["sections", si, "tabs", ti, "kinds"], message: "id мини-кнопок повторяются" });
+        }
+        t.items.forEach((item, ii) => {
+          const path = ["sections", si, "tabs", ti, "items", ii, "kind"];
+          if (t.kinds && (!item.kind || !kindIds.has(item.kind))) {
+            ctx.addIssue({ code: "custom", path, message: `у карточки «${item.title}» нужен kind из мини-кнопок вкладки (${[...kindIds].join(", ")})` });
+          }
+          if (!t.kinds && item.kind) ctx.addIssue({ code: "custom", path, message: "kind есть, а у вкладки нет kinds (мини-кнопок)" });
+        });
       });
     });
   });

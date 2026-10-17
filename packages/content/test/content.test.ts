@@ -550,6 +550,37 @@ describe("Объясни 🪧 (data/games/explain.json)", () => {
   });
 });
 
+describe("Разделы: мини-кнопки «во что» (data/sections.json)", () => {
+  type Tab = { kinds?: { id: string }[]; items: { kind?: string }[]; [key: string]: unknown };
+  type Layout = { sections: { id: string; tabs: Tab[] }[]; [key: string]: unknown };
+  const layout = () => JSON.parse(readFileSync(new URL("../data/sections.json", import.meta.url), "utf-8")) as Layout;
+  const build = (data: unknown) => buildCatalog([], { sectionLayouts: { path: "sections.json", data } });
+  const company = (l: Layout) => l.sections.find((x) => x.id === "company")!;
+
+  it("настоящий файл проходит; «Сколько вас?» в схеме больше нет", () => {
+    expect(() => build(layout())).not.toThrow();
+    const withPeople = layout();
+    (company(withPeople) as Record<string, unknown>).people = { question: "Сколько вас?", options: [], default: "x" };
+    expect(() => build(withPeople)).toThrow(ContentError);
+  });
+
+  it("карточка вкладки с мини-кнопками обязана быть в одной из групп, без мини-кнопок группы нет", () => {
+    const noKind = layout();
+    delete company(noKind).tabs[0]!.items[0]!.kind;
+    expect(() => build(noKind)).toThrow(/нужен kind/);
+    const wrongKind = layout();
+    company(wrongKind).tabs[0]!.items[0]!.kind = "nope";
+    expect(() => build(wrongKind)).toThrow(/нужен kind/);
+    const stray = layout();
+    company(stray).tabs[2]!.items[0]!.kind = "warm";
+    expect(() => build(stray)).toThrow(/нет kinds/);
+    const dupKinds = layout();
+    const kinds = company(dupKinds).tabs[0]!.kinds!;
+    kinds[1] = { ...kinds[1]!, id: kinds[0]!.id };
+    expect(() => build(dupKinds)).toThrow(ContentError);
+  });
+});
+
 describe("«Что ты получишь» (upsell.premium.items)", () => {
   it("у всех 7 тестов с блоком Premium есть пункты списком; слова «Премиум» кириллицей нет", () => {
     const catalog = loadCatalog();

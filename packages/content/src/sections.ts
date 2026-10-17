@@ -5,6 +5,6 @@ import type { Section } from "./schema";
 
 export const SECTION_LABELS: Record<Section, { title: string; emoji: string }> = {
   pairs: { title: "Для пар", emoji: "💞" },
-  company: { title: "Для компании", emoji: "🎉" },
+  company: { title: "Тусовка", emoji: "🎉" },
   solo: { title: "Познай себя", emoji: "🧠" },
 };
