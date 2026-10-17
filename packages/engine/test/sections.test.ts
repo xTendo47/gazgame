@@ -7,6 +7,8 @@ import knowJson from "@gazgame/content/data/games/know-each-other.json";
 import matchJson from "@gazgame/content/data/games/match-us.json";
 import matchFriendsJson from "@gazgame/content/data/games/match-friends.json";
 import knowFriendJson from "@gazgame/content/data/games/know-friend.json";
+import questionsJson from "@gazgame/content/data/games/36-questions.json";
+import coupleValuesJson from "@gazgame/content/data/tests/couple-values.json";
 import whoJson from "@gazgame/content/data/games/who-of-us.json";
 import neverJson from "@gazgame/content/data/games/never-have-i-ever.json";
 import mafiaJson from "@gazgame/content/data/games/mafia.json";
@@ -34,8 +36,8 @@ import loveNeedsJson from "@gazgame/content/data/tests/love-needs.json";
 import breakupJson from "@gazgame/content/data/tests/breakup.json";
 import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
-const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
-const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson, jealousyJson, romanceJson, flagsJson, loveNeedsJson, breakupJson];
+const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, questionsJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
+const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson, jealousyJson, romanceJson, flagsJson, loveNeedsJson, breakupJson, coupleValuesJson];
 const catalog = buildCatalog(
   [
     ...games.map((data, i): RawContentFile => ({ path: `g${i}.json`, kind: "game", data: { ...data, related: [] } })),
@@ -163,7 +165,7 @@ describe("разделы в одном формате (sections.json)", () => {
   });
 
   it("«Как играть за 10 секунд»: по три строки на каждую игру и тесты, тексты из спеки", () => {
-    expect(Object.keys(layouts.rules).sort()).toEqual(["cards", "explain", "know-each-other", "know-friend", "mafia", "match-friends", "match-us", "never-have-i-duo", "never-have-i-ever", "spy", "test", "truth-or-dare", "who-of-us"]);
+    expect(Object.keys(layouts.rules).sort()).toEqual(["36-questions", "cards", "explain", "know-each-other", "know-friend", "mafia", "match-friends", "match-us", "never-have-i-duo", "never-have-i-ever", "spy", "test", "truth-or-dare", "who-of-us"]);
     expect(layouts.rules.spy).toEqual(["Передаёте телефон по кругу, каждый тайно смотрит место.", "Одному выпадает «Ты шпион».", "Задаёте друг другу вопросы: город ищет шпиона, шпион угадывает место."]);
     expect(layouts.rules["never-have-i-ever"]?.[2]).toBe("Было? Загибай палец. Ноль пальцев = вылет.");
     expect(layouts.texts.rulesTitle).toBe("Как играть за 10 секунд");

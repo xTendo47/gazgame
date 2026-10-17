@@ -22,6 +22,7 @@ import { FlagMeter } from "./FlagMeter";
 import { LanguagePanel } from "./LanguagePanel";
 import { RankingPanel } from "./RankingPanel";
 import { ResultButton } from "./ResultButton";
+import { ValueMap } from "./ValueMap";
 import { TieBanner } from "./TieBanner";
 import { ResultHero } from "./ResultHero";
 import { ScalesPanel } from "./ScalesPanel";
@@ -129,6 +130,11 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </InsightCard>
       )}
 
+      {test.valueMap && (
+        <Suspense fallback={null}>
+          <ValueMap test={test} resultId={result.id} />
+        </Suspense>
+      )}
       {test.flagMeter && (
         // Сумма Флаг-метра читается из адреса уже в браузере; страница при этом остаётся статической.
         <Suspense fallback={null}>

@@ -52,7 +52,7 @@ export function rankingFromQuery(test: Test, params: Params, lead: { resultId: s
 }
 
 /** Служебное число из адреса (flag — сумма Флаг-метра, lang — номер языка). null — если его нет или оно не число. */
-export function sideScoreFromQuery(params: Params, key: string): number | null {
+export function sideScoreFromQuery(params: Params, key: string, maxDigits = 3): number | null {
   const raw = params.get(key);
-  return raw !== null && /^\d{1,3}$/.test(raw) ? Number(raw) : null;
+  return raw !== null && raw.length <= maxDigits && /^\d+$/.test(raw) ? Number(raw) : null;
 }

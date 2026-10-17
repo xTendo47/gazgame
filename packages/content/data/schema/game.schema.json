@@ -220,6 +220,14 @@
                     "award": {
                       "type": "string"
                     },
+                    "together": {
+                      "type": "boolean"
+                    },
+                    "timerSec": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 9007199254740991
+                    },
                     "options": {
                       "minItems": 2,
                       "type": "array",
@@ -589,6 +597,14 @@
                     "award": {
                       "type": "string"
                     },
+                    "together": {
+                      "type": "boolean"
+                    },
+                    "timerSec": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 9007199254740991
+                    },
                     "options": {
                       "minItems": 2,
                       "type": "array",
@@ -872,6 +888,14 @@
                     },
                     "award": {
                       "type": "string"
+                    },
+                    "together": {
+                      "type": "boolean"
+                    },
+                    "timerSec": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 9007199254740991
                     },
                     "options": {
                       "minItems": 2,
@@ -1190,6 +1214,14 @@
                     },
                     "award": {
                       "type": "string"
+                    },
+                    "together": {
+                      "type": "boolean"
+                    },
+                    "timerSec": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 9007199254740991
                     },
                     "options": {
                       "minItems": 2,
@@ -2476,6 +2508,477 @@
         "mechanic",
         "teamNames",
         "levels"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "_note": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emoji": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pairs",
+              "company",
+              "solo"
+            ]
+          }
+        },
+        "tier": {
+          "default": "free",
+          "type": "string",
+          "enum": [
+            "free",
+            "premium"
+          ]
+        },
+        "ageRating": {
+          "default": "all",
+          "type": "string",
+          "enum": [
+            "all",
+            "16+",
+            "18+"
+          ]
+        },
+        "players": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        "durationMin": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "tags": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "related": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "status": {
+          "default": "draft",
+          "type": "string",
+          "enum": [
+            "draft",
+            "published"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "const": "game"
+        },
+        "rules": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "decks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
+              "tier": {
+                "default": "free",
+                "type": "string",
+                "enum": [
+                  "free",
+                  "premium"
+                ]
+              },
+              "ageRating": {
+                "default": "all",
+                "type": "string",
+                "enum": [
+                  "all",
+                  "16+",
+                  "18+"
+                ]
+              },
+              "questionsPerGame": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "locked": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "soon",
+                      "subscription"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "reason",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "unlockAfter": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "finaleNote": {
+                "type": "string",
+                "minLength": 1
+              },
+              "upsellText": {
+                "type": "string",
+                "minLength": 1
+              },
+              "accent": {
+                "type": "string",
+                "enum": [
+                  "lime",
+                  "orange",
+                  "blue",
+                  "violet"
+                ]
+              },
+              "cards": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "award": {
+                      "type": "string"
+                    },
+                    "together": {
+                      "type": "boolean"
+                    },
+                    "timerSec": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 9007199254740991
+                    },
+                    "options": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "selfText": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "selfOptions": {
+                      "minItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "source": {
+                      "default": "official",
+                      "type": "string",
+                      "enum": [
+                        "official",
+                        "community"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "emoji",
+              "cards"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "mechanic": {
+          "type": "string",
+          "const": "ladder"
+        },
+        "fact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "texts": {
+          "type": "object",
+          "properties": {
+            "players": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ],
+              "items": false,
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "starts": {
+              "type": "string",
+              "minLength": 1
+            },
+            "together": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pass": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timer": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pause": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resume": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "players",
+            "starts",
+            "together",
+            "pass",
+            "next",
+            "timer",
+            "pause",
+            "resume"
+          ],
+          "additionalProperties": false
+        },
+        "levelDone": {
+          "type": "object",
+          "properties": {
+            "emoji": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "type": "string",
+              "minLength": 1
+            },
+            "later": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "emoji",
+            "title",
+            "text",
+            "next",
+            "later"
+          ],
+          "additionalProperties": false
+        },
+        "finale": {
+          "type": "object",
+          "properties": {
+            "emoji": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            },
+            "seconds": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 9007199254740991
+            },
+            "start": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pause": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resume": {
+              "type": "string",
+              "minLength": 1
+            },
+            "skip": {
+              "type": "string",
+              "minLength": 1
+            },
+            "after": {
+              "type": "object",
+              "properties": {
+                "emoji": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "emoji",
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "flexText": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "emoji",
+            "title",
+            "note",
+            "seconds",
+            "start",
+            "pause",
+            "resume",
+            "skip",
+            "after",
+            "flexText"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "slug",
+        "title",
+        "description",
+        "emoji",
+        "sections",
+        "players",
+        "durationMin",
+        "kind",
+        "decks",
+        "mechanic",
+        "fact",
+        "texts",
+        "levelDone",
+        "finale"
       ],
       "additionalProperties": false
     }

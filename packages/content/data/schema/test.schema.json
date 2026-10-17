@@ -349,6 +349,9 @@
           "scale": {
             "type": "string"
           },
+          "zone": {
+            "type": "string"
+          },
           "text": {
             "type": "string",
             "minLength": 1
@@ -845,6 +848,130 @@
       "required": [
         "title",
         "items"
+      ],
+      "additionalProperties": false
+    },
+    "valueMap": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "top": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "outOf": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "title",
+        "top",
+        "outOf"
+      ],
+      "additionalProperties": false
+    },
+    "pair": {
+      "type": "object",
+      "properties": {
+        "zones": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "same": {
+                "type": "string",
+                "minLength": 1
+              },
+              "differ": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "emoji",
+              "title",
+              "same",
+              "differ"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "names": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "minPercent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "emoji": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "minPercent",
+              "emoji",
+              "title",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "shared": {
+          "type": "string",
+          "minLength": 1
+        },
+        "noShared": {
+          "type": "string",
+          "minLength": 1
+        },
+        "zonesTitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "talkTitle": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "zones",
+        "names",
+        "shared",
+        "noShared",
+        "zonesTitle",
+        "talkTitle"
       ],
       "additionalProperties": false
     },

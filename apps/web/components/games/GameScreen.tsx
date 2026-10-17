@@ -14,6 +14,7 @@ import { ExplainGame } from "./ExplainGame";
 import { GuessPartnerGame } from "./GuessPartnerGame";
 import { MafiaGame } from "./MafiaGame";
 import { MatchGame } from "./MatchGame";
+import { QuestionsGame } from "./QuestionsGame";
 import { RoundDeckGame } from "./RoundDeckGame";
 import { SpyGame } from "./SpyGame";
 import { VoteGame } from "./VoteGame";
@@ -41,6 +42,7 @@ function Mechanic({
       return <VoteGame game={game} deck={deck} related={related} />;
     case "guess-partner":
     case "match":
+    case "ladder":
       return null; // открываются ниже целиком, без выбора колоды здесь
   }
 }
@@ -52,6 +54,7 @@ export function GameScreen({ game, related }: { game: Game; related?: ReactNode 
   if (game.mechanic === "explain") return <ExplainGame game={game} related={related} />;
   if (game.mechanic === "guess-partner") return <GuessPartnerGame game={game} related={related} />;
   if (game.mechanic === "match") return <MatchGame game={game} related={related} />;
+  if (game.mechanic === "ladder") return <QuestionsGame game={game} related={related} />;
   return <DecksScreen game={game} related={related} />;
 }
 

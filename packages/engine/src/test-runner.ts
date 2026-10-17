@@ -49,6 +49,8 @@ export interface TestScore {
   blend?: TestBlend;
   /** Есть у тестов с подсчётом "scales". */
   scales?: ScalesBreakdown;
+  /** Все типы от сильного к слабому, ничьи уже разведены по хэшу ответов (только подсчёт "types"). */
+  order?: string[];
 }
 
 /** Настройки подсчёта в полной записи (короткая "types" превращается в { type: "types" }). */
@@ -109,9 +111,26 @@ export function scoreTest(test: Test, answers: readonly number[]): TestScore {
 
 type Chosen = { question: Test["questions"][number]; option: TestOption; optionIndex: number }[];
 
-/** Служебные ключи в scores: сумма «красных» баллов Флаг-метра и номер «языка романтики». Едут в адресе результата, как и остальные баллы. */
+/**
+ * Служебные ключи в scores: сумма «красных» баллов Флаг-метра, номер «языка романтики» и порядок ценностей «своей карты».
+ * Едут в адресе результата, как и остальные баллы.
+ */
 export const FLAG_KEY = "flag";
 export const LANG_KEY = "lang";
+export const ORDER_KEY = "order";
+
+/** Порядок типов одним числом: «1» и номера результатов подряд (чтобы не терялся ведущий ноль), например 1412350. */
+export function encodeOrder(test: Test, ids: readonly string[]): number {
+  return Number("1" + ids.map((id) => test.results.findIndex((r) => r.id === id)).join(""));
+}
+
+/** Обратно: id типов от сильного к слабому. null — если число не подходит этому тесту. */
+export function decodeOrder(test: Test, value: number): string[] | null {
+  const digits = String(value);
+  if (digits[0] !== "1" || digits.length !== test.results.length + 1) return null;
+  const ids = [...digits.slice(1)].map((d) => test.results[Number(d)]?.id);
+  return ids.every((id): id is string => id !== undefined) && new Set(ids).size === ids.length ? ids : null;
+}
 
 /** Флаг-метр (test.flagMeter) и язык (test.languages): считаются по тем же ответам и кладутся в scores. */
 function addSideScores(test: Test, chosen: Chosen, scores: Record<string, number>): void {
@@ -184,7 +203,8 @@ function scoreTypes(test: Test, config: TypesScoring, chosen: Chosen): TestScore
   }
   const [best, second] = ranked as [TestResult, TestResult | undefined];
   addSideScores(test, chosen, scores);
-  const score: TestScore = { resultId: best.id, result: best, scores };
+  if (test.valueMap) scores[ORDER_KEY] = encodeOrder(test, ranked.map((r) => r.id));
+  const score: TestScore = { resultId: best.id, result: best, scores, order: ranked.map((r) => r.id) };
 
   const note = second && test.blendNotes?.[second.id];
   if (config.blend && second && note && (scores[best.id] ?? 0) - (scores[second.id] ?? 0) <= config.blend.maxGap) {

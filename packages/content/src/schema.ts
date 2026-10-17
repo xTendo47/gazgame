@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -94,6 +94,8 @@ export const testQuestionSchema = z.strictObject({
   audience: z.record(z.string(), questionAudienceSchema).optional(),
   /** Подсчёт "scales": к какой шкале относится вопрос. */
   scale: z.string().optional(),
+  /** «Ценности пары» (test.pair): к какой зоне относится вопрос. */
+  zone: z.string().optional(),
   text,
   options: z.array(testOptionSchema).min(2, "у вопроса должно быть минимум 2 варианта"),
 });
@@ -241,6 +243,20 @@ export const upsellSchema = z.strictObject({
   }),
 });
 
+const pairSchema = z.strictObject({
+  zones: z.array(z.strictObject({ id: slug, emoji: text, title: text, same: text, differ: text })).min(1),
+  names: z
+    .array(z.strictObject({ minPercent: z.number().min(0).max(100), emoji: text, title: text, text }))
+    .min(1)
+    .refine((n) => n.some((x) => x.minPercent === 0), "нужно название с minPercent: 0"),
+  /** Бесплатная строка: {value} — первая общая ценность из двух топ-3. */
+  shared: text,
+  noShared: text,
+  /** Заголовки блоков Premium 💎: «Шесть зон вашей пары» и «Разговор на эту неделю». */
+  zonesTitle: text,
+  talkTitle: text,
+});
+
 const languagesSchema = z.strictObject({
   title: text,
   datesTitle: text.optional(),
@@ -306,6 +322,16 @@ export const testSchema = itemBase
      * (ничья — по хэшу ответов). dates[id результата][id языка] — «Идеальное свидание для тебя».
      */
     languages: languagesSchema.optional(),
+    /**
+     * «Своя карта»: все типы полосками (баллы / outOf), top первых подсвечены. Порядок при ничьей — по хэшу ответов
+     * (едет в адресе как order). Нужна для «Ценностей пары».
+     */
+    valueMap: z.strictObject({ title: text, top: z.int().min(1), outOf: z.number().min(1) }).optional(),
+    /**
+     * Сравнение пары: зоны вопросов (question.zone), названия пары по проценту и строка про общую ценность.
+     * Процент = 50% × сходство карт + 50% × доля одинаковых ответов. Тексты зон: same — совпали, differ — вопрос для разговора.
+     */
+    pair: pairSchema.optional(),
     /** Заголовки дополнительных блоков результата. */
     resultBlocks: z
       .strictObject({
@@ -373,6 +399,7 @@ export const testSchema = itemBase
       }
     });
     if (test.languages) checkLanguages(test, test.languages, ids, ctx);
+    if (test.pair) checkPair(test, test.pair, ctx);
     if (typeof test.scoring === "object" && test.scoring.type === "scales") {
       checkScales(test, test.scoring, ctx);
       return;
@@ -429,6 +456,19 @@ export const testSchema = itemBase
       }
     }
   });
+
+/** «Ценности пары»: у каждого вопроса zone из pair.zones, в каждой зоне хотя бы один вопрос. */
+function checkPair(test: { questions: TestQuestion[] }, pair: z.infer<typeof pairSchema>, ctx: z.RefinementCtx) {
+  const zoneIds = pair.zones.map((z0) => z0.id);
+  test.questions.forEach((q, qi) => {
+    if (!q.zone || !zoneIds.includes(q.zone)) {
+      ctx.addIssue({ code: "custom", path: ["questions", qi, "zone"], message: `у вопроса должно быть поле zone (есть: ${zoneIds.join(", ")})` });
+    }
+  });
+  for (const id of zoneIds) {
+    if (!test.questions.some((q) => q.zone === id)) ctx.addIssue({ code: "custom", path: ["pair", "zones"], message: `в зоне "${id}" нет вопросов` });
+  }
+}
 
 /** «Язык романтики»: у вариантов type из languages, в dates известные результаты и языки. */
 function checkLanguages(
@@ -560,6 +600,10 @@ export const cardSchema = z.strictObject({
   type: z.string().optional(),
   /** Звание победителю раунда (механика vote), например «Соня года 😴». */
   award: z.string().optional(),
+  /** «Лесенка» (36 вопросов): вопрос, на который отвечаете вместе, — вместо «Начинает: Игрок N» строка «Отвечаете вместе». */
+  together: z.boolean().optional(),
+  /** «Лесенка»: у вопроса есть кнопка таймера на столько секунд (например, 240 — «Расскажи историю жизни за 4 минуты»). */
+  timerSec: z.int().min(10).optional(),
   /** Варианты ответа (механика guess-partner). */
   options: z.array(text).min(2).optional(),
   /** guess-partner: вопрос для того, кто отвечает про себя («Ты…»). В text — форма для угадывающего с {name}. */
@@ -631,6 +675,48 @@ export const deckGameSchema = gameBase.extend({
       flexText: text,
     })
     .optional(),
+});
+
+/**
+ * «Лесенка» («36 вопросов»): уровни-колоды идут в фиксированном порядке (без перемешивания), без раундов.
+ * Карточка: «Начинает: Игрок 1/2» (чередуется по номеру вопроса в игре) или «Отвечаете вместе» (card.together),
+ * кнопки «Пас» и «Дальше →», у вопроса с card.timerSec — таймер. Между уровнями экран levelDone,
+ * после последнего уровня — finale: таймер «глаза в глаза», затем after и шеринг.
+ */
+export const ladderGameSchema = gameBase.extend({
+  mechanic: z.literal("ladder"),
+  /** Плашка-факт на старте. */
+  fact: text,
+  texts: z.strictObject({
+    /** Имена по очереди: «Игрок 1», «Игрок 2». */
+    players: z.tuple([text, text]),
+    /** Строка на карточке, {player} — кто начинает. */
+    starts: text,
+    together: text,
+    pass: text,
+    next: text,
+    /** Кнопка таймера у вопроса (card.timerSec). */
+    timer: text,
+    /** Кнопка таймера, пока он идёт, и после паузы. */
+    pause: text,
+    resume: text,
+  }),
+  /** Экран между уровнями. {level} — название следующего уровня. */
+  levelDone: z.strictObject({ emoji: text, title: text, text, next: text, later: text }),
+  /** Финал после последнего уровня. */
+  finale: z.strictObject({
+    emoji: text,
+    title: text,
+    note: text,
+    seconds: z.int().min(10),
+    start: text,
+    pause: text,
+    resume: text,
+    skip: text,
+    after: z.strictObject({ emoji: text, title: text, text }),
+    /** Текст для «Пофлексить 🧊». */
+    flexText: text,
+  }),
 });
 
 /** «Кто из компании?»: все тайно голосуют за игрока. */
@@ -963,7 +1049,7 @@ function checkExplain(game: ExplainGameInput, ctx: z.RefinementCtx) {
 }
 
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
@@ -1477,6 +1563,7 @@ export type DeckGame = z.infer<typeof deckGameSchema>;
 export type VoteGame = z.infer<typeof voteGameSchema>;
 export type GuessPartnerGame = z.infer<typeof guessPartnerGameSchema>;
 export type MatchGame = z.infer<typeof matchGameSchema>;
+export type LadderGame = z.infer<typeof ladderGameSchema>;
 export type MafiaGame = z.infer<typeof mafiaGameSchema>;
 export type MafiaRole = MafiaGame["roles"][number];
 export type SpyGame = z.infer<typeof spyGameSchema>;

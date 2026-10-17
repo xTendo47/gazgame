@@ -18,6 +18,8 @@ export * from "./mechanics/match";
 export * from "./mechanics/mafia";
 export * from "./mechanics/spy";
 export * from "./mechanics/explain";
+export * from "./mechanics/ladder";
+export * from "./pair";
 export * from "./card-games";
 export * from "./premium";
 export * from "./sections";
