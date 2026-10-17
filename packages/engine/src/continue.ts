@@ -1,4 +1,5 @@
-// «Продолжить» на главной: незаконченный тест. Ответы хранятся в ProgressStore (testProgress), тут только проверка и выбор.
+// «Продолжить» на главной: последний незаконченный тест или игра. Ответы теста хранятся в ProgressStore (testProgress),
+// начатые игры — там же (gameStarted, только «когда открыли»: ход игры не сохраняем). Здесь проверка и выбор.
 import type { TestProgress } from "./storage";
 
 /** Из теста нужно только число вопросов и вариантов у каждого. */
@@ -20,17 +21,40 @@ export interface ContinueTest extends ResumableTest {
   emoji: string;
 }
 
-/** Карточка «Продолжить»: самый недавний незаконченный тест. Нет такого — null (карточки нет). */
-export function pickContinue<T extends ContinueTest>(
+export interface ContinueGame {
+  id: string;
+  slug: string;
+  title: string;
+  emoji: string;
+}
+
+/** Игру открыли и не доиграли: через сколько часов карточка «Продолжить» про неё пропадает (ход игры не сохраняется). */
+export const GAME_CONTINUE_HOURS = 12;
+
+/** Что показать в «Продолжить»: самый недавний незаконченный тест или игра. Ничего — null (карточки нет). */
+export type ContinuePick<T extends ContinueTest, G extends ContinueGame> =
+  | { kind: "test"; test: T; /** Номер вопроса, на котором остановились. */ question: number; total: number }
+  | { kind: "game"; game: G };
+
+export function pickContinue<T extends ContinueTest, G extends ContinueGame = ContinueGame>(
   tests: readonly T[],
   progress: Readonly<Record<string, TestProgress>>,
-): { test: T; /** Номер вопроса, на котором остановились. */ question: number; total: number } | null {
-  let best: { test: T; question: number; total: number; at: string } | null = null;
+  games: readonly G[] = [],
+  started: Readonly<Record<string, { at: string }>> = {},
+  now: Date = new Date(),
+): ContinuePick<T, G> | null {
+  let best: { pick: ContinuePick<T, G>; at: string } | null = null;
   for (const test of tests) {
     const saved = progress[test.id];
     const answers = resumeAnswers(test, saved);
     if (!answers || !saved) continue;
-    if (!best || saved.at > best.at) best = { test, question: answers.length + 1, total: test.questions.length, at: saved.at };
+    if (!best || saved.at > best.at) best = { pick: { kind: "test", test, question: answers.length + 1, total: test.questions.length }, at: saved.at };
   }
-  return best && { test: best.test, question: best.question, total: best.total };
+  const limit = now.getTime() - GAME_CONTINUE_HOURS * 3_600_000;
+  for (const game of games) {
+    const rec = started[game.id];
+    if (!rec || Date.parse(rec.at) < limit) continue;
+    if (!best || rec.at > best.at) best = { pick: { kind: "game", game }, at: rec.at };
+  }
+  return best?.pick ?? null;
 }

@@ -13,7 +13,8 @@ import { boldParts, sectionGroups, toggleKind, type SectionTarget } from "@gazga
 import { cn } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
-import { trackDeeperClick, trackPreviewOpen, trackSoonClick } from "@/lib/analytics";
+import { RulesSheet } from "@/components/RulesSheet";
+import { trackDeeperClick, trackPreviewOpen, trackRulesOpen, trackRulesPlay, trackSoonClick } from "@/lib/analytics";
 import { haptic } from "@/lib/haptics";
 import { usePremium } from "@/lib/premium";
 
@@ -42,6 +43,7 @@ export function SectionScreen({
   targets,
   lockedTests,
   previewTexts,
+  rules,
   openLocked,
 }: {
   section: SectionLayout;
@@ -51,6 +53,8 @@ export function SectionScreen({
   /** Платные тесты для шторки превью. */
   lockedTests: LockedTest[];
   previewTexts?: PremiumFile["preview"];
+  /** «Как играть за 10 секунд»: три строки по id игры (cards — «Карточные игры», test — любой тест). */
+  rules: Record<string, string[]>;
   /** Старый адрес /locked/<slug>: шторка превью открыта сразу. */
   openLocked?: string;
 }) {
@@ -97,11 +101,31 @@ export function SectionScreen({
     }
   }
 
+  /** Шторка «Как играть за 10 секунд» перед игрой или тестом: что открыть и ключ правил. */
+  const [rulesFor, setRulesFor] = useState<{ item: SectionItem; href: string; key: string } | null>(null);
+
   function tap(item: SectionItem, target: SectionTarget) {
     if (target.kind === "soon") return countSoon(item.title);
     // Платные тесты открывают своё превью (как раньше), остальные Premium-карточки — как замки 💎
     if (item.premium && !premium && target.kind !== "locked-test") return lockedTap(target, item.title);
+    // Игра или тест: сначала три строки «как играть», потом «Играть →»
+    const key = item.ref?.game ?? (item.ref?.cards ? "cards" : item.ref?.test ? "test" : undefined);
+    if (target.kind === "link" && key && rules[key]) {
+      trackRulesOpen({ id: key === "test" ? (item.ref?.test ?? key) : key, source: "section" });
+      setRulesFor({ item, href: target.href, key });
+      return;
+    }
     open(target);
+  }
+
+  /** Тап по чипу уровня: голубой 💎 и «Сравниться 💎» объясняют себя и считаются «Глубже 💎»; с Premium чип — часть карточки. */
+  function chipTap(e: { stopPropagation: () => void }, item: SectionItem, level: NonNullable<SectionItem["levels"]>[number]) {
+    if (!level.premium || premium) return;
+    e.stopPropagation();
+    haptic("double");
+    const id = item.ref?.game ?? item.ref?.test ?? item.title;
+    trackDeeperClick({ id, kind: item.ref?.test ? "test" : "game", source: level.compare ? "compat" : "locked-deck" });
+    say(level.compare ? texts.compareHint : texts.premiumHint);
   }
 
   function pickTab(t: SectionTab) {
@@ -150,6 +174,7 @@ export function SectionScreen({
               {item.levels.map((l) => (
                 <span
                   key={l.label}
+                  onClick={(e) => chipTap(e, item, l)}
                   className={cn(
                     "rounded-full px-2 py-[3px] text-[10.5px] font-bold",
                     l.premium ? "bg-[#62D2FF]/10 text-[#62D2FF]" : l.free ? "bg-lime/10 text-lime" : "bg-cream/7 text-muted",
@@ -269,6 +294,20 @@ export function SectionScreen({
           </p>
         )}
       </section>
+
+      {rulesFor && (
+        <RulesSheet
+          emoji={rulesFor.item.emoji}
+          name={rulesFor.item.title}
+          lines={rules[rulesFor.key] ?? []}
+          texts={{ title: texts.rulesTitle, play: texts.play, later: texts.later }}
+          onClose={() => setRulesFor(null)}
+          onPlay={() => {
+            trackRulesPlay({ id: rulesFor.item.ref?.game ?? rulesFor.item.ref?.test ?? rulesFor.key });
+            router.push(rulesFor.href);
+          }}
+        />
+      )}
 
       {previewTexts && <LockedPreviewSheet test={sheetTest} texts={previewTexts} onClose={() => setSheet(null)} />}
 

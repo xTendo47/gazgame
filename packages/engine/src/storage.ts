@@ -63,6 +63,12 @@ export interface ProgressData {
   collection?: CollectionData;
   /** Незаконченные тесты по id теста. */
   testProgress?: Record<string, TestProgress>;
+  /** Игры, которые открыли и ещё не доиграли до конца (id игры → когда открыли). Для «Продолжить» на главной. */
+  gameStarted?: Record<string, { at: string }>;
+  /** Последний выбор в умном 🎲: «Сколько вас?» и «Какой настрой?». */
+  dicePick?: { size: string; mood: string };
+  /** Подсказки, которые уже показали (всплывашки при первом заходе): повторять не надо. */
+  hintsSeen?: string[];
 }
 
 export interface FriendResult {
@@ -80,6 +86,13 @@ export interface ProgressStore {
   listTestProgress(): Record<string, TestProgress>;
   saveTestProgress(testId: string, answers: readonly number[], now?: Date): void;
   clearTestProgress(testId: string): void;
+  /** Игру открыли: она попадёт в «Продолжить», пока её не доиграют (recordGamePlayed снимает отметку). */
+  markGameStarted(gameId: string, now?: Date): void;
+  listGameStarted(): Record<string, { at: string }>;
+  getDicePick(): { size: string; mood: string } | null;
+  saveDicePick(pick: { size: string; mood: string }): void;
+  isHintSeen(id: string): boolean;
+  markHintSeen(id: string): void;
   /** Последний итог теста (его берёт Коллекция). tieId — второй итог при ничьей. */
   saveTestResult(testId: string, resultId: string, now?: Date, tieId?: string): void;
   recordGamePlayed(gameId: string, options?: { score?: number; now?: Date }): void;
@@ -158,6 +171,9 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.today ? { today: data.today } : {}),
         ...(data.collection ? { collection: data.collection } : {}),
         ...(data.testProgress ? { testProgress: data.testProgress } : {}),
+        ...(data.gameStarted ? { gameStarted: data.gameStarted } : {}),
+        ...(data.dicePick ? { dicePick: data.dicePick } : {}),
+        ...(data.hintsSeen ? { hintsSeen: data.hintsSeen } : {}),
       };
     } catch {
       return emptyProgress();
@@ -174,6 +190,25 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
 
   return {
     load,
+    markGameStarted(gameId, now = new Date()) {
+      const data = load();
+      data.gameStarted = { ...data.gameStarted, [gameId]: { at: now.toISOString() } };
+      save(data);
+    },
+    listGameStarted: () => load().gameStarted ?? {},
+    getDicePick: () => load().dicePick ?? null,
+    saveDicePick(pick) {
+      const data = load();
+      data.dicePick = { ...pick };
+      save(data);
+    },
+    isHintSeen: (id) => load().hintsSeen?.includes(id) ?? false,
+    markHintSeen(id) {
+      const data = load();
+      if (data.hintsSeen?.includes(id)) return;
+      data.hintsSeen = [...(data.hintsSeen ?? []), id];
+      save(data);
+    },
     getTestProgress: (testId) => load().testProgress?.[testId] ?? null,
     listTestProgress: () => load().testProgress ?? {},
     saveTestProgress(testId, answers, now = new Date()) {
@@ -201,6 +236,8 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
       const data = load();
       const prev = data.games[gameId];
       const best = [prev?.bestScore, score].filter((s): s is number => s !== undefined);
+      // доиграли до конца — «Продолжить» про эту игру больше не нужно
+      if (data.gameStarted) delete data.gameStarted[gameId];
       data.games[gameId] = {
         playedCount: (prev?.playedCount ?? 0) + 1,
         lastPlayedAt: now.toISOString(),

@@ -1,9 +1,11 @@
 "use client";
 
-// Карточка «Продолжить» на главной: только если есть незаконченный тест. Эмодзи теста, «Продолжить: …», «Вопрос 7 из 12»,
-// полоска прогресса и «Дальше →». Нет незаконченного теста — карточки нет. Ответы лежат на устройстве (ProgressStore.testProgress).
+// Карточка «Продолжить» на главной: последний незаконченный тест («Вопрос 7 из 12», полоска прогресса) или игра, которую открыли
+// и не доиграли («Игра не закончена»; ход игры не сохраняется, «Дальше →» начинает заново). Нет незаконченного — карточки нет.
+// Всё на устройстве (ProgressStore: testProgress и gameStarted).
 import { useMemo, useSyncExternalStore } from "react";
-import { pickContinue, type ContinueTest, type TestProgress } from "@gazgame/engine";
+import { pickContinue, type ContinueGame, type ContinueTest, type TestProgress } from "@gazgame/engine";
+import { useNow } from "@/lib/gaz";
 import { getProgress } from "@/lib/progress";
 import { TrackedLink } from "./TrackedLink";
 
@@ -18,37 +20,47 @@ export interface ContinueTestSummary {
 }
 
 function subscribe(listener: () => void) {
-  window.addEventListener("storage", listener); // тест продолжили в другой вкладке
+  window.addEventListener("storage", listener); // продолжили в другой вкладке
   return () => window.removeEventListener("storage", listener);
 }
 
-export function ContinueCard({ tests }: { tests: ContinueTestSummary[] }) {
-  // Снимок — строка: React не перерисовывает, пока ответы не поменялись
-  const snapshot = useSyncExternalStore(subscribe, () => JSON.stringify(getProgress().listTestProgress()), () => "{}");
+const EMPTY = JSON.stringify({ tests: {}, games: {} });
+
+export function ContinueCard({ tests, games }: { tests: ContinueTestSummary[]; games: ContinueGame[] }) {
+  // Снимок — строка: React не перерисовывает, пока данные не поменялись
+  const snapshot = useSyncExternalStore(
+    subscribe,
+    () => JSON.stringify({ tests: getProgress().listTestProgress(), games: getProgress().listGameStarted() }),
+    () => EMPTY,
+  );
+  // Главная статическая: до гидратации данных всё равно нет
+  const now = useNow(0);
   const pick = useMemo(() => {
     const full: ContinueTest[] = tests.map((t) => ({ ...t, questions: t.options.map((n) => ({ options: Array.from({ length: n }) })) }));
-    return pickContinue(full, JSON.parse(snapshot) as Record<string, TestProgress>);
-  }, [tests, snapshot]);
+    const data = JSON.parse(snapshot) as { tests: Record<string, TestProgress>; games: Record<string, { at: string }> };
+    return pickContinue(full, data.tests, games, data.games, now);
+  }, [tests, games, snapshot, now]);
 
   if (!pick) return null;
-  const { test, question, total } = pick;
+  const item = pick.kind === "test" ? pick.test : pick.game;
+  const href = pick.kind === "test" ? `/test/${item.slug}` : `/game/${item.slug}`;
   return (
     <TrackedLink
-      href={`/test/${test.slug}`}
+      href={href}
       track={{ kind: "home", target: "continue" }}
       className="gaz-press flex min-h-14 w-full items-center gap-3 rounded-[18px] border border-line bg-surface px-3.5 py-2.5 text-left"
     >
       <span aria-hidden="true" className="text-2xl leading-none">
-        {test.emoji}
+        {item.emoji}
       </span>
       <span className="min-w-0 flex-1">
-        <b className="block font-display text-[13.5px] leading-tight font-semibold">Продолжить: {test.title}</b>
-        <small className="block text-xs text-muted tabular-nums">
-          Вопрос {question} из {total}
-        </small>
-        <span aria-hidden="true" className="mt-1.5 block h-1 overflow-hidden rounded bg-line">
-          <i className="block h-full rounded bg-[#B58CFF]" style={{ width: `${Math.round((question / total) * 100)}%` }} />
-        </span>
+        <b className="block font-display text-[13.5px] leading-tight font-semibold">Продолжить: {item.title}</b>
+        <small className="block text-xs text-muted tabular-nums">{pick.kind === "test" ? `Вопрос ${pick.question} из ${pick.total}` : "Игра не закончена"}</small>
+        {pick.kind === "test" && (
+          <span aria-hidden="true" className="mt-1.5 block h-1 overflow-hidden rounded bg-line">
+            <i className="block h-full rounded bg-[#B58CFF]" style={{ width: `${Math.round((pick.question / pick.total) * 100)}%` }} />
+          </span>
+        )}
       </span>
       <span className="font-display text-xs font-extrabold whitespace-nowrap text-[#B58CFF]">Дальше →</span>
     </TrackedLink>

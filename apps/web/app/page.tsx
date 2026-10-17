@@ -1,10 +1,11 @@
 // Главная GAZ Game (спека 16.10): логотип, 🎲 и 👤, слоган, полоса «Сегодня», «Продолжить» (если есть незаконченный тест),
 // «С кем ты сейчас?» с тремя разделами, полоса GAZ, полоса Premium, мини-ряд. Что и в каком порядке — в lib/menu.ts.
 import type { CSSProperties } from "react";
-import { isVisible, itemPath, randomPool } from "@gazgame/engine";
+import { isVisible, itemPath, type DiceItem } from "@gazgame/engine";
 import { Screen } from "@gazgame/ui";
 import { CollectionDot } from "@/components/collection/CollectionDot";
 import { ContinueCard, type ContinueTestSummary } from "@/components/home/ContinueCard";
+import { FirstHints } from "@/components/home/FirstHints";
 import { TrackedLink } from "@/components/home/TrackedLink";
 import { RandomDice } from "@/components/RandomDice";
 import { TodayStrip } from "@/components/today/TodayStrip";
@@ -13,7 +14,20 @@ import { HOME_SECTIONS, MINI_BUTTONS } from "@/lib/menu";
 
 export default function Home() {
   const catalog = getCatalog();
-  const randomPaths = randomPool(catalog, visibility).map(itemPath);
+  const layouts = catalog.sectionLayouts;
+  // Готовые игры и тесты: те, на которые ведёт карточка раздела без «скоро» (их выбирает умный 🎲 и показывает «Продолжить»)
+  const ready = new Set(
+    (layouts?.sections ?? []).flatMap((s) =>
+      s.tabs.flatMap((t) => t.items.flatMap((i) => (i.soon || !i.ref ? [] : [i.ref.game, i.ref.test].filter((x): x is string => !!x)))),
+    ),
+  );
+  const readyGames = catalog.games.filter((g) => ready.has(g.slug) && isVisible(g, visibility));
+  const readyTests = catalog.tests.filter((t) => ready.has(t.slug) && isVisible(t, visibility));
+  const diceItems: DiceItem[] = [
+    ...readyGames.map((g): DiceItem => ({ slug: g.slug, kind: "game", emoji: g.emoji, title: g.title, text: g.description, href: itemPath(g) })),
+    ...readyTests.map((t): DiceItem => ({ slug: t.slug, kind: "test", emoji: t.emoji, title: t.title, text: t.description, href: itemPath(t) })),
+  ];
+  const games = readyGames.map((g) => ({ id: g.id, slug: g.slug, title: g.title, emoji: g.emoji }));
   // Для «Продолжить» нужны только название, эмодзи и число вариантов у вопросов
   const tests: ContinueTestSummary[] = catalog.tests
     .filter((t) => isVisible(t, visibility))
@@ -26,7 +40,7 @@ export default function Home() {
           GAZ <span className="text-orange">GAME</span>
         </h1>
         <div className="flex gap-2">
-          <RandomDice paths={randomPaths} />
+          {layouts && <RandomDice items={diceItems} config={layouts.dice} />}
           <TrackedLink
             href="/profile"
             track={{ kind: "home", target: "profile" }}
@@ -40,7 +54,7 @@ export default function Home() {
       <p className="-mt-1.5 font-bold text-muted">Не сиди. Не тупи. Играй!</p>
 
       <TodayStrip />
-      <ContinueCard tests={tests} />
+      <ContinueCard tests={tests} games={games} />
 
       <h2 className="mt-0.5 -mb-1 font-display text-[15px] font-semibold">С кем ты сейчас?</h2>
       <nav aria-label="Разделы">
@@ -131,6 +145,7 @@ export default function Home() {
           ))}
         </ul>
       </nav>
+      <FirstHints />
     </Screen>
   );
 }

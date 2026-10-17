@@ -1223,7 +1223,7 @@ export const sectionItemSchema = z.strictObject({
   title: text,
   text,
   /** Уровни чипами; premium — голубой чип с 💎, free — салатовый «Всегда бесплатно». */
-  levels: z.array(z.strictObject({ label: text, premium: z.boolean().optional(), free: z.boolean().optional() })).optional(),
+  levels: z.array(z.strictObject({ label: text, premium: z.boolean().optional(), free: z.boolean().optional(), compare: z.boolean().optional() })).optional(),
   /** «скоро» салатовой плашкой: тап — «Скоро! Тап засчитан 🔥», считаем. */
   soon: z.boolean().optional(),
   /** Premium-карточка (голубая рамка): тап как замки 💎. */
@@ -1273,10 +1273,41 @@ export const sectionsFileSchema = z
       /** Подсказка под мини-кнопками: ничего не выбрано / выбрана одна группа. */
       kindsAll: text,
       kindsOne: text,
+      /** Шторка «Как играть за 10 секунд»: заголовок, кнопки. */
+      rulesTitle: text,
+      play: text,
+      later: text,
+      /** Всплывашки по тапу на голубой уровень 💎 и на чип «Сравниться 💎». */
+      premiumHint: text,
+      compareHint: text,
+    }),
+    /** «Как играть за 10 секунд»: три строки по id игры; cards — «Карточные игры», test — любой тест. */
+    rules: z.record(slug, z.array(text).length(3, "в правилах за 10 секунд ровно три строки")),
+    /** Умный 🎲: «Сколько вас?» и «Какой настрой?». items — slug игр и тестов; "*tests" — все тесты. */
+    dice: z.strictObject({
+      title: text,
+      sub: text,
+      askSize: text,
+      askMood: text,
+      roll: text,
+      again: text,
+      play: text,
+      /** Если для выбранного состава ничего нет. */
+      empty: text,
+      default: z.strictObject({ size: slug, mood: slug }),
+      sizes: z.array(z.strictObject({ id: slug, label: text, items: z.array(z.string().min(1)).min(1) })).min(2),
+      moods: z.array(z.strictObject({ id: slug, label: text, items: z.array(z.string().min(1)).min(1) })).min(2),
     }),
     sections: z.array(sectionLayoutSchema).min(1),
   })
   .superRefine((file, ctx) => {
+    const d = file.dice;
+    if (!d.sizes.some((x) => x.id === d.default.size)) ctx.addIssue({ code: "custom", path: ["dice", "default", "size"], message: "default.size должен быть id одного из sizes" });
+    if (!d.moods.some((x) => x.id === d.default.mood)) ctx.addIssue({ code: "custom", path: ["dice", "default", "mood"], message: "default.mood должен быть id одного из moods" });
+    for (const key of ["sizes", "moods"] as const) {
+      const ids = d[key].map((x) => x.id);
+      if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", path: ["dice", key], message: "id повторяются" });
+    }
     file.sections.forEach((s, si) => {
       const ids = new Set<string>();
       s.tabs.forEach((t, ti) => {

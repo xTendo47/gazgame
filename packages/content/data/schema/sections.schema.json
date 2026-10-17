@@ -34,6 +34,26 @@
         "kindsOne": {
           "type": "string",
           "minLength": 1
+        },
+        "rulesTitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "play": {
+          "type": "string",
+          "minLength": 1
+        },
+        "later": {
+          "type": "string",
+          "minLength": 1
+        },
+        "premiumHint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compareHint": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": [
@@ -42,7 +62,159 @@
         "soon",
         "soonToast",
         "kindsAll",
-        "kindsOne"
+        "kindsOne",
+        "rulesTitle",
+        "play",
+        "later",
+        "premiumHint",
+        "compareHint"
+      ],
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "minItems": 3,
+        "maxItems": 3,
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dice": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sub": {
+          "type": "string",
+          "minLength": 1
+        },
+        "askSize": {
+          "type": "string",
+          "minLength": 1
+        },
+        "askMood": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roll": {
+          "type": "string",
+          "minLength": 1
+        },
+        "again": {
+          "type": "string",
+          "minLength": 1
+        },
+        "play": {
+          "type": "string",
+          "minLength": 1
+        },
+        "empty": {
+          "type": "string",
+          "minLength": 1
+        },
+        "default": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "mood": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          },
+          "required": [
+            "size",
+            "mood"
+          ],
+          "additionalProperties": false
+        },
+        "sizes": {
+          "minItems": 2,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "items": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "items"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "moods": {
+          "minItems": 2,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "items": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "items"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "title",
+        "sub",
+        "askSize",
+        "askMood",
+        "roll",
+        "again",
+        "play",
+        "empty",
+        "default",
+        "sizes",
+        "moods"
       ],
       "additionalProperties": false
     },
@@ -161,6 +333,9 @@
                             },
                             "free": {
                               "type": "boolean"
+                            },
+                            "compare": {
+                              "type": "boolean"
                             }
                           },
                           "required": [
@@ -237,6 +412,8 @@
   },
   "required": [
     "texts",
+    "rules",
+    "dice",
     "sections"
   ],
   "additionalProperties": false

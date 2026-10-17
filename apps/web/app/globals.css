@@ -625,3 +625,15 @@
     animation: none;
   }
 }
+
+/* Кубик в шторке умного 🎲: перед карточкой результата крутится ~0,6 с */
+@layer components {
+  .dice-spin {
+    animation: dice-roll 0.6s cubic-bezier(0.3, 0.7, 0.4, 1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dice-spin {
+    animation: none;
+  }
+}

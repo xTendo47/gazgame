@@ -109,7 +109,7 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(s.tabs.map((t) => t.items.length)).toEqual([6, 4, 5]);
     expect(s.tabs[2]?.note).toBe("Процент и одна строка бесплатно, чтобы второму захотелось пройти тест. Полный разбор вашей пары в Premium.");
     // чипы «Сравниться 💎» у тестов Близости и «Всегда бесплатно» у чека пары
-    expect(item("pairs", "Тип привязанности").levels).toEqual([{ label: "Сравниться 💎", premium: true }]);
+    expect(item("pairs", "Тип привязанности").levels).toEqual([{ label: "Сравниться 💎", premium: true, compare: true }]);
     expect(item("pairs", "Здоровые ли у вас отношения?").levels).toEqual([{ label: "Всегда бесплатно", free: true }]);
     // ссылка «Сравниться с партнёром 💎» из результата ведёт на вкладку compat
     expect(s.tabs[2]?.id).toBe("compat");
@@ -142,8 +142,32 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(catalog.games.map((g) => itemPath(g))).toContain("/game/explain");
   });
 
-  it("«Сколько вас?» больше нет: ни в данных, ни в тексте", () => {
-    expect(JSON.stringify(sectionsJson)).not.toMatch(/Сколько вас|fewPeople|needPeople|"people"/);
+  it("фильтра «Сколько вас?» на экранах разделов больше нет (вопрос остался только в шторке умного 🎲)", () => {
+    expect(JSON.stringify(layouts.sections)).not.toMatch(/Сколько вас|"people"/);
+    expect(JSON.stringify(layouts.texts)).not.toMatch(/fewPeople|needPeople/);
+    expect(layouts.dice.askSize).toBe("Сколько вас?");
+  });
+
+  it("«Как играть за 10 секунд»: по три строки на каждую игру и тесты, тексты из спеки", () => {
+    expect(Object.keys(layouts.rules).sort()).toEqual(["cards", "explain", "know-each-other", "mafia", "match-us", "never-have-i-ever", "spy", "test", "truth-or-dare", "who-of-us"]);
+    expect(layouts.rules.spy).toEqual(["Передаёте телефон по кругу, каждый тайно смотрит место.", "Одному выпадает «Ты шпион».", "Задаёте друг другу вопросы: город ищет шпиона, шпион угадывает место."]);
+    expect(layouts.rules["never-have-i-ever"]?.[2]).toBe("Было? Загибай палец. Ноль пальцев = вылет.");
+    expect(layouts.texts.rulesTitle).toBe("Как играть за 10 секунд");
+    expect([layouts.texts.play, layouts.texts.later]).toEqual(["Играть →", "Не сейчас"]);
+    // у каждой игры, которую можно открыть из раздела, правила есть
+    for (const s of layouts.sections) {
+      for (const it of s.tabs.flatMap((t) => t.items)) {
+        if (it.soon || !it.ref) continue;
+        const key = it.ref.game ?? (it.ref.cards ? "cards" : it.ref.test ? "test" : undefined);
+        if (key) expect(layouts.rules[key], `${s.id}: ${it.title}`).toBeDefined();
+      }
+    }
+  });
+
+  it("всплывашки по тапу: 💎 и «скоро» дословно из спеки", () => {
+    expect(layouts.texts.premiumHint).toBe("💎 Это Premium. Всё без 💎 бесплатно");
+    expect(layouts.texts.compareHint).toBe("💎 Тест бесплатно. Сравнение с партнёром в Premium, процент бесплатно");
+    expect(layouts.texts.soonToast).toBe("Скоро! Считаем, сколько людей ждут");
   });
 
   it("**жирный** в подписи", () => {

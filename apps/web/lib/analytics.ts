@@ -235,3 +235,35 @@ export function trackHomeClick(event: { target: HomeTarget }) {
 export function trackHomeSection(event: { section: "party" | "love" | "solo" }) {
   send("home_section_click", { ...event });
 }
+
+// ---------- Шторки и подсказки ----------
+
+/** Открыли шторку «Как играть за 10 секунд». id — slug игры, cards (карточные игры) или test. */
+export function trackRulesOpen(event: { id: string; source: "section" | "help" }) {
+  send("rules_open", { ...event });
+}
+
+/** «Играть →» в шторке правил. */
+export function trackRulesPlay(event: { id: string }) {
+  send("rules_play", { ...event });
+}
+
+/** Открыли умный 🎲. */
+export function trackDiceOpen() {
+  send("dice_open");
+}
+
+/** «Крутить 🎲» / «Крутить ещё 🎲»: что выбрали (size: solo/duo/few/many, mood: fun/talk/brain). */
+export function trackDiceRoll(event: { size: string; mood: string }) {
+  send("dice_roll", { ...event });
+}
+
+/** «Играть →» на карточке, которую выбрал 🎲. id — slug игры или теста. */
+export function trackDicePlay(event: { id: string }) {
+  send("dice_play", { ...event });
+}
+
+/** Подсказки при первом заходе («Сегодня» и 🎲) показали и закрыли. */
+export function trackHintsSeen() {
+  send("hints_seen");
+}

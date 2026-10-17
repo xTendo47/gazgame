@@ -8,6 +8,7 @@ import type { Test } from "@gazgame/content";
 import { findResult, findTest, parseSharedResult, sharedResultMeta } from "@gazgame/engine";
 import { Badge, PageHeader, Screen } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
+import { RulesHelp } from "@/components/RulesSheet";
 import { FriendBanner } from "@/components/share/FriendBanner";
 import { TestRunner } from "@/components/TestRunner";
 import { getCatalog, visibility } from "@/lib/catalog";
@@ -66,6 +67,8 @@ export default async function TestPage({ params, searchParams }: Props) {
   const shared = fromShare ? sharedFrom(test, sp) : null;
   const friendResult = shared ? findResult(test, shared.resultId) : undefined;
   const section = getSection(test.sections[0] ?? "solo");
+  const layouts = getCatalog().sectionLayouts;
+  const rules = layouts?.rules.test;
 
   return (
     <Screen>
@@ -78,6 +81,15 @@ export default async function TestPage({ params, searchParams }: Props) {
           <span className="flex flex-wrap gap-2">
             <Badge>Тест</Badge>
             {test.status === "draft" && <Badge tone="draft">черновик</Badge>}
+            {layouts && rules && (
+              <RulesHelp
+                id={test.slug}
+                emoji={test.emoji}
+                name={test.title}
+                lines={rules}
+                texts={{ title: layouts.texts.rulesTitle, play: layouts.texts.play, later: layouts.texts.later }}
+              />
+            )}
           </span>
         }
       />

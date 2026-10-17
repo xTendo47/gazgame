@@ -5,6 +5,8 @@ import { findGame } from "@gazgame/engine";
 import { Badge, PageHeader, Screen } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { GameScreen } from "@/components/games/GameScreen";
+import { GameStartMarker } from "@/components/games/GameStartMarker";
+import { RulesHelp } from "@/components/RulesSheet";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { getSection } from "@/lib/sections";
@@ -24,6 +26,8 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
   const game = findGame(getCatalog(), (await params).slug, visibility);
   if (!game) notFound();
   const section = getSection(game.sections[0] ?? "company");
+  const layouts = getCatalog().sectionLayouts;
+  const rules = layouts?.rules[game.slug];
   // Игра раундами, «Мафия», «Шпион», «Объясни» и «Совпадём?» показывают правила отдельным экраном — здесь их не дублируем.
   const rulesOnOwnScreen =
     (game.mechanic === "deck" && game.roundSize !== undefined) ||
@@ -48,6 +52,16 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
               · {game.durationMin} мин
             </Badge>
             {game.status === "draft" && <Badge tone="draft">черновик</Badge>}
+            {/* «?» открывает «Как играть за 10 секунд» (тот же текст, что в шторке раздела) */}
+            {layouts && rules && (
+              <RulesHelp
+                id={game.slug}
+                emoji={game.emoji}
+                name={game.title}
+                lines={rules}
+                texts={{ title: layouts.texts.rulesTitle, play: layouts.texts.play, later: layouts.texts.later }}
+              />
+            )}
           </span>
         }
       />
@@ -60,6 +74,7 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
         </ol>
       )}
 
+      <GameStartMarker id={game.id} />
       <GameScreen game={game} related={<RelatedBlock item={game} />} />
     </Screen>
   );

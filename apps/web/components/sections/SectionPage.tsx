@@ -22,6 +22,7 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
         targets={targets}
         lockedTests={catalog.lockedTests ?? []}
         previewTexts={catalog.premium?.preview}
+        rules={layouts.rules}
         openLocked={openLocked}
       />
     </Screen>
