@@ -17,8 +17,8 @@ export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "matc
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
-/** Цвет карточки и финала в игре раундами: салатовый, оранжевый или тёмный с голубым свечением (как «Подписка»). */
-export const DECK_ACCENTS = ["lime", "orange", "blue"] as const;
+/** Цвет карточки и финала в игре раундами: салатовый, оранжевый, фиолетовый (#B58CFF) или тёмный с голубым свечением (как «Подписка»). */
+export const DECK_ACCENTS = ["lime", "orange", "blue", "violet"] as const;
 /** «Костюмы» карточки для шеринга: средний блок картинки у каждого теста свой. */
 export const SHARE_STYLES = ["composition", "batteries", "receipt", "hero", "device", "player", "messenger"] as const;
 
@@ -507,6 +507,8 @@ export const deckSchema = z.strictObject({
   locked: z.strictObject({ reason: z.enum(["soon", "subscription"]), text }).optional(),
   /** id другой колоды этой игры: эта откроется, когда пара хоть раз доиграет ту до финала (запоминается на устройстве). */
   unlockAfter: slug.optional(),
+  /** Маленькая строка под финалом игры раундами именно этой колоды, например «Если что-то задело, это повод поговорить, а не поссориться 🤍». */
+  finaleNote: text.optional(),
   /** Строка под финалом игры, зовёт в следующую колоду, например «Слишком мило? Попробуйте Без тормозов 💎». */
   upsellText: text.optional(),
   /** Цвет карточки и финала (игра раундами). По умолчанию orange. */

@@ -22,6 +22,7 @@ const ACCENT: Record<NonNullable<Deck["accent"]>, string> = {
   lime: "bg-lime text-bg",
   orange: "bg-orange text-bg",
   blue: "diamond-glow bg-surface text-cream",
+  violet: "bg-[#B58CFF] text-bg",
 };
 
 /** Сколько протянуть влево (px) или как быстро смахнуть, чтобы карточка ушла. */
@@ -120,6 +121,7 @@ export function RoundDeckGame({
           <h2 className="font-display text-3xl font-black">{finale?.title ?? "Раунд сыгран!"}</h2>
           {finale?.text && <p className="text-lg font-semibold">{finale.text}</p>}
           {finale?.note && <p className="text-[15px] font-semibold opacity-80">{finale.note}</p>}
+          {deck.finaleNote && <p className="text-sm font-semibold opacity-80">{deck.finaleNote}</p>}
         </section>
 
         {finale && finale.hints.length > 0 && (
