@@ -18,7 +18,7 @@ import companyJson from "@gazgame/content/data/tests/company-role.json";
 import selfEsteemJson from "@gazgame/content/data/tests/self-esteem.json";
 import loveJson from "@gazgame/content/data/tests/love-languages.json";
 import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
-import { boldParts, sectionGroups, sectionTarget, toggleKind } from "../src/index";
+import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
 const games = [knowJson, matchJson, whoJson, neverJson, mafiaJson, spyJson, explainJson, truthJson];
 const tests = [temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
@@ -96,6 +96,50 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(toggleKind("roles", "points")).toBe("points");
     expect(toggleKind("roles", "roles")).toBeNull();
     expect(sectionGroups(section("company").tabs[2]!, null)).toBeNull(); // Premium: без групп
+  });
+
+  it("Романтика: Игры / Близость / Совместимость 💎, кнопки и карточки по спеке", () => {
+    const s = section("pairs");
+    expect(s.title).toBe("Романтика 💞");
+    expect(s.lead).toBe("Для себя всё бесплатно, разбор вас двоих в Premium");
+    expect(s.tabs.map((t) => [t.name.replace("\u00AD", ""), t.tag])).toEqual([["Игры", "вдвоём"], ["Близость", "тесты и разговоры"], ["Совместимость", "Premium"]]);
+    expect(s.tabs[0]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "Знаешь меня?", "Вдвоём вечером"]);
+    expect(s.tabs[1]?.kinds?.map((k) => k.name)).toEqual(["Ты в любви", "Разговоры", "Чек пары"]);
+    expect(s.tabs[2]?.kinds).toBeUndefined();
+    expect(s.tabs.map((t) => t.items.length)).toEqual([6, 4, 5]);
+    expect(s.tabs[2]?.note).toBe("Процент и одна строка бесплатно, чтобы второму захотелось пройти тест. Полный разбор вашей пары в Premium.");
+    // чипы «Сравниться 💎» у тестов Близости и «Всегда бесплатно» у чека пары
+    expect(item("pairs", "Тип привязанности").levels).toEqual([{ label: "Сравниться 💎", premium: true }]);
+    expect(item("pairs", "Здоровые ли у вас отношения?").levels).toEqual([{ label: "Всегда бесплатно", free: true }]);
+    // ссылка «Сравниться с партнёром 💎» из результата ведёт на вкладку compat
+    expect(s.tabs[2]?.id).toBe("compat");
+  });
+
+  it("Соло: Кто ты / Психо бесплатно / Глубже 💎; Тип привязанности в Соло не показываем", () => {
+    const s = section("solo");
+    expect(s.title).toBe("Соло 🧠");
+    expect(s.lead).toBe("Всё про тебя. Для себя бесплатно");
+    expect(s.tabs.map((t) => [t.name, t.tag])).toEqual([["Кто ты", "весёлые тесты"], ["Психо", "настоящая психология"], ["Глубже", "Premium"]]);
+    expect(s.tabs[1]?.premium).toBeUndefined(); // Психо бесплатно
+    expect(s.tabs[0]?.kinds?.map((k) => k.name)).toEqual(["Персонажи", "Дело и сила", "Вайб"]);
+    expect(s.tabs[1]?.kinds?.map((k) => k.name)).toEqual(["Характер", "Любовь", "Состояние"]);
+    const solo = s.tabs.flatMap((t) => t.items);
+    expect(solo.some((i) => i.ref?.test === "attachment-style")).toBe(false);
+    expect(solo.some((i) => i.title.includes("привязанности"))).toBe(false);
+    expect(item("solo", "Как ты сейчас?").levels).toEqual([{ label: "Всегда бесплатно", free: true }]);
+    expect(s.tabs[2]?.note).toBe("Сами тесты бесплатно. Здесь то, что глубже: сравнения и большие разборы.");
+  });
+
+  it("все тесты и игры доступны хотя бы из одного раздела (кроме заглушки «Правда или действие»)", () => {
+    const refs = layouts.sections.flatMap((s) => s.tabs.flatMap((t) => t.items.flatMap((i) => (i.ref && !i.soon ? [i.ref] : []))));
+    const reachable = new Set(refs.flatMap((r) => [r.game, r.test, r.lockedTest].filter((x): x is string => !!x)));
+    const missing = [...catalog.games.map((g) => g.slug), ...catalog.tests.map((t) => t.slug), ...(catalog.lockedTests ?? []).map((t) => t.slug)].filter(
+      (slug) => !reachable.has(slug),
+    );
+    // «Правда или действие» пока «скоро»: в игре черновые карточки-заглушки (как в спеке 16.10)
+    expect(missing).toEqual(["truth-or-dare"]);
+    expect(refs.some((r) => r.cards)).toBe(true); // «Карточные игры»
+    expect(catalog.games.map((g) => itemPath(g))).toContain("/game/explain");
   });
 
   it("«Сколько вас?» больше нет: ни в данных, ни в тексте", () => {

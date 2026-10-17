@@ -27,10 +27,6 @@
           "type": "string",
           "minLength": 1
         },
-        "heroToast": {
-          "type": "string",
-          "minLength": 1
-        },
         "kindsAll": {
           "type": "string",
           "minLength": 1
@@ -45,7 +41,6 @@
         "premium",
         "soon",
         "soonToast",
-        "heroToast",
         "kindsAll",
         "kindsOne"
       ],
@@ -134,167 +129,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "hero": {
-                  "type": "object",
-                  "properties": {
-                    "emoji": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "title": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "text": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  },
-                  "required": [
-                    "emoji",
-                    "title",
-                    "text"
-                  ],
-                  "additionalProperties": false
-                },
-                "compat": {
-                  "type": "object",
-                  "properties": {
-                    "steps": {
-                      "minItems": 3,
-                      "maxItems": 3,
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    },
-                    "exampleLabel": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "example": {
-                      "type": "object",
-                      "properties": {
-                        "left": {
-                          "type": "object",
-                          "properties": {
-                            "emoji": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "title": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "name": {
-                              "type": "string",
-                              "minLength": 1
-                            }
-                          },
-                          "required": [
-                            "emoji",
-                            "title",
-                            "name"
-                          ],
-                          "additionalProperties": false
-                        },
-                        "right": {
-                          "type": "object",
-                          "properties": {
-                            "emoji": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "title": {
-                              "type": "string",
-                              "minLength": 1
-                            },
-                            "name": {
-                              "type": "string",
-                              "minLength": 1
-                            }
-                          },
-                          "required": [
-                            "emoji",
-                            "title",
-                            "name"
-                          ],
-                          "additionalProperties": false
-                        },
-                        "percent": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "caption": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "free": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "blurred": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "title": {
-                                "type": "string",
-                                "minLength": 1
-                              },
-                              "text": {
-                                "type": "string",
-                                "minLength": 1
-                              }
-                            },
-                            "required": [
-                              "title",
-                              "text"
-                            ],
-                            "additionalProperties": false
-                          }
-                        },
-                        "button": {
-                          "type": "string",
-                          "minLength": 1
-                        }
-                      },
-                      "required": [
-                        "left",
-                        "right",
-                        "percent",
-                        "caption",
-                        "free",
-                        "blurred",
-                        "button"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "hint": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "insideTitle": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "insideSide": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  },
-                  "required": [
-                    "steps",
-                    "exampleLabel",
-                    "example",
-                    "hint",
-                    "insideTitle",
-                    "insideSide"
-                  ],
-                  "additionalProperties": false
-                },
                 "items": {
                   "minItems": 1,
                   "type": "array",
@@ -323,6 +157,9 @@
                               "minLength": 1
                             },
                             "premium": {
+                              "type": "boolean"
+                            },
+                            "free": {
                               "type": "boolean"
                             }
                           },

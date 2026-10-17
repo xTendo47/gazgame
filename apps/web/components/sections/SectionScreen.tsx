@@ -150,7 +150,10 @@ export function SectionScreen({
               {item.levels.map((l) => (
                 <span
                   key={l.label}
-                  className={cn("rounded-full px-2 py-[3px] text-[10.5px] font-bold", l.premium ? "bg-[#62D2FF]/10 text-[#62D2FF]" : "bg-cream/7 text-muted")}
+                  className={cn(
+                    "rounded-full px-2 py-[3px] text-[10.5px] font-bold",
+                    l.premium ? "bg-[#62D2FF]/10 text-[#62D2FF]" : l.free ? "bg-lime/10 text-lime" : "bg-cream/7 text-muted",
+                  )}
                 >
                   {l.label}
                 </span>
@@ -243,34 +246,10 @@ export function SectionScreen({
       <section id="section-panel" role="tabpanel" aria-labelledby={`tab-${tab.id}`} key={tab.id} className="section-pop flex flex-col gap-2.5">
         {tab.head && tab.side && <PanelHead title={tab.head} side={tab.side} />}
 
-        {tab.hero && (
-          <button
-            type="button"
-            onClick={() => {
-              trackSoonClick({ id: `${section.id}:${tab.hero!.title}` });
-              say(texts.heroToast);
-            }}
-            className="flex w-full items-center gap-3.5 rounded-[22px] border-[1.5px] border-[#62D2FF]/55 bg-[linear-gradient(160deg,#1F2A33,#1B1822)] p-4 text-left shadow-[0_0_24px_rgb(98_210_255/0.16)]"
-          >
-            <span aria-hidden="true" className="text-4xl leading-none">
-              {tab.hero.emoji}
-            </span>
-            <span>
-              <b className="block font-display text-[15px] font-bold">{tab.hero.title}</b>
-              <small className="mt-0.5 block text-[12.5px] text-muted">{tab.hero.text}</small>
-            </span>
-          </button>
-        )}
-
-        {tab.compat && (
-          <Compat
-            compat={tab.compat}
-            onOpen={() => {
-              if (premium) return countSoon(tab.compat!.example.button);
-              trackDeeperClick({ id: "attachment-style", kind: "test", source: "compat" });
-              router.push("/deeper");
-            }}
-          />
+        {tab.note && tab.premium && (
+          <p className="rounded-2xl border border-dashed border-[#62D2FF]/50 bg-[#62D2FF]/[0.06] px-3.5 py-3 text-[13px] text-cream/85">
+            <Rich text={tab.note} />
+          </p>
         )}
 
         {groups
@@ -284,7 +263,7 @@ export function SectionScreen({
             ))
           : tab.items.map((item, i) => renderItem(item, i))}
 
-        {tab.note && (
+        {tab.note && !tab.premium && (
           <p className="rounded-2xl bg-surface-2 px-3.5 py-3 text-[13px] text-muted">
             <Rich text={tab.note} />
           </p>
@@ -313,66 +292,3 @@ function PanelHead({ title, side }: { title: string; side: string }): ReactNode 
   );
 }
 
-/** «Совместимость»: три шага, карточка-пример с размытыми блоками, подпись и «Что внутри». */
-function Compat({ compat, onOpen }: { compat: NonNullable<SectionTab["compat"]>; onOpen: () => void }) {
-  const ex = compat.example;
-  return (
-    <>
-      <ol className="grid grid-cols-3 gap-1.5">
-        {compat.steps.map((step, i) => (
-          <li key={step} className="flex flex-col items-center gap-1 rounded-2xl bg-surface-2 px-2 py-2.5 text-center text-xs text-muted">
-            <i
-              className={cn(
-                "grid size-[26px] place-items-center rounded-full border bg-surface font-display text-[13px] font-black not-italic",
-                i === 2 ? "border-[#62D2FF] text-[#62D2FF]" : "border-line text-cream",
-              )}
-            >
-              {i + 1}
-            </i>
-            {step}
-          </li>
-        ))}
-      </ol>
-
-      <div className="mt-1.5 text-[10px] font-bold tracking-[0.14em] text-muted uppercase">{compat.exampleLabel}</div>
-      <article className="flex flex-col gap-3 rounded-[24px] border-[1.5px] border-[#62D2FF]/55 bg-[linear-gradient(160deg,#1F2A33,#1B1822)] p-[18px] shadow-[0_0_26px_rgb(98_210_255/0.15)]">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-center">
-          {[ex.left, ex.right].map((p, i) => (
-            <div key={p.title} className={cn(i === 1 && "col-start-3")}>
-              <span aria-hidden="true" className="text-4xl leading-none">
-                {p.emoji}
-              </span>
-              <b className="mt-1 block font-display text-xs leading-[1.2] font-bold">{p.title}</b>
-              <small className="block text-[11px] text-muted">{p.name}</small>
-            </div>
-          ))}
-          <span aria-hidden="true" className="col-start-2 row-start-1 font-display text-lg font-black text-muted">
-            +
-          </span>
-        </div>
-        <div className="text-center">
-          <b className="font-display text-[40px] leading-none font-black text-[#62D2FF] tabular-nums">{ex.percent}</b>
-          <small className="mt-1 block text-xs text-muted">{ex.caption}</small>
-        </div>
-        <p className="rounded-[14px] bg-cream/5 px-3 py-2.5 text-sm">{ex.free}</p>
-        <div className="flex flex-col gap-2">
-          {ex.blurred.map((b) => (
-            <div key={b.title} className="rounded-xl bg-cream/5 px-3 py-2.5 text-[13px]">
-              <b className="mb-0.5 block font-display text-[13px] font-bold">{b.title}</b>
-              <span aria-hidden="true" className="text-muted blur-[4px] select-none">
-                {b.text}
-              </span>
-            </div>
-          ))}
-        </div>
-        <button type="button" onClick={onOpen} className="min-h-12 w-full rounded-[14px] bg-[#62D2FF] px-2.5 py-3 text-center font-display text-[15px] font-black text-bg">
-          {ex.button}
-        </button>
-      </article>
-      <p className="text-center text-xs text-muted">{compat.hint}</p>
-      <div className="mt-2">
-        <PanelHead title={compat.insideTitle} side={compat.insideSide} />
-      </div>
-    </>
-  );
-}

@@ -1222,8 +1222,8 @@ export const sectionItemSchema = z.strictObject({
   emoji: text,
   title: text,
   text,
-  /** Уровни чипами; premium — голубой чип с 💎. */
-  levels: z.array(z.strictObject({ label: text, premium: z.boolean().optional() })).optional(),
+  /** Уровни чипами; premium — голубой чип с 💎, free — салатовый «Всегда бесплатно». */
+  levels: z.array(z.strictObject({ label: text, premium: z.boolean().optional(), free: z.boolean().optional() })).optional(),
   /** «скоро» салатовой плашкой: тап — «Скоро! Тап засчитан 🔥», считаем. */
   soon: z.boolean().optional(),
   /** Premium-карточка (голубая рамка): тап как замки 💎. */
@@ -1232,9 +1232,6 @@ export const sectionItemSchema = z.strictObject({
   kind: slug.optional(),
   ref: sectionRefSchema.optional(),
 });
-
-const blurBlock = z.strictObject({ title: text, text });
-const pairPerson = z.strictObject({ emoji: text, title: text, name: text });
 
 /** Вкладка раздела: плитка сверху и список под ней. */
 export const sectionTabSchema = z.strictObject({
@@ -1250,29 +1247,8 @@ export const sectionTabSchema = z.strictObject({
   /** Заголовок списка и подпись серым справа (если нужны; в формате с группами не нужны). */
   head: text.optional(),
   side: text.optional(),
-  /** Большая карточка-герой над списком (например, «Пазл личности»): тап — «Скоро в Premium 🔥». */
-  hero: z.strictObject({ emoji: text, title: text, text }).optional(),
-  /** «Совместимость»: три шага, карточка-пример с размытыми блоками, подпись и заголовок «Что внутри». */
-  compat: z
-    .strictObject({
-      steps: z.array(text).length(3),
-      exampleLabel: text,
-      example: z.strictObject({
-        left: pairPerson,
-        right: pairPerson,
-        percent: text,
-        caption: text,
-        free: text,
-        blurred: z.array(blurBlock).min(1),
-        button: text,
-      }),
-      hint: text,
-      insideTitle: text,
-      insideSide: text,
-    })
-    .optional(),
   items: z.array(sectionItemSchema).min(1),
-  /** Плашка под списком; **жирный** — выделение. */
+  /** Плашка-пояснение; **жирный** — выделение. У Premium-плитки — пунктирная голубая сверху списка. */
   note: text.optional(),
 });
 
@@ -1294,7 +1270,6 @@ export const sectionsFileSchema = z
       premium: text,
       soon: text,
       soonToast: text,
-      heroToast: text,
       /** Подсказка под мини-кнопками: ничего не выбрано / выбрана одна группа. */
       kindsAll: text,
       kindsOne: text,

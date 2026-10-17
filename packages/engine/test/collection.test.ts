@@ -50,10 +50,10 @@ const build = (progress: Parameters<typeof buildCollection>[1], now = msk(13)) =
 describe("контент Коллекции", () => {
   it("полка «Я»: тесты «Познай себя» по порядку из sections.json, потом остальные, потом платные", () => {
     expect(content.tests.map((t) => t.slug)).toEqual([
-      "temperament",
-      "superpower",
-      "thinking-type",
       "company-role",
+      "superpower",
+      "temperament",
+      "thinking-type",
       "self-esteem",
       "love-languages",
       "attachment-style",
