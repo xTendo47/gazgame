@@ -8,7 +8,9 @@ import {
   defaultExplainSettings,
   drawWord,
   endExplain,
+  explainDeck,
   finishRound,
+  modeAllowed,
   randomTeamName,
   rematchExplain,
   roundEndsGame,
@@ -68,6 +70,39 @@ describe("слова без повторов", () => {
     }
     expect(new Set(shown).size).toBe(shown.length);
     expect(s.used).toEqual(shown);
+  });
+});
+
+describe("режим «Жестами»: своя колода, на Тяжёлом недоступен", () => {
+  const [easyLevel, midLevel, hardLevel] = game.levels;
+
+  it("«Словами» — все слова уровня, «Жестами» — колода gestures", () => {
+    expect(explainDeck(easyLevel!, "words")).toHaveLength(391);
+    expect(explainDeck(easyLevel!, "gestures")).toHaveLength(391);
+    expect(explainDeck(midLevel!, "words")).toHaveLength(377);
+    expect(explainDeck(midLevel!, "gestures")).toHaveLength(135);
+  });
+
+  it("Тяжёлый 💎 жестами не играется: колоды нет, режим недоступен; словами можно", () => {
+    expect(hardLevel?.tier).toBe("premium");
+    expect(explainDeck(hardLevel!, "gestures")).toEqual([]);
+    expect(modeAllowed(hardLevel!, "gestures")).toBe(false);
+    expect(modeAllowed(hardLevel!, "words")).toBe(true);
+    expect(modeAllowed(easyLevel!, "gestures")).toBe(true);
+    expect(modeAllowed(midLevel!, "gestures")).toBe(true);
+  });
+
+  it("игра жестами берёт слова только из колоды «Жестами» и без повторов", () => {
+    const deck = explainDeck(midLevel!, "gestures");
+    const random = seededRandom(4);
+    let s = beginTurn(startExplain(settings({ mode: "gestures", levelId: "mid" })), deck, random);
+    const shown = [s.word];
+    for (let i = 0; i < 60; i++) {
+      s = answerWord(s, true, deck, random);
+      shown.push(s.word);
+    }
+    expect(new Set(shown).size).toBe(shown.length);
+    for (const w of shown) expect(deck).toContain(w);
   });
 });
 

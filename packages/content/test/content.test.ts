@@ -521,14 +521,18 @@ describe("Объясни 🪧 (data/games/explain.json)", () => {
   };
   const build = (data: unknown) => buildCatalog([{ path: "explain.json", kind: "game", data }]);
 
-  it("настоящий файл загружается: 120 / 120 / 70 слов, Тяжёлый — Premium, 12 имён для 🎲", () => {
+  it("настоящий файл загружается: 391 / 377 / 343 слова, колода «Жестами» 391 / 135 / нет, Тяжёлый — Premium, 12 имён для 🎲", () => {
     const game = loadCatalog().games.find((g) => g.mechanic === "explain");
     if (game?.mechanic !== "explain") throw new Error("нет игры «Объясни»");
     expect(game.levels.map((l) => [l.id, l.words.length, l.tier])).toEqual([
-      ["easy", 120, "free"],
-      ["mid", 120, "free"],
-      ["hard", 70, "premium"],
+      ["easy", 391, "free"],
+      ["mid", 377, "free"],
+      ["hard", 343, "premium"],
     ]);
+    // «Жестами»: Лёгкий целиком, Средний частично, Тяжёлый жестами не играется
+    expect(game.levels.map((l) => l.gestures?.length)).toEqual([391, 135, undefined]);
+    // ни одной «слабой» фразы, которой нет среди слов уровня: колода «Жестами» — подмножество слов
+    for (const l of game.levels) for (const g of l.gestures ?? []) expect(l.words, `${l.id}: ${g}`).toContain(g);
     expect(game.teamNames).toHaveLength(12);
     expect(game.teamNames.slice(0, 2)).toEqual(["Газ", "Тормоза"]);
     expect(game.players.min).toBe(4);
@@ -547,6 +551,23 @@ describe("Объясни 🪧 (data/games/explain.json)", () => {
     paid.levels[0] = { ...paid.levels[0], tier: "premium" } as (typeof paid.levels)[number];
     expect(() => build(paid)).toThrow(/первый уровень должен быть бесплатным/);
     expect(() => build({ ...explainFile(), extra: 1 })).toThrow(ContentError);
+  });
+
+  it("слово из одного уровня в другом, «жест» не из слов уровня и повтор в gestures не проходят", () => {
+    const cross = explainFile();
+    const mid = cross.levels[1]!;
+    cross.levels[1] = { ...mid, words: [...mid.words, "Замок"] } as (typeof cross.levels)[number]; // «замок» уже в Лёгком
+    expect(() => build(cross)).toThrow(/уже есть в уровне "easy"/);
+    const yo = explainFile();
+    yo.levels[2] = { ...yo.levels[2], words: [...yo.levels[2]!.words, "Ёлка"] } as (typeof yo.levels)[number]; // «ёлка» ≈ «елка» из Лёгкого
+    expect(() => build(yo)).toThrow(/уже есть в уровне/);
+    const stray = explainFile() as ReturnType<typeof explainFile> & { levels: { gestures?: string[] }[] };
+    stray.levels[1] = { ...stray.levels[1], gestures: [...(stray.levels[1]?.gestures ?? []), "несуществующее слово"] } as (typeof stray.levels)[number];
+    expect(() => build(stray)).toThrow(/есть в gestures, но нет в words/);
+    const dupG = explainFile() as ReturnType<typeof explainFile> & { levels: { gestures?: string[] }[] };
+    const first = dupG.levels[0]!.gestures![0]!;
+    dupG.levels[0] = { ...dupG.levels[0], gestures: [...dupG.levels[0]!.gestures!, first] } as (typeof dupG.levels)[number];
+    expect(() => build(dupG)).toThrow(/повторяется в gestures/);
   });
 });
 

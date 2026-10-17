@@ -7,6 +7,7 @@ import {
   EXPLAIN_MAX_TEAMS,
   EXPLAIN_MIN_TEAMS,
   EXPLAIN_TIMES,
+  modeAllowed,
   randomTeamName,
   type ExplainSettings,
 } from "@gazgame/engine";
@@ -31,7 +32,7 @@ function Seg<T extends string | number>({
 }: {
   name: string;
   value: T;
-  options: readonly { value: T; label: string; premium?: boolean }[];
+  options: readonly { value: T; label: string; premium?: boolean; /** Неактивна: подпись «Только словами». */ disabled?: boolean }[];
   onPick: (value: T) => void;
 }) {
   return (
@@ -41,13 +42,16 @@ function Seg<T extends string | number>({
           key={String(o.value)}
           type="button"
           aria-pressed={value === o.value}
+          disabled={o.disabled}
           onClick={() => onPick(o.value)}
           className={cn(
             "min-h-11 rounded-xl px-1 py-2.5 text-[13.5px] font-bold transition-colors motion-reduce:transition-none",
             value === o.value ? "bg-[#2A2531] text-cream shadow-[inset_0_0_0_1.5px_#FF5A1F]" : o.premium ? "text-[#62D2FF]" : "text-muted",
+            o.disabled && "opacity-45",
           )}
         >
           {o.label}
+          {o.disabled && <small className="block text-[10px] leading-tight font-semibold">Только словами</small>}
         </button>
       ))}
     </div>
@@ -83,6 +87,7 @@ export function Setup({
   onStart: () => void;
 }) {
   const { teams } = settings;
+  const currentLevel = game.levels.find((l) => l.id === settings.levelId) ?? game.levels[0]!;
   const setTeam = (i: number, name: string) => onChange({ teams: teams.map((t, k) => (k === i ? name : t)) });
 
   return (
@@ -93,7 +98,8 @@ export function Setup({
           value={settings.mode}
           options={[
             { value: "words", label: "Словами" },
-            { value: "gestures", label: "Жестами" },
+            // На Тяжёлом 💎 «Жестами» нет колоды: кнопка неактивна с подписью «Только словами»
+            { value: "gestures", label: "Жестами", disabled: !modeAllowed(currentLevel, "gestures") },
           ]}
           onPick={(mode) => onChange({ mode })}
         />
@@ -103,7 +109,13 @@ export function Setup({
         <Seg
           name="Уровень"
           value={settings.levelId}
-          options={game.levels.map((l) => ({ value: l.id, label: l.tier === "premium" ? `${l.title} 💎` : l.title, premium: l.tier === "premium" }))}
+          // В режиме «Жестами» уровень без колоды (Тяжёлый 💎) неактивен с подписью «Только словами»
+          options={game.levels.map((l) => ({
+            value: l.id,
+            label: l.tier === "premium" ? `${l.title} 💎` : l.title,
+            premium: l.tier === "premium",
+            disabled: settings.mode === "gestures" && !modeAllowed(l, "gestures"),
+          }))}
           onPick={(id) => {
             const level = game.levels.find((l) => l.id === id);
             // Premium-уровень без подписки: замок, тап считается интересом

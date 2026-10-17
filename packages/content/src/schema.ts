@@ -802,7 +802,10 @@ export const explainLevelSchema = z.strictObject({
   title: text,
   emoji: text,
   tier: tierSchema.default("free"),
+  /** Слова режима «Словами». */
   words: z.array(text).min(1, "в уровне должно быть хотя бы одно слово"),
+  /** Колода режима «Жестами» (слова, которые можно показать руками; подмножество words). Нет — режим «Жестами» на этом уровне недоступен («Только словами»). */
+  gestures: z.array(text).min(1).optional(),
 });
 
 /**
@@ -822,14 +825,29 @@ type ExplainGameInput = z.infer<typeof explainGameSchema>;
 /** Проверки «Объясни»: id уровней, повторы слов внутри уровня (без учёта регистра) и имён команд, от 4 человек. */
 function checkExplain(game: ExplainGameInput, ctx: z.RefinementCtx) {
   const levelIds = new Set<string>();
+  /** Слово без учёта регистра и ё/е. */
+  const norm = (w: string) => w.toLowerCase().replace(/ё/g, "е");
+  const wordOwner = new Map<string, string>();
   game.levels.forEach((level, li) => {
     if (levelIds.has(level.id)) ctx.addIssue({ code: "custom", path: ["levels", li, "id"], message: `уровень "${level.id}" повторяется` });
     levelIds.add(level.id);
     const seen = new Set<string>();
     level.words.forEach((word, wi) => {
-      const key = word.toLowerCase();
+      const key = norm(word);
       if (seen.has(key)) ctx.addIssue({ code: "custom", path: ["levels", li, "words", wi], message: `слово "${word}" повторяется в уровне "${level.id}"` });
+      else if (wordOwner.has(key)) {
+        ctx.addIssue({ code: "custom", path: ["levels", li, "words", wi], message: `слово "${word}" уже есть в уровне "${wordOwner.get(key)}": между уровнями слова не повторяются` });
+      }
       seen.add(key);
+      if (!wordOwner.has(key)) wordOwner.set(key, level.id);
+    });
+    // «Жестами»: слова колоды должны быть в words уровня и не повторяться
+    const gestureSeen = new Set<string>();
+    level.gestures?.forEach((word, gi) => {
+      const key = norm(word);
+      if (!seen.has(key)) ctx.addIssue({ code: "custom", path: ["levels", li, "gestures", gi], message: `слово "${word}" есть в gestures, но нет в words уровня "${level.id}"` });
+      if (gestureSeen.has(key)) ctx.addIssue({ code: "custom", path: ["levels", li, "gestures", gi], message: `слово "${word}" повторяется в gestures уровня "${level.id}"` });
+      gestureSeen.add(key);
     });
   });
   const names = new Set<string>();

@@ -2423,6 +2423,14 @@
                   "type": "string",
                   "minLength": 1
                 }
+              },
+              "gestures": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             },
             "required": [

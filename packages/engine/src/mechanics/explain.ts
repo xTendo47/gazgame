@@ -25,6 +25,20 @@ export interface ExplainSettings {
   penalty: boolean;
 }
 
+/** Что нужно от уровня для колоды: слова и (необязательно) колода режима «Жестами». */
+export interface ExplainDeckLevel {
+  words: readonly string[];
+  gestures?: readonly string[];
+}
+
+/** Колода режима: «Словами» — все слова уровня, «Жестами» — только слова, которые можно показать (gestures). Нет колоды — пусто. */
+export function explainDeck(level: ExplainDeckLevel, mode: ExplainMode): readonly string[] {
+  return mode === "gestures" ? (level.gestures ?? []) : level.words;
+}
+
+/** Можно ли играть уровень в этом режиме. Тяжёлый 💎 жестами не играется («Только словами»). */
+export const modeAllowed = (level: ExplainDeckLevel, mode: ExplainMode): boolean => explainDeck(level, mode).length > 0;
+
 export const defaultExplainSettings = (levelId: string, teams: readonly string[]): ExplainSettings => ({
   mode: "words",
   levelId,

@@ -12,7 +12,9 @@ import {
   chooseLastWinner,
   defaultExplainSettings,
   endExplain,
+  explainDeck,
   finishRound,
+  modeAllowed,
   rematchExplain,
   roundEndsGame,
   roundPoints,
@@ -40,8 +42,8 @@ import { BIG_BUTTON, GHOST_BUTTON, Rules, ScoreTable, Setup, TEAM_COLORS } from 
 
 type Stage = "setup" | "rules" | "game";
 
-/** Показанные слова хранятся на устройстве по уровню: пока колода уровня не кончится, повторов нет. */
-const usedKey = (gameId: string, levelId: string) => `${gameId}/${levelId}`;
+/** Показанные слова хранятся на устройстве по уровню и режиму (у «Жестами» своя колода): пока колода не кончится, повторов нет. */
+const usedKey = (gameId: string, levelId: string, mode: ExplainSettings["mode"]) => (mode === "gestures" ? `${gameId}/${levelId}/gestures` : `${gameId}/${levelId}`);
 
 export function ExplainGame({ game, related }: { game: ExplainGameData; related?: ReactNode }) {
   const premium = usePremium();
@@ -57,15 +59,17 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
   const lastLeft = useRef(0);
 
   const level = game.levels.find((l) => l.id === (state?.settings.levelId ?? settings.levelId)) ?? game.levels[0];
-  const words = level?.words ?? [];
+  // Колода режима: «Словами» — все слова уровня, «Жестами» — слова, которые можно показать руками
+  const words = level ? explainDeck(level, state?.settings.mode ?? settings.mode) : [];
   const phase = state?.phase;
 
   // Показанные слова — на устройство (по уровню), чтобы следующая игра не повторяла их
   const used = state?.used;
   const usedLevel = state?.settings.levelId;
+  const usedMode = state?.settings.mode;
   useEffect(() => {
-    if (used && usedLevel) getProgress().saveLastCards(usedKey(game.id, usedLevel), used);
-  }, [used, usedLevel, game.id]);
+    if (used && usedLevel && usedMode) getProgress().saveLastCards(usedKey(game.id, usedLevel, usedMode), used);
+  }, [used, usedLevel, usedMode, game.id]);
 
   // Каждый новый экран — с самого верха
   useEffect(() => {
@@ -107,9 +111,12 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
   function toRules() {
     // пустое имя команды заменяем «Команда N»
     const teams = settings.teams.map((t, i) => t.trim() || `Команда ${i + 1}`);
-    const final = { ...settings, teams };
+    // «Жестами» на уровне без такой колоды (Тяжёлый) недоступно: играем словами
+    const chosen = game.levels.find((l) => l.id === settings.levelId);
+    const mode = chosen && !modeAllowed(chosen, settings.mode) ? "words" : settings.mode;
+    const final = { ...settings, mode, teams };
     setSettings(final);
-    setState(startExplain(final, getProgress().getLastCards(usedKey(game.id, final.levelId))));
+    setState(startExplain(final, getProgress().getLastCards(usedKey(game.id, final.levelId, final.mode))));
     trackExplainStart({ mode: final.mode, level: final.levelId, teams: teams.length, time: final.time, goal: final.goal, penalty: final.penalty });
     setStage("rules");
   }
