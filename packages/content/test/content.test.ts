@@ -603,11 +603,12 @@ describe("Разделы: мини-кнопки «во что» (data/sections.j
 });
 
 describe("«Что ты получишь» (upsell.premium.items)", () => {
-  it("у всех 7 тестов с блоком Premium есть пункты списком; слова «Премиум» кириллицей нет", () => {
+  it("у всех 13 тестов с блоком Premium есть пункты списком (у первых 7 не меньше трёх); слова «Премиум» кириллицей нет", () => {
     const catalog = loadCatalog();
     const withUpsell = catalog.tests.filter((t) => t.upsell);
-    expect(withUpsell).toHaveLength(7);
-    for (const t of withUpsell) expect(t.upsell?.premium.items?.length, t.id).toBeGreaterThanOrEqual(3);
+    expect(withUpsell).toHaveLength(13);
+    const first7 = ["temperament", "superpower", "thinking-type", "company-role", "self-esteem", "love-languages", "attachment-style"];
+    for (const t of withUpsell) expect(t.upsell?.premium.items?.length, t.id).toBeGreaterThanOrEqual(first7.includes(t.id) ? 3 : 2);
     expect(JSON.stringify([catalog.tests, catalog.games, catalog.premium, catalog.lockedTests])).not.toMatch(/Премиум/);
   });
 });

@@ -29,6 +29,10 @@ export function AnswerBack({ test, mine }: { test: Test; mine: TestResult }) {
       <p className="text-center text-lg font-bold">
         Ты: {mine.title} {mine.emoji} <span className="text-muted">·</span> Друг: {friend.title} {friend.emoji}
       </p>
+      {/* Роли совпали с «Лучшей химией» (share.duo у любого из двух) */}
+      {(mine.share?.duo === friend.id || friend.share?.duo === mine.id) && (
+        <p className="text-center font-display text-base font-extrabold text-lime">Идеальный дуэт ⚡</p>
+      )}
       <Button
         variant="accent"
         onClick={() => {

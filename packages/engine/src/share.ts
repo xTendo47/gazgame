@@ -22,7 +22,8 @@ export function shareButtonLabel(test: Test): string {
  * У тестов по шкалам {emoji} — эмодзи самой высокой шкалы. Нет share — shareText результата и ссылка.
  */
 export function shareMessage(test: Test, result: TestResult, values: ShareValues): string {
-  if (!test.share) return [result.shareText ?? `${result.title} ${result.emoji}`, values.link].join(" ");
+  // Нет share или в нём нет общего текста: «Текст для сторис» самого результата и ссылка
+  if (!test.share?.text) return [result.shareText ?? `${result.title} ${result.emoji}`, values.link].join(" ");
   const vars: Record<string, string | undefined> = {
     title: result.title,
     emoji: values.topScale?.emoji ?? result.emoji,

@@ -57,6 +57,9 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
   const blocks = test.resultBlocks;
   const loveHeading = blocks?.howToLoveMe ?? "Как меня любить";
   const listEmoji = blocks?.howToLoveMeEmoji;
+  /** Фишки теста: до «Сильных сторон» и после «Совета». */
+  const extrasBefore = (result.extras ?? []).filter((e) => !e.after);
+  const extrasAfter = (result.extras ?? []).filter((e) => e.after);
 
   return (
     <ShareProvider test={test} resultId={result.id} blendId={blend?.resultId}>
@@ -122,6 +125,8 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           {blend.note.text}
         </InsightCard>
       )}
+
+      <Extras extras={extrasBefore} />
 
       {result.strengths && result.strengths.length > 0 && (
         <section aria-labelledby="strengths-title" className="flex flex-col gap-3">
@@ -201,6 +206,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
           {result.tip}
         </InsightCard>
       )}
+      <Extras extras={extrasAfter} />
       {result.care && (
         <section className="flex gap-3 rounded-card bg-surface-2/60 p-5">
           <span aria-hidden="true" className="text-2xl leading-none">
@@ -283,6 +289,36 @@ function BackToSection({ test }: { test: Test }) {
     <Link href={`/${section.id}`} className={buttonVariants({ variant: "outline" })}>
       Вернуться в «{section.title}» {section.emoji}
     </Link>
+  );
+}
+
+/** Фишки теста (result.extras): «Твоя сцена», «Профессии под тебя», «Шанс дожить до финала» и т.п. */
+function Extras({ extras }: { extras: NonNullable<TestResult["extras"]> }) {
+  return (
+    <>
+      {extras.map((e) => (
+        <section key={e.title} aria-label={e.title} className="flex flex-col gap-2 rounded-card border border-line bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-display text-lg leading-tight font-bold">
+            {e.emoji && <span aria-hidden="true">{e.emoji}</span>}
+            {e.title}
+          </h2>
+          {e.big && <p className="font-display text-5xl leading-none font-black text-orange tabular-nums">{e.big}</p>}
+          {e.text && <p className="leading-relaxed text-cream/85">{e.text}</p>}
+          {e.items && (
+            <ul className="flex flex-col gap-2">
+              {e.items.map((item) => (
+                <li key={item} className="flex gap-3 leading-[1.5]">
+                  <span aria-hidden="true" className="flex h-[1.5em] shrink-0 items-center">
+                    <span className="size-2 rounded-full bg-orange" />
+                  </span>
+                  <span className="min-w-0">{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+    </>
   );
 }
 

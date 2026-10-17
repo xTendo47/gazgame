@@ -16,6 +16,18 @@ import { needsScoresInQuery, scoreQuery } from "@/lib/result-query";
 
 const noSubscribe = () => () => {};
 
+/** Порядок показа вариантов вопроса: 0…n-1, перемешанный (тест с shuffleOptions) или как в файле. */
+function optionOrder(test: Test, questionIndex: number): number[] {
+  const n = test.questions[questionIndex]?.options.length ?? 0;
+  const order = Array.from({ length: n }, (_, i) => i);
+  if (!test.shuffleOptions) return order;
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j] as number, order[i] as number];
+  }
+  return order;
+}
+
 /**
  * Незаконченный тест продолжается с того же вопроса («Продолжить» на главной). Ответы лежат на устройстве, поэтому читаем их
  * только после гидратации: сначала рисуем чистый тест (как на сервере), потом он пересоздаётся уже с сохранёнными ответами.
@@ -37,6 +49,8 @@ function Runner({ test, restore }: { test: Test; restore: boolean }) {
     return isAudience(test, chosen) ? chosen : null;
   });
   const [picking, setPicking] = useState(saved !== null && !!test.audience && audience === null);
+  /** В каком порядке показаны варианты текущего вопроса (номера из файла): ответ считается по номеру из файла. */
+  const [order, setOrder] = useState<number[]>(() => optionOrder(test, saved?.length ?? 0));
 
   const index = answers.length;
   const total = test.questions.length;
@@ -45,6 +59,7 @@ function Runner({ test, restore }: { test: Test; restore: boolean }) {
   function choose(optionIndex: number) {
     const next = [...answers, optionIndex];
     setAnswers(next);
+    setOrder(optionOrder(test, next.length));
     // ответы на устройстве: тест можно закрыть и продолжить с главной; дошёл до итога — запись удаляется
     if (next.length < total) getProgress().saveTestProgress(test.id, next);
     else getProgress().clearTestProgress(test.id);
@@ -137,9 +152,9 @@ function Runner({ test, restore }: { test: Test; restore: boolean }) {
           className="flex flex-col gap-3"
         >
           <legend className="mb-4 font-display text-2xl font-bold leading-tight">{view?.text}</legend>
-          {view?.options.map((option, i) => (
+          {order.map((i) => (
             <Button key={i} variant="option" onClick={() => choose(i)}>
-              {option}
+              {view?.options[i]}
             </Button>
           ))}
         </motion.fieldset>
@@ -150,6 +165,7 @@ function Runner({ test, restore }: { test: Test; restore: boolean }) {
           onClick={() => {
             const back = answers.slice(0, -1);
             setAnswers(back);
+            setOrder(optionOrder(test, back.length));
             getProgress().saveTestProgress(test.id, back);
           }}
           className="min-h-11 self-center rounded-full px-4 text-[15px] font-semibold text-muted hover:text-cream"

@@ -141,6 +141,24 @@ export const testResultSchema = z
     range: rangeSchema.optional(),
     /** Текст, который подставляется при «Поделиться». */
     shareText: text.optional(),
+    /**
+     * Фишки теста: дополнительные блоки итога («Твоя сцена», «Профессии под тебя», «Шанс дожить до финала»).
+     * title — заголовок (эмодзи по желанию), дальше text, список items или крупное значение big. after — после «Совета», иначе перед «Сильными сторонами».
+     */
+    extras: z
+      .array(
+        z
+          .strictObject({
+            emoji: text.optional(),
+            title: text,
+            text: text.optional(),
+            items: z.array(text).min(1).optional(),
+            big: text.optional(),
+            after: z.boolean().optional(),
+          })
+          .refine((e) => e.text !== undefined || e.items !== undefined || e.big !== undefined, "у фишки должен быть text, items или big"),
+      )
+      .optional(),
     /** Закрытая «глубокая» часть (старый формат; в новом — общий блок upsell у теста). */
     deepTeaser: deepTeaserSchema.optional(),
   })
@@ -153,12 +171,17 @@ export const typesScoringSchema = z.strictObject({
   rule: z.string().optional(),
   /** Порядок типов: по нему решается ничья, если остальное равно. По умолчанию — порядок results. */
   types: z.array(z.string()).optional(),
-  /** Ничья: побеждает тип, набравший больше в этих вопросах. */
+  /**
+   * Ничья: побеждает тип, набравший больше в вопросах lastQuestions. hash — одна из равных выбирается по хэшу ответов
+   * (сумма (номер_варианта+1)×(номер_вопроса+7) по модулю числа равных): одинаковые ответы дают одинаковый итог, а ни один тип не в выигрыше.
+   */
   tieBreak: z
     .strictObject({
       rule: z.string().optional(),
-      lastQuestions: z.array(z.string()).min(1),
+      lastQuestions: z.array(z.string()).min(1).optional(),
+      hash: z.boolean().optional(),
     })
+    .refine((t) => t.lastQuestions !== undefined || t.hash === true, "в tieBreak нужны lastQuestions или hash")
     .optional(),
   /** Смешанный результат: «основной тип + нотки второго», если второй отстаёт не больше чем на maxGap баллов. */
   blend: z
@@ -249,11 +272,13 @@ export const testSchema = itemBase
       })
       .optional(),
     upsell: upsellSchema.optional(),
+    /** Варианты ответов показываются в случайном порядке (каждый раз новом); подсчёт и хэш ничьей идут по порядку в файле. */
+    shuffleOptions: z.boolean().optional(),
     /**
      * Шеринг итога: надпись на кнопке «Куда кидаем?» и текст сообщения в чат.
      * Плейсхолдеры: {title} {emoji} {pct} {scale} {link}. Нет share — «Пофлексить 🧊» и shareText результата.
      */
-    share: z.strictObject({ button: text, text, style: z.enum(SHARE_STYLES).optional() }).optional(),
+    share: z.strictObject({ button: text, text: text.optional(), style: z.enum(SHARE_STYLES).optional() }).optional(),
     /** «Сравниться с партнёром 💎» после списка для партнёра: кнопка ведёт в «Для пар» → «Совместимость». Заголовок и текст по желанию. */
     compat: z.strictObject({ title: text.optional(), text: text.optional(), button: text }).optional(),
   })
@@ -336,7 +361,7 @@ export const testSchema = itemBase
           ctx.addIssue({ code: "custom", path: ["scoring", "types", i], message: `нет результата с id "${type}" ${known}` });
         }
       });
-      test.scoring.tieBreak?.lastQuestions.forEach((qid, i) => {
+      test.scoring.tieBreak?.lastQuestions?.forEach((qid, i) => {
         if (!questionIds.has(qid)) {
           ctx.addIssue({
             code: "custom",

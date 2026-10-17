@@ -83,7 +83,7 @@ export function scoreTest(test: Test, answers: readonly number[]): TestScore {
     if (!question || !option) {
       throw new Error(`Тест "${test.id}": нет варианта ${optionIndex} в вопросе ${questionIndex + 1}`);
     }
-    return { question, option };
+    return { question, option, optionIndex };
   });
 
   const config = scoringConfig(test);
@@ -106,7 +106,12 @@ export function scoreTest(test: Test, answers: readonly number[]): TestScore {
   }
 }
 
-type Chosen = { question: Test["questions"][number]; option: TestOption }[];
+type Chosen = { question: Test["questions"][number]; option: TestOption; optionIndex: number }[];
+
+/** Хэш ответов для ничьей: сумма (номер_варианта+1)×(номер_вопроса+7). Номера считаются по порядку в файле, а не на экране. */
+export function answersHash(answers: readonly number[]): number {
+  return answers.reduce((sum, optionIndex, questionIndex) => sum + (optionIndex + 1) * (questionIndex + 7), 0);
+}
 
 /** Места: больше баллов → больше баллов в последних вопросах → раньше в scoring.types (или в results). */
 function scoreTypes(test: Test, config: TypesScoring, chosen: Chosen): TestScore {
@@ -130,6 +135,21 @@ function scoreTypes(test: Test, config: TypesScoring, chosen: Chosen): TestScore
       (tieScores[b.id] ?? 0) - (tieScores[a.id] ?? 0) ||
       position(a) - position(b),
   );
+  // tieBreak.hash: среди равных (по баллам и по баллам последних вопросов) побеждает тот, на кого указывает хэш ответов
+  if (config.tieBreak?.hash) {
+    const hash = answersHash(chosen.map((c) => c.optionIndex));
+    const same = (a: TestResult, b: TestResult) => (scores[a.id] ?? 0) === (scores[b.id] ?? 0) && (tieScores[a.id] ?? 0) === (tieScores[b.id] ?? 0);
+    const turned: TestResult[] = [];
+    for (let i = 0; i < ranked.length; ) {
+      let j = i;
+      while (j < ranked.length && same(ranked[i] as TestResult, ranked[j] as TestResult)) j++;
+      const run = ranked.slice(i, j);
+      const k = hash % run.length;
+      turned.push(...run.slice(k), ...run.slice(0, k));
+      i = j;
+    }
+    ranked.splice(0, ranked.length, ...turned);
+  }
   const [best, second] = ranked as [TestResult, TestResult | undefined];
   const score: TestScore = { resultId: best.id, result: best, scores };
 

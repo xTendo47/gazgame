@@ -113,10 +113,14 @@
           "tag": "весёлые тесты",
           "kinds": [{ "id": "chars", "emoji": "🎭", "name": "Персонажи" }, { "id": "work", "emoji": "💼", "name": "Дело и сила" }, { "id": "vibe", "emoji": "✨", "name": "Вайб" }],
           "items": [
-            { "emoji": "🎬", "title": "Какой ты персонаж", "text": "Кино, сериалы и мемы", "kind": "chars", "soon": true },
+            { "emoji": "🎬", "title": "Какой ты персонаж", "text": "Кино, сериалы и мемы", "kind": "chars", "ref": { "test": "character" } },
             { "emoji": "🪩", "title": "Кто ты в компании", "text": "Какая у тебя роль среди друзей", "kind": "chars", "ref": { "test": "company-role" } },
+            { "emoji": "🎂", "title": "Сколько тебе лет на самом деле?", "text": "По паспорту одно, а по душе?", "kind": "chars", "ref": { "test": "age" } },
+            { "emoji": "🐾", "title": "Какое ты животное?", "text": "Кот, пёс, лиса или капибара?", "kind": "chars", "ref": { "test": "animal" } },
+            { "emoji": "🔮", "title": "Твой знак GAZ", "text": "Гороскоп без гороскопа", "kind": "chars", "ref": { "test": "sign" } },
+            { "emoji": "🧟", "title": "Твоя роль в зомби-апокалипсисе", "text": "Конец света, зомби на улицах", "kind": "chars", "ref": { "test": "zombie" } },
             { "emoji": "🦸", "title": "Твоя суперсила", "text": "Что у тебя получается лучше всех", "kind": "work", "ref": { "test": "superpower" } },
-            { "emoji": "💼", "title": "Кем тебе работать", "text": "Дело, в котором ты загоришься", "kind": "work", "soon": true },
+            { "emoji": "💼", "title": "Кем тебе работать", "text": "Дело, в котором ты загоришься", "kind": "work", "ref": { "test": "job" } },
             { "emoji": "✨", "title": "Твой вайб", "text": "Old money, y2k, гранж и другие", "kind": "vibe", "soon": true },
             { "emoji": "🤭", "title": "Твой юмор", "text": "Над чем ты смеёшься и почему", "kind": "vibe", "soon": true }
           ]

@@ -12,6 +12,12 @@ import spyJson from "@gazgame/content/data/games/spy.json";
 import explainJson from "@gazgame/content/data/games/explain.json";
 import truthJson from "@gazgame/content/data/games/truth-or-dare.json";
 import temperamentJson from "@gazgame/content/data/tests/temperament.json";
+import characterJson from "@gazgame/content/data/tests/character.json";
+import jobJson from "@gazgame/content/data/tests/job.json";
+import ageJson from "@gazgame/content/data/tests/age.json";
+import animalJson from "@gazgame/content/data/tests/animal.json";
+import signJson from "@gazgame/content/data/tests/sign.json";
+import zombieJson from "@gazgame/content/data/tests/zombie.json";
 import superpowerJson from "@gazgame/content/data/tests/superpower.json";
 import thinkingJson from "@gazgame/content/data/tests/thinking-type.json";
 import companyJson from "@gazgame/content/data/tests/company-role.json";
@@ -21,7 +27,7 @@ import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
 import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
 const games = [knowJson, matchJson, whoJson, neverJson, mafiaJson, spyJson, explainJson, truthJson];
-const tests = [temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
+const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
 const catalog = buildCatalog(
   [
     ...games.map((data, i): RawContentFile => ({ path: `g${i}.json`, kind: "game", data: { ...data, related: [] } })),
