@@ -5,6 +5,8 @@ import lockedTestsJson from "@gazgame/content/data/locked-tests.json";
 import cardGamesJson from "@gazgame/content/data/card-games.json";
 import knowJson from "@gazgame/content/data/games/know-each-other.json";
 import matchJson from "@gazgame/content/data/games/match-us.json";
+import matchFriendsJson from "@gazgame/content/data/games/match-friends.json";
+import knowFriendJson from "@gazgame/content/data/games/know-friend.json";
 import whoJson from "@gazgame/content/data/games/who-of-us.json";
 import neverJson from "@gazgame/content/data/games/never-have-i-ever.json";
 import mafiaJson from "@gazgame/content/data/games/mafia.json";
@@ -27,7 +29,7 @@ import loveJson from "@gazgame/content/data/tests/love-languages.json";
 import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
 import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
-const games = [knowJson, matchJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
+const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
 const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson];
 const catalog = buildCatalog(
   [
@@ -156,7 +158,7 @@ describe("разделы в одном формате (sections.json)", () => {
   });
 
   it("«Как играть за 10 секунд»: по три строки на каждую игру и тесты, тексты из спеки", () => {
-    expect(Object.keys(layouts.rules).sort()).toEqual(["cards", "explain", "know-each-other", "mafia", "match-us", "never-have-i-duo", "never-have-i-ever", "spy", "test", "truth-or-dare", "who-of-us"]);
+    expect(Object.keys(layouts.rules).sort()).toEqual(["cards", "explain", "know-each-other", "know-friend", "mafia", "match-friends", "match-us", "never-have-i-duo", "never-have-i-ever", "spy", "test", "truth-or-dare", "who-of-us"]);
     expect(layouts.rules.spy).toEqual(["Передаёте телефон по кругу, каждый тайно смотрит место.", "Одному выпадает «Ты шпион».", "Задаёте друг другу вопросы: город ищет шпиона, шпион угадывает место."]);
     expect(layouts.rules["never-have-i-ever"]?.[2]).toBe("Было? Загибай палец. Ноль пальцев = вылет.");
     expect(layouts.texts.rulesTitle).toBe("Как играть за 10 секунд");
