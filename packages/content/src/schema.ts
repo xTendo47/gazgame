@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder", "timer-deck"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -770,6 +770,52 @@ export const ladderGameSchema = gameBase.extend({
   }),
 });
 
+/** Итог игры «5 секунд»: заголовок, эмодзи и текст для победителя, ничьей и последнего места. */
+const finaleCaseSchema = z.strictObject({ title: text, emoji: text, text });
+
+/**
+ * «5 секунд» (timer-deck): колода как у deck + таймер на ответ + очки по игрокам. Один телефон идёт по кругу:
+ * «Ход: имя» → «Старт» → карта и кольцо таймера (timerSec) → «Засчитано / Не засчитано» (+1 очко) → следующий.
+ * Карт на игрока — на выбор из cardsPerPlayer. «Цепочка»: при «Не засчитано» та же карта уходит следующему игроку.
+ */
+export const timerDeckGameSchema = gameBase.extend({
+  mechanic: z.literal("timer-deck"),
+  /** Секунд на ответ. */
+  timerSec: z.int().min(1),
+  /** Сколько карт на игрока можно выбрать в настройках, и какое выбрано по умолчанию. */
+  cardsPerPlayer: z.array(z.int().min(1)).min(1),
+  cardsPerPlayerDefault: z.int().min(1),
+  /** «Цепочка» включена по умолчанию? */
+  chainRuleDefault: z.boolean().default(false),
+  /** Строка над заданием на карте: «Назови за 5 секунд». */
+  cardPrompt: text,
+  /** Экран хода, {name} — чей ход: «Передай телефон: ход {name} 👉». */
+  handoffText: text,
+  buttons: z.strictObject({ yes: text, no: text }),
+  finale: z.strictObject({ winner: finaleCaseSchema, tie: finaleCaseSchema, last: finaleCaseSchema }),
+  /** Подписи экранов: настройки, правила, ход, финал. {name} — имя (в flexText — победитель или победители). */
+  texts: z.strictObject({
+    playersTitle: text,
+    addPlayer: text,
+    cardsPerPlayer: text,
+    deck: text,
+    chainSwitch: text,
+    rulesTitle: text,
+    rulesOk: text,
+    go: text,
+    start: text,
+    timeUp: text,
+    chain: text,
+    scoreTitle: text,
+    again: text,
+    changeDeck: text,
+    flexText: text,
+  }),
+}).refine((g) => g.cardsPerPlayer.includes(g.cardsPerPlayerDefault), {
+  message: "cardsPerPlayerDefault должно быть одним из cardsPerPlayer",
+  path: ["cardsPerPlayerDefault"],
+});
+
 /** «Кто из компании?»: все тайно голосуют за игрока. */
 export const voteGameSchema = gameBase.extend({
   mechanic: z.literal("vote"),
@@ -1100,7 +1146,7 @@ function checkExplain(game: ExplainGameInput, ctx: z.RefinementCtx) {
 }
 
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema, timerDeckGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
@@ -1615,6 +1661,7 @@ export type VoteGame = z.infer<typeof voteGameSchema>;
 export type GuessPartnerGame = z.infer<typeof guessPartnerGameSchema>;
 export type MatchGame = z.infer<typeof matchGameSchema>;
 export type LadderGame = z.infer<typeof ladderGameSchema>;
+export type TimerDeckGame = z.infer<typeof timerDeckGameSchema>;
 export type MafiaGame = z.infer<typeof mafiaGameSchema>;
 export type MafiaRole = MafiaGame["roles"][number];
 export type SpyGame = z.infer<typeof spyGameSchema>;

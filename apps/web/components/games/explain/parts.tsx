@@ -294,7 +294,7 @@ export function ScoreTable({
           <span aria-hidden="true" className="col-span-full h-1.5 overflow-hidden rounded-full bg-[#2A2531]">
             <i
               className="today-smooth block h-full rounded-full transition-[width] duration-500"
-              style={{ width: `${Math.min(100, ((scores[i] ?? 0) / target) * 100)}%`, background: TEAM_COLORS[i] }}
+              style={{ width: `${Math.min(100, ((scores[i] ?? 0) / target) * 100)}%`, background: TEAM_COLORS[i % TEAM_COLORS.length] }}
             />
           </span>
         </li>

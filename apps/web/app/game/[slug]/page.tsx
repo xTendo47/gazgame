@@ -28,13 +28,14 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
   const section = getSection(game.sections[0] ?? "company");
   const layouts = getCatalog().sectionLayouts;
   const rules = layouts?.rules[game.slug];
-  // Игра раундами, «Мафия», «Шпион», «Объясни» и «Совпадём?» показывают правила отдельным экраном — здесь их не дублируем.
+  // Игра раундами, «Мафия», «Шпион», «Объясни», «Совпадём?» и «5 секунд» показывают правила отдельным экраном — здесь их не дублируем.
   const rulesOnOwnScreen =
     (game.mechanic === "deck" && game.roundSize !== undefined) ||
     game.mechanic === "mafia" ||
     game.mechanic === "spy" ||
     game.mechanic === "explain" ||
-    game.mechanic === "match";
+    game.mechanic === "match" ||
+    game.mechanic === "timer-deck";
 
   return (
     <Screen>
