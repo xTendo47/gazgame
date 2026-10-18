@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder", "timer-deck", "rebus"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder", "timer-deck", "rebus", "verdict"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -857,6 +857,55 @@ export const rebusGameSchema = gameBase.extend({
   win: z.strictObject({ emoji: text, title: text, tie: text, rematch: text, flexText: text }),
 }).refine((g) => g.goals.includes(g.goalDefault), { message: "goalDefault должно быть одним из goals", path: ["goalDefault"] });
 
+/**
+ * «Норм или стрём» (verdict): на экране ситуация (card.text, инфинитив — так нет рода), каждый игрок тайно выбирает «норм» или «стрём»,
+ * потом ответы открываются разом. Вдвоём экран делится пополам (верхняя половина перевёрнута), втроём и больше — чипы с именами.
+ * Итог: процент совпадений, «строже всех», «добрее всех», список спорных ситуаций. Плейсхолдеры: {pct}, {link}, {name}, {norm}, {cringe}, {n}, {total}.
+ */
+export const verdictGameSchema = gameBase.extend({
+  mechanic: z.literal("verdict"),
+  /** Сколько ситуаций за игру. */
+  questionsPerGame: z.int().min(1),
+  buttons: z.strictObject({ norm: text, cringe: text }),
+  texts: z.strictObject({
+    playersTitle: text,
+    addPlayer: text,
+    deck: text,
+    go: text,
+    /** Над ситуацией: «Ситуация 3 из 10». */
+    progress: text,
+    /** Половина экрана после выбора, пока второй не ответил. */
+    ready: text,
+    /** Подсказка над чипами в игре компанией. */
+    chipsHint: text,
+    reveal: text,
+    next: text,
+    /** Вдвоём: ответы совпали / нет. */
+    matched: text,
+    clash: text,
+    /** Компанией: плашки итога ситуации. */
+    unanimous: text,
+    contested: text,
+    /** «{norm} норм · {cringe} стрём». */
+    count: text,
+  }),
+  finale: z.strictObject({
+    emoji: text,
+    /** «Вы совпали на {pct}%». */
+    title: text,
+    strictest: text,
+    kindest: text,
+    /** Под званием: «{name}» и сколько раз он выбрал: «{n} из {total}». */
+    awardCount: text,
+    diverged: text,
+    divergedHint: text,
+    divergedEmpty: text,
+    again: text,
+    changeDeck: text,
+    flexText: text,
+  }),
+});
+
 /** «Кто из компании?»: все тайно голосуют за игрока. */
 export const voteGameSchema = gameBase.extend({
   mechanic: z.literal("vote"),
@@ -1187,7 +1236,7 @@ function checkExplain(game: ExplainGameInput, ctx: z.RefinementCtx) {
 }
 
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema, timerDeckGameSchema, rebusGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema, timerDeckGameSchema, rebusGameSchema, verdictGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
@@ -1560,6 +1609,8 @@ export const todayFileSchema = z
 /** Куда ведёт карточка: игра, тест, платный тест (шторка превью) или «Карточные игры». Нет такого — «скоро». */
 export const sectionRefSchema = z.strictObject({
   game: slug.optional(),
+  /** Параметры ссылки на игру, например "deck=love&mode=duo": открыть сразу нужную колоду и режим. */
+  query: z.string().regex(/^[a-z0-9=&-]+$/).optional(),
   test: slug.optional(),
   lockedTest: slug.optional(),
   cards: z.literal(true).optional(),
@@ -1707,6 +1758,7 @@ export type MatchGame = z.infer<typeof matchGameSchema>;
 export type LadderGame = z.infer<typeof ladderGameSchema>;
 export type TimerDeckGame = z.infer<typeof timerDeckGameSchema>;
 export type RebusGame = z.infer<typeof rebusGameSchema>;
+export type VerdictGame = z.infer<typeof verdictGameSchema>;
 export type MafiaGame = z.infer<typeof mafiaGameSchema>;
 export type MafiaRole = MafiaGame["roles"][number];
 export type SpyGame = z.infer<typeof spyGameSchema>;

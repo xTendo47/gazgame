@@ -10,7 +10,7 @@ export function sectionTarget(catalog: Catalog, item: SectionItem, options?: Vis
   if (item.soon || !ref) return { kind: "soon" };
   if (ref.game) {
     const game = findGame(catalog, ref.game, options);
-    return game ? { kind: "link", href: `/game/${game.slug}` } : { kind: "soon" };
+    return game ? { kind: "link", href: `/game/${game.slug}${ref.query ? `?${ref.query}` : ""}` } : { kind: "soon" };
   }
   if (ref.test) {
     const test = findTest(catalog, ref.test, options);

@@ -36,7 +36,8 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
     game.mechanic === "explain" ||
     game.mechanic === "match" ||
     game.mechanic === "timer-deck" ||
-    game.mechanic === "rebus";
+    game.mechanic === "rebus" ||
+    game.mechanic === "verdict";
 
   return (
     <Screen>

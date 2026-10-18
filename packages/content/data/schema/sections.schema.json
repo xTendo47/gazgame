@@ -361,6 +361,10 @@
                             "type": "string",
                             "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
                           },
+                          "query": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9=&-]+$"
+                          },
                           "test": {
                             "type": "string",
                             "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"

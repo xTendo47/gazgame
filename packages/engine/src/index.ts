@@ -21,6 +21,7 @@ export * from "./mechanics/explain";
 export * from "./mechanics/ladder";
 export * from "./mechanics/timer-deck";
 export * from "./mechanics/rebus";
+export * from "./mechanics/verdict";
 export * from "./pair";
 export * from "./card-games";
 export * from "./premium";

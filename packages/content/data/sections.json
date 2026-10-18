@@ -18,6 +18,7 @@
     "who-of-us": ["Читаешь вопрос вслух.", "На счёт три все показывают пальцем на того, кто подходит.", "У кого больше всего пальцев, тот и рассказывает."],
     "never-have-i-duo": ["Каждый поднимает 10 пальцев 🙌.", "Читаете фразы по очереди. Если было хоть раз (или бывает), загибаешь палец. Врать нельзя.", "Через 12 карточек считаете пальцы. Больше загнуто: Тёмная лошадка 😏. Меньше: Ангел 😇."],
     "five-seconds": ["Жмёшь «Старт», видишь задание и за 5 секунд называешь вслух три ответа.", "Компания решает, засчитать ли ответ. Спорно? Решает большинство.", "После раунда побеждает тот, у кого больше очков."],
+    "norm-or-cringe": ["Выберите колоду и впишите имена: от 2 до 8 человек, телефон один.", "На экране ситуация. Каждый решает: норм 👍 или стрём 👎. Долго не думайте.", "Разошлись? Спорьте! Для этого игра и придумана 🔥"],
     "emoji-guess": ["На карточке ребус из эмодзи. Кто первым выкрикнул правильный ответ, тот молодец.", "Застряли? «Подсказка 💡» покажет тему, первую букву и намёк.", "Не угадали совсем? «Ответ 👀», и дальше."],
     "never-have-i-ever": ["Все поднимают пять пальцев.", "По очереди читаете «Я никогда не…».", "Было? Загибай палец. Ноль пальцев = вылет."],
     "spy": ["Передаёте телефон по кругу, каждый тайно смотрит место.", "Одному выпадает «Ты шпион».", "Задаёте друг другу вопросы: город ищет шпиона, шпион угадывает место."],
@@ -44,13 +45,13 @@
     "default": { "size": "duo", "mood": "fun" },
     "sizes": [
       { "id": "solo", "label": "Только я", "items": ["*tests"] },
-      { "id": "duo", "label": "Вдвоём", "items": ["match-us", "know-each-other", "five-seconds", "emoji-guess"] },
-      { "id": "few", "label": "3–4", "items": ["never-have-i-ever", "who-of-us", "spy", "five-seconds", "emoji-guess"] },
-      { "id": "many", "label": "5+", "items": ["who-of-us", "spy", "mafia", "explain", "never-have-i-ever", "five-seconds", "emoji-guess"] }
+      { "id": "duo", "label": "Вдвоём", "items": ["match-us", "know-each-other", "norm-or-cringe", "five-seconds", "emoji-guess"] },
+      { "id": "few", "label": "3–4", "items": ["never-have-i-ever", "who-of-us", "norm-or-cringe", "spy", "five-seconds", "emoji-guess"] },
+      { "id": "many", "label": "5+", "items": ["who-of-us", "spy", "mafia", "explain", "never-have-i-ever", "norm-or-cringe", "five-seconds", "emoji-guess"] }
     ],
     "moods": [
-      { "id": "fun", "label": "😂 Поржать", "items": ["who-of-us", "never-have-i-ever", "explain", "five-seconds", "emoji-guess"] },
-      { "id": "talk", "label": "💬 Поговорить", "items": ["match-us", "know-each-other", "*tests"] },
+      { "id": "fun", "label": "😂 Поржать", "items": ["who-of-us", "never-have-i-ever", "norm-or-cringe", "explain", "five-seconds", "emoji-guess"] },
+      { "id": "talk", "label": "💬 Поговорить", "items": ["match-us", "know-each-other", "norm-or-cringe", "*tests"] },
       { "id": "brain", "label": "🧠 Пошевелить мозгами", "items": ["spy", "mafia", "thinking-type", "five-seconds", "emoji-guess"] }
     ]
   },
@@ -75,7 +76,8 @@
               { "emoji": "🫥", "title": "Данетки", "text": "Мрачные загадки, ответ только да или нет", "kind": "guess", "soon": true },
               { "emoji": "🪪", "title": "Кто я?", "text": "Телефон ко лбу, друзья объясняют", "kind": "guess", "soon": true },
               { "emoji": "⏱️", "title": "5 секунд", "text": "Назови три за пять секунд", "kind": "warm", "ref": { "game": "five-seconds" }, "levels": [{ "label": "Разминка" }, { "label": "Мозговой штурм" }, { "label": "Без тормозов 💎", "premium": true }] },
-              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }] }
+              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }] },
+              { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe" }, "levels": [{ "label": "Бытовое" }, { "label": "Отношения" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }] }
           ]
         },
         {
@@ -92,7 +94,8 @@
               { "emoji": "🪧", "title": "Объясни", "text": "Наш Alias: словами или жестами", "kind": "points", "ref": { "game": "explain" }, "levels": [{ "label": "Лёгкий" },{ "label": "Средний" },{ "label": "Тяжёлый 💎", "premium": true }] },
               { "emoji": "🃏", "title": "Карточные игры", "text": "Правила под рукой", "kind": "points", "ref": { "cards": true } },
               { "emoji": "⏱️", "title": "5 секунд", "text": "Назови три за пять секунд", "kind": "warm", "ref": { "game": "five-seconds" }, "levels": [{ "label": "Разминка" }, { "label": "Мозговой штурм" }, { "label": "Без тормозов 💎", "premium": true }] },
-              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }] }
+              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }] },
+              { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe" }, "levels": [{ "label": "Бытовое" }, { "label": "Отношения" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }] }
           ]
         },
         {
@@ -191,6 +194,7 @@
             { "emoji": "🫂", "title": "Насколько ты меня знаешь", "text": "Один отвечает, второй угадывает", "kind": "know", "ref": { "game": "know-each-other" }, "levels": [{ "label": "Поверхность" }, { "label": "Глубина" }, { "label": "Бездна 💎", "premium": true }] },
             { "emoji": "💞", "title": "Совпадём?", "text": "Это или то: насколько вы похожи", "kind": "know", "ref": { "game": "match-us" }, "levels": [{ "label": "Лайт" }, { "label": "Серьёзнее" }, { "label": "Глубоко 💎", "premium": true }] },
             { "emoji": "🫙", "title": "Капсула времени", "text": "Письмо друг другу, откроется через месяц", "kind": "eve", "soon": true },
+            { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe", "query": "deck=love&mode=duo" }, "levels": [{ "label": "Отношения" }, { "label": "Бытовое" }, { "label": "Без фильтра 💎", "premium": true }] },
             { "emoji": "🪁", "title": "Наш список 100 дел", "text": "Что сделать вдвоём, отмечайте галочками", "kind": "eve", "soon": true }
           ]
         },

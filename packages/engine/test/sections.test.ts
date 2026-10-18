@@ -10,6 +10,7 @@ import knowFriendJson from "@gazgame/content/data/games/know-friend.json";
 import questionsJson from "@gazgame/content/data/games/36-questions.json";
 import fiveSecondsJson from "@gazgame/content/data/games/five-seconds.json";
 import emojiGuessJson from "@gazgame/content/data/games/emoji-guess.json";
+import normJson from "@gazgame/content/data/games/norm-or-cringe.json";
 import coupleValuesJson from "@gazgame/content/data/tests/couple-values.json";
 import introExtroJson from "@gazgame/content/data/tests/intro-extro.json";
 import colorJson from "@gazgame/content/data/tests/color.json";
@@ -42,7 +43,7 @@ import loveNeedsJson from "@gazgame/content/data/tests/love-needs.json";
 import breakupJson from "@gazgame/content/data/tests/breakup.json";
 import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
-const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, questionsJson, fiveSecondsJson, emojiGuessJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
+const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, questionsJson, fiveSecondsJson, emojiGuessJson, normJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
 const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson, jealousyJson, romanceJson, flagsJson, loveNeedsJson, breakupJson, coupleValuesJson, introExtroJson, colorJson, vibeJson, cityJson];
 const catalog = buildCatalog(
   [
@@ -100,14 +101,14 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(tabs[0]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "Узнать друг друга", "Угадайки"]);
     expect(tabs[1]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "С ролями", "На очки"]);
     expect(tabs[2]?.kinds).toBeUndefined();
-    expect(tabs.map((t) => t.items.length)).toEqual([9, 8, 7]);
+    expect(tabs.map((t) => t.items.length)).toEqual([10, 9, 7]);
     expect(tabs[2]?.items.every((i) => i.premium)).toBe(true);
   });
 
   it("мини-кнопка «во что» оставляет одну группу, повторный тап возвращает все; номера карточек сохраняются", () => {
     const band = section("company").tabs[1]!;
     const all = sectionGroups(band, null)!;
-    expect(all.map((g) => [g.name, g.items.length])).toEqual([["На разогрев", 4], ["С ролями", 2], ["На очки", 2]]);
+    expect(all.map((g) => [g.name, g.items.length])).toEqual([["На разогрев", 5], ["С ролями", 2], ["На очки", 2]]);
     expect(all.reduce((n, g) => n + g.items.length, 0)).toBe(band.items.length);
     const roles = sectionGroups(band, "roles")!;
     expect(roles.map((g) => g.id)).toEqual(["roles"]);
@@ -128,7 +129,7 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(s.tabs[0]?.kinds?.map((k) => k.name)).toEqual(["На разогрев", "Знаешь меня?", "Вдвоём вечером"]);
     expect(s.tabs[1]?.kinds?.map((k) => k.name)).toEqual(["Ты в любви", "Разговоры", "Чек пары"]);
     expect(s.tabs[2]?.kinds).toBeUndefined();
-    expect(s.tabs.map((t) => t.items.length)).toEqual([6, 9, 5]);
+    expect(s.tabs.map((t) => t.items.length)).toEqual([7, 9, 5]);
     expect(s.tabs[2]?.note).toBe("Процент и одна строка бесплатно, чтобы второму захотелось пройти тест. Полный разбор вашей пары в Premium.");
     // чипы «Сравниться 💎» у тестов Близости и «Всегда бесплатно» у чека пары
     expect(item("pairs", "Тип привязанности").levels).toEqual([{ label: "Сравниться 💎", premium: true, compare: true }]);
@@ -171,7 +172,7 @@ describe("разделы в одном формате (sections.json)", () => {
   });
 
   it("«Как играть за 10 секунд»: по три строки на каждую игру и тесты, тексты из спеки", () => {
-    expect(Object.keys(layouts.rules).sort()).toEqual(["36-questions", "cards", "emoji-guess", "explain", "five-seconds", "know-each-other", "know-friend", "mafia", "match-friends", "match-us", "never-have-i-duo", "never-have-i-ever", "spy", "test", "truth-or-dare", "who-of-us"]);
+    expect(Object.keys(layouts.rules).sort()).toEqual(["36-questions", "cards", "emoji-guess", "explain", "five-seconds", "know-each-other", "know-friend", "mafia", "match-friends", "match-us", "never-have-i-duo", "never-have-i-ever", "norm-or-cringe", "spy", "test", "truth-or-dare", "who-of-us"]);
     expect(layouts.rules.spy).toEqual(["Передаёте телефон по кругу, каждый тайно смотрит место.", "Одному выпадает «Ты шпион».", "Задаёте друг другу вопросы: город ищет шпиона, шпион угадывает место."]);
     expect(layouts.rules["never-have-i-ever"]?.[2]).toBe("Было? Загибай палец. Ноль пальцев = вылет.");
     expect(layouts.texts.rulesTitle).toBe("Как играть за 10 секунд");
