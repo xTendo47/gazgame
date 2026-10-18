@@ -9,6 +9,10 @@ import matchFriendsJson from "@gazgame/content/data/games/match-friends.json";
 import knowFriendJson from "@gazgame/content/data/games/know-friend.json";
 import questionsJson from "@gazgame/content/data/games/36-questions.json";
 import coupleValuesJson from "@gazgame/content/data/tests/couple-values.json";
+import introExtroJson from "@gazgame/content/data/tests/intro-extro.json";
+import colorJson from "@gazgame/content/data/tests/color.json";
+import vibeJson from "@gazgame/content/data/tests/vibe.json";
+import cityJson from "@gazgame/content/data/tests/city.json";
 import whoJson from "@gazgame/content/data/games/who-of-us.json";
 import neverJson from "@gazgame/content/data/games/never-have-i-ever.json";
 import mafiaJson from "@gazgame/content/data/games/mafia.json";
@@ -37,7 +41,7 @@ import breakupJson from "@gazgame/content/data/tests/breakup.json";
 import { boldParts, itemPath, sectionGroups, sectionTarget, toggleKind } from "../src/index";
 
 const games = [knowJson, matchJson, matchFriendsJson, knowFriendJson, questionsJson, whoJson, neverJson, neverDuoJson, mafiaJson, spyJson, explainJson, truthJson];
-const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson, jealousyJson, romanceJson, flagsJson, loveNeedsJson, breakupJson, coupleValuesJson];
+const tests = [characterJson, jobJson, ageJson, animalJson, signJson, zombieJson, temperamentJson, superpowerJson, thinkingJson, companyJson, selfEsteemJson, loveJson, attachmentJson, jealousyJson, romanceJson, flagsJson, loveNeedsJson, breakupJson, coupleValuesJson, introExtroJson, colorJson, vibeJson, cityJson];
 const catalog = buildCatalog(
   [
     ...games.map((data, i): RawContentFile => ({ path: `g${i}.json`, kind: "game", data: { ...data, related: [] } })),
@@ -137,7 +141,7 @@ describe("разделы в одном формате (sections.json)", () => {
     expect(s.lead).toBe("Всё про тебя. Для себя бесплатно");
     expect(s.tabs.map((t) => [t.name, t.tag])).toEqual([["Кто ты", "весёлые тесты"], ["Психо", "настоящая психология"], ["Глубже", "Premium"]]);
     expect(s.tabs[1]?.premium).toBeUndefined(); // Психо бесплатно
-    expect(s.tabs[0]?.kinds?.map((k) => k.name)).toEqual(["Персонажи", "Дело и сила", "Вайб"]);
+    expect(s.tabs[0]?.kinds?.map((k) => k.name)).toEqual(["Персонажи", "Дело и сила", "Вайб", "Город"]);
     expect(s.tabs[1]?.kinds?.map((k) => k.name)).toEqual(["Характер", "Любовь", "Состояние"]);
     const solo = s.tabs.flatMap((t) => t.items);
     expect(solo.some((i) => i.ref?.test === "attachment-style")).toBe(false);

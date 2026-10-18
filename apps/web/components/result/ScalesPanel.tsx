@@ -6,14 +6,14 @@
 // Тест может переименовать блок, уровни и цвета (test.scalesPanel), спрятать его или добавить советы к самой сильной шкале.
 import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
-import type { ScaleScore } from "@gazgame/engine";
+import { borderlineNeighbour, type ScaleScore } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { scalesFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
 
 const LEVEL_LABELS: Record<string, string> = { low: "низкий", mid: "средний", high: "высокий" };
 const LEVEL_BARS: Record<string, string> = { low: "bg-orange", mid: "bg-gradient-to-r from-orange to-lime", high: "bg-lime" };
-const TONE_BARS = { good: "bg-lime", warn: "bg-[#FFC83D]", bad: "bg-[#FF4D4D]" } as const;
+const TONE_BARS = { good: "bg-lime", warn: "bg-[#FFC83D]", bad: "bg-[#FF4D4D]", neutral: "bg-[#62D2FF]" } as const;
 
 type LevelView = NonNullable<NonNullable<Test["scalesPanel"]>["levels"]>[string];
 
@@ -26,15 +26,22 @@ export function ScalesPanel({ test, range }: { test: Test; range?: readonly [num
   // самая сильная шкала (при равенстве первая по порядку) — для советов «Что помогает именно тебе»
   const top = scales.reduce((best, s) => (s.score > best.score ? s : best));
   const tips = panel?.tips && top.score > 0 ? panel.tips.byScale[top.scale.id] : undefined;
+  // сумма в 1 балле от границы: «Ты на границе с «…»: часть его описания тоже про тебя»
+  const neighbour = test.borderline ? borderlineNeighbour(test, breakdown.total) : null;
 
   return (
     <>
+      {neighbour && test.borderline && (
+        <p className="rounded-card border border-dashed border-line px-4 py-3 text-center text-[15px] font-semibold text-balance text-cream/90">
+          {neighbour.emoji} {test.borderline.replace("{title}", neighbour.title)}
+        </p>
+      )}
       <section aria-labelledby="scales-title" className="flex flex-col gap-4 rounded-card bg-surface p-5">
         <h2 id="scales-title" className="font-display text-xl font-bold">
           {panel?.title ?? "Твои шкалы 📊"}
         </h2>
         {scales.map((s) => (
-          <ScaleRow key={s.scale.id} item={s} view={s.level ? panel?.levels?.[s.level] : undefined} />
+          <ScaleRow key={s.scale.id} item={s} view={s.level ? panel?.levels?.[s.level] : undefined} slider={panel?.slider} />
         ))}
       </section>
 
@@ -72,7 +79,7 @@ export function ScalesPanel({ test, range }: { test: Test; range?: readonly [num
   );
 }
 
-function ScaleRow({ item, view }: { item: ScaleScore; view?: LevelView }) {
+function ScaleRow({ item, view, slider }: { item: ScaleScore; view?: LevelView; slider?: { low: string; high: string } }) {
   const { scale, score, level, zone } = item;
   const percent = Math.round((score / scale.max) * 100);
   const levelLabel = view ? `${view.emoji ? `${view.emoji} ` : ""}${view.label}` : level && LEVEL_LABELS[level];
@@ -89,8 +96,7 @@ function ScaleRow({ item, view }: { item: ScaleScore; view?: LevelView }) {
           {scale.title}
         </span>
         <span className="shrink-0 text-sm font-bold text-muted">
-          {score}/{scale.max}
-          {levelLabel && ` · ${levelLabel}`}
+          {slider ? levelLabel : `${score}/${scale.max}${levelLabel ? ` · ${levelLabel}` : ""}`}
         </span>
       </div>
       <div
@@ -100,10 +106,25 @@ function ScaleRow({ item, view }: { item: ScaleScore; view?: LevelView }) {
         aria-valuemax={scale.max}
         aria-valuenow={score}
         aria-valuetext={`${score} из ${scale.max}${levelSpeech ? `, ${levelSpeech}${view ? "" : " уровень"}` : ""}`}
-        className="h-3 overflow-hidden rounded-full bg-surface-2"
+        className={slider ? "relative h-3 rounded-full bg-gradient-to-r from-[#62D2FF] via-surface-2 to-orange" : "h-3 overflow-hidden rounded-full bg-surface-2"}
       >
-        <FillBar percent={percent} className={bar} />
+        {slider ? (
+          // ползунок: слева край «интро», справа край «экстра»
+          <span
+            aria-hidden="true"
+            className="absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-cream bg-bg"
+            style={{ left: `${Math.min(Math.max(percent, 4), 96)}%` }}
+          />
+        ) : (
+          <FillBar percent={percent} className={bar} />
+        )}
       </div>
+      {slider && (
+        <div aria-hidden="true" className="-mt-1 flex justify-between text-xs font-bold text-muted">
+          <span>{slider.low}</span>
+          <span>{slider.high}</span>
+        </div>
+      )}
       {zone && <p className="text-[15px] leading-relaxed text-cream/80">{zone}</p>}
     </div>
   );

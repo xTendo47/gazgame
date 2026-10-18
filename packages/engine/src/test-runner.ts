@@ -203,7 +203,7 @@ function scoreTypes(test: Test, config: TypesScoring, chosen: Chosen): TestScore
   }
   const [best, second] = ranked as [TestResult, TestResult | undefined];
   addSideScores(test, chosen, scores);
-  if (test.valueMap) scores[ORDER_KEY] = encodeOrder(test, ranked.map((r) => r.id));
+  if (test.valueMap || test.palette || test.pairBlock) scores[ORDER_KEY] = encodeOrder(test, ranked.map((r) => r.id));
   const score: TestScore = { resultId: best.id, result: best, scores, order: ranked.map((r) => r.id) };
 
   const note = second && test.blendNotes?.[second.id];
@@ -242,6 +242,19 @@ export function scaleBreakdown(test: Test, scores: Readonly<Record<string, numbe
     profile: flat ? { kind: "flat" } : { kind: "peaks", strongest, weakest },
     weakest,
   };
+}
+
+/**
+ * Пограничный итог: сумма в 1 балле от границы соседнего итога (9 и 10 у «ракушки» и «тихого режима»).
+ * Возвращает соседа, на границу с которым попала сумма, или null.
+ */
+export function borderlineNeighbour(test: Test, total: number): TestResult | null {
+  const ranged = test.results.filter((r) => r.range);
+  const own = ranged.find((r) => r.range && r.range[0] <= total && total <= r.range[1]);
+  if (!own?.range) return null;
+  if (total === own.range[1]) return ranged.find((r) => r.range && r.range[0] === total + 1) ?? null;
+  if (total === own.range[0]) return ranged.find((r) => r.range && r.range[1] === total - 1) ?? null;
+  return null;
 }
 
 /** Результат по сумме баллов (results[].range). Если диапазона нет — ближайший. */

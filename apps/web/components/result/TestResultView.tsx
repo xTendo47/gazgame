@@ -20,6 +20,9 @@ import { AnswerBack } from "@/components/share/AnswerBack";
 import { ShareButton, ShareIconButton, ShareProvider } from "@/components/share/ShareSheet";
 import { FlagMeter } from "./FlagMeter";
 import { LanguagePanel } from "./LanguagePanel";
+import { Battery } from "./Battery";
+import { PairBlock } from "./PairBlock";
+import { Palette } from "./Palette";
 import { RankingPanel } from "./RankingPanel";
 import { ResultButton } from "./ResultButton";
 import { ValueMap } from "./ValueMap";
@@ -81,6 +84,8 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         blendEmoji={blend?.result.emoji}
         blendTitle={blend?.note.title}
         subtitle={result.subtitle}
+        accent={result.acc ? { color: result.acc, border: result.accBorder } : undefined}
+        tag={result.tag}
         status={test.share?.style === "messenger" ? result.share?.line : undefined}
         text={result.text}
       />
@@ -117,10 +122,27 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </Suspense>
       )}
 
+      {test.battery && hasScales && (
+        <Suspense fallback={null}>
+          <Battery test={test} hours={result.battery} />
+        </Suspense>
+      )}
+
       {hasScales && (
         // Шкалы читаются из адреса уже в браузере; страница при этом остаётся статической.
         <Suspense fallback={null}>
           <ScalesPanel test={test} range={result.range} />
+        </Suspense>
+      )}
+
+      {test.palette && (
+        <Suspense fallback={null}>
+          <Palette test={test} resultId={result.id} />
+        </Suspense>
+      )}
+      {test.pairBlock && (
+        <Suspense fallback={null}>
+          <PairBlock test={test} resultId={result.id} />
         </Suspense>
       )}
 
@@ -147,7 +169,10 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         </Suspense>
       )}
 
+      {result.route && <RouteBlock title={blocks?.route ?? "Твой маршрут на выходные"} route={result.route} />}
+      {result.board && <BoardBlock board={result.board} blocks={blocks} />}
       <Extras extras={extrasBefore} />
+      {result.compat && <CompatBlock compat={result.compat} blocks={blocks} />}
 
       {result.strengths && result.strengths.length > 0 && (
         <section aria-labelledby="strengths-title" className="flex flex-col gap-3">
@@ -315,6 +340,71 @@ function BackToSection({ test }: { test: Test }) {
   );
 }
 
+/** «Твой маршрут на выходные»: три точки — утро, день, вечер. */
+function RouteBlock({ title, route }: { title: string; route: NonNullable<TestResult["route"]> }) {
+  return (
+    <section aria-label={title} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
+      <h2 className="font-display text-lg leading-tight font-bold">🗺 {title}</h2>
+      <ol className="flex flex-col gap-3">
+        {route.map((step) => (
+          <li key={step.label} className="flex flex-col gap-0.5 border-l-2 border-orange pl-3">
+            <span className="text-sm font-extrabold text-orange">{step.label}</span>
+            <span className="leading-snug text-cream/90">{step.text}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/** «Вайб-борд»: градиент из двух цветов с тремя эмодзи, чипы настроения музыки, локация и звук. */
+function BoardBlock({ board, blocks }: { board: NonNullable<TestResult["board"]>; blocks: Test["resultBlocks"] }) {
+  const [from, to] = board.colors;
+  return (
+    <section aria-label={blocks?.board ?? "Твой вайб-борд"} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
+      <h2 className="font-display text-lg leading-tight font-bold">🎨 {blocks?.board ?? "Твой вайб-борд"}</h2>
+      <div
+        aria-hidden="true"
+        className="flex items-center justify-center gap-4 rounded-2xl py-6 text-5xl"
+        style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}
+      >
+        {board.emojis.map((e) => (
+          <span key={e}>{e}</span>
+        ))}
+      </div>
+      <ul className="flex flex-wrap gap-2" aria-label="Настроение музыки">
+        {board.moods.map((m) => (
+          <li key={m} className="rounded-full bg-surface-2 px-3.5 py-1.5 text-[15px] font-bold">
+            🎧 {m}
+          </li>
+        ))}
+      </ul>
+      <p className="leading-snug">
+        <b className="font-extrabold">📍 {blocks?.boardPlace ?? "Локация"}:</b> <span className="text-cream/90">{board.place}</span>
+      </p>
+      <p className="leading-snug">
+        <b className="font-extrabold">🔊 {blocks?.boardSound ?? "Звук"}:</b> <span className="text-cream/90">{board.sound}</span>
+      </p>
+    </section>
+  );
+}
+
+/** «Вайб-совместимость»: с кем совпадаешь и кто разряжает. */
+function CompatBlock({ compat, blocks }: { compat: NonNullable<TestResult["compat"]>; blocks: Test["resultBlocks"] }) {
+  const title = blocks?.compat ?? "Совместимость";
+  return (
+    <section aria-label={title} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
+      <h2 className="font-display text-lg leading-tight font-bold">💞 {title}</h2>
+      <p className="border-l-4 border-lime pl-3 leading-snug">
+        <b className="font-extrabold">{blocks?.compatMatch ?? "Совпадаешь"}:</b> <span className="text-cream/90">{compat.match}</span>
+      </p>
+      <p className="border-l-4 border-orange pl-3 leading-snug">
+        <b className="font-extrabold">{blocks?.compatDrain ?? "Разряжает"}:</b> <span className="text-cream/90">{compat.drain}</span>
+      </p>
+    </section>
+  );
+}
+
 /** Фишки теста (result.extras): «Твоя сцена», «Профессии под тебя», «Шанс дожить до финала» и т.п. */
 function Extras({ extras }: { extras: NonNullable<TestResult["extras"]> }) {
   return (
@@ -327,7 +417,16 @@ function Extras({ extras }: { extras: NonNullable<TestResult["extras"]> }) {
           </h2>
           {e.big && <p className="font-display text-5xl leading-none font-black text-orange tabular-nums">{e.big}</p>}
           {e.text && <p className="leading-relaxed text-cream/85">{e.text}</p>}
-          {e.items && (
+          {e.items && e.chips && (
+            <ul className="flex flex-wrap gap-2">
+              {e.items.map((item) => (
+                <li key={item} className="rounded-full bg-surface-2 px-3.5 py-1.5 text-[15px] font-bold">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+          {e.items && !e.chips && (
             <ul className="flex flex-col gap-2">
               {e.items.map((item) => (
                 <li key={item} className="flex gap-3 leading-[1.5]">

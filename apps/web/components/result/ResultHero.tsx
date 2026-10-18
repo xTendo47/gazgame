@@ -17,6 +17,12 @@ function titleSize(title: string): string {
   return "text-[min(1.6rem,7vw)]";
 }
 
+/** Тёмный или светлый текст на карточке цвета hex: чтобы читалось и на жёлтом, и на чёрном. */
+function textOn(hex: string): string {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.5 ? "#141217" : "#F3EEE6";
+}
+
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
@@ -32,6 +38,8 @@ export function ResultHero({
   subtitle,
   status,
   text,
+  accent,
+  tag,
 }: {
   /** «🌡️ Твой темперамент · твой результат». */
   label: string;
@@ -44,10 +52,26 @@ export function ResultHero({
   /** Плашка-статус «в сети» под подзаголовком, например «Режим: 100 уведомлений» (тесты с костюмом messenger). */
   status?: string;
   text?: string;
+  /** Цвет карточки итога (result.acc) и рамка со свечением (result.accBorder). Нет — оранжевая, как у всех. */
+  accent?: { color: string; border?: string };
+  /** Чип под названием: «по-научному: интроверт». */
+  tag?: string;
 }) {
+  const fg = accent ? textOn(accent.color) : undefined;
   return (
     <MotionConfig reducedMotion="user">
-      <section className="flex flex-col items-center gap-3 overflow-hidden rounded-card bg-orange px-5 pt-8 pb-7 text-center text-bg">
+      <section
+        className={`flex flex-col items-center gap-3 overflow-hidden rounded-card px-5 pt-8 pb-7 text-center ${accent ? "" : "bg-orange text-bg"}`}
+        style={
+          accent
+            ? {
+                backgroundColor: accent.color,
+                color: fg,
+                ...(accent.border ? { border: `2px solid ${accent.border}`, boxShadow: `0 0 32px ${accent.border}55` } : {}),
+              }
+            : undefined
+        }
+      >
         <div className="text-sm font-extrabold uppercase tracking-wide text-balance">{label}</div>
         {/* Второй эмодзи стоит в своём месте справа от первого, а не поверх — на текст не налезает */}
         <div aria-hidden="true" className="flex items-end justify-center gap-1 text-7xl leading-none">
@@ -84,9 +108,15 @@ export function ResultHero({
         {subtitle && (
           <motion.p
             {...rise(0.2)}
-            className="max-w-full rounded-full bg-bg px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-balance text-orange"
+            className={`max-w-full rounded-full px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-balance ${accent ? "" : "bg-bg text-orange"}`}
+            style={accent ? { backgroundColor: fg, color: accent.color } : undefined}
           >
             {subtitle}
+          </motion.p>
+        )}
+        {tag && (
+          <motion.p {...rise(0.22)} className="max-w-full rounded-full border border-current/45 px-3 py-0.5 text-xs font-bold text-balance">
+            {tag}
           </motion.p>
         )}
         {status && (

@@ -461,6 +461,121 @@
               "minLength": 1
             }
           },
+          "acc": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "accBorder": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "tag": {
+            "type": "string",
+            "minLength": 1
+          },
+          "battery": {
+            "type": "string",
+            "minLength": 1
+          },
+          "route": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "label",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "board": {
+            "type": "object",
+            "properties": {
+              "emojis": {
+                "minItems": 3,
+                "maxItems": 3,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "colors": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$"
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "moods": {
+                "minItems": 3,
+                "maxItems": 3,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "place": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sound": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "emojis",
+              "colors",
+              "moods",
+              "place",
+              "sound"
+            ],
+            "additionalProperties": false
+          },
+          "compat": {
+            "type": "object",
+            "properties": {
+              "match": {
+                "type": "string",
+                "minLength": 1
+              },
+              "drain": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "match",
+              "drain"
+            ],
+            "additionalProperties": false
+          },
+          "asSecond": {
+            "type": "string",
+            "minLength": 1
+          },
           "care": {
             "type": "string",
             "minLength": 1
@@ -559,6 +674,9 @@
                   "minLength": 1
                 },
                 "after": {
+                  "type": "boolean"
+                },
+                "chips": {
                   "type": "boolean"
                 }
               },
@@ -691,7 +809,8 @@
                 "enum": [
                   "good",
                   "warn",
-                  "bad"
+                  "bad",
+                  "neutral"
                 ]
               }
             },
@@ -701,6 +820,24 @@
             ],
             "additionalProperties": false
           }
+        },
+        "slider": {
+          "type": "object",
+          "properties": {
+            "low": {
+              "type": "string",
+              "minLength": 1
+            },
+            "high": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "low",
+            "high"
+          ],
+          "additionalProperties": false
         },
         "tips": {
           "type": "object",
@@ -975,6 +1112,59 @@
       ],
       "additionalProperties": false
     },
+    "battery": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "caption"
+      ],
+      "additionalProperties": false
+    },
+    "borderline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "palette": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "barTitle": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "barTitle"
+      ],
+      "additionalProperties": false
+    },
+    "pairBlock": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "additionalProperties": false
+    },
     "resultBlocks": {
       "type": "object",
       "properties": {
@@ -991,6 +1181,34 @@
           "minLength": 1
         },
         "howToLoveMeCopy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1
+        },
+        "board": {
+          "type": "string",
+          "minLength": 1
+        },
+        "boardPlace": {
+          "type": "string",
+          "minLength": 1
+        },
+        "boardSound": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compat": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compatMatch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compatDrain": {
           "type": "string",
           "minLength": 1
         }

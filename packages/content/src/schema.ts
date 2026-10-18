@@ -28,6 +28,8 @@ const slug = z
 
 const text = z.string().trim().min(1, "текст не может быть пустым");
 
+const hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "цвет в формате #RRGGBB, например #FF5A1F");
+
 export const sectionSchema = z.enum(SECTIONS);
 export const tierSchema = z.enum(TIERS);
 export const ageRatingSchema = z.enum(AGE_RATINGS);
@@ -130,6 +132,30 @@ export const testResultSchema = z
     tip: text.optional(),
     /** «Как меня любить»: список, который можно скопировать и отправить своему человеку. */
     howToLoveMe: z.array(text).min(1).optional(),
+    /** Цвет карточки итога (hex), например «#FF5A1F»: шапка результата красится в него. */
+    acc: hex.optional(),
+    /** Рамка и свечение карточки, если цвет почти сливается с фоном (чёрный бархат: «#C9C2CF»). */
+    accBorder: hex.optional(),
+    /** Маленький чип под названием итога, например «по-научному: интроверт». */
+    tag: text.optional(),
+    /** «Соц-батарейка»: на сколько хватает, подставляется в test.battery.caption как {hours}, например «1–2 часа». */
+    battery: text.optional(),
+    /** «Маршрут на выходные»: три точки — Утро, День, Вечер (label — «☀️ Утро»). */
+    route: z.array(z.strictObject({ label: text, text })).min(1).optional(),
+    /** «Вайб-борд»: мини-мудборд — три эмодзи, градиент из двух цветов, три настроения музыки, локация и звук. */
+    board: z
+      .strictObject({
+        emojis: z.array(text).length(3),
+        colors: z.tuple([hex, hex]),
+        moods: z.array(text).length(3),
+        place: text,
+        sound: text,
+      })
+      .optional(),
+    /** «Вайб-совместимость»: с кем совпадаешь и кто разряжает (целые строки: «🧸 Cozy: тихий вечер вместе»). */
+    compat: z.strictObject({ match: text, drain: text }).optional(),
+    /** Текст, когда этот итог оказался вторым по баллам: «Что добавляет второй цвет» (палитра), «Город-пара». */
+    asSecond: text.optional(),
     /** Мягкая забота под советом, например «поговори с близким или психологом». */
     care: text.optional(),
     /**
@@ -167,6 +193,8 @@ export const testResultSchema = z
             items: z.array(text).min(1).optional(),
             big: text.optional(),
             after: z.boolean().optional(),
+            /** items показываются чипами (плашками), а не списком: «Где тебя видно». */
+            chips: z.boolean().optional(),
           })
           .refine((e) => e.text !== undefined || e.items !== undefined || e.big !== undefined, "у фишки должен быть text, items или big"),
       )
@@ -301,8 +329,10 @@ export const testSchema = itemBase
         hidden: z.boolean().optional(),
         title: text.optional(),
         levels: z
-          .record(z.string(), z.strictObject({ label: text, emoji: text.optional(), tone: z.enum(["good", "warn", "bad"]) }))
+          .record(z.string(), z.strictObject({ label: text, emoji: text.optional(), tone: z.enum(["good", "warn", "bad", "neutral"]) }))
           .optional(),
+        /** Вместо полоски — ползунок на шкале «слева ↔ справа» (интро ↔ экстра): подписи краёв. */
+        slider: z.strictObject({ low: text, high: text }).optional(),
         tips: z.strictObject({ title: text, byScale: z.record(z.string(), z.array(text).min(1)) }).optional(),
       })
       .optional(),
@@ -332,6 +362,17 @@ export const testSchema = itemBase
      * Процент = 50% × сходство карт + 50% × доля одинаковых ответов. Тексты зон: same — совпали, differ — вопрос для разговора.
      */
     pair: pairSchema.optional(),
+    /** «Соц-батарейка»: большая батарейка, заполнение = сумма / максимум (подсчёт "scales"); caption с {hours} из result.battery. */
+    battery: z.strictObject({ title: text, caption: text }).optional(),
+    /** Пограничный итог: сумма в 1 балле от границы соседнего итога → строка с {title} соседа. */
+    borderline: text.optional(),
+    /**
+     * «Твоя палитра»: карточка-градиент из цвета итога и второго по баллам (result.acc), строка о том, что добавляет
+     * второй (result.asSecond), и полоска со всеми долями. Порядок при ничьей — по хэшу (order в адресе).
+     */
+    palette: z.strictObject({ title: text, barTitle: text }).optional(),
+    /** «Город-пара»: всегда показываем второй по баллам итог с его result.asSecond. title — «А ещё тебе подойдёт». */
+    pairBlock: z.strictObject({ title: text }).optional(),
     /** Заголовки дополнительных блоков результата. */
     resultBlocks: z
       .strictObject({
@@ -343,6 +384,16 @@ export const testSchema = itemBase
         howToLoveMeEmoji: text.optional(),
         /** Текст кнопки копирования, например «Скопировать в общий чат». Нет — «Скопировать для своего человека». */
         howToLoveMeCopy: text.optional(),
+        /** Заголовок «Твой маршрут на выходные» (result.route). */
+        route: text.optional(),
+        /** Заголовки вайб-борда (result.board): общий, «📍 Локация», «🔊 Звук». */
+        board: text.optional(),
+        boardPlace: text.optional(),
+        boardSound: text.optional(),
+        /** «Вайб-совместимость» (result.compat): общий заголовок и подписи «Совпадаешь» / «Разряжает». */
+        compat: text.optional(),
+        compatMatch: text.optional(),
+        compatDrain: text.optional(),
       })
       .optional(),
     upsell: upsellSchema.optional(),
