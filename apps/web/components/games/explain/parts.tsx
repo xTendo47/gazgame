@@ -24,7 +24,7 @@ export const GHOST_BUTTON = "gaz-press min-h-12 w-full rounded-2xl border border
 const label = "text-[10px] font-bold tracking-[0.14em] text-muted uppercase";
 
 /** Переключатель из нескольких вариантов в одной плашке. */
-function Seg<T extends string | number>({
+export function Seg<T extends string | number>({
   name,
   value,
   options,
@@ -58,7 +58,7 @@ function Seg<T extends string | number>({
   );
 }
 
-function Field({ name, children }: { name: string; children: React.ReactNode }) {
+export function Field({ name, children }: { name: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
       <span className={label}>{name}</span>

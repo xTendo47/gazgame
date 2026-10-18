@@ -13,7 +13,7 @@ export const TIERS = ["free", "premium"] as const;
 export const AGE_RATINGS = ["all", "16+", "18+"] as const;
 export const STATUSES = ["draft", "published"] as const;
 export const KINDS = ["test", "game"] as const;
-export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder", "timer-deck"] as const;
+export const MECHANICS = ["deck", "vote", "guess-partner", "mafia", "spy", "match", "explain", "ladder", "timer-deck", "rebus"] as const;
 export const SCORING_METHODS = ["types", "scales"] as const;
 /** Откуда карточка: наша или прислана через «Предложи своё». */
 export const CARD_SOURCES = ["official", "community"] as const;
@@ -651,6 +651,10 @@ export const cardSchema = z.strictObject({
   type: z.string().optional(),
   /** Звание победителю раунда (механика vote), например «Соня года 😴». */
   award: z.string().optional(),
+  /** «Угадай по эмодзи» (rebus): ответ ребуса. В text лежит сам ребус из эмодзи. */
+  answer: text.optional(),
+  /** «Угадай по эмодзи»: намёк для «Подсказки 💡» (кроме названия колоды и первой буквы ответа). */
+  hint: text.optional(),
   /** «Лесенка» (36 вопросов): вопрос, на который отвечаете вместе, — вместо «Начинает: Игрок N» строка «Отвечаете вместе». */
   together: z.boolean().optional(),
   /** «Лесенка»: у вопроса есть кнопка таймера на столько секунд (например, 240 — «Расскажи историю жизни за 4 минуты»). */
@@ -815,6 +819,43 @@ export const timerDeckGameSchema = gameBase.extend({
   message: "cardsPerPlayerDefault должно быть одним из cardsPerPlayer",
   path: ["cardsPerPlayerDefault"],
 });
+
+/**
+ * «Угадай по эмодзи» (rebus): ребус из эмодзи в card.text, ответ — card.answer, намёк — card.hint. Без ввода текста: ответ
+ * выкрикивает компания и сама решает, угадали ли. Колода перемешана, без повторов до конца колоды. Без команд — раунд из roundSize
+ * карточек и счёт «угадали N из M». С командами (две): ход переходит после каждой карточки, без подсказки +2, с подсказкой +1, пас 0.
+ * Таймер timerSec по желанию: на нуле карточка сама открывает ответ.
+ */
+export const rebusGameSchema = gameBase.extend({
+  mechanic: z.literal("rebus"),
+  roundSize: z.int().min(1),
+  timerSec: z.int().min(5),
+  /** Игра командами до стольких очков: на выбор goals, по умолчанию goalDefault. */
+  goals: z.array(z.int().min(1)).min(1),
+  goalDefault: z.int().min(1),
+  /** Имена команд для 🎲 (первые две — по умолчанию), как в «Объясни». */
+  teamNames: z.array(text).min(4, "для 🎲 нужно минимум 4 имени команд"),
+  buttons: z.strictObject({ hint: text, answer: text, pass: text, guessed: text }),
+  texts: z.strictObject({
+    deck: text,
+    teams: text,
+    timer: text,
+    goal: text,
+    go: text,
+    rulesTitle: text,
+    rulesOk: text,
+    /** «Тема: {deck}» и «Первая буква: {letter}» в подсказке. */
+    hintTheme: text,
+    hintLetter: text,
+    /** Строка хода в режиме команд: «Ходит: {team}». */
+    turn: text,
+    scoreTitle: text,
+  }),
+  /** Финал без команд: «Сколько угадали? 🧩», кнопки и текст для «Пофлексить 🧊» ({guessed} из {total}). */
+  finale: z.strictObject({ emoji: text, title: text, again: text, otherDeck: text, flexText: text }),
+  /** Победа команды: title с {team}, «Реванш 🔥», ничья. */
+  win: z.strictObject({ emoji: text, title: text, tie: text, rematch: text, flexText: text }),
+}).refine((g) => g.goals.includes(g.goalDefault), { message: "goalDefault должно быть одним из goals", path: ["goalDefault"] });
 
 /** «Кто из компании?»: все тайно голосуют за игрока. */
 export const voteGameSchema = gameBase.extend({
@@ -1146,7 +1187,7 @@ function checkExplain(game: ExplainGameInput, ctx: z.RefinementCtx) {
 }
 
 export const gameSchema = z
-  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema, timerDeckGameSchema])
+  .discriminatedUnion("mechanic", [deckGameSchema, voteGameSchema, guessPartnerGameSchema, matchGameSchema, mafiaGameSchema, spyGameSchema, explainGameSchema, ladderGameSchema, timerDeckGameSchema, rebusGameSchema])
   .superRefine((game, ctx) => {
     if (game.mechanic === "mafia") {
       checkMafia(game, ctx);
@@ -1184,6 +1225,9 @@ export const gameSchema = z
             path: [...path, "selfOptions"],
             message: `в selfOptions должно быть столько же вариантов, сколько в options (${card.options?.length ?? 0}), сейчас ${card.selfOptions.length}`,
           });
+        }
+        if (game.mechanic === "rebus" && !card.answer) {
+          ctx.addIssue({ code: "custom", path, message: "у ребуса должен быть answer (ответ)" });
         }
         if (game.mechanic === "deck" && game.cardTypes) {
           const types = game.cardTypes.map((t) => t.id);
@@ -1662,6 +1706,7 @@ export type GuessPartnerGame = z.infer<typeof guessPartnerGameSchema>;
 export type MatchGame = z.infer<typeof matchGameSchema>;
 export type LadderGame = z.infer<typeof ladderGameSchema>;
 export type TimerDeckGame = z.infer<typeof timerDeckGameSchema>;
+export type RebusGame = z.infer<typeof rebusGameSchema>;
 export type MafiaGame = z.infer<typeof mafiaGameSchema>;
 export type MafiaRole = MafiaGame["roles"][number];
 export type SpyGame = z.infer<typeof spyGameSchema>;

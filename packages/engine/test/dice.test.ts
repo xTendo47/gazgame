@@ -12,6 +12,7 @@ import knowJson from "@gazgame/content/data/games/know-each-other.json";
 import matchJson from "@gazgame/content/data/games/match-us.json";
 import truthJson from "@gazgame/content/data/games/truth-or-dare.json";
 import fiveSecondsJson from "@gazgame/content/data/games/five-seconds.json";
+import emojiGuessJson from "@gazgame/content/data/games/emoji-guess.json";
 import superpowerJson from "@gazgame/content/data/tests/superpower.json";
 import temperamentJson from "@gazgame/content/data/tests/temperament.json";
 import thinkingJson from "@gazgame/content/data/tests/thinking-type.json";
@@ -21,7 +22,7 @@ import loveJson from "@gazgame/content/data/tests/love-languages.json";
 import attachmentJson from "@gazgame/content/data/tests/attachment-style.json";
 import { createMemoryKeyValueStore, createProgressStore, itemPath, pickDice, seededRandom, validDicePick, type DiceItem } from "../src/index";
 
-const games = [whoJson, neverJson, mafiaJson, spyJson, explainJson, knowJson, matchJson, truthJson, fiveSecondsJson];
+const games = [whoJson, neverJson, mafiaJson, spyJson, explainJson, knowJson, matchJson, truthJson, fiveSecondsJson, emojiGuessJson];
 const tests = [superpowerJson, temperamentJson, thinkingJson, companyJson, selfJson, loveJson, attachmentJson];
 const catalog = buildCatalog(
   [
@@ -53,9 +54,9 @@ describe("умный 🎲: «Сколько вас?» + «Какой настр�
   });
 
   it("пересечение людей и настроя: 5+ и «Поржать» — Кто из нас, Я никогда не, Объясни", () => {
-    expect(slugs("many", "fun")).toEqual(["explain", "five-seconds", "never-have-i-ever", "who-of-us"]);
-    expect(slugs("many", "brain")).toEqual(["five-seconds", "mafia", "spy"]);
-    expect(slugs("few", "fun")).toEqual(["five-seconds", "never-have-i-ever", "who-of-us"]);
+    expect(slugs("many", "fun")).toEqual(["emoji-guess", "explain", "five-seconds", "never-have-i-ever", "who-of-us"]);
+    expect(slugs("many", "brain")).toEqual(["emoji-guess", "five-seconds", "mafia", "spy"]);
+    expect(slugs("few", "fun")).toEqual(["emoji-guess", "five-seconds", "never-have-i-ever", "who-of-us"]);
     expect(slugs("duo", "talk")).toEqual(["know-each-other", "match-us"]);
     expect(slugs("solo", "brain")).toEqual(["thinking-type"]);
   });
@@ -66,9 +67,9 @@ describe("умный 🎲: «Сколько вас?» + «Какой настр�
   });
 
   it("«5 секунд» есть в умной 🎲 для любого числа людей от двух; пустое пересечение — любая подходящая по людям", () => {
-    expect(slugs("duo", "fun")).toEqual(["five-seconds"]);
-    expect(slugs("duo", "brain")).toEqual(["five-seconds"]);
-    expect(slugs("many", "talk")).toEqual(["explain", "five-seconds", "mafia", "never-have-i-ever", "spy", "who-of-us"]);
+    expect(slugs("duo", "fun")).toEqual(["emoji-guess", "five-seconds"]);
+    expect(slugs("duo", "brain")).toEqual(["emoji-guess", "five-seconds"]);
+    expect(slugs("many", "talk")).toEqual(["emoji-guess", "explain", "five-seconds", "mafia", "never-have-i-ever", "spy", "who-of-us"]);
   });
 
   it("подряд одно и то же не выпадает, если есть из чего выбрать; нет подходящих — null", () => {

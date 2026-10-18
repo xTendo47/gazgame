@@ -15,6 +15,7 @@ import { GuessPartnerGame } from "./GuessPartnerGame";
 import { MafiaGame } from "./MafiaGame";
 import { MatchGame } from "./MatchGame";
 import { QuestionsGame } from "./QuestionsGame";
+import { RebusGame } from "./RebusGame";
 import { RoundDeckGame } from "./RoundDeckGame";
 import { SpyGame } from "./SpyGame";
 import { TimerDeckGame } from "./TimerDeckGame";
@@ -45,6 +46,7 @@ function Mechanic({
     case "match":
     case "ladder":
     case "timer-deck":
+    case "rebus":
       return null; // открываются ниже целиком, без выбора колоды здесь
   }
 }
@@ -58,6 +60,7 @@ export function GameScreen({ game, related }: { game: Game; related?: ReactNode 
   if (game.mechanic === "match") return <MatchGame game={game} related={related} />;
   if (game.mechanic === "ladder") return <QuestionsGame game={game} related={related} />;
   if (game.mechanic === "timer-deck") return <TimerDeckGame game={game} related={related} />;
+  if (game.mechanic === "rebus") return <RebusGame game={game} related={related} />;
   return <DecksScreen game={game} related={related} />;
 }
 
