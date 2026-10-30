@@ -98,58 +98,6 @@
   gap: 6px;
   padding: 26px 0 0 50px;
 }
-.gt-tool {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  min-height: 48px;
-}
-.gt-tool-disc {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  font-size: 26px;
-  line-height: 1;
-  background:
-    radial-gradient(circle at 35% 30%, rgb(255 230 190 / 0.35), transparent 55%),
-    var(--gz-fibre),
-    linear-gradient(180deg, #b07a42, #6a3e1a);
-  box-shadow:
-    inset 0 0 0 3px rgb(60 30 8 / 0.55),
-    inset 0 2px 0 rgb(255 230 190 / 0.4),
-    0 5px 8px rgb(0 0 0 / 0.5);
-  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.gt-tool:active .gt-tool-disc {
-  transform: translateY(2px) scale(0.96);
-}
-.gt-tool .gz-tag {
-  font-size: 9px;
-  padding: 3px 7px 2px;
-  letter-spacing: 0.12em;
-}
-/* винил */
-.gt-vinyl {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, #ff7a1a 0 24%, #1a1517 25% 30%, transparent 31%),
-    repeating-radial-gradient(circle, #15110f 0 2px, #2a2420 2px 3px);
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.6);
-}
-.gt-vinyl[data-playing="true"] {
-  animation: gt-spin 3.2s linear infinite;
-}
-@keyframes gt-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* ---------- билет «Продолжим» ---------- */
 .gt-ticket-wrap {
   display: flex;
@@ -564,12 +512,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gt-vinyl[data-playing="true"],
   .gt-panic-dome::after {
     animation: none;
   }
-  .gt-tool-disc,
-  .gt-bulb,
   .gt-panic-dome {
     transition: none;
   }

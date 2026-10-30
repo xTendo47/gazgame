@@ -68,6 +68,15 @@ describe("«Продолжить»: незаконченный тест", () => 
     expect(createProgressStore(kv).getBoxSkin()).toBe("ice");
   });
 
+  it("имя в профиле: необязательное, пробелы по краям убираются, пустое стирает", () => {
+    const kv = createMemoryKeyValueStore();
+    expect(createProgressStore(kv).getProfileName()).toBe("");
+    createProgressStore(kv).saveProfileName("  Аня ");
+    expect(createProgressStore(kv).getProfileName()).toBe("Аня");
+    createProgressStore(kv).saveProfileName("   ");
+    expect(createProgressStore(kv).getProfileName()).toBe("");
+  });
+
   it("нет незаконченного — карточки нет; устаревшие или битые ответы не считаются", () => {
     expect(pickContinue([a, b], {})).toBeNull();
     const at = "2026-10-17T10:00:00Z";

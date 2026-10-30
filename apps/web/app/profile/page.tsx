@@ -6,6 +6,7 @@ import { PageHeader, Screen } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { MyResults, type TestSummary } from "@/components/MyResults";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
+import { ProfileNameField } from "@/components/ProfileNameField";
 import { getCatalog, visibility } from "@/lib/catalog";
 
 export const metadata: Metadata = { title: "Мои результаты" };
@@ -29,6 +30,7 @@ export default function ProfilePage() {
         subtitle="Тесты, которые ты прошёл. Хранятся только на этом устройстве."
         badge={<ProfileAvatar />}
       />
+      <ProfileNameField />
       <MyResults tests={tests} emptyHref="/solo" />
     </Screen>
   );

@@ -1,14 +1,15 @@
 "use client";
 
 // Главный стол (экран «Стол» макета v6.4): полка (музыка, кубики, правила, обои), билет «Продолжим», коробка GAZ GAME,
-// календарь «Батл дня» с серией, «Мне скучно» и VIP-карта. Логика — прежняя: «Продолжить», «Сегодня», 🎲, GAZ, Premium;
-// новое — скин коробки (лампочка и «Обои») и пауза музыки.
+// календарь «Батл дня» с серией, «Мне скучно» и VIP-карта, жетон «Профиль». Логика прежняя: «Продолжить», «Сегодня»,
+// подбор игры кубиками, GAZ, Premium; новое — скин коробки (лампочка и «Обои»), пауза музыки, имя на жетоне.
+// Эмодзи на столе нет: значки — разметка и SVG.
 import { useState, useSyncExternalStore, type CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SectionsFile } from "@gazgame/content";
 import { currentStreak, pluralDays, type ContinueGame, type DiceItem } from "@gazgame/engine";
-import { ContinueTicket, Jeton, Tag } from "@gazgame/ui";
+import { ContinueTicket, Jeton } from "@gazgame/ui";
 import { RandomDice } from "@/components/RandomDice";
 import { Sheet } from "@/components/Sheet";
 import { TrackedLink } from "@/components/home/TrackedLink";
@@ -18,10 +19,13 @@ import { BOX_SKINS, nextBoxSkin, setBoxSkin, useBoxSkin } from "@/lib/box-skin";
 import { prefersReducedMotion, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { isMusicPlaying, subscribeMusic, toggleMusic } from "@/lib/music";
+import { profileInitial, useProfileName } from "@/lib/profile-name";
 import { useTodayData } from "@/lib/today";
 import { BULB_SVG, CARD_BACK, CARD_BACK_RED, SKIN_ART, START_CARDS, START_DECOR } from "./decor-art";
+import { DiceIcon, Plate, RulesIcon, VinylIcon, WallsIcon } from "./ShelfIcons";
 import "./table.css";
 import "./table-decor.css";
+import "./table-shelf.css";
 
 /** Цвета для образцов в шторке «Обои» (тот же набор, что в table.css). */
 const SKIN_SWATCH: Record<string, string> = {
@@ -42,14 +46,41 @@ export interface StartTableProps {
   boredIds: string[];
 }
 
-/** Буква на жетоне «Профиль». Имени пользователя в проекте пока нет, поэтому «Я». */
-const PROFILE_INITIAL = "Я";
+/** Значок «играть» — треугольник; текстовый ▶ на iPhone превращается в цветной эмодзи. */
+function PlayGlyph({ size = 14 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 12 14" width={size * 0.86} height={size} aria-hidden="true" style={{ display: "inline-block", flex: "none" }}>
+      <path d="M1.5 1.2v11.6a.7.7 0 0 0 1.07.6l9-5.8a.7.7 0 0 0 0-1.2l-9-5.8A.7.7 0 0 0 1.5 1.2z" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Пламя серии в календаре. */
+function FlameGlyph() {
+  return (
+    <svg viewBox="0 0 24 30" width="14" height="17" aria-hidden="true" style={{ display: "inline-block", marginLeft: 1, verticalAlign: "-1px" }}>
+      <path d="M12 1c1 5 7 8 7 15a7 7 0 0 1-14 0c0-3 1.5-5 3-6.5.2 2 1 3 2 3.5C9.5 8 10 4.5 12 1z" fill="#ff7a1a" />
+      <path d="M12 13c.6 2.5 3.5 4 3.5 7a3.5 3.5 0 0 1-7 0c0-1.6.8-2.6 1.5-3.4.2 1 .6 1.5 1 1.8C10.8 16 11.2 14.6 12 13z" fill="#ffd34a" />
+    </svg>
+  );
+}
+
+/** Предупреждающий треугольник у надписи DANGER. */
+function WarnGlyph() {
+  return (
+    <svg viewBox="0 0 14 12" width="10" height="9" aria-hidden="true" style={{ display: "inline-block", marginRight: 3, verticalAlign: "-0.5px" }}>
+      <path d="M7 .8 13.4 11.2H.6z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M7 4.6v3.2M7 9.2v.1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: StartTableProps) {
   const router = useRouter();
   const skin = useBoxSkin();
   const pick = useContinuePick(tests, games);
   const todayData = useTodayData();
+  const profileName = useProfileName();
   const now = useNow(0);
   const streak = currentStreak(todayData, now);
   const playing = useSyncExternalStore(subscribeMusic, isMusicPlaying, () => false);
@@ -78,12 +109,12 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
     setTimeout(() => router.push(href), 450);
   }
 
-  /** «Мне скучно»: случайная игра из тех же, что в 🎲, или задание из колоды «Мне скучно» (примерно каждый третий раз). */
+  /** «Мне скучно»: случайная игра из тех же, что в подборе кубиками, или задание из колоды «Мне скучно» (примерно каждый третий раз). */
   function bored() {
     trackHomeClick({ target: "gaz" });
     haptic("tick");
-    const games = diceItems.filter((i) => i.kind === "game");
-    const pool = games.length > 0 ? games : diceItems;
+    const onlyGames = diceItems.filter((i) => i.kind === "game");
+    const pool = onlyGames.length > 0 ? onlyGames : diceItems;
     const wantTask = boredIds.length > 0 && (pool.length === 0 || Math.random() < 1 / 3);
     if (wantTask) {
       router.push(`/gaz?dare=${boredIds[Math.floor(Math.random() * boredIds.length)]}`);
@@ -118,61 +149,64 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
         </button>
       </div>
       <div className="gt-inner">
-        <Link href="/profile" className="gt-profile" aria-label="Профиль" onClick={() => trackHomeClick({ target: "profile" })}>
-          <span aria-hidden="true">{PROFILE_INITIAL}</span>
+        <Link
+          href="/profile"
+          className="gt-profile"
+          aria-label={profileName ? `Профиль: ${profileName}` : "Профиль"}
+          onClick={() => trackHomeClick({ target: "profile" })}
+        >
+          <span aria-hidden="true">{profileInitial(profileName)}</span>
         </Link>
 
-        {/* Полка */}
+        {/* Полка: пробковые диски с бирками */}
         <div className="gt-shelf" role="group" aria-label="Инструменты стола">
-          <div className="gt-tool">
-            <button
-              type="button"
-              className="gt-tool-disc"
-              aria-label={playing ? "Музыка: поставить на паузу" : "Музыка: включить"}
-              aria-pressed={playing}
-              onClick={() => {
-                trackHomeClick({ target: "music" });
-                void toggleMusic();
-              }}
-            >
-              <span className="gt-vinyl" data-playing={playing} aria-hidden="true" />
-            </button>
-            <Tag>Музыка</Tag>
-          </div>
-          <div className="gt-tool">
-            {diceConfig && <RandomDice items={diceItems} config={diceConfig} className="gt-tool-disc" />}
-            <Tag>Кубики</Tag>
-          </div>
-          <div className="gt-tool">
-            <button
-              type="button"
-              className="gt-tool-disc"
-              aria-label="Правила"
-              aria-haspopup="dialog"
-              onClick={() => {
-                trackHomeClick({ target: "rules" });
-                setSheet("rules");
-              }}
-            >
-              <span aria-hidden="true">📜</span>
-            </button>
-            <Tag>Правила</Tag>
-          </div>
-          <div className="gt-tool">
-            <button
-              type="button"
-              className="gt-tool-disc"
-              aria-label="Обои: оформление коробки"
-              aria-haspopup="dialog"
-              onClick={() => {
-                trackHomeClick({ target: "wallpaper" });
-                setSheet("wallpaper");
-              }}
-            >
-              <span aria-hidden="true">🎨</span>
-            </button>
-            <Tag>Обои</Tag>
-          </div>
+          <button
+            type="button"
+            className="gt-tool"
+            aria-label={playing ? "Музыка: поставить на паузу" : "Музыка: включить"}
+            aria-pressed={playing}
+            onClick={() => {
+              trackHomeClick({ target: "music" });
+              void toggleMusic();
+            }}
+          >
+            <VinylIcon playing={playing} />
+            <Plate>музыка</Plate>
+          </button>
+          {diceConfig ? (
+            <RandomDice bare items={diceItems} config={diceConfig} className="gt-tool">
+              <DiceIcon />
+              <Plate>кубики</Plate>
+            </RandomDice>
+          ) : (
+            <span aria-hidden="true" />
+          )}
+          <button
+            type="button"
+            className="gt-tool"
+            aria-label="Правила"
+            aria-haspopup="dialog"
+            onClick={() => {
+              trackHomeClick({ target: "rules" });
+              setSheet("rules");
+            }}
+          >
+            <RulesIcon />
+            <Plate>правила</Plate>
+          </button>
+          <button
+            type="button"
+            className="gt-tool"
+            aria-label="Обои: оформление коробки"
+            aria-haspopup="dialog"
+            onClick={() => {
+              trackHomeClick({ target: "wallpaper" });
+              setSheet("wallpaper");
+            }}
+          >
+            <WallsIcon />
+            <Plate>обои</Plate>
+          </button>
         </div>
 
         {/* Билет «Продолжим» — только если есть что продолжать */}
@@ -185,7 +219,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
                 {pick?.kind === "test" && <span>{`Вопрос ${pick.question} из ${pick.total}`}</span>}
               </span>
               <span className="gt-play" aria-hidden="true">
-                ▶
+                <PlayGlyph size={13} />
               </span>
             </ContinueTicket>
           </div>
@@ -214,7 +248,9 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
               <b>30+</b>игр
             </span>
           </span>
-          <span className="gt-box-play">Играть ▶</span>
+          <span className="gt-box-play">
+            Играть <PlayGlyph size={17} />
+          </span>
           <span className="gt-box-foot" aria-hidden="true">
             ОТКРЫВАТЬ С ДРУЗЬЯМИ ✦
           </span>
@@ -233,7 +269,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
               <span className="gt-cal-ring">
                 <span>
                   {streak}
-                  <small aria-hidden="true">🔥</small>
+                  <FlameGlyph />
                 </span>
               </span>
               <span className="gt-cal-label block">Батл дня</span>
@@ -243,7 +279,10 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
 
           <div className="gt-item">
             <button type="button" onClick={bored} className="gt-panic" aria-label="GAZ: мне скучно. Случайная игра или задание">
-              <span className="gt-panic-danger">⚠ DANGER</span>
+              <span className="gt-panic-danger">
+                <WarnGlyph />
+                DANGER
+              </span>
               <span className="gt-panic-well">
                 <span className="gt-panic-dome">GAZ</span>
               </span>

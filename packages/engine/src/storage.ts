@@ -71,6 +71,8 @@ export interface ProgressData {
   hintsSeen?: string[];
   /** Оформление коробки на главном столе (id скина: classic, sand, ice, west, baroque). */
   boxSkin?: string;
+  /** Имя в «Профиле» (необязательное): первая буква — на жетоне стола. */
+  profileName?: string;
 }
 
 export interface FriendResult {
@@ -96,6 +98,10 @@ export interface ProgressStore {
   /** Выбранный скин коробки (null — не выбирали, будет классика). */
   getBoxSkin(): string | null;
   saveBoxSkin(skin: string): void;
+  /** Имя в профиле (пустая строка — не задано). */
+  getProfileName(): string;
+  /** Сохранить имя: пробелы по краям убираются, пустое — стирает. */
+  saveProfileName(name: string): void;
   isHintSeen(id: string): boolean;
   markHintSeen(id: string): void;
   /** Последний итог теста (его берёт Коллекция). tieId — второй итог при ничьей. */
@@ -180,6 +186,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.dicePick ? { dicePick: data.dicePick } : {}),
         ...(data.hintsSeen ? { hintsSeen: data.hintsSeen } : {}),
         ...(data.boxSkin ? { boxSkin: data.boxSkin } : {}),
+        ...(data.profileName ? { profileName: data.profileName } : {}),
       };
     } catch {
       return emptyProgress();
@@ -212,6 +219,14 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     saveBoxSkin(skin) {
       const data = load();
       data.boxSkin = skin;
+      save(data);
+    },
+    getProfileName: () => load().profileName ?? "",
+    saveProfileName(name) {
+      const data = load();
+      const clean = name.trim().slice(0, 24);
+      if (clean) data.profileName = clean;
+      else delete data.profileName;
       save(data);
     },
     isHintSeen: (id) => load().hintsSeen?.includes(id) ?? false,

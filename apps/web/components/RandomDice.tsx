@@ -3,7 +3,7 @@
 // Умный кубик 🎲 в шапке главной: тап открывает шторку «Во что играем?» с двумя вопросами («Сколько вас?» и «Какой настрой?»),
 // «Крутить 🎲» выбирает одну случайную готовую игру или тест из подходящих (списки — data/sections.json, dice; подбор — engine/dice.ts).
 // Выбор запоминается на устройстве. Кубик покачивается; перед карточкой он крутится ~0,6 с (при «Уменьшить движение» — без анимаций).
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { SectionsFile } from "@gazgame/content";
 import { pickDice, validDicePick, type DiceItem, type DicePick } from "@gazgame/engine";
@@ -16,7 +16,20 @@ import { Sheet } from "./Sheet";
 
 const ROLL_MS = 600;
 
-export function RandomDice({ items, config, className }: { items: DiceItem[]; config: SectionsFile["dice"]; className?: string }) {
+/** bare + children — свой значок вместо эмодзи 🎲 (кубики на полке стола); подбор и шторка те же. */
+export function RandomDice({
+  items,
+  config,
+  className,
+  bare,
+  children,
+}: {
+  items: DiceItem[];
+  config: SectionsFile["dice"];
+  className?: string;
+  bare?: boolean;
+  children?: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -31,13 +44,16 @@ export function RandomDice({ items, config, className }: { items: DiceItem[]; co
           setOpen(true);
         }}
         className={cn(
-          "dice-button grid size-[46px] shrink-0 place-items-center rounded-[14px] border border-line bg-surface text-2xl transition hover:bg-surface-2 max-[380px]:size-[42px] max-[380px]:text-[21px]",
+          !bare &&
+            "dice-button grid size-[46px] shrink-0 place-items-center rounded-[14px] border border-line bg-surface text-2xl transition hover:bg-surface-2 max-[380px]:size-[42px] max-[380px]:text-[21px]",
           className,
         )}
       >
-        <span aria-hidden="true" className="dice-emoji leading-none">
-          🎲
-        </span>
+        {children ?? (
+          <span aria-hidden="true" className="dice-emoji leading-none">
+            🎲
+          </span>
+        )}
       </button>
       {open && <DiceSheet items={items} config={config} onClose={() => setOpen(false)} />}
     </>
