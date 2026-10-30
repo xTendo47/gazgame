@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "@gazgame/ui/theme.css";
+@import "@gazgame/ui/physical.css";
+@import "./fonts.css";
 
 /* Tailwind ищет классы и в компонентах дизайн-системы */
 @source "../../../packages/ui/src";

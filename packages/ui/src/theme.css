@@ -23,4 +23,60 @@
   --font-body: var(--font-manrope), system-ui, sans-serif;
 
   --radius-card: 1.5rem;
+
+  /* ---- Дизайн v6.4 ---- */
+  /* Золото: 5 опорных цветов */
+  --color-gold-1: #8a6420;
+  --color-gold-2: #f6e3a1;
+  --color-gold-3: #b8913f;
+  --color-gold-4: #fff1c4;
+  --color-gold-5: #9c7426;
+  /* Сукно (казино-стол) */
+  --color-cloth-1: #1a7a4e;
+  --color-cloth-2: #0b4a2e;
+  --color-cloth-3: #031a10;
+  /* Дерево стола */
+  --color-wood-1: #3b2519;
+  --color-wood-2: #2a1910;
+  --color-wood-3: #1b100a;
+  /* Бумага */
+  --color-paper: #fbf6e8;
+  --color-paper-2: #f3ead6;
+  --color-paper-ink: #2a2018;
+  /* Оранжевый GAZ из макета, «лёд» VIP и цвета разделов */
+  --color-orange-gaz: #ff7a1a;
+  --color-orange-hot: #e2470f;
+  --color-ice: #62d2ff;
+  --color-pink: #ff6fae;
+  --color-violet: #b58cff;
+
+  /* Шрифты-украшения (Fontsource, см. apps/web/app/fonts.css) */
+  --font-playfair: "Playfair Display", Georgia, serif;
+  --font-marck: "Marck Script", cursive;
+  --font-kelly: "Kelly Slab", serif;
+  --font-glitch: "Rubik Glitch", system-ui, sans-serif;
+  --font-rubik-mono: "Rubik Mono One", system-ui, sans-serif;
+  --font-bungee-inline: "Bungee Inline", "Unbounded Variable", sans-serif;
+  --font-bungee: "Bungee", "Unbounded Variable", sans-serif;
+  --font-plex: "IBM Plex Mono", ui-monospace, monospace;
+  --font-comfortaa: "Comfortaa", system-ui, sans-serif;
+  --font-script: "Bad Script", cursive;
+  --font-rye: "Rye", "Playfair Display", serif;
+  --font-slab: "Roboto Slab", serif;
+}
+
+/* Золото, тени и текстуры «физического слоя» (шум дерева, бумаги, волокон — как в макете) */
+:root {
+  --gz-gold-gradient: linear-gradient(160deg, #f6dc9a, #c99a3e 35%, #ecc975 55%, #a97b28 80%, #d9b45a);
+  --gz-gold-text: linear-gradient(180deg, #8a6420, #f6e3a1 30%, #b8913f 55%, #fff1c4 75%, #9c7426);
+  --gz-shadow-gold:
+    inset 0 1px 0 rgb(255 255 255 / 0.65), inset 0 -1px 0 rgb(0 0 0 / 0.28), inset 0 0 0 1px rgb(110 75 20 / 0.35);
+  /* Светлое дерево с вертикальными волокнами — «назад», бирки, подписи на полке */
+  --gz-wood-plank:
+    repeating-linear-gradient(92deg, rgb(255 220 170 / 0) 0 7px, rgb(255 220 170 / 0.08) 7px 8px, rgb(0 0 0 / 0) 8px 15px, rgb(0 0 0 / 0.12) 15px 16px),
+    linear-gradient(180deg, #b07a42, #8a5628 55%, #6a3e1a);
+  --gz-shadow-lift: 0 5px 8px rgb(0 0 0 / 0.45);
+  --gz-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.18' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.16  0 0 0 0 0.09  0 0 0 0 0.05  0 0 0 0.85 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  --gz-pnoise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.28  0 0 0 0 0.2  0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --gz-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04 0.6' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.12  0 0 0 0 0.02  0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
 }

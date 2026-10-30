@@ -1,0 +1,30 @@
+/* Шрифты дизайна v6.4 (Fontsource, без Google Fonts). Подключаются из globals.css.
+   Только нужные начертания и подсеты: кириллица + латиница.
+   У Bungee, Bungee Inline и Rye кириллицы нет — ими набраны латинские надписи (G A Z, ADMIT ONE). */
+@import "@fontsource/playfair-display/latin-700.css";
+@import "@fontsource/playfair-display/cyrillic-700.css";
+@import "@fontsource/playfair-display/latin-900.css";
+@import "@fontsource/playfair-display/cyrillic-900.css";
+@import "@fontsource/marck-script/latin-400.css";
+@import "@fontsource/marck-script/cyrillic-400.css";
+@import "@fontsource/kelly-slab/latin-400.css";
+@import "@fontsource/kelly-slab/cyrillic-400.css";
+@import "@fontsource/rubik-glitch/latin-400.css";
+@import "@fontsource/rubik-glitch/cyrillic-400.css";
+@import "@fontsource/rubik-mono-one/latin-400.css";
+@import "@fontsource/rubik-mono-one/cyrillic-400.css";
+@import "@fontsource/bungee-inline/latin-400.css";
+@import "@fontsource/bungee/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/cyrillic-400.css";
+@import "@fontsource/ibm-plex-mono/latin-700.css";
+@import "@fontsource/ibm-plex-mono/cyrillic-700.css";
+@import "@fontsource/comfortaa/latin-700.css";
+@import "@fontsource/comfortaa/cyrillic-700.css";
+@import "@fontsource/bad-script/latin-400.css";
+@import "@fontsource/bad-script/cyrillic-400.css";
+@import "@fontsource/rye/latin-400.css";
+@import "@fontsource/roboto-slab/latin-700.css";
+@import "@fontsource/roboto-slab/cyrillic-700.css";
+@import "@fontsource/roboto-slab/latin-900.css";
+@import "@fontsource/roboto-slab/cyrillic-900.css";

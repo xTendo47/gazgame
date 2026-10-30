@@ -3,6 +3,7 @@
 // всё нужное получают через props. Токены (цвета, шрифты) — в ./theme.css.
 export { cn } from "./cn";
 export { Button, buttonVariants, type ButtonProps, type ButtonVariant, type ButtonSize } from "./Button";
+export { BackTag, Jeton, ContinueTicket, AdmitTicket, Tag, backTagClass, jetonClass } from "./Physical";
 export { Tile, type TileProps, type TileAccent } from "./Tile";
 export { Badge, type BadgeTone } from "./Badge";
 export { ProgressBar, type ProgressBarProps } from "./ProgressBar";
