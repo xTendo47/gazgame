@@ -30,7 +30,7 @@ export default function Home() {
 
   return (
     <>
-      <StartTable tests={tests} games={games} diceItems={diceItems} diceConfig={layouts?.dice} />
+      <StartTable tests={tests} games={games} diceItems={diceItems} diceConfig={layouts?.dice} boredIds={catalog.gaz?.bored.map((t) => t.id) ?? []} />
       <FirstHints />
       <IntroSplash />
     </>

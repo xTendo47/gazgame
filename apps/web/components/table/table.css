@@ -12,6 +12,11 @@
   --bx-game: #2a1208;
   --bx-ink: #2a1208;
   --bx-line: rgb(255 226 190 / 0.5);
+  --bx-bg:
+    linear-gradient(112deg, transparent 28%, rgb(255 255 255 / 0.2) 40%, rgb(255 255 255 / 0.04) 47%, transparent 54%),
+    radial-gradient(120% 90% at 18% 0%, rgb(255 255 255 / 0.16), transparent 55%),
+    linear-gradient(160deg, #ff7838, #f2541b 45%, #c4390b);
+  --bx-shadow: inset 0 0 0 2px var(--bx-edge), inset 0 -6px 0 rgb(0 0 0 / 0.18), 0 10px 0 rgb(0 0 0 / 0.35), 0 18px 22px rgb(0 0 0 / 0.55);
   position: relative;
   min-height: 100dvh;
   overflow-x: clip;
@@ -32,6 +37,8 @@
   --bx-game: #4a2c10;
   --bx-ink: #3a2410;
   --bx-line: rgb(90 60 20 / 0.45);
+  --bx-bg: radial-gradient(90% 70% at 30% 20%, #f3dcae, #d9b47a 55%, #b88a4e);
+  --bx-shadow: inset 0 0 0 1px rgb(90 60 20 / 0.4), 0 1px 0 #c49a5e, 0 3px 0 #a87e44, 0 5px 0 #8a6430, 0 7px 0 #3a2410, 0 14px 26px rgb(0 0 0 / 0.55);
 }
 .gt-table[data-box="ice"] {
   --bx1: #c4ecff;
@@ -42,6 +49,8 @@
   --bx-game: #0c2a3c;
   --bx-ink: #0c2a3c;
   --bx-line: rgb(255 255 255 / 0.65);
+  --bx-bg: linear-gradient(160deg, rgb(236 250 255 / 0.96), rgb(150 215 245 / 0.78) 45%, rgb(80 160 210 / 0.8) 75%, rgb(210 245 255 / 0.96)), #7ab4d4;
+  --bx-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.85), 0 1px 0 #9fd0e8, 0 3px 0 #7ab4d4, 0 5px 0 #4a8ab0, 0 7px 0 #0c3a55, 0 14px 26px rgb(0 0 0 / 0.5), 0 0 30px rgb(140 210 255 / 0.35);
 }
 .gt-table[data-box="west"] {
   --bx1: #b5651d;
@@ -49,9 +58,11 @@
   --bx-edge: #4a230a;
   --bx-band: #2a1608;
   --bx-gaz: #ffe9b8;
-  --bx-game: #1f0e04;
-  --bx-ink: #2a1608;
+  --bx-game: #ffe9b8;
+  --bx-ink: #f5e2b8;
   --bx-line: rgb(255 226 170 / 0.55);
+  --bx-bg: repeating-linear-gradient(90deg, rgb(0 0 0 / 0.25) 0 2px, transparent 2px 48px), var(--gz-fibre), linear-gradient(180deg, #8a5a2a, #5a3418);
+  --bx-shadow: inset 0 0 0 4px #3a200e, inset 0 0 0 6px #c9a46a, 0 1px 0 #5a3418, 0 3px 0 #4a2a12, 0 5px 0 #3a200e, 0 7px 0 #1a0e06, 0 14px 26px rgb(0 0 0 / 0.6);
 }
 .gt-table[data-box="baroque"] {
   --bx1: #6a1c38;
@@ -63,6 +74,8 @@
   --bx-game: #f6e3a1;
   --bx-ink: #f6e3a1;
   --bx-line: rgb(246 227 161 / 0.7);
+  --bx-bg: radial-gradient(70% 60% at 50% 35%, #6a1020, #2a040a 75%), var(--gz-pnoise);
+  --bx-shadow: inset 0 0 0 2px #d4b062, 0 1px 0 #3a0610, 0 3px 0 #2a040a, 0 5px 0 #1a0206, 0 7px 0 #000, 0 14px 26px rgb(0 0 0 / 0.6);
 }
 
 .gt-inner {
@@ -75,40 +88,7 @@
   gap: 16px;
   /* на высоком экране блоки раздвигаются, на низком идут подряд */
   min-height: calc(100dvh - 42px - env(safe-area-inset-bottom));
-}
-
-/* ---------- гирлянда и лампочка ---------- */
-.gt-lights {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 22px;
-  pointer-events: none;
-  background:
-    radial-gradient(circle 3px at 8% 14px, #ffd98a, transparent 70%),
-    radial-gradient(circle 3px at 30% 8px, #ffd98a, transparent 70%),
-    radial-gradient(circle 3px at 52% 14px, #ffd98a, transparent 70%),
-    radial-gradient(circle 3px at 74% 8px, #ffd98a, transparent 70%),
-    radial-gradient(circle 3px at 94% 14px, #ffd98a, transparent 70%);
-  opacity: 0.8;
-}
-.gt-bulb {
-  position: absolute;
-  left: -2px;
-  top: 6px;
-  z-index: 3;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 56px;
-  border-radius: 50%;
-  font-size: 28px;
-  filter: drop-shadow(0 0 10px rgb(255 214 130 / 0.8));
-  transition: transform 0.16s;
-}
-.gt-bulb:active {
-  transform: translateY(3px) scale(0.94);
+  z-index: 2;
 }
 
 /* ---------- полка с инструментами ---------- */
@@ -116,7 +96,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 6px;
-  padding: 0 0 0 50px;
+  padding: 26px 0 0 50px;
 }
 .gt-tool {
   display: flex;
@@ -233,14 +213,12 @@
   border-radius: 6px;
   text-align: center;
   color: var(--bx-ink);
-  background:
-    var(--gz-pnoise),
-    linear-gradient(160deg, var(--bx1), var(--bx2));
-  box-shadow:
-    inset 0 0 0 2px var(--bx-edge),
-    inset 0 -6px 0 rgb(0 0 0 / 0.18),
-    0 10px 0 rgb(0 0 0 / 0.35),
-    0 18px 22px rgb(0 0 0 / 0.55);
+  background: var(--bx-bg);
+  box-shadow: var(--bx-shadow);
+}
+/* всё содержимое коробки — над рисунком скина */
+.gt-box > :not(.gt-box-art) {
+  z-index: 1;
 }
 .gt-box::before {
   /* рамка-кант внутри крышки */

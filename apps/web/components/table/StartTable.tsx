@@ -4,6 +4,7 @@
 // календарь «Батл дня» с серией, «Мне скучно» и VIP-карта. Логика — прежняя: «Продолжить», «Сегодня», 🎲, GAZ, Premium;
 // новое — скин коробки (лампочка и «Обои») и пауза музыки.
 import { useState, useSyncExternalStore, type CSSProperties } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SectionsFile } from "@gazgame/content";
 import { currentStreak, pluralDays, type ContinueGame, type DiceItem } from "@gazgame/engine";
@@ -18,7 +19,9 @@ import { prefersReducedMotion, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { isMusicPlaying, subscribeMusic, toggleMusic } from "@/lib/music";
 import { useTodayData } from "@/lib/today";
+import { BULB_SVG, CARD_BACK, CARD_BACK_RED, SKIN_ART, START_CARDS, START_DECOR } from "./decor-art";
 import "./table.css";
+import "./table-decor.css";
 
 /** Цвета для образцов в шторке «Обои» (тот же набор, что в table.css). */
 const SKIN_SWATCH: Record<string, string> = {
@@ -35,9 +38,14 @@ export interface StartTableProps {
   diceItems: DiceItem[];
   /** Нет настроек кубика (sections.json без dice) — кубика на полке нет, как раньше на главной. */
   diceConfig?: SectionsFile["dice"];
+  /** id заданий из колоды «Мне скучно» (/gaz?dare=…): для кнопки «Мне скучно». */
+  boredIds: string[];
 }
 
-export function StartTable({ tests, games, diceItems, diceConfig }: StartTableProps) {
+/** Буква на жетоне «Профиль». Имени пользователя в проекте пока нет, поэтому «Я». */
+const PROFILE_INITIAL = "Я";
+
+export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: StartTableProps) {
   const router = useRouter();
   const skin = useBoxSkin();
   const pick = useContinuePick(tests, games);
@@ -70,19 +78,52 @@ export function StartTable({ tests, games, diceItems, diceConfig }: StartTablePr
     setTimeout(() => router.push(href), 450);
   }
 
+  /** «Мне скучно»: случайная игра из тех же, что в 🎲, или задание из колоды «Мне скучно» (примерно каждый третий раз). */
+  function bored() {
+    trackHomeClick({ target: "gaz" });
+    haptic("tick");
+    const games = diceItems.filter((i) => i.kind === "game");
+    const pool = games.length > 0 ? games : diceItems;
+    const wantTask = boredIds.length > 0 && (pool.length === 0 || Math.random() < 1 / 3);
+    if (wantTask) {
+      router.push(`/gaz?dare=${boredIds[Math.floor(Math.random() * boredIds.length)]}`);
+    } else if (pool.length > 0) {
+      router.push(pool[Math.floor(Math.random() * pool.length)]!.href);
+    } else {
+      router.push("/gaz");
+    }
+  }
+
   const nextName = BOX_SKINS.find((s) => s.id === nextBoxSkin(skin))?.name;
   const continueItem = pick ? (pick.kind === "test" ? pick.test : pick.game) : null;
 
   return (
     <div className="gt-table" data-box={skin}>
-      <div className="gt-lights" aria-hidden="true" />
-      <div className="gt-inner">
-        <button type="button" className="gt-bulb" onClick={cycleSkin} aria-label={`Сменить оформление коробки. Сейчас: ${BOX_SKINS.find((s) => s.id === skin)?.name}. Дальше: ${nextName}`}>
-          <span aria-hidden="true">💡</span>
+      {/* Предметы на столе (SVG макета): гирлянда, карты, часы, домино, фишки… Под содержимым, не нажимаются */}
+      <div
+        className="gt-decor"
+        aria-hidden="true"
+        style={{ "--gt-back": CARD_BACK, "--gt-bkp": CARD_BACK_RED } as CSSProperties}
+        dangerouslySetInnerHTML={{ __html: START_DECOR + START_CARDS }}
+      />
+      <div className="gt-decor" style={{ filter: "none", zIndex: 3 }}>
+        <button
+          type="button"
+          className="gt-bulb"
+          onClick={cycleSkin}
+          aria-label={`Сменить оформление коробки. Сейчас: ${BOX_SKINS.find((s) => s.id === skin)?.name}. Дальше: ${nextName}`}
+        >
+          <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: BULB_SVG }} />
+          <span className="gt-bulb-glow" aria-hidden="true" />
         </button>
+      </div>
+      <div className="gt-inner">
+        <Link href="/profile" className="gt-profile" aria-label="Профиль" onClick={() => trackHomeClick({ target: "profile" })}>
+          <span aria-hidden="true">{PROFILE_INITIAL}</span>
+        </Link>
 
         {/* Полка */}
-        <div className="gt-shelf pt-2" role="group" aria-label="Инструменты стола">
+        <div className="gt-shelf" role="group" aria-label="Инструменты стола">
           <div className="gt-tool">
             <button
               type="button"
@@ -152,6 +193,7 @@ export function StartTable({ tests, games, diceItems, diceConfig }: StartTablePr
 
         {/* Коробка: ведёт на «Чем займёмся?» */}
         <TrackedLink href="/open" track={{ kind: "home", target: "play" }} className="gz-obj gt-box" data-skin={skin} aria-label="Играть: открыть коробку">
+          {skin !== "classic" && <span className="gt-box-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: SKIN_ART[skin] }} />}
           <span className="gt-box-band">
             <span>НАСТОЛЬНАЯ ИГРА</span>
             <span>1–10 игроков</span>
@@ -200,13 +242,13 @@ export function StartTable({ tests, games, diceItems, diceConfig }: StartTablePr
           </div>
 
           <div className="gt-item">
-            <TrackedLink href="/gaz" track={{ kind: "home", target: "gaz" }} className="gt-panic" aria-label="GAZ: мне скучно">
+            <button type="button" onClick={bored} className="gt-panic" aria-label="GAZ: мне скучно. Случайная игра или задание">
               <span className="gt-panic-danger">⚠ DANGER</span>
               <span className="gt-panic-well">
                 <span className="gt-panic-dome">GAZ</span>
               </span>
               <span className="gt-panic-dont">НЕ НАЖИМАЙ</span>
-            </TrackedLink>
+            </button>
             <span className="gt-label gt-label-dark" style={{ "--r": "0deg" } as CSSProperties}>
               МНЕ СКУЧНО
             </span>

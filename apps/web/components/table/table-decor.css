@@ -1,0 +1,279 @@
+/* Предметы на столе и подвесная лампочка. SVG — из decor-art.ts (макет v6.4, блок .bgp), стили собраны заново
+   по значениям макета (позиции — inline в самой разметке). Всё статично, кроме мерцания гирлянды (opacity)
+   и покачивания лампочки (transform). */
+.gt-decor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: min(100%, 460px);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+  filter: saturate(0.92) brightness(0.9);
+}
+.gt-decor > * {
+  position: absolute;
+}
+
+/* гирлянда */
+.gt-p-garland {
+  left: -10px;
+  right: -10px;
+  top: -6px;
+  height: 44px;
+}
+.gt-p-garland svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: gt-twinkle 2.8s ease-in-out infinite;
+}
+@keyframes gt-twinkle {
+  50% {
+    opacity: 0.82;
+  }
+}
+
+/* предметы-SVG */
+.gt-p-hand {
+  width: 96px;
+  height: 86px;
+  filter: drop-shadow(0 8px 8px rgb(0 0 0 / 0.55));
+}
+.gt-p-board {
+  width: 140px;
+  height: 140px;
+  filter: drop-shadow(0 10px 10px rgb(0 0 0 / 0.55));
+}
+.gt-p-glass {
+  width: 26px;
+  height: 42px;
+  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 0.6));
+}
+.gt-p-domino {
+  width: 22px;
+  height: 40px;
+  filter: drop-shadow(0 4px 4px rgb(0 0 0 / 0.6));
+}
+.gt-p-meep {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 3px 2px rgb(0 0 0 / 0.6));
+}
+.gt-p-meep svg,
+.gt-p-hand svg,
+.gt-p-board svg,
+.gt-p-glass svg,
+.gt-p-domino svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* карточка-роль (маска) */
+.gt-p-role {
+  width: 52px;
+  height: 74px;
+  padding-top: 12px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #2a1218, #140a0d);
+  box-shadow:
+    inset 0 0 0 2px #efe6d8,
+    inset 0 0 0 4px #2a1218,
+    inset 0 0 0 5px rgb(239 230 216 / 0.4),
+    0 8px 10px -2px rgb(0 0 0 / 0.6);
+  text-align: center;
+}
+.gt-p-role svg {
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+}
+.gt-p-role b {
+  display: block;
+  margin-top: 4px;
+  font: 800 7px var(--font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #efe6d8;
+}
+/* колода с ремешком */
+.gt-b-deck {
+  width: 44px;
+  height: 62px;
+  border-radius: 3px;
+  background: var(--gt-bkp) 0 0 / 9px 9px;
+  border: 2.5px solid #efe6d8;
+  box-shadow:
+    0 1px 0 #d8cdbb,
+    0 2px 0 #c7bba7,
+    0 3px 0 #b8ab95,
+    0 4px 0 #a6987f,
+    0 8px 10px -2px rgb(0 0 0 / 0.6);
+}
+.gt-b-deck::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 40%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #9b4a3a, #6e2a1f);
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.5);
+}
+/* фишки */
+.gt-b-chip {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c) 0 42%, #f4ead6 43% 46%, var(--c) 47%);
+  border: 4px dashed rgb(244 234 214 / 0.8);
+  background-clip: padding-box;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.4),
+    0 1px 1px rgb(0 0 0 / 0.55),
+    0 2px 3px rgb(0 0 0 / 0.32);
+}
+/* две карты у верхнего левого угла: рубашка и семёрка */
+.gt-prop {
+  filter: brightness(0.7) contrast(0.88) saturate(0.8);
+}
+.gt-pcard {
+  width: 56px;
+  height: 80px;
+  border-radius: 4px;
+  background: var(--gt-back);
+  background-size: 11px 11px;
+  border: 3px solid #efe6d8;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.5);
+}
+.gt-pcard.gt-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5efe4;
+  border-color: #f5efe4;
+  color: #c8321c;
+  font: 800 22px var(--font-display);
+}
+
+/* подвесная лампочка: тап меняет скин коробки */
+.gt-bulb {
+  position: absolute;
+  left: 24px;
+  top: -4px;
+  z-index: 3;
+  width: 16px;
+  height: 76px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-origin: 50% 0;
+  animation: gt-bulb-swing 6s ease-in-out infinite;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+/* зона нажатия шире самой лампочки (не меньше 44 px) */
+.gt-bulb::before {
+  content: "";
+  position: absolute;
+  inset: 0 -16px -10px;
+}
+.gt-bulb svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.5));
+}
+.gt-bulb-glow {
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 210 130 / 0.45), rgb(255 170 80 / 0.12) 45%, transparent 70%);
+  pointer-events: none;
+}
+.gt-bulb:active {
+  animation: none;
+  transform: translateY(8px);
+}
+.gt-bulb:focus-visible {
+  outline: 2px solid #f2dc9a;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+@keyframes gt-bulb-swing {
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+/* кожаный жетон «Профиль» с инициалом */
+.gt-profile {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font: 900 16px/1 var(--font-playfair);
+  color: #f2dc9a;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.6);
+  background:
+    radial-gradient(circle at 35% 28%, rgb(255 220 170 / 0.35), transparent 55%),
+    var(--gz-fibre),
+    linear-gradient(180deg, #7a4a28, #3f2312);
+  box-shadow:
+    inset 0 0 0 2px rgb(30 14 6 / 0.7),
+    inset 0 0 0 3.5px rgb(214 176 98 / 0.55),
+    0 4px 6px rgb(0 0 0 / 0.5);
+  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.gt-profile::after {
+  /* ушко для «шнурка» */
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8ecf0, #6b7078 60%, #2a2e36);
+}
+.gt-profile:active {
+  transform: translateY(2px) scale(0.95);
+}
+
+/* рисунок скина поверх коробки */
+.gt-box-art {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.gt-box-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-p-garland svg,
+  .gt-bulb {
+    animation: none;
+  }
+  .gt-profile {
+    transition: none;
+  }
+}
