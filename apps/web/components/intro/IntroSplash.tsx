@@ -1,42 +1,31 @@
 "use client";
 
-// Заставка первого запуска: чёрный экран → «СТАРТ» → трек с начала → G, A, Z влетают в такт, «game» печатается,
-// полоса, вспышка и переход в меню ровно на 5-й секунде трека. Показывается один раз (флаг в ProgressStore).
-// Время берём из audio.currentTime; если звук не завёлся (запрет браузера) — идём по таймеру.
+// Заставка первого запуска: чёрный экран → «СТАРТ» → трек с начала → искры летят к центру, G, A, Z влетают,
+// «game» печатается, полоса, световые штрихи, вспышка и переход в меню ровно на 5-й секунде трека.
+// Тайминги анимации — в intro.css (шкала времени от старта трека, как в макете); здесь только запуск и дроп.
+// Показывается один раз (флаг в ProgressStore). Время дропа берём из audio.currentTime;
+// если звук не завёлся (запрет браузера) — идём по таймеру.
 import { useRef, useState, useSyncExternalStore } from "react";
 import { getProgress } from "@/lib/progress";
 import { startMusic } from "@/lib/music";
 import "./intro.css";
 
 const HINT_ID = "intro";
-/** Секунда трека, на которой наступает бит-дроп и заставка уходит. */
+/** Секунда трека, на которой наступает дроп: вспышка и уход заставки. */
 const DROP = 5.0;
-/** Удары трека (замерены в макете): класс добавляется на корень, когда currentTime дошёл до секунды. */
-const BEATS: [number, string][] = [
-  [1.95, "l0"],
-  [2.62, "l1"],
-  [3.29, "l2"],
-  [3.4, "bar"],
-  [3.8, "streaks"],
-  [3.96, "gm"],
-];
 const LETTERS = ["G", "A", "Z"];
+/** Искры: 28 штук, положение и задержка считаются по номеру — так же, как в макете. */
+const DUST = Array.from({ length: 28 }, (_, i) => ({ x: (i * 37) % 100, y: (i * 53) % 100, d: (i % 7) * 0.35, s: 1 + (i % 3) }));
 const noSubscribe = () => () => {};
 
-/** Ход заставки: ловит удары трека по audio.currentTime и в конце зовёт onDrop. */
+/** Запускает музыку и шкалу анимации (класс go), в секунду DROP зовёт onDrop. */
 async function playIntro(el: HTMLElement, onDrop: () => void) {
-  el.classList.add("go");
   const audio = await startMusic();
+  // Анимации стартуют вместе с треком — тогда дроп на 5.0 с попадает в бит
+  el.classList.add("go");
   const t0 = performance.now();
-  const fired = new Set<string>();
   const tick = () => {
     const t = audio && !audio.paused ? audio.currentTime : (performance.now() - t0) / 1000;
-    for (const [at, cls] of BEATS) {
-      if (t >= at && !fired.has(cls)) {
-        fired.add(cls);
-        el.classList.add(cls);
-      }
-    }
     if (t >= DROP - 0.02) {
       el.classList.add("drop");
       onDrop();
@@ -72,6 +61,11 @@ export function IntroSplash() {
       <noscript>
         <style>{".gz-intro{display:none}"}</style>
       </noscript>
+      <span className="gz-intro-dust" aria-hidden="true">
+        {DUST.map((p, i) => (
+          <i key={i} style={{ "--x": p.x, "--y": p.y, "--d": `${p.d}s`, "--s": `${p.s}px` } as React.CSSProperties} />
+        ))}
+      </span>
       <span className="gz-intro-streaks" aria-hidden="true">
         <i />
         <i />
@@ -81,7 +75,10 @@ export function IntroSplash() {
       <span className="gz-intro-logo" aria-hidden="true">
         <span className="gz-intro-gz">
           {LETTERS.map((c, i) => (
-            <b key={c} style={{ "--fx": `${[-140, 10, 150][i]}px`, "--fy": `${[-160, 190, -120][i]}px`, "--fr": `${[-80, 40, 110][i]}deg` } as React.CSSProperties}>
+            <b
+              key={c}
+              style={{ "--i": i, "--fx": `${[-140, 10, 150][i]}px`, "--fy": `${[-160, 190, -120][i]}px`, "--fr": `${[-80, 40, 110][i]}deg` } as React.CSSProperties}
+            >
               {c}
             </b>
           ))}
