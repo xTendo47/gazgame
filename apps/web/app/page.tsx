@@ -6,6 +6,7 @@ import { Screen } from "@gazgame/ui";
 import { CollectionDot } from "@/components/collection/CollectionDot";
 import { ContinueCard, type ContinueTestSummary } from "@/components/home/ContinueCard";
 import { FirstHints } from "@/components/home/FirstHints";
+import { IntroSplash } from "@/components/intro/IntroSplash";
 import { TrackedLink } from "@/components/home/TrackedLink";
 import { RandomDice } from "@/components/RandomDice";
 import { TodayStrip } from "@/components/today/TodayStrip";
@@ -146,6 +147,7 @@ export default function Home() {
         </ul>
       </nav>
       <FirstHints />
+      <IntroSplash />
     </Screen>
   );
 }
