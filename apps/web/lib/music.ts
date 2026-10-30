@@ -10,6 +10,19 @@ interface WindowWithWebkitAudio extends Window {
 }
 
 let audio: HTMLAudioElement | null = null;
+const listeners = new Set<() => void>();
+const notify = () => listeners.forEach((l) => l());
+
+/** Для useSyncExternalStore: подписка на «заиграла / поставили на паузу». */
+export function subscribeMusic(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+/** Играет ли музыка сейчас. */
+export function isMusicPlaying(): boolean {
+  return !!audio && !audio.paused;
+}
 let ctx: AudioContext | null = null;
 let gain: GainNode | null = null;
 
@@ -45,8 +58,24 @@ export async function startMusic(): Promise<HTMLAudioElement | null> {
     if (ctx?.state === "suspended") await ctx.resume();
     audio.currentTime = 0;
     await audio.play();
+    notify();
     return audio;
   } catch {
     return null;
   }
+}
+
+/** Кнопка «Музыка» на полке: пауза и продолжение; если музыку ещё не запускали (заставку уже видели) — запускает. Из жеста пользователя. */
+export async function toggleMusic(): Promise<void> {
+  if (!audio) {
+    await startMusic();
+    return;
+  }
+  if (audio.paused) {
+    if (ctx?.state === "suspended") await ctx.resume();
+    await audio.play().catch(() => {});
+  } else {
+    audio.pause();
+  }
+  notify();
 }

@@ -61,6 +61,13 @@ describe("«Продолжить»: незаконченный тест", () => 
     expect(createProgressStore(kv).load().hintsSeen).toEqual(["home"]);
   });
 
+  it("скин коробки на столе запоминается на устройстве", () => {
+    const kv = createMemoryKeyValueStore();
+    expect(createProgressStore(kv).getBoxSkin()).toBeNull();
+    createProgressStore(kv).saveBoxSkin("ice");
+    expect(createProgressStore(kv).getBoxSkin()).toBe("ice");
+  });
+
   it("нет незаконченного — карточки нет; устаревшие или битые ответы не считаются", () => {
     expect(pickContinue([a, b], {})).toBeNull();
     const at = "2026-10-17T10:00:00Z";

@@ -225,7 +225,21 @@ export function trackExplainHardClick() {
 // ---------- Главная ----------
 
 /** Куда нажали на главной (кроме трёх разделов): полоса «Сегодня», 🎲, 👤 Профиль, «Продолжить», GAZ / «Мне скучно», Premium, мини-ряд. */
-export type HomeTarget = "today" | "dice" | "profile" | "continue" | "gaz" | "premium" | "collection" | "ultimate" | "suggest";
+export type HomeTarget =
+  | "today"
+  | "dice"
+  | "profile"
+  | "continue"
+  | "gaz"
+  | "premium"
+  | "collection"
+  | "ultimate"
+  | "suggest"
+  | "play"
+  | "music"
+  | "rules"
+  | "wallpaper"
+  | "skin";
 
 export function trackHomeClick(event: { target: HomeTarget }) {
   send("home_click", { ...event });

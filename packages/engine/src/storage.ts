@@ -69,6 +69,8 @@ export interface ProgressData {
   dicePick?: { size: string; mood: string };
   /** Подсказки, которые уже показали (всплывашки при первом заходе): повторять не надо. */
   hintsSeen?: string[];
+  /** Оформление коробки на главном столе (id скина: classic, sand, ice, west, baroque). */
+  boxSkin?: string;
 }
 
 export interface FriendResult {
@@ -91,6 +93,9 @@ export interface ProgressStore {
   listGameStarted(): Record<string, { at: string }>;
   getDicePick(): { size: string; mood: string } | null;
   saveDicePick(pick: { size: string; mood: string }): void;
+  /** Выбранный скин коробки (null — не выбирали, будет классика). */
+  getBoxSkin(): string | null;
+  saveBoxSkin(skin: string): void;
   isHintSeen(id: string): boolean;
   markHintSeen(id: string): void;
   /** Последний итог теста (его берёт Коллекция). tieId — второй итог при ничьей. */
@@ -174,6 +179,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.gameStarted ? { gameStarted: data.gameStarted } : {}),
         ...(data.dicePick ? { dicePick: data.dicePick } : {}),
         ...(data.hintsSeen ? { hintsSeen: data.hintsSeen } : {}),
+        ...(data.boxSkin ? { boxSkin: data.boxSkin } : {}),
       };
     } catch {
       return emptyProgress();
@@ -200,6 +206,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     saveDicePick(pick) {
       const data = load();
       data.dicePick = { ...pick };
+      save(data);
+    },
+    getBoxSkin: () => load().boxSkin ?? null,
+    saveBoxSkin(skin) {
+      const data = load();
+      data.boxSkin = skin;
       save(data);
     },
     isHintSeen: (id) => load().hintsSeen?.includes(id) ?? false,
