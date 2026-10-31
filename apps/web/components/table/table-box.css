@@ -1,0 +1,510 @@
+/* Коробка, календарь «Батл дня» и кнопка «Мне скучно» — по макету v6.4 (блоки .gamebox, .cal, .panic), собрано заново.
+   Цвета и фон коробки задают переменные скина --bx-* (table.css). Анимации — transform/opacity. */
+
+/* ---------- коробка ---------- */
+.gt-box {
+  --r: -2.5deg;
+  position: relative;
+  display: block;
+  /* чуть шире колонки: коробка лежит на столе наискосок и выступает по краям */
+  width: calc(100% + 28px);
+  margin: 0 -14px;
+  aspect-ratio: 300 / 211;
+  min-height: 200px;
+  overflow: hidden;
+  border-radius: 6px;
+  text-align: center;
+  color: var(--bx-ink);
+  background: var(--bx-bg);
+  box-shadow: var(--bx-shadow);
+}
+/* всё содержимое коробки — над рисунком скина */
+.gt-box > :not(.gt-box-art) {
+  z-index: 1;
+}
+.gt-box::before {
+  /* тонкая рамка-кант по краю крышки */
+  content: "";
+  position: absolute;
+  inset: 10px 10px 18px;
+  border: 1px solid var(--bx-line);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.gt-box[data-skin="west"]::before {
+  border-style: dashed;
+}
+.gt-box-art {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.gt-box-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gt-box-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 18px 10px;
+  background: var(--bx-band);
+  color: var(--bx-band-ink);
+  font: 800 11.5px var(--font-body);
+  letter-spacing: 0.16em;
+}
+.gt-box-band span:last-child {
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+.gt-box-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 29%;
+  font: 800 clamp(38px, 12.6vw, 60px) / 1 var(--font-display);
+  letter-spacing: -0.03em;
+  color: var(--bx-game);
+  white-space: nowrap;
+}
+.gt-box-title b {
+  color: var(--bx-gaz);
+  text-shadow:
+    0 0 14px rgb(255 255 255 / 0.6),
+    0 2px 0 rgb(0 0 0 / 0.15);
+}
+.gt-box-tag {
+  position: absolute;
+  left: 25%;
+  right: 27%;
+  top: 55.5%;
+  font: 800 clamp(10.5px, 3.3vw, 14.5px) var(--font-body);
+}
+/* штрихкод с цифрами */
+.gt-box-bar {
+  position: absolute;
+  right: 5%;
+  top: 52%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 3px 5px 2px;
+  background: #fff;
+  color: #222;
+  transform: rotate(1.5deg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
+.gt-box-bar i {
+  display: block;
+  width: 62px;
+  height: 17px;
+  background: repeating-linear-gradient(90deg, #111 0 1px, #fff 1px 2px, #111 2px 4px, #fff 4px 5px, #111 5px 6px, #fff 6px 8px);
+}
+.gt-box-bar span {
+  font: 400 6px/1 var(--font-plex);
+  letter-spacing: 0.06em;
+}
+/* круглая печать «GAZ GAME · ИГРОВОЙ ВЕЧЕР» */
+.gt-box-stamp {
+  position: absolute;
+  left: 4.5%;
+  top: 50%;
+  width: 20%;
+  max-width: 76px;
+  aspect-ratio: 1;
+  transform: rotate(-12deg);
+  color: var(--bx-ink);
+  opacity: 0.78;
+}
+.gt-box-stamp svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gt-box-b16,
+.gt-box-b30 {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font: 800 12px var(--font-body);
+}
+.gt-box-b16 {
+  left: 5.5%;
+  bottom: 13%;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--bx-line);
+}
+.gt-box-b30 {
+  right: 6%;
+  bottom: 14%;
+  width: 46px;
+  height: 46px;
+  border: 1.5px dashed var(--bx-line);
+  font-size: 10px;
+  line-height: 1.05;
+}
+.gt-box-b30 b {
+  display: block;
+  font-size: 15px;
+}
+.gt-box-play {
+  position: absolute;
+  left: 50%;
+  bottom: 17%;
+  transform: translateX(-50%) rotate(-3deg);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 30px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #2a2428, #141014);
+  color: #fff;
+  font: 800 clamp(17px, 5.6vw, 24px) var(--font-display);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 4px 0 #000,
+    0 9px 12px rgb(0 0 0 / 0.5);
+  white-space: nowrap;
+}
+.gt-box-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9%;
+  font: 800 8.5px var(--font-body);
+  letter-spacing: 0.24em;
+  opacity: 0.85;
+}
+/* нижняя кромка коробки: тираж и штрихкоды по краям */
+.gt-box-side {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 16px;
+  padding: 0 8px;
+  background: rgb(0 0 0 / 0.28);
+  color: var(--bx-ink);
+  font: 700 5.6px var(--font-body);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.gt-box-side i {
+  flex: none;
+  width: 46px;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 2px, currentColor 2px 4px, transparent 4px 5px);
+  opacity: 0.7;
+}
+.gt-box-side span {
+  flex: 1;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* ---------- календарь «Батл дня»: листок с пружиной и загнутым уголком ---------- */
+.gt-cal {
+  --r: -3deg;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 128px;
+  color: var(--color-paper-ink);
+  text-align: center;
+}
+.gt-cal-pages {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 12px;
+  bottom: 0;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fbf6ec, #ece2d1);
+  box-shadow:
+    0 1px 0 #ddd2c0,
+    0 2px 0 #f2eadb,
+    0 3px 0 #d6cab7,
+    0 4px 0 #efe6d6,
+    0 5px 0 #cfc2ae,
+    0 6px 0 #b9ab96,
+    0 10px 12px rgb(0 0 0 / 0.55);
+}
+.gt-cal-pages::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--gz-pnoise);
+  opacity: 0.6;
+  mix-blend-mode: multiply;
+}
+.gt-cal-bind {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  height: 21px;
+  border-radius: 3px 3px 2px 2px;
+  background: linear-gradient(180deg, #d3381f, #a5260f);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    0 2px 3px rgb(0 0 0 / 0.35);
+}
+.gt-cal-bind i {
+  position: absolute;
+  top: -5px;
+  width: 6px;
+  height: 14px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #8a8a8a, #f2f2f2 50%, #7a7a7a);
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.5);
+}
+.gt-cal-bind i:nth-child(1) {
+  left: 18%;
+}
+.gt-cal-bind i:nth-child(2) {
+  left: 40%;
+}
+.gt-cal-bind i:nth-child(3) {
+  left: 58%;
+}
+.gt-cal-bind i:nth-child(4) {
+  left: 78%;
+}
+.gt-cal-bind span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6px;
+  font: 800 8.5px var(--font-body);
+  letter-spacing: 0.2em;
+  color: #fff1e6;
+}
+.gt-cal-perf {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 26px;
+  border-top: 1.5px dotted rgb(42 32 24 / 0.35);
+}
+/* круглая печать с числом серии */
+.gt-cal-stamp {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border: 2.5px solid rgb(200 50 28 / 0.85);
+  border-radius: 50%;
+  color: rgb(200 50 28 / 0.95);
+  font: 800 23px/1 var(--font-display);
+  transform: rotate(-10deg);
+  mix-blend-mode: multiply;
+}
+.gt-cal-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px dashed rgb(200 50 28 / 0.6);
+  border-radius: 50%;
+}
+.gt-cal-t {
+  position: absolute;
+  left: 0;
+  right: 10px;
+  bottom: 11px;
+  font: 800 10px var(--font-display);
+}
+/* загнутый уголок */
+.gt-cal-curl {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 0 0 3px;
+  background: linear-gradient(225deg, transparent 45%, #d9cdb9 46%, #f6efe3 70%);
+  box-shadow: -2px -2px 3px rgb(0 0 0 / 0.14);
+}
+
+/* ---------- «Мне скучно»: стеклянный колпак, хромированное кольцо, жёлто-чёрная полоса ---------- */
+.gt-panic {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 112px;
+  aspect-ratio: 1;
+  margin-top: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.gt-panic-house {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  background: repeating-linear-gradient(-45deg, #ffd21a 0 9px, #141217 9px 18px);
+  box-shadow:
+    inset 0 0 0 2px rgb(0 0 0 / 0.35),
+    inset 0 2px 0 rgb(255 255 255 / 0.35),
+    0 3px 0 #a08408,
+    0 5px 0 #5f4f06,
+    0 12px 14px rgb(0 0 0 / 0.6);
+}
+.gt-panic-plate {
+  position: absolute;
+  inset: 11px;
+  border-radius: 4px;
+  background: radial-gradient(circle at 40% 30%, #3a3540, #141217 70%);
+  box-shadow:
+    inset 0 3px 6px rgb(0 0 0 / 0.8),
+    0 1px 0 rgb(255 255 255 / 0.15);
+}
+/* хромированное кольцо вокруг кнопки */
+.gt-panic-collar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 68%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #2b2b2e 0 58%, #9a9aa0 62%, #f2f2f6 68%, #6d6d73 77%, #2b2b2e 84%);
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.6);
+}
+.gt-panic-dome {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54%;
+  aspect-ratio: 1;
+  margin: -27% 0 0 -27%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #ffb3a1 0 6%, #ff4a2b 22%, #d41b0b 55%, #7d0b03 88%);
+  box-shadow:
+    inset 0 -4px 6px rgb(0 0 0 / 0.45),
+    0 5px 0 #5d0702,
+    0 7px 8px rgb(0 0 0 / 0.6);
+  font: 800 12px var(--font-display);
+  color: rgb(255 235 228 / 0.92);
+  text-shadow: 0 1px 0 rgb(90 0 0 / 0.8);
+  transition: transform 0.12s;
+}
+/* пульсация: красное свечение, только opacity */
+.gt-panic-dome::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  box-shadow: 0 0 24px 7px rgb(255 60 30 / 0.7);
+  opacity: 0;
+  animation: gt-glow 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+.gt-panic:active .gt-panic-dome {
+  transform: translateY(4px) scale(0.93);
+}
+/* стеклянный колпак над кнопкой; при нажатии откидывается вверх */
+.gt-panic-cover {
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  top: 9px;
+  bottom: 9px;
+  border-radius: 6px;
+  transform-origin: 50% 0;
+  transition: transform 0.32s cubic-bezier(0.3, 1.3, 0.5, 1);
+  background: linear-gradient(150deg, rgb(255 255 255 / 0.36), rgb(255 255 255 / 0.06) 40%, rgb(255 255 255 / 0.14) 70%, rgb(255 255 255 / 0.04));
+  border: 1.5px solid rgb(255 255 255 / 0.5);
+  box-shadow:
+    inset 0 0 12px rgb(255 255 255 / 0.18),
+    0 2px 4px rgb(0 0 0 / 0.3);
+  pointer-events: none;
+}
+.gt-panic-cover::before {
+  /* петля колпака */
+  content: "";
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: -5px;
+  height: 7px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #d8d8de, #6d6d73);
+}
+.gt-panic-cover::after {
+  /* блик */
+  content: "";
+  position: absolute;
+  left: 12%;
+  top: 10%;
+  width: 30%;
+  height: 14%;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.45);
+  transform: rotate(-20deg);
+}
+.gt-panic[data-lift="true"] .gt-panic-cover {
+  transform: translateY(-64%) scaleY(0.4);
+}
+.gt-panic-danger {
+  position: absolute;
+  left: 50%;
+  top: -11px;
+  z-index: 2;
+  transform: translateX(-50%) rotate(-2deg);
+  padding: 2px 6px;
+  background: #141217;
+  color: #ffd21a;
+  font: 800 8.5px var(--font-display);
+  letter-spacing: 0.14em;
+  border: 1.5px solid #ffd21a;
+  white-space: nowrap;
+}
+.gt-panic-dont {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  z-index: 2;
+  transform: translateX(-50%);
+  padding: 2px 7px;
+  background: #c41a1a;
+  color: #fff;
+  font: 900 7.5px/1 var(--font-body);
+  letter-spacing: 0.14em;
+  border-radius: 2px;
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.5);
+  white-space: nowrap;
+}
+@keyframes gt-glow {
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-panic-dome::after {
+    animation: none;
+  }
+  .gt-panic-cover,
+  .gt-panic-dome {
+    transition: none;
+  }
+}

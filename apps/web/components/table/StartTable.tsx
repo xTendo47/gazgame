@@ -21,9 +21,10 @@ import { haptic } from "@/lib/haptics";
 import { isMusicPlaying, subscribeMusic, toggleMusic } from "@/lib/music";
 import { profileInitial, useProfileName } from "@/lib/profile-name";
 import { useTodayData } from "@/lib/today";
-import { BULB_SVG, CARD_BACK, CARD_BACK_RED, SKIN_ART, START_CARDS, START_DECOR } from "./decor-art";
+import { BULB_SVG, CARD_BACK, CARD_BACK_RED, SKIN_ART, START_CARDS, START_DECOR, START_PROPS } from "./decor-art";
 import { DiceIcon, Plate, RulesIcon, VinylIcon, WallsIcon } from "./ShelfIcons";
 import "./table.css";
+import "./table-box.css";
 import "./table-decor.css";
 import "./table-shelf.css";
 
@@ -86,6 +87,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
   const playing = useSyncExternalStore(subscribeMusic, isMusicPlaying, () => false);
   const [sheet, setSheet] = useState<"rules" | "wallpaper" | null>(null);
   const [torn, setTorn] = useState(false);
+  const [lifting, setLifting] = useState(false);
 
   const month = now.toLocaleDateString("ru-RU", { month: "long" }).toUpperCase();
 
@@ -111,8 +113,19 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
 
   /** «Мне скучно»: случайная игра из тех же, что в подборе кубиками, или задание из колоды «Мне скучно» (примерно каждый третий раз). */
   function bored() {
+    if (lifting) return;
     trackHomeClick({ target: "gaz" });
     haptic("tick");
+    // Колпак откидывается, потом переходим (при «Уменьшить движение» — сразу)
+    if (prefersReducedMotion()) {
+      goBored();
+      return;
+    }
+    setLifting(true);
+    setTimeout(goBored, 380);
+  }
+
+  function goBored() {
     const onlyGames = diceItems.filter((i) => i.kind === "game");
     const pool = onlyGames.length > 0 ? onlyGames : diceItems;
     const wantTask = boredIds.length > 0 && (pool.length === 0 || Math.random() < 1 / 3);
@@ -135,7 +148,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
         className="gt-decor"
         aria-hidden="true"
         style={{ "--gt-back": CARD_BACK, "--gt-bkp": CARD_BACK_RED } as CSSProperties}
-        dangerouslySetInnerHTML={{ __html: START_DECOR + START_CARDS }}
+        dangerouslySetInnerHTML={{ __html: START_DECOR + START_PROPS + START_CARDS }}
       />
       <div className="gt-decor" style={{ filter: "none", zIndex: 3 }}>
         <button
@@ -236,9 +249,24 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
             <b>GAZ</b> GAME
           </span>
           <span className="gt-box-tag">Не сиди. Не тупи. Играй!</span>
-          <span className="gt-box-bar" aria-hidden="true" />
+          <span className="gt-box-bar" aria-hidden="true">
+            <i />
+            <span>4 607001 202616</span>
+          </span>
           <span className="gt-box-stamp" aria-hidden="true">
-            GAZ
+            <svg viewBox="0 0 60 60">
+              <defs>
+                <path id="gt-stamp-ring" d="M30 30m-21 0a21 21 0 1 1 42 0a21 21 0 1 1-42 0" />
+              </defs>
+              <circle cx="30" cy="30" r="28.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+              <circle cx="30" cy="30" r="15" fill="none" stroke="currentColor" strokeWidth="0.9" />
+              <text fontSize="5.4" fontWeight="800" letterSpacing="0.9" fill="currentColor" fontFamily="Manrope Variable, sans-serif">
+                <textPath href="#gt-stamp-ring">GAZ GAME · ИГРОВОЙ ВЕЧЕР · </textPath>
+              </text>
+              <text x="30" y="34.5" textAnchor="middle" fontSize="12" fontWeight="900" fontStyle="italic" fill="currentColor" fontFamily="Playfair Display, serif">
+                GAZ
+              </text>
+            </svg>
           </span>
           <span className="gt-box-b16" aria-hidden="true">
             16+
@@ -254,6 +282,11 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
           <span className="gt-box-foot" aria-hidden="true">
             ОТКРЫВАТЬ С ДРУЗЬЯМИ ✦
           </span>
+          <span className="gt-box-side" aria-hidden="true">
+            <i />
+            <span>ТИРАЖ № 001 · 30+ ИГР · ВОЗРАСТ 16+ · СДЕЛАНО В GAZ</span>
+            <i />
+          </span>
         </TrackedLink>
 
         {/* Календарь, «Мне скучно», VIP */}
@@ -265,26 +298,35 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
               className="gz-obj gt-cal"
               aria-label={streak > 0 ? `Батл дня. Серия ${streak} ${pluralDays(streak)}` : "Батл дня. Начни серию"}
             >
-              <span className="gt-cal-head">{month}</span>
-              <span className="gt-cal-ring">
-                <span>
-                  {streak}
-                  <FlameGlyph />
-                </span>
+              <span className="gt-cal-pages" />
+              <span className="gt-cal-bind">
+                <i />
+                <i />
+                <i />
+                <i />
+                <span>{month}</span>
               </span>
-              <span className="gt-cal-label block">Батл дня</span>
+              <span className="gt-cal-perf" />
+              <span className="gt-cal-stamp">
+                {streak}
+                <FlameGlyph />
+              </span>
+              <span className="gt-cal-t">Батл дня</span>
+              <span className="gt-cal-curl" />
             </TrackedLink>
-            <span className="gt-label">{streak > 0 ? `${streak} ${pluralDays(streak)}` : "Начни серию"}</span>
+            <span className="gt-label">{streak > 0 ? `${streak} ${pluralDays(streak)} подряд` : "Начни серию"}</span>
           </div>
 
           <div className="gt-item">
-            <button type="button" onClick={bored} className="gt-panic" aria-label="GAZ: мне скучно. Случайная игра или задание">
+            <button type="button" onClick={bored} className="gt-panic" data-lift={lifting} aria-label="GAZ: мне скучно. Случайная игра или задание">
+              <span className="gt-panic-house" />
+              <span className="gt-panic-plate" />
+              <span className="gt-panic-collar" />
+              <span className="gt-panic-dome">GAZ</span>
+              <span className="gt-panic-cover" />
               <span className="gt-panic-danger">
                 <WarnGlyph />
                 DANGER
-              </span>
-              <span className="gt-panic-well">
-                <span className="gt-panic-dome">GAZ</span>
               </span>
               <span className="gt-panic-dont">НЕ НАЖИМАЙ</span>
             </button>

@@ -277,3 +277,62 @@
     transition: none;
   }
 }
+
+/* ещё предметы: ведёрко попкорна, веер карт, стопка фишек, секундомер, телефон, жетоны (макет v6.4j, .tbx-*) */
+.gt-x64 {
+  position: absolute;
+  pointer-events: none;
+}
+.gt-x64 svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.gt-tbx-pop {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 12px 12px rgb(0 0 0 / 0.55));
+}
+.gt-tbx-fan {
+  width: 110px;
+  height: 90px;
+  filter: drop-shadow(0 8px 8px rgb(0 0 0 / 0.5));
+}
+.gt-tbx-chips {
+  width: 60px;
+  height: 60px;
+  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 0.55));
+}
+.gt-tbx-timer {
+  width: 44px;
+  height: 44px;
+  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 0.55));
+}
+.gt-tbx-ph {
+  width: 58px;
+  height: 116px;
+  border-radius: 9px;
+  background: linear-gradient(160deg, #2a2730, #121116);
+  box-shadow:
+    inset 0 0 0 2px #3a3742,
+    0 10px 14px rgb(0 0 0 / 0.55);
+}
+.gt-tbx-ph::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: radial-gradient(circle, #0a0a0c 0 40%, #2a2a33 45%);
+  box-shadow: 20px 0 0 -2px #1a1a20;
+}
+.gt-tbx-tok {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6d0, var(--c) 55%, #000 140%);
+  box-shadow: 0 3px 3px rgb(0 0 0 / 0.5);
+}
