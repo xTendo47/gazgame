@@ -10,6 +10,7 @@ import { CollectionDot } from "@/components/collection/CollectionDot";
 import { TrackedLink } from "@/components/home/TrackedLink";
 import { trackHomeClick } from "@/lib/analytics";
 import { prefersReducedMotion } from "@/lib/gaz";
+import { sfx } from "@/lib/sfx";
 import { COMPASS, DIARY_COVER, LOVE_MAT, NOTE_BULB, PARTY_MAT, PARTY_SCENE, SHOW_DRAPE, SHOW_STAGE, SHOW_TV, VIP_HANDLE, VIP_INSIDE, VIP_LID } from "./tile-art";
 import "./table-tiles.css";
 
@@ -146,6 +147,8 @@ export function ShowTile({ href, label }: { href: string; label: string }) {
           return;
         }
         setOpen(true);
+        sfx.swish();
+        sfx.tap(0.5);
         setTimeout(() => router.push(href), 800);
       }}
     >
@@ -178,7 +181,7 @@ export function ShowTile({ href, label }: { href: string; label: string }) {
 /** «Коллекция»: кожаный альбом с торчащей картой. */
 export function AlbumExtra() {
   return (
-    <TrackedLink href="/collection" track={{ kind: "home", target: "collection" }} className="gz-obj gt-ex" aria-label="Коллекция: альбом карт">
+    <TrackedLink href="/collection" track={{ kind: "home", target: "collection" }} className="gz-obj gt-ex" aria-label="Коллекция: альбом карт" onClick={() => sfx.page()}>
       <span className="gt-ex-in gt-album">
         <span className="gt-album-pages" />
         <span className="gt-album-cover">
@@ -229,6 +232,8 @@ export function VipExtra({ href }: { href: string }) {
           return;
         }
         setOpen(true);
+        sfx.lock();
+        sfx.tin();
         setTimeout(() => router.push(href), 950);
       }}
     >

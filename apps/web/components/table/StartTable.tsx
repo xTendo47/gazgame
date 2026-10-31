@@ -20,6 +20,7 @@ import { setBoxFlight } from "@/lib/box-flight";
 import { prefersReducedMotion, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { isMusicPlaying, subscribeMusic, toggleMusic } from "@/lib/music";
+import { sfx } from "@/lib/sfx";
 import { profileInitial, useProfileName } from "@/lib/profile-name";
 import { useTodayData } from "@/lib/today";
 import { BULB_SVG, CARD_BACK, CARD_BACK_RED, START_CARDS, START_DECOR, START_PROPS } from "./decor-art";
@@ -88,6 +89,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
 
   function cycleSkin() {
     trackHomeClick({ target: "skin" });
+    sfx.lamp();
     haptic("tick");
     setBoxSkin(nextBoxSkin(skin));
   }
@@ -95,6 +97,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
   function continueGame() {
     if (!pick) return;
     trackHomeClick({ target: "continue" });
+    sfx.tear();
     const item = pick.kind === "test" ? pick.test : pick.game;
     const href = pick.kind === "test" ? `/test/${item.slug}` : `/game/${item.slug}`;
     if (prefersReducedMotion()) {
@@ -110,6 +113,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
   function bored() {
     if (lifting) return;
     trackHomeClick({ target: "gaz" });
+    sfx.cover();
     haptic("tick");
     // Колпак откидывается, потом переходим (при «Уменьшить движение» — сразу)
     if (prefersReducedMotion()) {
@@ -121,6 +125,8 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
   }
 
   function goBored() {
+    sfx.clunk();
+    sfx.alarm();
     const onlyGames = diceItems.filter((i) => i.kind === "game");
     const pool = onlyGames.length > 0 ? onlyGames : diceItems;
     const wantTask = boredIds.length > 0 && (pool.length === 0 || Math.random() < 1 / 3);
@@ -174,6 +180,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
           <span className="gt-bulb-glow" aria-hidden="true" />
         </button>
       </div>
+      <div className="gt-camdim" aria-hidden="true" />
       <div className="gt-inner">
         <Link
           href="/profile"
@@ -214,6 +221,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
             aria-haspopup="dialog"
             onClick={() => {
               trackHomeClick({ target: "rules" });
+              sfx.page();
               setSheet("rules");
             }}
           >
@@ -227,6 +235,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
             aria-haspopup="dialog"
             onClick={() => {
               trackHomeClick({ target: "wallpaper" });
+              sfx.page();
               setSheet("wallpaper");
             }}
           >
@@ -263,6 +272,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
               href="/today"
               track={{ kind: "home", target: "today" }}
               className="gz-obj gt-cal"
+              onClick={() => sfx.tear()}
               aria-label={streak > 0 ? `Батл дня. Серия ${streak} ${pluralDays(streak)}` : "Батл дня. Начни серию"}
             >
               <span className="gt-cal-pages" />
@@ -303,7 +313,8 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
           </div>
 
           <div className="gt-item">
-            <TrackedLink href="/premium" track={{ kind: "home", target: "premium" }} className="gz-obj gt-vip" aria-label="VIP: всё открыто">
+            <TrackedLink href="/premium" track={{ kind: "home", target: "premium" }} className="gz-obj gt-vip"
+              onClick={() => sfx.frost()} aria-label="VIP: всё открыто">
               <small>GAZ GAME</small>
               <b>VIP</b>
               <span className="gt-vip-chip" aria-hidden="true" />

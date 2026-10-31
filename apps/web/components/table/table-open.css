@@ -7,7 +7,7 @@
 }
 .gt-open-title {
   margin: 4px 0 4px;
-  font: 800 clamp(26px, 8.2vw, 32px) / 1.05 var(--font-display);
+  font: 800 clamp(22px, 7vw, 27px) / 1.05 var(--font-display);
   color: #fff;
   text-shadow:
     0 3px 0 rgb(0 0 0 / 0.55),
@@ -17,7 +17,8 @@
 /* лоток: оранжевая рамка, внутри тёмное дерево и выемка сверху */
 .gt-tray {
   position: relative;
-  padding: 10px;
+  z-index: 5;
+  padding: 14px 12px;
   border: 6px solid #ee5a1b;
   border-radius: 13px;
   background:
@@ -44,7 +45,7 @@
 .gt-tray-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 20px 12px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -55,9 +56,116 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 0;
-  margin: auto -12px 4px;
+  margin: auto -12px 0;
 }
 /* лишняя маска справа сверху: на этом месте у макета лежит крышка коробки (появится с анимацией открытия) */
 .gt-open .gt-decor .gt-p-role {
   display: none;
+}
+
+/* ---------- папиросная бумага поверх лотка (первое открытие за сеанс) ---------- */
+.gt-tissue {
+  position: absolute;
+  inset: 9px 9px 12px;
+  z-index: 7;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.gt-tissue[data-state="go"],
+.gt-tissue[data-state="rustle"] {
+  pointer-events: none;
+}
+.gt-th {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 55%;
+  background:
+    linear-gradient(97deg, transparent 0 18%, rgb(255 255 255 / 0.4) 19%, transparent 23% 46%, rgb(150 138 126 / 0.2) 47%, transparent 51% 72%, rgb(255 255 255 / 0.34) 73%, transparent 77%),
+    linear-gradient(84deg, transparent 0 30%, rgb(150 138 126 / 0.18) 31%, transparent 35% 62%, rgb(150 138 126 / 0.14) 63%, transparent 67%),
+    linear-gradient(176deg, transparent 0 40%, rgb(255 255 255 / 0.3) 41%, transparent 45%),
+    linear-gradient(180deg, rgb(252 248 242 / 0.84), rgb(234 228 220 / 0.8));
+  box-shadow:
+    0 2px 6px rgb(0 0 0 / 0.35),
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.5);
+  transition:
+    transform 0.8s cubic-bezier(0.45, 0, 0.2, 1),
+    opacity 0.55s 0.2s;
+}
+.gt-th-l {
+  left: -2px;
+  border-radius: 3px 2px 3px 3px;
+  transform-origin: 0 50%;
+  clip-path: polygon(0 0, 100% 1%, 97% 22%, 100% 46%, 96% 71%, 100% 100%, 0 100%);
+}
+.gt-th-r {
+  right: -2px;
+  border-radius: 2px 3px 3px 3px;
+  transform-origin: 100% 50%;
+}
+.gt-tissue-seal {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  text-align: center;
+  background: radial-gradient(circle at 35% 30%, #ff9466, #ec5419 55%, #b8400f);
+  color: #fff1de;
+  font: 800 9px/44px var(--font-display);
+  letter-spacing: 0.08em;
+  box-shadow:
+    inset 0 0 0 2px rgb(255 220 190 / 0.35),
+    0 1px 0 rgb(0 0 0 / 0.3),
+    0 3px 5px rgb(0 0 0 / 0.4);
+  transition:
+    transform 0.7s cubic-bezier(0.45, 0, 0.2, 1),
+    opacity 0.4s 0.25s;
+}
+.gt-tissue-tip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16%;
+  text-align: center;
+  font: 400 17px/1 var(--font-script);
+  color: rgb(60 46 36 / 0.75);
+}
+.gt-tissue[data-state="rustle"] {
+  animation: gt-rustle 0.3s ease-in-out 2;
+}
+.gt-tissue[data-state="go"] .gt-th-l {
+  transform: translateX(-64%) rotate(-8deg) skewY(5deg) scaleX(0.55);
+  opacity: 0;
+}
+.gt-tissue[data-state="go"] .gt-th-r {
+  transform: translateX(64%) rotate(7deg) skewY(-5deg) scaleX(0.55);
+  opacity: 0;
+}
+.gt-tissue[data-state="go"] .gt-tissue-seal {
+  transform: translate(70px, -10px) rotate(70deg) scale(0.7);
+  opacity: 0;
+}
+.gt-tissue[data-state="go"] .gt-tissue-tip {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+@keyframes gt-rustle {
+  25% {
+    transform: translateY(-1px) skewX(0.8deg);
+  }
+  75% {
+    transform: translateY(1px) skewX(-0.8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gt-th,
+  .gt-tissue-seal {
+    transition: none;
+  }
+  .gt-tissue[data-state="rustle"] {
+    animation: none;
+  }
 }

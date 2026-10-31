@@ -7,8 +7,8 @@
   position: relative;
   display: block;
   /* чуть шире колонки: коробка лежит на столе наискосок и выступает по краям */
-  width: calc(100% + 28px);
-  margin: 0 -14px;
+  width: calc(100% + 14px);
+  margin: 0 -7px;
   aspect-ratio: 300 / 211;
   min-height: 200px;
   overflow: hidden;
@@ -515,6 +515,7 @@
   z-index: 6;
   margin: 0;
   min-height: 0;
+  aspect-ratio: auto;
   /* размер и место задаёт OpenBox по лотку; пока не измерено — не видна, чтобы не мигала */
   visibility: hidden;
   pointer-events: none;
@@ -527,10 +528,10 @@
 /* вкладыш «Правила»: бумажка в нижнем левом углу крышки, единственное, что нажимается */
 .gt-lid-insert {
   position: absolute;
-  left: 6%;
-  bottom: 12%;
+  left: 4%;
+  bottom: 11%;
   z-index: 3;
-  width: 34%;
+  width: 41%;
   padding: 7px 8px 6px;
   text-align: left;
   pointer-events: auto;
@@ -556,27 +557,41 @@
 }
 .gt-lid-insert b {
   display: block;
-  font: 900 8.5px/1 var(--font-body);
+  font: 900 10.5px/1 var(--font-body);
   letter-spacing: 0.1em;
   color: #c8321c;
 }
 .gt-lid-insert i {
   display: block;
   margin-top: 3px;
-  font: 700 6.8px/1.25 var(--font-body);
+  font: 700 8.2px/1.25 var(--font-body);
   font-style: normal;
   color: #2a2018;
 }
 .gt-lid-insert em {
   display: block;
   margin-top: 4px;
-  font: 400 10px/1 var(--font-marck);
+  font: 400 12.5px/1 var(--font-marck);
   font-style: normal;
   color: #2447b8;
 }
 .gt-lid-insert:focus-visible {
   outline: 2px solid #d4ff3a;
   outline-offset: 2px;
+}
+
+/* затемнение стола, пока коробка открывается (виньетка камеры в макете) */
+.gt-camdim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.46s;
+  background: radial-gradient(75% 55% at 50% 45%, rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.8));
+}
+.gt-table[data-leaving="true"] .gt-camdim {
+  opacity: 1;
 }
 
 /* ---------- нажатие на коробку: стол отъезжает, как камера от коробки ---------- */
