@@ -508,3 +508,116 @@
     transition: none;
   }
 }
+
+/* ---------- крышка коробки на «Чем займёмся?» ---------- */
+.gt-box.gt-lid {
+  position: absolute;
+  z-index: 6;
+  margin: 0;
+  min-height: 0;
+  /* размер и место задаёт OpenBox по лотку; пока не измерено — не видна, чтобы не мигала */
+  visibility: hidden;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.gt-box.gt-lid[data-ready="true"] {
+  visibility: visible;
+}
+/* вкладыш «Правила»: бумажка в нижнем левом углу крышки, единственное, что нажимается */
+.gt-lid-insert {
+  position: absolute;
+  left: 6%;
+  bottom: 12%;
+  z-index: 3;
+  width: 34%;
+  padding: 7px 8px 6px;
+  text-align: left;
+  pointer-events: auto;
+  transform: rotate(-9deg);
+  color: #1d2a6a;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 9px, rgb(80 120 180 / 0.35) 9px 9.6px) 0 20px / 100% 100% no-repeat,
+    linear-gradient(180deg, #fffdf5, #f1e8d0);
+  box-shadow:
+    0 2px 0 #d9ceb0,
+    0 6px 10px rgb(0 0 0 / 0.45);
+  -webkit-tap-highlight-color: transparent;
+}
+.gt-lid-insert::before {
+  /* угол вкладыша загнут */
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(225deg, #ff7a1a 50%, transparent 50.5%);
+}
+.gt-lid-insert b {
+  display: block;
+  font: 900 8.5px/1 var(--font-body);
+  letter-spacing: 0.1em;
+  color: #c8321c;
+}
+.gt-lid-insert i {
+  display: block;
+  margin-top: 3px;
+  font: 700 6.8px/1.25 var(--font-body);
+  font-style: normal;
+  color: #2a2018;
+}
+.gt-lid-insert em {
+  display: block;
+  margin-top: 4px;
+  font: 400 10px/1 var(--font-marck);
+  font-style: normal;
+  color: #2447b8;
+}
+.gt-lid-insert:focus-visible {
+  outline: 2px solid #d4ff3a;
+  outline-offset: 2px;
+}
+
+/* ---------- нажатие на коробку: стол отъезжает, как камера от коробки ---------- */
+.gt-decor,
+.gt-shelf,
+.gt-ticket-wrap,
+.gt-trio,
+.gt-profile {
+  transition:
+    transform 0.46s cubic-bezier(0.5, 0, 0.25, 1),
+    opacity 0.34s;
+}
+.gt-table[data-leaving="true"] .gt-decor {
+  transform: translateX(-50%) scale(1.4);
+  opacity: 0;
+}
+.gt-table[data-leaving="true"] .gt-shelf {
+  transform: translateY(-26px);
+  opacity: 0;
+}
+.gt-table[data-leaving="true"] .gt-ticket-wrap {
+  transform: translateY(-18px) scale(0.96);
+  opacity: 0;
+}
+.gt-table[data-leaving="true"] .gt-trio {
+  transform: translateY(34px);
+  opacity: 0;
+}
+.gt-table[data-leaving="true"] .gt-profile {
+  opacity: 0;
+}
+.gt-table[data-leaving="true"] .gt-box {
+  z-index: 4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-decor,
+  .gt-shelf,
+  .gt-ticket-wrap,
+  .gt-trio,
+  .gt-profile {
+    transition: none;
+  }
+}

@@ -16,12 +16,15 @@ import { TrackedLink } from "@/components/home/TrackedLink";
 import { useContinuePick, type ContinueTestSummary } from "@/components/home/ContinueCard";
 import { trackHomeClick } from "@/lib/analytics";
 import { BOX_SKINS, nextBoxSkin, setBoxSkin, useBoxSkin } from "@/lib/box-skin";
+import { setBoxFlight } from "@/lib/box-flight";
 import { prefersReducedMotion, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { isMusicPlaying, subscribeMusic, toggleMusic } from "@/lib/music";
 import { profileInitial, useProfileName } from "@/lib/profile-name";
 import { useTodayData } from "@/lib/today";
-import { BULB_SVG, CARD_BACK, CARD_BACK_RED, SKIN_ART, START_CARDS, START_DECOR, START_PROPS } from "./decor-art";
+import { BULB_SVG, CARD_BACK, CARD_BACK_RED, START_CARDS, START_DECOR, START_PROPS } from "./decor-art";
+import { BoxFace, PlayGlyph } from "./BoxFace";
+import { BoxRulesSheet } from "./BoxRules";
 import { DiceIcon, Plate, RulesIcon, VinylIcon, WallsIcon } from "./ShelfIcons";
 import "./table.css";
 import "./table-box.css";
@@ -45,15 +48,6 @@ export interface StartTableProps {
   diceConfig?: SectionsFile["dice"];
   /** id заданий из колоды «Мне скучно» (/gaz?dare=…): для кнопки «Мне скучно». */
   boredIds: string[];
-}
-
-/** Значок «играть» — треугольник; текстовый ▶ на iPhone превращается в цветной эмодзи. */
-function PlayGlyph({ size = 14 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 12 14" width={size * 0.86} height={size} aria-hidden="true" style={{ display: "inline-block", flex: "none" }}>
-      <path d="M1.5 1.2v11.6a.7.7 0 0 0 1.07.6l9-5.8a.7.7 0 0 0 0-1.2l-9-5.8A.7.7 0 0 0 1.5 1.2z" fill="currentColor" />
-    </svg>
-  );
 }
 
 /** Пламя серии в календаре. */
@@ -88,6 +82,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
   const [sheet, setSheet] = useState<"rules" | "wallpaper" | null>(null);
   const [torn, setTorn] = useState(false);
   const [lifting, setLifting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   const month = now.toLocaleDateString("ru-RU", { month: "long" }).toUpperCase();
 
@@ -138,11 +133,29 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
     }
   }
 
+  /** Нажали на коробку: стол отъезжает, коробка «вылетает» в лоток (на «Чем займёмся?» продолжится), потом переход. */
+  function openBox(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (prefersReducedMotion() || e.metaKey || e.ctrlKey || e.shiftKey) return; // обычный переход по ссылке
+    e.preventDefault();
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    setBoxFlight({
+      cx: r.left + r.width / 2,
+      cy: r.top + r.height / 2,
+      w: el.offsetWidth,
+      h: el.offsetHeight,
+      rot: parseFloat(getComputedStyle(el).getPropertyValue("--r")) || 0,
+    });
+    haptic("tick");
+    setLeaving(true);
+    setTimeout(() => router.push("/open"), 460);
+  }
+
   const nextName = BOX_SKINS.find((s) => s.id === nextBoxSkin(skin))?.name;
   const continueItem = pick ? (pick.kind === "test" ? pick.test : pick.game) : null;
 
   return (
-    <div className="gt-table" data-box={skin}>
+    <div className="gt-table" data-box={skin} data-leaving={leaving}>
       {/* Предметы на столе (SVG макета): гирлянда, карты, часы, домино, фишки… Под содержимым, не нажимаются */}
       <div
         className="gt-decor"
@@ -239,54 +252,8 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
         )}
 
         {/* Коробка: ведёт на «Чем займёмся?» */}
-        <TrackedLink href="/open" track={{ kind: "home", target: "play" }} className="gz-obj gt-box" data-skin={skin} aria-label="Играть: открыть коробку">
-          {skin !== "classic" && <span className="gt-box-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: SKIN_ART[skin] }} />}
-          <span className="gt-box-band">
-            <span>НАСТОЛЬНАЯ ИГРА</span>
-            <span>1–10 игроков</span>
-          </span>
-          <span className="gt-box-title">
-            <b>GAZ</b> GAME
-          </span>
-          <span className="gt-box-tag">Не сиди. Не тупи. Играй!</span>
-          <span className="gt-box-bar" aria-hidden="true">
-            <i />
-            <span>4 607001 202616</span>
-          </span>
-          <span className="gt-box-stamp" aria-hidden="true">
-            <svg viewBox="0 0 60 60">
-              <defs>
-                <path id="gt-stamp-ring" d="M30 30m-21 0a21 21 0 1 1 42 0a21 21 0 1 1-42 0" />
-              </defs>
-              <circle cx="30" cy="30" r="28.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
-              <circle cx="30" cy="30" r="15" fill="none" stroke="currentColor" strokeWidth="0.9" />
-              <text fontSize="5.4" fontWeight="800" letterSpacing="0.9" fill="currentColor" fontFamily="Manrope Variable, sans-serif">
-                <textPath href="#gt-stamp-ring">GAZ GAME · ИГРОВОЙ ВЕЧЕР · </textPath>
-              </text>
-              <text x="30" y="34.5" textAnchor="middle" fontSize="12" fontWeight="900" fontStyle="italic" fill="currentColor" fontFamily="Playfair Display, serif">
-                GAZ
-              </text>
-            </svg>
-          </span>
-          <span className="gt-box-b16" aria-hidden="true">
-            16+
-          </span>
-          <span className="gt-box-b30" aria-hidden="true">
-            <span>
-              <b>30+</b>игр
-            </span>
-          </span>
-          <span className="gt-box-play">
-            Играть <PlayGlyph size={17} />
-          </span>
-          <span className="gt-box-foot" aria-hidden="true">
-            ОТКРЫВАТЬ С ДРУЗЬЯМИ ✦
-          </span>
-          <span className="gt-box-side" aria-hidden="true">
-            <i />
-            <span>ТИРАЖ № 001 · 30+ ИГР · ВОЗРАСТ 16+ · СДЕЛАНО В GAZ</span>
-            <i />
-          </span>
+        <TrackedLink href="/open" track={{ kind: "home", target: "play" }} onClick={openBox} className="gz-obj gt-box" data-skin={skin} aria-label="Играть: открыть коробку">
+          <BoxFace skin={skin} />
         </TrackedLink>
 
         {/* Календарь, «Мне скучно», VIP */}
@@ -347,18 +314,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
         </div>
       </div>
 
-      {sheet === "rules" && (
-        <Sheet label="Правила GAZ GAME" onClose={() => setSheet(null)}>
-          <h2 className="font-display text-[19px] leading-tight font-extrabold">Правила GAZ GAME</h2>
-          <ol className="flex list-decimal flex-col gap-2 pl-5 text-[15px] leading-snug">
-            <li>Жми «Играть» и открывай коробку: внутри разделы для компании, для пары и для себя.</li>
-            <li>Выбери то, что ближе, и тапни игру или тест. Правила каждой игры — в одно касание.</li>
-            <li>Не знаешь, во что играть? Кинь кубики или жми «Мне скучно».</li>
-          </ol>
-          <p className="text-[12px] text-muted">[черновик: настоящие правила напишет основатель]</p>
-          <Jeton onClick={() => setSheet(null)}>Понятно</Jeton>
-        </Sheet>
-      )}
+      {sheet === "rules" && <BoxRulesSheet onClose={() => setSheet(null)} />}
       {sheet === "wallpaper" && (
         <Sheet label="Обои: оформление коробки" onClose={() => setSheet(null)}>
           <h2 className="font-display text-[19px] leading-tight font-extrabold">Обои</h2>

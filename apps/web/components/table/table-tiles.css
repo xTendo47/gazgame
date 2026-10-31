@@ -407,37 +407,48 @@
     opacity: 0.2;
   }
 }
-/* лента «СКОРО» на закрытой плитке */
+/* лента «СКОРО» на закрытой плитке: узкая диагональ в правом верхнем углу, телевизор остаётся виден целиком */
 .gt-soon {
   position: absolute;
-  left: calc(-6 * var(--u));
-  right: calc(-6 * var(--u));
-  top: calc(30 * var(--u));
+  top: 0;
+  right: 0;
   z-index: 5;
+  width: calc(58 * var(--u));
+  height: calc(58 * var(--u));
+  overflow: hidden;
+  pointer-events: none;
+}
+.gt-soon-band {
+  position: absolute;
+  top: calc(12 * var(--u));
+  right: calc(-24 * var(--u));
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: calc(6 * var(--u));
-  height: calc(26 * var(--u));
-  transform: rotate(-7deg);
-  background: repeating-linear-gradient(-45deg, #ffd21a 0 9px, #141217 9px 18px);
+  gap: calc(3 * var(--u));
+  width: calc(92 * var(--u));
+  height: calc(15 * var(--u));
+  transform: rotate(45deg);
+  background: repeating-linear-gradient(-45deg, #ffd21a 0 6px, #141217 6px 12px);
   box-shadow:
-    0 0 0 2px #141217,
-    0 5px 9px rgb(0 0 0 / 0.55);
-  pointer-events: none;
+    0 0 0 1px #141217,
+    0 3px 5px rgb(0 0 0 / 0.55);
 }
-.gt-soon b {
-  padding: calc(2.5 * var(--u)) calc(8 * var(--u));
+.gt-soon-band b {
+  padding: calc(1.5 * var(--u)) calc(4 * var(--u));
   background: #141217;
   color: #ffd21a;
-  font: 800 calc(11 * var(--u)) / 1 var(--font-display);
-  letter-spacing: 0.16em;
+  font: 800 calc(7 * var(--u)) / 1 var(--font-display);
+  letter-spacing: 0.14em;
 }
-.gt-soon svg {
+.gt-soon-band svg {
   flex: none;
-  width: calc(16 * var(--u));
-  height: calc(19 * var(--u));
-  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.5));
+  width: calc(8 * var(--u));
+  height: calc(9.5 * var(--u));
+  padding: calc(1.5 * var(--u));
+  box-sizing: content-box;
+  border-radius: 50%;
+  background: #141217;
 }
 
 /* ---------- нижний ряд ---------- */

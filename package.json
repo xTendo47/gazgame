@@ -15,7 +15,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "check": "turbo run lint typecheck test build",
+    "check": "turbo run lint typecheck test && turbo run build",
     "content:check": "npm run validate --workspace=@gazgame/content",
     "premium:codes": "npm run premium-codes --workspace=@gazgame/content --"
   },

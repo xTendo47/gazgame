@@ -160,15 +160,15 @@ export function ShowTile({ href, label }: { href: string; label: string }) {
             <b>В ЭФИРЕ</b>
           </span>
         </span>
-        {/* лента «СКОРО»: раздел ещё не готов */}
+        {/* лента «СКОРО» в углу: раздел ещё не готов */}
         <span className="gt-soon" aria-hidden="true">
-          <svg viewBox="0 0 24 28">
-            <path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="#d8d8de" strokeWidth="2.4" strokeLinecap="round" />
-            <rect x="3" y="11" width="18" height="15" rx="2.5" fill="#f2c318" stroke="#141217" strokeWidth="1.4" />
-            <circle cx="12" cy="18" r="2.2" fill="#141217" />
-            <path d="M12 19v3.4" stroke="#141217" strokeWidth="1.8" strokeLinecap="round" />
-          </svg>
-          <b>СКОРО</b>
+          <span className="gt-soon-band">
+            <svg viewBox="0 0 24 28">
+              <path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="#ffd21a" strokeWidth="3" strokeLinecap="round" />
+              <rect x="3" y="11" width="18" height="15" rx="2.5" fill="#ffd21a" />
+            </svg>
+            <b>СКОРО</b>
+          </span>
         </span>
       </span>
     </Link>

@@ -12,6 +12,7 @@ import { activatePremium, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { BottomSheet } from "../BottomSheet";
 import { HeaderBack } from "../HeaderBack";
+import { Trident } from "../ultimate/Trident";
 import { Gem } from "./Gem";
 
 type Sheet = { kind: "section"; id: string } | { kind: "pay" } | { kind: "code" } | null;
@@ -138,9 +139,7 @@ export function PremiumScreen({
           onClick={() => trackHomeClick({ target: "ultimate" })}
           className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-3.5 py-3 text-left transition active:scale-[0.98] motion-reduce:transition-none"
         >
-          <span aria-hidden="true" className="text-2xl leading-none">
-            🔱
-          </span>
+          <Trident size={30} />
           <b className="min-w-0 flex-1 font-display text-[15px] font-bold">{ultimate.title}</b>
           <em className="rounded-full border border-lime/40 px-2.5 py-0.5 text-[11px] font-extrabold text-lime not-italic">{ultimate.subtitle}</em>
         </Link>
