@@ -8,6 +8,12 @@ export interface SoonFeature {
 
 export const SOON_FEATURES: SoonFeature[] = [
   {
+    id: "show",
+    emoji: "📺",
+    title: "GAZ GAME $HOW",
+    text: "Квиз-шоу в прямом эфире: вопрос дня, Суд над героем и супер-квиз. Уже скоро!",
+  },
+  {
     id: "subscription",
     emoji: "💎",
     title: "Подписка",

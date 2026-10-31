@@ -1,0 +1,132 @@
+/* Экран «Чем займёмся?»: лоток с четырьмя плитками и нижний ряд. Образец — _design/etalon/03_chem_zaimemsya.png.
+   Рамка лотка — CSS; картинки плиток — public/table/*.webp (вырезаны из макета). */
+
+.gt-open .gt-inner {
+  justify-content: flex-start;
+  gap: 12px;
+}
+.gt-open-title {
+  margin: 4px 0 4px;
+  font: 800 clamp(26px, 8.2vw, 32px) / 1.05 var(--font-display);
+  color: #fff;
+  text-shadow:
+    0 3px 0 rgb(0 0 0 / 0.55),
+    0 6px 14px rgb(0 0 0 / 0.5);
+}
+
+/* лоток: оранжевая рамка, внутри тёмное дерево и выемка сверху */
+.gt-tray {
+  position: relative;
+  padding: 10px;
+  border: 6px solid #ee5a1b;
+  border-radius: 13px;
+  background:
+    var(--gz-noise),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.22) 0 2px, transparent 2px 26px),
+    linear-gradient(180deg, #5a3a22, #3f2514);
+  box-shadow:
+    inset 0 0 0 2px #b8400f,
+    inset 0 6px 14px rgb(0 0 0 / 0.55),
+    0 3px 0 #a8380b,
+    0 10px 16px rgb(0 0 0 / 0.55);
+}
+.gt-tray-notch {
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  width: 52px;
+  height: 14px;
+  margin-left: -26px;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #2a1a10, #1a0f08);
+  box-shadow: inset 0 -2px 3px rgb(0 0 0 / 0.5);
+}
+.gt-tray-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.gt-tile {
+  position: relative;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+.gt-tile:focus-visible,
+.gt-extra:focus-visible {
+  outline: 3px solid #d4ff3a;
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+.gt-tile img {
+  display: block;
+  height: auto;
+  /* плитка чуть выступает за свою ячейку: в картинке запас под тень */
+  margin: -4px;
+  width: calc(100% + 8px);
+  max-width: none;
+}
+
+/* закрытая плитка: затемнена, поперёк жёлто-чёрная лента «СКОРО» и замок */
+.gt-tile-locked img {
+  filter: brightness(0.62) saturate(0.7);
+}
+.gt-soon {
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  margin-top: -18px;
+  transform: rotate(-8deg);
+  background: repeating-linear-gradient(-45deg, #ffd21a 0 10px, #141217 10px 20px);
+  box-shadow:
+    0 0 0 2px #141217,
+    0 6px 10px rgb(0 0 0 / 0.55);
+}
+.gt-soon b {
+  padding: 3px 9px;
+  background: #141217;
+  color: #ffd21a;
+  font: 800 13px/1 var(--font-display);
+  letter-spacing: 0.16em;
+}
+.gt-soon svg {
+  flex: none;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.5));
+}
+
+/* нижний ряд: альбом, записка, VIP-кейс */
+.gt-extras {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0;
+  margin: auto -12px 4px;
+}
+.gt-extra {
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.gt-extra img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.gt-extra-note {
+  margin-top: -14px;
+}
+
+/* лишняя маска справа сверху: на этом месте у макета лежит крышка коробки (появится с анимацией открытия) */
+.gt-open .gt-decor .gt-p-role {
+  display: none;
+}

@@ -239,7 +239,8 @@ export type HomeTarget =
   | "music"
   | "rules"
   | "wallpaper"
-  | "skin";
+  | "skin"
+  | "show";
 
 export function trackHomeClick(event: { target: HomeTarget }) {
   send("home_click", { ...event });
