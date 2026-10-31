@@ -10,13 +10,15 @@ import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { LockedTest, PremiumFile, SectionItem, SectionLayout, SectionsFile, SectionTab } from "@gazgame/content";
 import { boldParts, sectionGroups, toggleKind, type SectionTarget } from "@gazgame/engine";
-import { cn } from "@gazgame/ui";
+import { BackTag, cn } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
+import { CasinoScene } from "@/components/casino/CasinoScene";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
 import { RulesSheet } from "@/components/RulesSheet";
 import { trackDeeperClick, trackPreviewOpen, trackRulesOpen, trackRulesPlay, trackSoonClick } from "@/lib/analytics";
 import { haptic } from "@/lib/haptics";
 import { usePremium } from "@/lib/premium";
+import { stripEmoji } from "@/lib/text";
 
 const noopSubscribe = () => () => {};
 
@@ -65,6 +67,10 @@ export function SectionScreen({
   const [picked, setPicked] = useState<string | null>(openLocked ? (section.tabs.find((t) => t.items.some((i) => i.ref?.lockedTest === openLocked))?.id ?? null) : null);
   const tabId = picked ?? (section.tabs.some((t) => t.id === urlTab) ? urlTab : section.tabs[0]!.id);
   const tab = section.tabs.find((t) => t.id === tabId) ?? section.tabs[0]!;
+  // «Тусовка»: сначала сцена казино с тремя колодами (это вкладки раздела), после выбора колоды — список игр
+  const casino = section.id === "company";
+  const [casinoView, setCasinoView] = useState<"decks" | "games" | null>(null);
+  const showDecks = casino && (casinoView ?? (picked || urlTab || openLocked ? "games" : "decks")) === "decks";
 
   // Мини-кнопка «во что»: выбранная группа этой вкладки (при смене вкладки показываем все группы)
   const [kindSel, setKindSel] = useState<{ tab: string; kind: string | null }>({ tab: "", kind: null });
@@ -192,10 +198,31 @@ export function SectionScreen({
 
   const sheetTest = lockedTests.find((t) => t.slug === sheet);
 
+  if (showDecks) {
+    return (
+      <CasinoScene
+        title={stripEmoji(section.title)}
+        decks={section.tabs.map((t) => ({ id: t.id, name: t.name, premium: !!t.premium }))}
+        premium={premium}
+        onPick={(id) => {
+          const t = section.tabs.find((x) => x.id === id);
+          if (t) pickTab(t);
+          setCasinoView("games");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-[18px]">
       <header className="flex flex-col gap-1">
-        <BackLink href="/">Главная</BackLink>
+        {casino ? (
+          <div>
+            <BackTag onClick={() => setCasinoView("decks")}>← К колодам</BackTag>
+          </div>
+        ) : (
+          <BackLink href="/">Главная</BackLink>
+        )}
         <h1 className="mt-1 font-display text-[26px] leading-[1.1] font-extrabold">{section.title}</h1>
         <p className="text-[15px] leading-[1.45] text-muted">
           <Rich text={section.lead} />

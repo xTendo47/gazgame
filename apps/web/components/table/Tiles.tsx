@@ -10,6 +10,7 @@ import { CollectionDot } from "@/components/collection/CollectionDot";
 import { TrackedLink } from "@/components/home/TrackedLink";
 import { trackHomeClick } from "@/lib/analytics";
 import { prefersReducedMotion } from "@/lib/gaz";
+import { setOpeningSection } from "@/lib/section-open";
 import { sfx } from "@/lib/sfx";
 import { COMPASS, DIARY_COVER, LOVE_MAT, NOTE_BULB, PARTY_MAT, PARTY_SCENE, SHOW_DRAPE, SHOW_STAGE, SHOW_TV, VIP_HANDLE, VIP_INSIDE, VIP_LID } from "./tile-art";
 import "./table-tiles.css";
@@ -24,12 +25,14 @@ type SectionLinkProps = {
   section: "party" | "love" | "solo";
   label: string;
   children: ReactNode;
+  /** Что сделать при нажатии (например, поставить метку «открывается раздел»). */
+  onOpen?: () => void;
 };
 
 /** Плитка раздела: ссылка с отметкой в аналитике. */
-function SectionTile({ href, section, label, children }: SectionLinkProps) {
+function SectionTile({ href, section, label, children, onOpen }: SectionLinkProps) {
   return (
-    <TrackedLink href={href} track={{ kind: "section", section }} className="gz-obj gt-card" aria-label={label}>
+    <TrackedLink href={href} track={{ kind: "section", section }} className="gz-obj gt-card" aria-label={label} onClick={onOpen}>
       <span className="gt-in">{children}</span>
     </TrackedLink>
   );
@@ -38,7 +41,7 @@ function SectionTile({ href, section, label, children }: SectionLinkProps) {
 /** Тусовка: казино, рулетка крутится (анимация внутри SVG, ключевые кадры raysr — в table-tiles.css). */
 export function PartyTile({ href, label }: { href: string; label: string }) {
   return (
-    <SectionTile href={href} section="party" label={label}>
+    <SectionTile href={href} section="party" label={label} onOpen={() => setOpeningSection("party")}>
       <Art html={PARTY_MAT} />
       <Art html={PARTY_SCENE} />
       <span className="gt-plaque">Тусовка</span>
