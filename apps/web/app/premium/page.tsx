@@ -3,7 +3,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { premiumRefExists } from "@gazgame/engine";
-import { Screen } from "@gazgame/ui";
 import { PremiumScreen } from "@/components/premium/PremiumScreen";
 import { getCatalog } from "@/lib/catalog";
 
@@ -16,8 +15,6 @@ export default function PremiumPage() {
   const found = Object.fromEntries(texts.sections.map((s) => [s.id, s.items.map((i) => premiumRefExists(catalog, i.ref))]));
 
   return (
-    <Screen>
-      <PremiumScreen texts={texts} found={found} hashes={catalog.premiumCodes ?? []} ultimate={catalog.ultimate?.tile} />
-    </Screen>
+    <PremiumScreen texts={texts} found={found} hashes={catalog.premiumCodes ?? []} ultimate={catalog.ultimate?.tile} />
   );
 }
