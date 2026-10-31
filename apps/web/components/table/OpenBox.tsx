@@ -30,7 +30,7 @@ const section = (id: "party" | "love" | "solo") => HOME_SECTIONS.find((s) => s.i
 const SUGGEST = MINI_BUTTONS.find((m) => m.id === "suggest");
 
 /** Где крышка остаётся после открытия: доля ширины и высоты лотка от его центра и наклон (LK[3] макета). */
-const REST = { dx: 0.74, dy: -0.86, turn: 13 };
+const REST = { dx: 0.63, dy: -0.6, turn: 13, ratio: 211 / 300 };
 
 type TissueState = "off" | "on" | "rustle" | "go";
 
@@ -68,7 +68,7 @@ export function OpenBox() {
   const dim = useRef<HTMLDivElement>(null);
   const timers = useRef<number[]>([]);
   const busy = useRef(false);
-  const geo = useRef<{ left: number; top: number; W: number; H: number; rest: string } | null>(null);
+  const geo = useRef<{ shape: (k: number) => { left: string; top: string; width: string; height: string }; W: number; H: number; rest: string } | null>(null);
 
   /** Развернуть бумагу: шорох, половинки разъезжаются, печать улетает. */
   const tissueAway = useCallback(() => {
@@ -95,9 +95,15 @@ export function OpenBox() {
     const left = tr.left - rr.left;
     const top = tr.top - rr.top;
     const rest = `translate(${REST.dx * W}px, ${REST.dy * H}px) rotate(${REST.turn}deg)`;
-    Object.assign(lidEl.style, { left: `${left}px`, top: `${top}px`, width: `${W}px`, height: `${H}px`, transform: rest });
+    // k = 0: портретная крышка на весь лоток (при вылете); k = 1: она же, но ниже и шире по пропорциям коробки — такой лежит в углу
+    const Hr = W * REST.ratio;
+    const shape = (k: number) => {
+      const h = H + (Hr - H) * k;
+      return { left: `${left}px`, top: `${top + (H - h) / 2}px`, width: `${W}px`, height: `${h}px` };
+    };
+    Object.assign(lidEl.style, { ...shape(1), transform: rest });
     lidEl.dataset.ready = "true";
-    geo.current = { left, top, W, H, rest };
+    geo.current = { shape, W, H, rest };
 
     const flight = peekBoxFlight();
     if (!flight || prefersReducedMotion() || typeof lidEl.animate !== "function") {
@@ -105,7 +111,7 @@ export function OpenBox() {
       return;
     }
 
-    const onTray = (transform: string) => ({ left: `${left}px`, top: `${top}px`, width: `${W}px`, height: `${H}px`, transform });
+    const onTray = (transform: string, k = 0) => ({ ...shape(k), transform });
     const start = {
       left: `${flight.cx - flight.w / 2 - rr.left}px`,
       top: `${flight.cy - flight.h / 2 - rr.top}px`,
@@ -115,8 +121,8 @@ export function OpenBox() {
     };
     const cover = onTray("rotate(0deg)");
     const lift = onTray(`translate(0px, ${-0.046 * H}px) perspective(900px) rotateX(10deg) rotate(-1deg) scale(1.035)`);
-    const mid = onTray(`translate(${0.4 * W}px, ${-0.42 * H}px) perspective(900px) rotateX(6deg) rotate(6deg) scale(1.05)`);
-    const end = onTray(rest);
+    const mid = onTray(`translate(${0.4 * W}px, ${-0.42 * H}px) perspective(900px) rotateX(6deg) rotate(6deg) scale(1.05)`, 0.5);
+    const end = onTray(rest, 1);
 
     sfx.arm();
     const anims: Animation[] = [];
@@ -167,7 +173,7 @@ export function OpenBox() {
       .then(() => {
         sfx.thump(0.45);
         anims.forEach((a) => a.cancel());
-        Object.assign(lidEl.style, onTray(rest));
+        Object.assign(lidEl.style, onTray(rest, 1));
         clearBoxFlight();
         // бумага сама убирается через 0,65 с после того, как крышка легла
         if (withTissue.current) timers.current.push(window.setTimeout(tissueAway, 650));
@@ -191,15 +197,15 @@ export function OpenBox() {
     if (busy.current) return;
     busy.current = true;
     setTissue("off");
-    const { left, top, W, H, rest } = g;
-    const onTray = (transform: string) => ({ left: `${left}px`, top: `${top}px`, width: `${W}px`, height: `${H}px`, transform });
+    const { shape, W, H, rest } = g;
+    const onTray = (transform: string, k = 0) => ({ ...shape(k), transform });
     const rr = rootEl.getBoundingClientRect();
     const target = lastBoxFlight();
     sfx.lid();
     const back = lidEl.animate(
       [
-        { ...onTray(rest), offset: 0 },
-        { ...onTray(`translate(${0.4 * W}px, ${-0.42 * H}px) perspective(900px) rotateX(6deg) rotate(6deg) scale(1.05)`), offset: 0.3 },
+        { ...onTray(rest, 1), offset: 0 },
+        { ...onTray(`translate(${0.4 * W}px, ${-0.42 * H}px) perspective(900px) rotateX(6deg) rotate(6deg) scale(1.05)`, 0.5), offset: 0.3 },
         { ...onTray(`translate(0px, ${-0.046 * H}px) perspective(900px) rotateX(10deg) rotate(-1deg) scale(1.035)`), offset: 0.62 },
         { ...onTray("rotate(0deg)"), offset: 1 },
       ],

@@ -528,10 +528,10 @@
 /* вкладыш «Правила»: бумажка в нижнем левом углу крышки, единственное, что нажимается */
 .gt-lid-insert {
   position: absolute;
-  left: 4%;
-  bottom: 11%;
+  left: 22%;
+  bottom: 13%;
   z-index: 3;
-  width: 41%;
+  width: 36%;
   padding: 7px 8px 6px;
   text-align: left;
   pointer-events: auto;

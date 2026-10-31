@@ -144,13 +144,42 @@
 }
 /* кожа обложки темнее исходного рисунка, как в макете */
 .gt-book-cover > .gt-art {
-  filter: brightness(0.58) contrast(1.1);
+  filter: brightness(0.4) contrast(1.15);
+}
+/* крупные золотые уголки обложки */
+.gt-book-corner {
+  position: absolute;
+  z-index: 2;
+  width: calc(30 * var(--u));
+  height: calc(30 * var(--u));
+  background: linear-gradient(135deg, #fff1c4, #d9b45a 50%, #7a5a1a);
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.6));
+}
+.gt-c-tl {
+  left: 0;
+  top: 0;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.gt-c-tr {
+  right: 0;
+  top: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.gt-c-bl {
+  left: 0;
+  bottom: 0;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+.gt-c-br {
+  right: 0;
+  bottom: 0;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 .gt-book-title {
   position: absolute;
-  left: 0;
-  right: calc(18 * var(--u));
-  top: calc(13 * var(--u));
+  left: calc(14 * var(--u));
+  right: calc(34 * var(--u));
+  top: calc(15 * var(--u));
   text-align: center;
   font: 900 calc(14 * var(--u)) / 1 var(--font-playfair);
   letter-spacing: 0.16em;
@@ -181,7 +210,7 @@
 .gt-book-kanji {
   position: absolute;
   left: 0;
-  right: calc(18 * var(--u));
+  right: calc(24 * var(--u));
   bottom: calc(20 * var(--u));
   text-align: center;
   font: 700 calc(13 * var(--u)) / 1 "Noto Serif JP", "Yu Mincho", "MS Mincho", serif;
@@ -196,7 +225,7 @@
   right: calc(8 * var(--u));
   top: calc(-3 * var(--u));
   bottom: calc(-3 * var(--u));
-  width: calc(14 * var(--u));
+  width: calc(21 * var(--u));
   background:
     repeating-linear-gradient(0deg, rgb(0 0 0 / 0.35) 0 1px, transparent 1px calc(3 * var(--u))),
     linear-gradient(90deg, #4a3a2a, #8a7254 40%, #5a4632);

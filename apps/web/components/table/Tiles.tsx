@@ -84,7 +84,7 @@ export function LoveTile({ href, label }: { href: string; label: string }) {
           <ellipse cx="66.5" cy="83" rx="4.5" ry="2.2" fill="#fff" opacity=".35" transform="rotate(-25 66.5 83)" />
         </g>
         {/* роза на ветке */}
-        <g transform="translate(4 8)">
+        <g transform="translate(-16 -4) scale(1.38) translate(4 8)">
           <path d="M6 44C22 36 38 26 60 14" fill="none" stroke="#3f6a2e" strokeWidth="2.2" strokeLinecap="round" />
           <path d="M20 38l-3-6 7 3zM34 29l-2-7 7 4z" fill="#3f6a2e" />
           <ellipse cx="26" cy="33" rx="6.5" ry="3" fill="#4f8038" transform="rotate(-35 26 33)" />
@@ -93,7 +93,7 @@ export function LoveTile({ href, label }: { href: string; label: string }) {
           <path d="M57 12c3-4 9-3 10 1M58 16c3 3 8 2 9-1M62 9c2 1 3 3 2 5" fill="none" stroke="#e8708a" strokeWidth=".9" strokeLinecap="round" opacity=".8" />
         </g>
         {/* марка с сердцем */}
-        <g transform="rotate(8 120 34)">
+        <g transform="translate(122 34) scale(1.24) translate(-120 -34) rotate(8 120 34)">
           <rect x="105" y="14" width="29" height="36" rx="1.5" fill="#fff" stroke="#e8b3c8" strokeWidth=".8" strokeDasharray="1.6 1.2" />
           <rect x="108.5" y="17.5" width="22" height="29" fill="#ffc2d8" />
           <path d="M119.5 39c-5.500-3.300-7.500-5.800-7.500-8.500 0-2.100 1.600-3.600 3.500-3.600 1.600 0 3 .9 4 2.500 1-1.600 2.400-2.500 4-2.500 1.900 0 3.500 1.500 3.500 3.600 0 2.700-2 5.200-7.500 8.500z" fill="#d6337f" />
@@ -113,6 +113,10 @@ export function DiaryTile({ href, label }: { href: string; label: string }) {
         <span className="gt-book-pages" />
         <span className="gt-book-cover">
           <Art html={DIARY_COVER} />
+          <span className="gt-book-corner gt-c-tl" aria-hidden="true" />
+          <span className="gt-book-corner gt-c-tr" aria-hidden="true" />
+          <span className="gt-book-corner gt-c-bl" aria-hidden="true" />
+          <span className="gt-book-corner gt-c-br" aria-hidden="true" />
           <span className="gt-book-title">ДНЕВНИК</span>
           <span className="gt-book-compass" dangerouslySetInnerHTML={{ __html: COMPASS }} aria-hidden="true" />
           <span className="gt-book-kanji" aria-hidden="true">
