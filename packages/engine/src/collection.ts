@@ -65,7 +65,7 @@ export interface CollectionContent {
 }
 
 /**
- * Контент для Коллекции. Порядок полки «Я»: тесты раздела «Познай себя» как в sections.json, потом остальные тесты
+ * Контент для Коллекции. Порядок полки «Я»: тесты раздела «Дневник» как в sections.json, потом остальные тесты
  * (например, «Тип привязанности»), потом платные тесты. Видимость — как в каталоге.
  */
 export function collectionContent(catalog: Catalog, options?: VisibilityOptions): CollectionContent {

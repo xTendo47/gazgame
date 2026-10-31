@@ -329,7 +329,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
   );
 }
 
-/** «Вернуться в «Познай себя»» (раздел solo). Если теста там нет — в его первый раздел. Названия — в sections.ts. */
+/** «Вернуться в «Дневник»» (раздел solo). Если теста там нет — в его первый раздел. Названия — в sections.ts. */
 function BackToSection({ test }: { test: Test }) {
   const section = getSection(test.sections.includes("solo") ? "solo" : (test.sections[0] ?? "solo"));
   if (!section) return null;

@@ -28,8 +28,8 @@ const near = (actual: number | undefined, expected: number, tol: number, label: 
   expect(actual ?? 0, `${label}: ${(actual ?? 0).toFixed(2)}% (ждали ${expected}%)`).toBeLessThan(expected + tol);
 };
 
-describe("4 теста Соло → Кто ты: общее", () => {
-  it("12 вопросов по 4 варианта, раздел Соло, бесплатно, варианты перемешиваются", () => {
+describe("4 теста Дневника → Кто ты: общее", () => {
+  it("12 вопросов по 4 варианта, раздел Дневник, бесплатно, варианты перемешиваются", () => {
     for (const t of [intro, color, vibe, city]) {
       expect(t.questions, t.id).toHaveLength(12);
       for (const q of t.questions) expect(q.options, `${t.id}: ${q.id}`).toHaveLength(4);

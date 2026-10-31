@@ -17,7 +17,7 @@ export default function PremiumPage() {
 
   return (
     <Screen>
-      <PremiumScreen texts={texts} found={found} hashes={catalog.premiumCodes ?? []} />
+      <PremiumScreen texts={texts} found={found} hashes={catalog.premiumCodes ?? []} ultimate={catalog.ultimate?.tile} />
     </Screen>
   );
 }

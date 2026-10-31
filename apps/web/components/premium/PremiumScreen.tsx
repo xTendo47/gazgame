@@ -7,7 +7,7 @@ import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import type { PremiumFile } from "@gazgame/content";
 import { cn } from "@gazgame/ui";
-import { trackSubscribeClick, trackSubscribeWaitlist } from "@/lib/analytics";
+import { trackHomeClick, trackSubscribeClick, trackSubscribeWaitlist } from "@/lib/analytics";
 import { activatePremium, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { BottomSheet } from "../BottomSheet";
@@ -32,11 +32,14 @@ export function PremiumScreen({
   texts,
   found,
   hashes,
+  ultimate,
 }: {
   texts: PremiumFile;
   /** Найден ли в контенте пункт шторки: found[sectionId][i]. Нет — «скоро». */
   found: Record<string, boolean[]>;
   hashes: string[];
+  /** Плитка Ultimate (название и «скоро») из ultimate.json: ссылка на /ultimate. */
+  ultimate?: { title: string; subtitle: string };
 }) {
   const premium = usePremium();
   const [sheet, setSheet] = useState<Sheet>(null);
@@ -128,6 +131,20 @@ export function PremiumScreen({
           {texts.fresh.text} <b className="font-bold text-lime">{texts.fresh.accent}</b>
         </span>
       </div>
+
+      {ultimate && (
+        <Link
+          href="/ultimate"
+          onClick={() => trackHomeClick({ target: "ultimate" })}
+          className="flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface px-3.5 py-3 text-left transition active:scale-[0.98] motion-reduce:transition-none"
+        >
+          <span aria-hidden="true" className="text-2xl leading-none">
+            🔱
+          </span>
+          <b className="min-w-0 flex-1 font-display text-[15px] font-bold">{ultimate.title}</b>
+          <em className="rounded-full border border-lime/40 px-2.5 py-0.5 text-[11px] font-extrabold text-lime not-italic">{ultimate.subtitle}</em>
+        </Link>
+      )}
 
       {on ? (
         <Link

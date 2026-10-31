@@ -1,0 +1,736 @@
+/* Плитки лотка («Тусовка», «Романтика», «Дневник», $HOW) и нижний ряд («Коллекция», «Предложи своё», VIP-кейс).
+   Рисунки — SVG макета v6.4 (tile-art.ts) и свои (конверт, обложка, альбом); тексты — настоящие.
+   Размеры считаются от ширины плитки: --u = 1/146 её ширины, поэтому всё масштабируется вместе с экраном.
+   Анимации — только transform/opacity; при «Уменьшить движение» всё стоит. */
+
+/* ---------- каркас плитки ---------- */
+.gt-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 154 / 183;
+  container-type: inline-size;
+  -webkit-tap-highlight-color: transparent;
+}
+/* выемка в лотке, в которой лежит плитка */
+.gt-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #24150d, #150c07);
+  box-shadow:
+    inset 0 2px 5px rgb(0 0 0 / 0.7),
+    0 1px 0 rgb(255 226 190 / 0.14);
+}
+.gt-in {
+  --u: calc(100cqw / 154);
+  position: absolute;
+  inset: calc(4 * var(--u));
+  overflow: hidden;
+  border-radius: calc(5 * var(--u));
+}
+.gt-art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+.gt-art > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Тусовка: казино, рулетка крутится ---------- */
+@keyframes raysr {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.gt-plaque {
+  position: absolute;
+  left: 50%;
+  top: calc(7 * var(--u));
+  z-index: 3;
+  transform: translateX(-50%);
+  padding: calc(5 * var(--u)) calc(18 * var(--u)) calc(6 * var(--u));
+  border-radius: 999px;
+  background: linear-gradient(180deg, #17402f, #0a2218);
+  box-shadow:
+    inset 0 0 0 calc(2 * var(--u)) #e9cf86,
+    inset 0 0 0 calc(3.6 * var(--u)) #1a4a36,
+    inset 0 0 0 calc(4.4 * var(--u)) rgb(233 207 134 / 0.7),
+    0 calc(3 * var(--u)) calc(6 * var(--u)) rgb(0 0 0 / 0.5);
+  white-space: nowrap;
+  font: italic 900 calc(17 * var(--u)) / 1 var(--font-playfair);
+  letter-spacing: 0.04em;
+  color: #fff3c9;
+  text-shadow:
+    0 0 calc(5 * var(--u)) rgb(255 224 140 / 0.85),
+    0 calc(1 * var(--u)) 0 rgb(80 50 0 / 0.6);
+}
+
+/* ---------- Романтика: конверт ---------- */
+.gt-love-body {
+  position: absolute;
+  inset: 0;
+}
+.gt-love-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(114 * var(--u));
+  z-index: 3;
+  transform: rotate(-2deg);
+  text-align: center;
+  font: italic 900 calc(19 * var(--u)) / 1 var(--font-playfair);
+  letter-spacing: 0.01em;
+  color: #b3235b;
+  text-shadow: 0 calc(1 * var(--u)) 0 rgb(255 255 255 / 0.7);
+}
+.gt-love-sub {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(140 * var(--u));
+  z-index: 3;
+  transform: rotate(-2deg);
+  text-align: center;
+  font: 400 calc(12 * var(--u)) / 1 var(--font-script);
+  letter-spacing: 0.22em;
+  color: #b0527d;
+}
+.gt-heart-pulse {
+  transform-origin: 73px 83px;
+  animation: gt-heartbeat 2.4s ease-in-out infinite;
+}
+@keyframes gt-heartbeat {
+  0%,
+  60%,
+  100% {
+    transform: scale(1);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  80% {
+    transform: scale(0.97);
+  }
+}
+
+/* ---------- Дневник: обложка, компас, золотой свет из страниц ---------- */
+.gt-book {
+  position: absolute;
+  left: calc(10 * var(--u));
+  top: calc(8 * var(--u));
+  width: calc(122 * var(--u));
+  height: calc(150 * var(--u));
+}
+.gt-book-pages {
+  position: absolute;
+  inset: calc(3 * var(--u)) calc(-5 * var(--u)) calc(-5 * var(--u)) calc(3 * var(--u));
+  border-radius: 2px calc(7 * var(--u)) calc(7 * var(--u)) 2px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(2 * var(--u)), rgb(120 90 40 / 0.22) calc(2 * var(--u)) calc(2.6 * var(--u))),
+    linear-gradient(90deg, #efe2c0, #fbf2da);
+  box-shadow: 0 calc(3 * var(--u)) calc(6 * var(--u)) rgb(0 0 0 / 0.55);
+}
+.gt-book-cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2px calc(6 * var(--u)) calc(6 * var(--u)) 2px;
+  box-shadow: 0 calc(2 * var(--u)) calc(4 * var(--u)) rgb(0 0 0 / 0.5);
+}
+/* кожа обложки темнее исходного рисунка, как в макете */
+.gt-book-cover > .gt-art {
+  filter: brightness(0.58) contrast(1.1);
+}
+.gt-book-title {
+  position: absolute;
+  left: 0;
+  right: calc(18 * var(--u));
+  top: calc(13 * var(--u));
+  text-align: center;
+  font: 900 calc(14 * var(--u)) / 1 var(--font-playfair);
+  letter-spacing: 0.16em;
+  padding-left: 0.16em;
+  background: linear-gradient(180deg, #fff1c4, #d9b45a 55%, #8a6420);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.6));
+}
+.gt-book-title::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin: calc(6 * var(--u)) 12% 0;
+  background: linear-gradient(90deg, transparent, #c9a14e, transparent);
+}
+.gt-book-compass {
+  position: absolute;
+  left: calc(14 * var(--u));
+  top: calc(40 * var(--u));
+  width: calc(76 * var(--u));
+  height: calc(76 * var(--u));
+  transform-origin: 50% 50%;
+  animation: gt-compass-turn 11s ease-in-out infinite;
+  filter: drop-shadow(0 calc(2 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.6));
+}
+.gt-book-kanji {
+  position: absolute;
+  left: 0;
+  right: calc(18 * var(--u));
+  bottom: calc(20 * var(--u));
+  text-align: center;
+  font: 700 calc(13 * var(--u)) / 1 "Noto Serif JP", "Yu Mincho", "MS Mincho", serif;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+  color: #d9b45a;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.6);
+}
+/* ремешок и пряжка */
+.gt-book-strap {
+  position: absolute;
+  right: calc(8 * var(--u));
+  top: calc(-3 * var(--u));
+  bottom: calc(-3 * var(--u));
+  width: calc(14 * var(--u));
+  background:
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 0.35) 0 1px, transparent 1px calc(3 * var(--u))),
+    linear-gradient(90deg, #4a3a2a, #8a7254 40%, #5a4632);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 0 0 1px rgb(20 10 4 / 0.7),
+    0 calc(2 * var(--u)) calc(4 * var(--u)) rgb(0 0 0 / 0.55);
+}
+.gt-book-buckle {
+  position: absolute;
+  left: calc(-4 * var(--u));
+  right: calc(-4 * var(--u));
+  top: 56%;
+  height: calc(14 * var(--u));
+  border: calc(2.4 * var(--u)) solid #d9b45a;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow:
+    inset 0 0 0 1px rgb(80 50 10 / 0.6),
+    0 1px 2px rgb(0 0 0 / 0.5);
+}
+.gt-book-ribbon {
+  position: absolute;
+  left: calc(52 * var(--u));
+  bottom: calc(-12 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(26 * var(--u));
+  background: linear-gradient(90deg, #8f1d1d, #c0392b 50%, #8f1d1d);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.5));
+}
+/* золотой свет из страниц: полоса вдоль обреза и лучи; вспыхивает в момент, когда поворачивается компас */
+.gt-book-glow {
+  position: absolute;
+  right: calc(-12 * var(--u));
+  top: 4%;
+  bottom: 4%;
+  width: calc(36 * var(--u));
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(70% 50% at 18% 50%, rgb(255 230 150 / 0.95), rgb(255 200 90 / 0.35) 55%, transparent 80%),
+    repeating-linear-gradient(180deg, transparent 0 calc(5 * var(--u)), rgb(255 236 170 / 0.45) calc(5 * var(--u)) calc(6 * var(--u)));
+  animation: gt-holy 11s ease-in-out infinite;
+}
+@keyframes gt-compass-turn {
+  0%,
+  62%,
+  100% {
+    transform: rotate(0deg);
+  }
+  70% {
+    transform: rotate(34deg);
+  }
+  76% {
+    transform: rotate(-14deg);
+  }
+  82% {
+    transform: rotate(6deg);
+  }
+  88% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes gt-holy {
+  0%,
+  64%,
+  100% {
+    opacity: 0;
+  }
+  74% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- $HOW: сцена, ТВ, шторы, лампа «В ЭФИРЕ» ---------- */
+.gt-show-tv {
+  position: absolute;
+  left: calc(22 * var(--u));
+  top: calc(12 * var(--u));
+  width: calc(102 * var(--u));
+  height: calc(122 * var(--u));
+}
+.gt-show-tv svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gt-show-tv .tvt {
+  animation: gt-tvflick 5s infinite;
+}
+.gt-show-tv .rec,
+.gt-show-tv .onair {
+  animation: gt-recb 1.4s steps(1) infinite;
+}
+.gt-drape .dl,
+.gt-drape .dr,
+.gt-drape .dt {
+  transition: transform 0.7s cubic-bezier(0.3, 0.9, 0.3, 1.1);
+}
+.gt-drape .dl {
+  transform-origin: 0 0;
+}
+.gt-drape .dr {
+  transform-origin: 170px 0;
+}
+/* нажатие: шторы раздвигаются */
+.gt-card[data-open="true"] .gt-drape .dl,
+.gt-card[data-open="true"] .gt-drape .dr {
+  transform: scaleX(0.55);
+}
+.gt-card[data-open="true"] .gt-drape .dt {
+  transform: translateY(-4px);
+}
+.gt-air {
+  position: absolute;
+  left: 50%;
+  bottom: calc(7 * var(--u));
+  z-index: 3;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+  padding: calc(4 * var(--u)) calc(9 * var(--u)) calc(4 * var(--u)) calc(6 * var(--u));
+  border-radius: 4px;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #121018, #07060a);
+  box-shadow:
+    inset 0 0 0 1px #c9a14e,
+    inset 0 0 0 2.5px #0a0810,
+    0 calc(3 * var(--u)) calc(5 * var(--u)) rgb(0 0 0 / 0.6);
+}
+.gt-air-lamp {
+  position: relative;
+  flex: none;
+  width: calc(14 * var(--u));
+  height: calc(14 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ff8a8a, #d41a1a 55%, #6a0606);
+  box-shadow:
+    0 0 0 1.5px #3a3c44,
+    0 0 8px #ff3b3b;
+  animation: gt-lamp 1.6s ease-in-out infinite;
+}
+.gt-air-lamp::after {
+  /* блик */
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 18%;
+  width: 36%;
+  height: 24%;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.7;
+}
+.gt-air-tx {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  text-align: left;
+}
+.gt-air-tx small {
+  font: 800 calc(6 * var(--u)) var(--font-body);
+  letter-spacing: 0.32em;
+  color: #c9a14e;
+}
+.gt-air-tx b {
+  font: 800 calc(11.5 * var(--u)) var(--font-display);
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 0 6px rgb(255 80 80 / 0.5);
+}
+@keyframes gt-lamp {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow:
+      0 0 0 1.5px #3a3c44,
+      0 0 10px #ff3b3b;
+  }
+  50% {
+    opacity: 0.55;
+    box-shadow:
+      0 0 0 1.5px #3a3c44,
+      0 0 3px #ff3b3b;
+  }
+}
+@keyframes gt-tvflick {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.5;
+  }
+  95% {
+    opacity: 1;
+  }
+}
+@keyframes gt-recb {
+  50% {
+    opacity: 0.2;
+  }
+}
+/* лента «СКОРО» на закрытой плитке */
+.gt-soon {
+  position: absolute;
+  left: calc(-6 * var(--u));
+  right: calc(-6 * var(--u));
+  top: calc(30 * var(--u));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(6 * var(--u));
+  height: calc(26 * var(--u));
+  transform: rotate(-7deg);
+  background: repeating-linear-gradient(-45deg, #ffd21a 0 9px, #141217 9px 18px);
+  box-shadow:
+    0 0 0 2px #141217,
+    0 5px 9px rgb(0 0 0 / 0.55);
+  pointer-events: none;
+}
+.gt-soon b {
+  padding: calc(2.5 * var(--u)) calc(8 * var(--u));
+  background: #141217;
+  color: #ffd21a;
+  font: 800 calc(11 * var(--u)) / 1 var(--font-display);
+  letter-spacing: 0.16em;
+}
+.gt-soon svg {
+  flex: none;
+  width: calc(16 * var(--u));
+  height: calc(19 * var(--u));
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.5));
+}
+
+/* ---------- нижний ряд ---------- */
+.gt-ex {
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  container-type: inline-size;
+  -webkit-tap-highlight-color: transparent;
+}
+.gt-ex-in {
+  --u: calc(100cqw / 118);
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 118 / 100;
+}
+/* альбом «Коллекция» */
+.gt-album {
+  transform: rotate(-4deg);
+}
+.gt-album-cover {
+  position: absolute;
+  left: calc(6 * var(--u));
+  top: calc(12 * var(--u));
+  width: calc(100 * var(--u));
+  height: calc(76 * var(--u));
+  border-radius: calc(3 * var(--u)) calc(6 * var(--u)) calc(6 * var(--u)) calc(3 * var(--u));
+  background:
+    radial-gradient(circle at 20% 25%, rgb(255 220 170 / 0.12), transparent 40%),
+    var(--gz-fibre),
+    linear-gradient(160deg, #6a3a22, #3f2012);
+  box-shadow:
+    inset 0 0 0 1px rgb(20 8 2 / 0.7),
+    0 calc(5 * var(--u)) calc(8 * var(--u)) rgb(0 0 0 / 0.55);
+}
+.gt-album-pages {
+  position: absolute;
+  left: calc(10 * var(--u));
+  top: calc(16 * var(--u));
+  width: calc(104 * var(--u));
+  height: calc(76 * var(--u));
+  border-radius: 2px calc(6 * var(--u)) calc(6 * var(--u)) 2px;
+  background: linear-gradient(90deg, #d9c9a0, #f4ead0);
+  box-shadow: 0 calc(3 * var(--u)) calc(5 * var(--u)) rgb(0 0 0 / 0.4);
+}
+.gt-album-stitch {
+  position: absolute;
+  inset: calc(5 * var(--u));
+  border: 1px dashed rgb(226 200 150 / 0.7);
+  border-radius: 3px;
+}
+.gt-album-t {
+  position: absolute;
+  left: 0;
+  right: calc(14 * var(--u));
+  top: calc(26 * var(--u));
+  text-align: center;
+  font: 800 calc(9 * var(--u)) / 1 var(--font-display);
+  letter-spacing: 0.05em;
+  background: linear-gradient(180deg, #f6dc9a, #c9962e 55%, #8a6420);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-transform: uppercase;
+}
+.gt-album-s {
+  position: absolute;
+  left: 0;
+  right: calc(14 * var(--u));
+  top: calc(44 * var(--u));
+  text-align: center;
+  font: 400 calc(13 * var(--u)) / 1 var(--font-marck);
+  letter-spacing: 0.04em;
+  color: #e6c777;
+}
+.gt-album-band {
+  position: absolute;
+  right: calc(16 * var(--u));
+  top: calc(8 * var(--u));
+  width: calc(10 * var(--u));
+  height: calc(82 * var(--u));
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2a1208, #5a3a22 50%, #2a1208);
+  box-shadow: 0 calc(2 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.55);
+}
+.gt-album-peek {
+  position: absolute;
+  right: calc(8 * var(--u));
+  top: calc(1 * var(--u));
+  width: calc(26 * var(--u));
+  height: calc(32 * var(--u));
+  transform: rotate(8deg);
+  border-radius: 3px;
+  border: calc(2 * var(--u)) solid #f3ead6;
+  background:
+    radial-gradient(circle, rgb(255 255 255 / 0.4) 0 1.4px, transparent 1.8px) 0 0 / calc(6 * var(--u)) calc(6 * var(--u)),
+    linear-gradient(160deg, #c8321c, #8a1c10);
+  box-shadow: 0 calc(2 * var(--u)) calc(4 * var(--u)) rgb(0 0 0 / 0.5);
+}
+.gt-album-corner {
+  position: absolute;
+  right: calc(7 * var(--u));
+  bottom: calc(10 * var(--u));
+  width: calc(13 * var(--u));
+  height: calc(13 * var(--u));
+  background: linear-gradient(135deg, transparent 50%, #d9b45a 51%);
+  border-radius: 0 0 calc(5 * var(--u)) 0;
+}
+
+/* записка «Предложи своё» */
+.gt-note {
+  transform: rotate(3deg);
+}
+.gt-note-paper {
+  position: absolute;
+  left: calc(8 * var(--u));
+  top: calc(18 * var(--u));
+  width: calc(98 * var(--u));
+  height: calc(66 * var(--u));
+  border-radius: 3px;
+  background: var(--gz-pnoise), linear-gradient(180deg, #f6edd2, #ebdfbd);
+  box-shadow:
+    0 1px 0 #d9c9a0,
+    0 calc(5 * var(--u)) calc(9 * var(--u)) rgb(0 0 0 / 0.5);
+}
+.gt-note-t {
+  position: absolute;
+  left: calc(8 * var(--u));
+  top: calc(8 * var(--u));
+  font: italic 900 calc(10 * var(--u)) / 1.1 var(--font-playfair);
+  color: #24160a;
+}
+.gt-note-t::after {
+  content: "";
+  display: block;
+  height: 1.5px;
+  margin-top: calc(3 * var(--u));
+  background: #a51f1a;
+}
+.gt-note-l1,
+.gt-note-l2 {
+  position: absolute;
+  left: calc(8 * var(--u));
+  font: 400 calc(9.5 * var(--u)) / 1 var(--font-marck);
+  white-space: nowrap;
+}
+.gt-note-l1 {
+  top: calc(33 * var(--u));
+  color: #6a6048;
+  text-decoration: line-through;
+  text-decoration-color: #a51f1a;
+}
+.gt-note-l2 {
+  top: calc(47 * var(--u));
+  color: #a51f1a;
+}
+.gt-note-bulb {
+  position: absolute;
+  right: calc(2 * var(--u));
+  top: calc(-2 * var(--u));
+  width: calc(24 * var(--u));
+  height: calc(37 * var(--u));
+  transform: rotate(8deg);
+  filter: drop-shadow(0 calc(2 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.45));
+}
+.gt-note-bulb svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gt-note-glow {
+  position: absolute;
+  right: calc(-8 * var(--u));
+  top: calc(-12 * var(--u));
+  width: calc(50 * var(--u));
+  height: calc(50 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 214 120 / 0.55), transparent 65%);
+  opacity: 0.6;
+  animation: gt-bulb-glow 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes gt-bulb-glow {
+  to {
+    opacity: 1;
+  }
+}
+
+/* VIP-кейс: открывается при нажатии */
+.gt-vipcase {
+  transform: rotate(1.5deg);
+}
+.gt-vc-glow {
+  position: absolute;
+  left: calc(12 * var(--u));
+  top: calc(26 * var(--u));
+  width: calc(92 * var(--u));
+  height: calc(58 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 210 110 / 0.7), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+.gt-vc-inside {
+  position: absolute;
+  left: calc(8 * var(--u));
+  top: calc(22 * var(--u));
+  width: calc(100 * var(--u));
+  height: calc(72 * var(--u));
+  filter: drop-shadow(0 calc(4 * var(--u)) calc(5 * var(--u)) rgb(0 0 0 / 0.55));
+}
+.gt-vc-lid {
+  position: absolute;
+  left: calc(8 * var(--u));
+  top: calc(22 * var(--u));
+  width: calc(100 * var(--u));
+  height: calc(72 * var(--u));
+  transform-origin: 50% 0;
+  transition: transform 0.7s cubic-bezier(0.3, 1.2, 0.5, 1);
+  filter: drop-shadow(0 calc(4 * var(--u)) calc(5 * var(--u)) rgb(0 0 0 / 0.55));
+}
+.gt-vc-inside svg,
+.gt-vc-lid > .gt-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gt-vc-handle {
+  position: absolute;
+  left: calc(30 * var(--u));
+  top: calc(-9 * var(--u));
+  width: calc(40 * var(--u));
+  height: calc(13 * var(--u));
+}
+.gt-vc-handle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gt-vc-lab {
+  position: absolute;
+  left: 50%;
+  bottom: calc(-2 * var(--u));
+  z-index: 3;
+  transform: translateX(-50%);
+  padding: calc(3 * var(--u)) calc(9 * var(--u)) calc(2 * var(--u));
+  border-radius: 2px;
+  background: #0b0807;
+  color: #f2dc9a;
+  box-shadow:
+    inset 0 0 0 1px #c9a14e,
+    0 2px 4px rgb(0 0 0 / 0.5);
+  font: 900 calc(10 * var(--u)) var(--font-body);
+  letter-spacing: 0.14em;
+}
+.gt-vipcase[data-open="true"] .gt-vc-lid {
+  transform: perspective(260px) rotateX(-118deg);
+}
+.gt-vipcase[data-open="true"] .gt-vc-glow {
+  opacity: 1;
+}
+/* кейс слегка «дышит» золотым, пока закрыт */
+.gt-vipcase:not([data-open="true"]) .gt-vc-glow {
+  opacity: 0.35;
+  animation: gt-vc-breath 3s ease-in-out infinite alternate;
+}
+@keyframes gt-vc-breath {
+  to {
+    opacity: 0.1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-art svg [style*="raysr"],
+  .gt-book-compass,
+  .gt-book-glow,
+  .gt-heart-pulse,
+  .gt-show-tv .tvt,
+  .gt-show-tv .rec,
+  .gt-show-tv .onair,
+  .gt-air-lamp,
+  .gt-note-glow,
+  .gt-vipcase:not([data-open="true"]) .gt-vc-glow {
+    animation: none;
+  }
+  .gt-drape .dl,
+  .gt-drape .dr,
+  .gt-drape .dt,
+  .gt-vc-lid,
+  .gt-vc-glow {
+    transition: none;
+  }
+}

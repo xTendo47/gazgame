@@ -18,7 +18,7 @@ export interface HomeSection {
 export const HOME_SECTIONS: HomeSection[] = [
   { id: "party", href: "/company", emoji: "🎉", title: "Тусовка", who: "2+ ЧЕЛОВЕКА", subtitle: "Кто из нас, Шпион, Мафия, Объясни и другие", color: "#FF5A1F" },
   { id: "love", href: "/pairs", emoji: "💞", title: "Романтика", who: "ВДВОЁМ", subtitle: "Игры, тесты и разбор вашей пары", color: "#FF6FAE" },
-  { id: "solo", href: "/solo", emoji: "🧠", title: "Соло", who: "ТОЛЬКО ТЫ", subtitle: "Кто ты, психотесты и сравнения", color: "#B58CFF" },
+  { id: "solo", href: "/solo", emoji: "🧠", title: "Дневник", who: "ТОЛЬКО ТЫ", subtitle: "Кто ты, психотесты и сравнения", color: "#B58CFF" },
 ];
 
 export interface MiniButton {
