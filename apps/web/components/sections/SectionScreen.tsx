@@ -26,6 +26,8 @@ import { BackTag, cn } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { CasinoDeckView } from "@/components/casino/CasinoDeckView";
 import { CasinoScene } from "@/components/casino/CasinoScene";
+import { DiaryDeckView } from "@/components/diary/DiaryDeckView";
+import { DiaryScene } from "@/components/diary/DiaryScene";
 import { LoveDeckView } from "@/components/love/LoveDeckView";
 import { LoveScene } from "@/components/love/LoveScene";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
@@ -60,6 +62,9 @@ function Rich({ text }: { text: string }) {
     </>
   );
 }
+
+/** Названия кармашков «Дневника» (по макету): вкладки раздела who / psy / deep. */
+const DIARY_NAMES: Record<string, string> = { who: "Ты в розыске", psy: "Психо", deep: "Глубже" };
 
 export function SectionScreen({
   section,
@@ -111,7 +116,9 @@ export function SectionScreen({
   const casino = section.id === "company";
   // «Романтика»: сцена с конвертом и тремя колодами, дальше экран колоды с карточками-билетами
   const love = section.id === "pairs";
-  const themed = casino || love;
+  // «Дневник»: книга с тремя кармашками (это вкладки раздела), после выбора — страница со списком тестов
+  const diary = section.id === "solo";
+  const themed = casino || love || diary;
   const [casinoView, setCasinoView] = useState<"decks" | "games" | null>(null);
   const showDecks =
     themed &&
@@ -344,6 +351,36 @@ export function SectionScreen({
   );
 
   // «Тусовка», колода открыта: казино-карты вместо списка. Что делает тап по карточке — те же tap/countSoon/lockedTap выше
+  if (diary && !showDecks) {
+    const items = tab.items.map((item, index) => {
+      const target = targets[tab.id]?.[index] ?? ({ kind: "soon" } as SectionTarget);
+      return { item, index, target };
+    });
+    const playable = items.filter(({ item, target }) => target.kind === "link" && !(item.premium && !premium));
+    return (
+      <>
+        <DiaryDeckView
+          title={DIARY_NAMES[tab.id] ?? stripEmoji(tab.name)}
+          entries={items.map(({ item, index, target }) => ({
+            index,
+            title: stripEmoji(item.title),
+            text: stripEmoji(item.text),
+            emoji: item.emoji,
+            soon: target.kind === "soon",
+            locked: !!item.premium && !premium,
+          }))}
+          onBack={() => setCasinoView("decks")}
+          onPick={(index) => {
+            const found = items[index];
+            if (found) tap(found.item, found.target);
+          }}
+          onRandom={playable.length > 0 ? () => randomTap(playable) : null}
+        />
+        {overlays}
+      </>
+    );
+  }
+
   if (love && !showDecks) {
     const items = tab.items.map((item, index) => {
       const target = targets[tab.id]?.[index] ?? ({ kind: "soon" } as SectionTarget);
@@ -415,6 +452,25 @@ export function SectionScreen({
         />
         {overlays}
       </>
+    );
+  }
+
+  if (showDecks && diary) {
+    return (
+      <DiaryScene
+        title={stripEmoji(section.title)}
+        pockets={section.tabs.map((t) => ({
+          id: t.id,
+          count: t.items.filter((i) => i.ref?.test || i.ref?.lockedTest).length,
+          premium: !!t.premium,
+        }))}
+        names={DIARY_NAMES}
+        onPick={(id) => {
+          const t = section.tabs.find((x) => x.id === id);
+          if (t) pickTab(t);
+          setCasinoView("games");
+        }}
+      />
     );
   }
 

@@ -111,7 +111,7 @@ export function LoveTile({ href, label }: { href: string; label: string }) {
 /** Дневник: кожаная книга с компасом; компас иногда поворачивается, из страниц идёт золотой свет. */
 export function DiaryTile({ href, label }: { href: string; label: string }) {
   return (
-    <SectionTile href={href} section="solo" label={label}>
+    <SectionTile href={href} section="solo" label={label} onOpen={() => setOpeningSection("solo")}>
       <span className="gt-book">
         <span className="gt-book-pages" />
         <span className="gt-book-cover">
