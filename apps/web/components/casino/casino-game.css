@@ -344,3 +344,22 @@
 .cg-skin .cg-rebus div[role="status"] {
   background: rgb(184 145 63 / 0.18);
 }
+
+/* половины экрана «Совпадём?» — это кнопки: убираем жетон, оставляем плоские половины во всю ширину */
+.cg-skin button.cg-half {
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+.cg-skin button.cg-half.bg-orange {
+  color: #fbf6e8;
+  background: radial-gradient(90% 90% at 50% 0%, #d6283f, transparent 70%), linear-gradient(180deg, #a40f26, #6f0a1b);
+}
+.cg-skin button.cg-half.bg-lime {
+  color: #2a1a10;
+  background: radial-gradient(90% 90% at 50% 100%, #fffdf6, transparent 70%), linear-gradient(180deg, #f3ead6, #e6d9b8);
+}
+.cg-skin button.cg-half:active {
+  transform: none;
+  filter: brightness(1.08);
+}

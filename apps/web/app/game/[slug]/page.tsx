@@ -6,6 +6,7 @@ import { findGame } from "@gazgame/engine";
 import { backTagClass, Badge, PageHeader, Screen } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { CasinoBackdrop } from "@/components/casino/CasinoBackdrop";
+import { LoveBackdrop } from "@/components/love/LoveBackdrop";
 import { GameScreen } from "@/components/games/GameScreen";
 import { GameStartMarker } from "@/components/games/GameStartMarker";
 import { RulesHelp } from "@/components/RulesSheet";
@@ -27,13 +28,21 @@ export async function generateMetadata({
   return { title: game?.title, description: game?.description };
 }
 
-export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
+export default async function GamePage({ params, searchParams }: PageProps<"/game/[slug]">) {
   const found = findGame(getCatalog(), (await params).slug, visibility);
   if (!found) notFound();
-  // Игры «Тусовки» оформлены в стиле казино (сукно, золото); остальные — как были
-  const casino = found.sections.includes("company");
-  const game = casino ? stripGameEmoji(found) : found;
-  const section = getSection(game.sections[0] ?? "company");
+  // Игры «Тусовки» оформлены в стиле казино (сукно, золото), игры «Романтики» — в стиле конверта (слива, розовый).
+  // «Норм или стрём» есть в обоих разделах: из «Романтики» её открывают с ?mode=duo.
+  const duo = (await searchParams).mode === "duo";
+  const inPairs = found.sections.includes("pairs") && (!found.sections.includes("company") || duo);
+  const love = inPairs;
+  const casino = !love && found.sections.includes("company");
+  const themed = casino || love;
+  const game = themed ? stripGameEmoji(found) : found;
+  const section = getSection(love ? "pairs" : (game.sections[0] ?? "company"));
+  const sectionTitle = themed
+    ? (getCatalog().sectionLayouts?.sections.find((x) => x.id === section?.id)?.title ?? section?.title)
+    : section?.title;
   const layouts = getCatalog().sectionLayouts;
   const rules = layouts?.rules[game.slug];
   // Игра раундами, «Мафия», «Шпион», «Объясни», «Совпадём?» и «5 секунд» показывают правила отдельным экраном — здесь их не дублируем.
@@ -51,12 +60,13 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
   return (
     <>
       {casino && <CasinoBackdrop />}
-      <Screen className={casino ? "cg-skin" : undefined}>
+      {love && <LoveBackdrop />}
+      <Screen className={casino ? "cg-skin" : love ? "lv-skin" : undefined}>
         <PageHeader
           back={
-            casino ? (
+            themed ? (
               <Link href={`/${section?.id ?? ""}`} className={backTagClass()}>
-                ← {stripEmoji(section?.title ?? "Меню")}
+                ← {stripEmoji(sectionTitle ?? "Меню")}
               </Link>
             ) : (
               <BackLink href={`/${section?.id ?? ""}`}>
@@ -65,7 +75,7 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
             )
           }
           title={stripEmoji(game.title)}
-          emoji={casino ? undefined : game.emoji}
+          emoji={themed ? undefined : game.emoji}
           subtitle={stripEmoji(game.description)}
           badge={
             <span className="flex flex-wrap gap-2">

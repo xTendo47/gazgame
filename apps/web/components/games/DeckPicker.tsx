@@ -102,7 +102,7 @@ export function DeckTile({
         key={shake}
         type="button"
         aria-disabled="true"
-        aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`}
+        aria-label={`Уровень «${deck.title}» закрыт: ${stripEmoji(access.text)}`}
         onClick={() => {
           setShake(shake + 1);
           haptic("double");
@@ -113,7 +113,7 @@ export function DeckTile({
           emoji={<Glyph emoji={deck.emoji} label={deck.title} />}
           title={stripEmoji(deck.title)}
           subtitle={`${subtitle}
-${access.text}`}
+${stripEmoji(access.text)}`}
           accent="none"
           size="md"
           badge={<GIcon name="lock" size={22} />}
@@ -128,7 +128,7 @@ ${access.text}`}
   // переносим его второй строкой в подпись, а в значке оставляем замок и 💎.
   const longLock = access.text.length > 24;
   const lockedSubtitle = longLock ? `${subtitle}
-${access.text}` : subtitle;
+${stripEmoji(access.text)}` : subtitle;
   const lock = (
     <Badge tone={access.reason === "subscription" ? "premium" : "soon"} className="max-w-32 text-right">
       <Lock aria-hidden="true" size={12} className="shrink-0" /> {longLock ? (access.reason === "subscription" ? <GIcon name="diamond" size={12} /> : "") : stripEmoji(access.text)}
@@ -140,7 +140,7 @@ ${access.text}` : subtitle;
       <button
         type="button"
         className="diamond-glow group block rounded-card text-left"
-        aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`}
+        aria-label={`Уровень «${deck.title}» закрыт: ${stripEmoji(access.text)}`}
         onClick={() => {
           trackDeeperClick({ id: game.id, kind: "game", source });
           router.push("/deeper");
@@ -153,7 +153,7 @@ ${access.text}` : subtitle;
 
   // «Скоро» — нажимать некуда, просто показываем замок.
   return (
-    <div role="group" aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`} aria-disabled="true">
+    <div role="group" aria-label={`Уровень «${deck.title}» закрыт: ${stripEmoji(access.text)}`} aria-disabled="true">
       <Tile emoji={<Glyph emoji={deck.emoji} label={deck.title} />} title={stripEmoji(deck.title)} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" dimmed />
     </div>
   );
