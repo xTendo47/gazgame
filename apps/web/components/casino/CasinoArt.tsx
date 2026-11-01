@@ -106,10 +106,10 @@ export function CasinoTable() {
 
       {/* коктейли */}
       {[
-        { x: 22, y: 130, c1: "#e8453a", c2: "#c42a2a", fruit: "#f6a23a" },
-        { x: 70, y: 154, c1: "#f6b03a", c2: "#e68a1a", fruit: "#f2dc4a" },
+        { x: 22, y: 100, c1: "#e8453a", c2: "#c42a2a", fruit: "#f6a23a" },
+        { x: 70, y: 126, c1: "#f6b03a", c2: "#e68a1a", fruit: "#f2dc4a" },
       ].map((g, k) => (
-        <g key={k} transform={`translate(${g.x} ${g.y})`}>
+        <g key={k} transform={`translate(${g.x} ${g.y}) scale(1.28)`}>
           <ellipse cx="14" cy="102" rx="14" ry="3.5" fill="#000" opacity=".4" />
           <path d="M14 56v44M14 100h-9M14 100h9" stroke="#e8e0cc" strokeWidth="2.6" strokeLinecap="round" fill="none" />
           <path d="M-8 20h44l-18 34a4.2 4.2 0 0 1-8 0z" fill="url(#cs-glass)" stroke="#e8e0cc" strokeOpacity=".7" />

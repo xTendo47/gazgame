@@ -409,10 +409,10 @@ export function CasinoScene({
         },
       ),
     );
-    timers.push(
-      window.setTimeout(() => sfx.rattle(true), 700),
-      window.setTimeout(() => sfx.clack(0.8), 1400),
-    );
+    // звуки как в макете: колесо раскручивается, шарик падает на него, фишки стучат
+    sfx.whirr(0.15, 1.2);
+    sfx.ballDrop(1.15);
+    sfx.chips(0.5);
 
     // 3) фишки разлетаются от центра
     if (burstEl) {
