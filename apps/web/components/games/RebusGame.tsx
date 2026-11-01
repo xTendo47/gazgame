@@ -339,7 +339,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
               haptic("click");
               setState(askRebusHint(state));
             }}
-            className="gaz-press min-h-14 rounded-2xl border border-line bg-[#2A2531] px-2 py-3 text-center text-sm font-extrabold disabled:opacity-45"
+            className="cg-ghost gaz-press min-h-14 rounded-2xl border border-line bg-[#2A2531] px-2 py-3 text-center text-sm font-extrabold disabled:opacity-45"
           >
             {game.buttons.hint}
           </button>
@@ -350,7 +350,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
               haptic("click");
               setState(revealRebusAnswer(state));
             }}
-            className="gaz-press min-h-14 rounded-2xl border border-line bg-[#2A2531] px-2 py-3 text-center text-sm font-extrabold disabled:opacity-45"
+            className="cg-ghost gaz-press min-h-14 rounded-2xl border border-line bg-[#2A2531] px-2 py-3 text-center text-sm font-extrabold disabled:opacity-45"
           >
             {game.buttons.answer}
           </button>
