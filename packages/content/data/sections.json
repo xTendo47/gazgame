@@ -189,9 +189,9 @@
           "tag": "вдвоём",
           "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "know", "emoji": "🧠", "name": "Знаешь меня?" }, { "id": "eve", "emoji": "💌", "name": "Вдвоём вечером" }],
           "items": [
-            { "emoji": "🎯", "title": "Правда или действие", "text": "Флирт и немного смелости", "kind": "warm", "soon": true, "levels": [{ "label": "Флирт" }, { "label": "Жарче 💎", "premium": true }] },
+            { "emoji": "🎯", "title": "Правда или действие", "text": "Флирт и немного смелости", "kind": "warm", "soon": true, "levels": [{ "label": "Флирт" }, { "label": "Смелее 💎", "premium": true }] },
             { "emoji": "✋", "title": "Я никогда не… вдвоём", "text": "Про отношения, бывших и первые свидания", "kind": "warm", "ref": { "game": "never-have-i-duo" }, "levels": [{ "label": "Про нас" }, { "label": "Признания" }, { "label": "Каверзно 💎", "premium": true }] },
-            { "emoji": "🫂", "title": "Насколько ты меня знаешь", "text": "Один отвечает, второй угадывает", "kind": "know", "ref": { "game": "know-each-other" }, "levels": [{ "label": "Поверхность" }, { "label": "Глубина" }, { "label": "Бездна 💎", "premium": true }] },
+            { "emoji": "🫂", "title": "Насколько ты меня знаешь", "text": "Ты отвечаешь, партнёр угадывает, потом меняетесь", "kind": "know", "ref": { "game": "know-each-other" }, "levels": [{ "label": "Поверхность" }, { "label": "Глубина" }, { "label": "Бездна 💎", "premium": true }] },
             { "emoji": "💞", "title": "Совпадём?", "text": "Это или то: насколько вы похожи", "kind": "know", "ref": { "game": "match-us" }, "levels": [{ "label": "Лайт" }, { "label": "Серьёзнее" }, { "label": "Глубоко 💎", "premium": true }] },
             { "emoji": "🫙", "title": "Капсула времени", "text": "Письмо друг другу, откроется через месяц", "kind": "eve", "soon": true },
             { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe", "query": "deck=love&mode=duo" }, "levels": [{ "label": "Отношения" }, { "label": "Бытовое" }, { "label": "Без фильтра 💎", "premium": true }] },
