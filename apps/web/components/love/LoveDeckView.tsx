@@ -9,6 +9,7 @@ import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
 import { prefersReducedMotion } from "@/lib/gaz";
 import { FLOUR, LACE, ROSE } from "./love-art";
+import { LoveIcon } from "./LoveIcon";
 import { GoldLock, HeartBead } from "./LoveScene";
 import "@/components/casino/casino-deck.css";
 import "./love.css";
@@ -113,7 +114,7 @@ export function LoveDeckView({
                     <em>2</em>
                   </span>
                   <span className="ld-cameo" aria-hidden="true">
-                    <Glyph emoji={c.emoji} label={c.title} />
+                    <LoveIcon emoji={c.emoji} label={c.title} />
                   </span>
                   <HeartBead className="ld-bead" />
                   <b className="ld-name">{c.title}</b>

@@ -159,7 +159,7 @@
   aspect-ratio: 1;
   margin-top: 16%;
   border-radius: 50%;
-  font-size: clamp(30px, 10vw, 42px);
+  font-size: clamp(40px, 13vw, 54px);
   color: #ffd6e4;
   background: radial-gradient(circle at 50% 40%, #2a0a1d, #120410 80%);
   box-shadow:
