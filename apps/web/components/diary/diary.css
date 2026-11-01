@@ -914,6 +914,12 @@
   transition-delay: calc(var(--i) * 0.14s);
 }
 
+/* короткая версия (повторное открытие): кармашки въезжают за 0,4 с */
+.dr-page[data-mode="short"][data-opening="done"] .dr-pocket {
+  transition-duration: 0.4s, 0.2s;
+  transition-delay: calc(var(--i) * 0.05s);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dr-flame,
   .dr-halo {

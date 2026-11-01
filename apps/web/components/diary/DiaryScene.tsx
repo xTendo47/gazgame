@@ -16,6 +16,32 @@ import "./diary.css";
 
 const noSubscribe = () => () => {};
 
+const SEEN_KEY = "gaz:diary-opened";
+type OpenMode = "full" | "short" | "none";
+/** Режим выбран один раз на показ экрана: полная книга — только при первом открытии за сессию, потом короткая версия. */
+let decided: OpenMode | null = null;
+
+function readMode(): OpenMode {
+  if (decided) return decided;
+  if (peekOpeningSection() !== "solo" || prefersReducedMotion()) return "none";
+  let seen = false;
+  try {
+    seen = sessionStorage.getItem(SEEN_KEY) === "1";
+  } catch {
+    // хранилища нет (приватный режим) — считаем, что книга ещё не открывалась
+  }
+  decided = seen ? "short" : "full";
+  return decided;
+}
+
+function markSeen(): void {
+  try {
+    sessionStorage.setItem(SEEN_KEY, "1");
+  } catch {
+    // не страшно: в худшем случае покажем полную версию ещё раз
+  }
+}
+
 export interface DiaryPocket {
   id: string;
   /** Сколько тестов лежит в кармашке («12 тестов»). */
@@ -185,16 +211,20 @@ export function DiaryScene({
 }) {
   const root = useRef<HTMLDivElement>(null);
   // «Открытие из стола»: метку читаем в браузере (на сервере её нет), поэтому разметка сервера и браузера совпадает
-  const armed = useSyncExternalStore(
-    noSubscribe,
-    () => peekOpeningSection() === "solo" && !prefersReducedMotion(),
-    () => false,
-  );
-  // run → (2,45 с) done → (ещё 1,4 с) idle; пока метки нет, сразу idle
+  const mode = useSyncExternalStore(noSubscribe, readMode, (): OpenMode => "none");
+  const armed = mode !== "none";
+  // run → done (кармашки едут) → idle; пока метки нет, сразу idle
   const [phase, setPhase] = useState<"done" | "idle" | null>(null);
   /** Пелена с книгой: убираем по окончании её анимации, а не по таймеру (на медленном телефоне они разойдутся). */
   const [overlayGone, setOverlayGone] = useState(false);
   const opening = phase ?? (armed ? "run" : "idle");
+
+  function finish() {
+    setPhase("idle");
+    setOverlayGone(true);
+    decided = null;
+    clearOpeningSection();
+  }
 
   useEffect(() => {
     if (!armed) {
@@ -203,25 +233,48 @@ export function DiaryScene({
     }
     sfx.arm();
     sfx.page();
-    // как в макете: книга раскрывается 2,6 с, на 2,45 с кармашки начинают въезжать (ещё 1,4 с)
-    const t1 = window.setTimeout(() => {
-      setPhase("done");
-      sfx.flip();
-      window.setTimeout(() => sfx.flip(), 140);
-      window.setTimeout(() => sfx.flip(), 280);
-    }, 2450);
-    const t2 = window.setTimeout(() => {
-      setPhase("idle");
-      clearOpeningSection();
-    }, 2450 + 1400);
+    const full = mode === "full";
+    if (full) markSeen();
+    // полная версия, как в макете: книга 2,6 с, на 2,45 с кармашки въезжают (ещё 1,4 с); короткая: ~0,4 с
+    const t1 = window.setTimeout(
+      () => {
+        setPhase("done");
+        sfx.flip();
+        if (full) {
+          window.setTimeout(() => sfx.flip(), 140);
+          window.setTimeout(() => sfx.flip(), 280);
+        }
+      },
+      full ? 2450 : 30,
+    );
+    const t2 = window.setTimeout(
+      () => {
+        setPhase("idle");
+        decided = null;
+        clearOpeningSection();
+      },
+      full ? 2450 + 1400 : 30 + 450,
+    );
     return () => {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
-  }, [armed]);
+  }, [armed, mode]);
 
   return (
-    <div className="dr-page" ref={root} data-opening={opening}>
+    <div
+      className="dr-page"
+      ref={root}
+      data-opening={opening}
+      data-mode={mode}
+      // тап во время анимации сразу показывает конечное состояние (и не нажимает то, что под пальцем)
+      onPointerDownCapture={(e) => {
+        if (opening === "idle") return;
+        e.stopPropagation();
+        e.preventDefault();
+        finish();
+      }}
+    >
       <div className="dr-scroll">
         <div className="dr-inner">
           <Link href={backHref} className={backTagClass()} onClick={() => sfx.page()}>
@@ -340,7 +393,7 @@ export function DiaryScene({
         </div>
       </div>
 
-      {armed && !overlayGone && <BookOpening onEnd={() => setOverlayGone(true)} />}
+      {mode === "full" && !overlayGone && <BookOpening onEnd={() => setOverlayGone(true)} />}
     </div>
   );
 }
