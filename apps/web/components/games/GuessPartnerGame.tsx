@@ -167,7 +167,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
       <Pause
         emoji="🙈"
         title="Передай телефон"
-        text={`Телефон — ${guesser}. Угадай, что ответил(а) ${subject}. ${subject}, не подсказывай!`}
+        text={`Телефон — ${guesser}. ${subject}: угадай ответ. ${subject}, не подсказывай!`}
         button={`Я ${guesser}, поехали`}
         onContinue={() => dispatch({ type: "continue" })}
       />
