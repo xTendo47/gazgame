@@ -26,6 +26,8 @@ import { BackTag, cn } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { CasinoDeckView } from "@/components/casino/CasinoDeckView";
 import { CasinoScene } from "@/components/casino/CasinoScene";
+import { LoveDeckView } from "@/components/love/LoveDeckView";
+import { LoveScene } from "@/components/love/LoveScene";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
 import { RulesSheet } from "@/components/RulesSheet";
 import {
@@ -64,6 +66,7 @@ export function SectionScreen({
   texts,
   targets,
   players,
+  meta,
   lockedTests,
   previewTexts,
   rules,
@@ -75,6 +78,8 @@ export function SectionScreen({
   targets: Record<string, SectionTarget[]>;
   /** Подпись «сколько игроков» по карточкам: players[tabId][номер карточки] (null — неизвестно). */
   players: Record<string, (string | null)[]>;
+  /** Подпись «2 · 20 МИН» / «ТЕСТ» на карточках «Романтики»: meta[tabId][номер карточки]. */
+  meta?: Record<string, (string | null)[]>;
   /** Платные тесты для шторки превью. */
   lockedTests: LockedTest[];
   previewTexts?: PremiumFile["preview"];
@@ -104,9 +109,12 @@ export function SectionScreen({
   const tab = section.tabs.find((t) => t.id === tabId) ?? section.tabs[0]!;
   // «Тусовка»: сначала сцена казино с тремя колодами (это вкладки раздела), после выбора колоды — список игр
   const casino = section.id === "company";
+  // «Романтика»: сцена с конвертом и тремя колодами, дальше экран колоды с карточками-билетами
+  const love = section.id === "pairs";
+  const themed = casino || love;
   const [casinoView, setCasinoView] = useState<"decks" | "games" | null>(null);
   const showDecks =
-    casino &&
+    themed &&
     (casinoView ?? (picked || urlTab || openLocked ? "games" : "decks")) ===
       "decks";
 
@@ -336,6 +344,42 @@ export function SectionScreen({
   );
 
   // «Тусовка», колода открыта: казино-карты вместо списка. Что делает тап по карточке — те же tap/countSoon/lockedTap выше
+  if (love && !showDecks) {
+    const items = tab.items.map((item, index) => {
+      const target = targets[tab.id]?.[index] ?? ({ kind: "soon" } as SectionTarget);
+      return { item, index, target };
+    });
+    const playable = items.filter(({ item, target }) => target.kind === "link" && !(item.premium && !premium));
+    const tabPos = section.tabs.findIndex((t) => t.id === tab.id);
+    const numberBase = section.tabs.slice(0, tabPos).reduce((n, t) => n + t.items.length, 0);
+    const numberTotal = section.tabs.reduce((n, t) => n + t.items.length, 0);
+    return (
+      <>
+        <LoveDeckView
+          deckId={tab.id}
+          title={stripEmoji(tab.name)}
+          cards={items.map(({ item, index, target }) => ({
+            index,
+            title: stripEmoji(item.title),
+            emoji: item.emoji,
+            meta: meta?.[tab.id]?.[index] ?? null,
+            soon: target.kind === "soon",
+            locked: !!item.premium && !premium,
+          }))}
+          numberBase={numberBase}
+          numberTotal={numberTotal}
+          onBack={() => setCasinoView("decks")}
+          onPick={(index) => {
+            const found = items[index];
+            if (found) tap(found.item, found.target);
+          }}
+          onRandom={playable.length > 0 ? () => randomTap(playable) : null}
+        />
+        {overlays}
+      </>
+    );
+  }
+
   if (casino && !showDecks) {
     const items = tab.items.map((item, index) => {
       const target =
@@ -371,6 +415,21 @@ export function SectionScreen({
         />
         {overlays}
       </>
+    );
+  }
+
+  if (showDecks && love) {
+    return (
+      <LoveScene
+        title={stripEmoji(section.title)}
+        decks={section.tabs.map((t) => ({ id: t.id, name: stripEmoji(t.name), premium: !!t.premium }))}
+        premium={premium}
+        onPick={(id) => {
+          const t = section.tabs.find((x) => x.id === id);
+          if (t) pickTab(t);
+          setCasinoView("games");
+        }}
+      />
     );
   }
 

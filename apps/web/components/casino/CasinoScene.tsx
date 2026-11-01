@@ -362,8 +362,8 @@ export function CasinoScene({
   );
 
   useLayoutEffect(() => {
-    if (!peekOpeningSection() || prefersReducedMotion()) {
-      clearOpeningSection();
+    if (peekOpeningSection() !== "party" || prefersReducedMotion()) {
+      if (peekOpeningSection() === "party") clearOpeningSection();
       return;
     }
     const rootEl = root.current;

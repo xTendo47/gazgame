@@ -26,6 +26,18 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
     ]),
   );
 
+  // Подпись на карточке колоды «Романтики»: «2 · 20 МИН» у игры, «ТЕСТ» у теста
+  const meta = Object.fromEntries(
+    section.tabs.map((t) => [
+      t.id,
+      t.items.map((item) => {
+        const game = item.ref?.game ? catalog.games.find((g) => g.slug === item.ref?.game) : undefined;
+        if (game) return `${game.players.min === game.players.max ? game.players.min : `${game.players.min}–${game.players.max}`} · ${game.durationMin} МИН`;
+        return item.ref?.test || item.ref?.lockedTest ? "ТЕСТ" : null;
+      }),
+    ]),
+  );
+
   return (
     <Screen>
       <SectionScreen
@@ -33,6 +45,7 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
         texts={layouts.texts}
         targets={targets}
         players={players}
+        meta={meta}
         lockedTests={catalog.lockedTests ?? []}
         previewTexts={catalog.premium?.preview}
         rules={layouts.rules}

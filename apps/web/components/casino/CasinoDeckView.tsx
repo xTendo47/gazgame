@@ -101,7 +101,7 @@ function GoldSplash() {
 }
 
 /** Кубики и колода: кнопка «Наугад» (в эталоне — в правом верхнем углу). */
-function RandomButton({ onClick }: { onClick: () => void }) {
+export function RandomButton({ onClick }: { onClick: () => void }) {
   const pips = (cx: number, cy: number, s: number) =>
     [
       [-s, -s],

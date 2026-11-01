@@ -171,6 +171,40 @@ const ICONS = {
     </>
   ),
   sparkle: <path d="M12 3l1.800 6.200L20 11l-6.200 1.800L12 19l-1.800-6.200L4 11l6.200-1.800z" fill="currentColor" />,
+  // ---- значки «Романтики» ----
+  jar: <path d="M8 3h8v3H8zM7 6h10l1 3v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9zM9.500 13c1-1.500 2-1.500 2.500 0 .5-1.500 1.500-1.500 2.500 0-.5 2-2.500 3.500-2.500 3.500s-2-1.500-2.500-3.500z" {...S} strokeWidth="1.700" />,
+  kite: <path d="M12 2l6 8-6 9-6-9zM12 2v17M6 10h12M12 19c-2 1.500-1 3 1 2.500s1 2 3 1.500" {...S} strokeWidth="1.700" />,
+  loveLetter: (
+    <>
+      <path d="M3 6h18v13H3zM3 7l9 7 9-7" {...S} />
+      <path d="M12 12.500S9 11 9 9.300A1.500 1.500 0 0 1 12 8.800a1.500 1.500 0 0 1 3 .5c0 1.700-3 3.200-3 3.200z" fill="currentColor" />
+    </>
+  ),
+  trafficLight: (
+    <>
+      <rect x="7" y="2.500" width="10" height="19" rx="3" {...S} />
+      <circle cx="12" cy="7.500" r="1.800" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.800" {...S} />
+      <circle cx="12" cy="16.500" r="1.800" {...S} />
+    </>
+  ),
+  heartHands: <path d="M12 20.500c-5-3.500-8-6-8-10A4.200 4.200 0 0 1 12 8a4.200 4.200 0 0 1 8 2.500c0 4-3 6.500-8 10zM12 8v5" {...S} />,
+  rose: <path d="M12 21v-7M12 14c-2 0-3.500 1-4.500 2.500M12 17c2 0 3.500-1 4.500-2.500M12 14c-4 0-6-3-6-6l2.500 1L9 5l3 2 3-2 .5 4 2.500-1c0 3-2 6-6 6z" {...S} strokeWidth="1.700" />,
+  brokenHeart: <path d="M12 20S4 14.500 4 9.200A4.200 4.200 0 0 1 12 7a4.200 4.200 0 0 1 8 2.200C20 14.500 12 20 12 20zM12 7l-2 4 3 2-2 4" {...S} />,
+  idCard: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2.500" {...S} />
+      <circle cx="9" cy="11" r="2.200" {...S} />
+      <path d="M5.500 16c.6-2 1.800-3 3.500-3s2.900 1 3.500 3M14.500 10h4M14.500 13.500h3" {...S} />
+    </>
+  ),
+  hug: <path d="M8 4a2.500 2.500 0 1 0 0-.1zM16 4a2.500 2.500 0 1 0 0-.1zM4 20v-6c0-2.500 1.500-4 4-4M20 20v-6c0-2.500-1.500-4-4-4M8 10c2 1 6 1 8 0M8 13l4 3 4-3M6 20h12" {...S} strokeWidth="1.700" />,
+  twoHearts: (
+    <>
+      <path d="M9 18C4 14.500 2.500 12 2.500 9.500A3.500 3.500 0 0 1 9 8a3.500 3.500 0 0 1 6.500 1.500c0 2.500-1.500 5-6.500 8.500z" {...S} />
+      <path d="M16 21c-3-2-4.500-3.500-4.500-5.500A2.600 2.600 0 0 1 16 14a2.600 2.600 0 0 1 4.500 1.500c0 2-1.500 3.500-4.500 5.500z" fill="currentColor" />
+    </>
+  ),
   // ---- места, профессии и страны «Шпиона» ----
   metro: <path d="M6 3h12a1 1 0 0 1 1 1v11a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V4a1 1 0 0 1 1-1zM5 11h14M8 21l2-3M16 21l-2-3M9 15h.1M15 15h.1" {...S} />,
   shawarma: <path d="M6 19L14.500 4 19 7.500 13 20zM9.500 13l6 3M12 9l5.500 3" {...S} />,
@@ -418,12 +452,12 @@ const BY_EMOJI: Record<string, GIconName> = {
   "⏱": "timer", "🎲": "dice", "🔪": "knife", "🌙": "moon", "☀": "sun", "☠": "skull", "🙈": "hide", "🎙": "mic",
   "🃏": "cards", "🕵": "spy", "👍": "thumbUp", "👎": "thumbDown", "📱": "phone", "🔗": "link", "🗝": "key", "🔑": "key",
   "👀": "eyes", "✓": "check", "✅": "check", "✕": "cross", "✗": "cross", "⭐": "star", "🐴": "horse", "🤫": "lips",
-  "🏙": "city", "🏠": "home", "📍": "pin", "✋": "hand", "🙌": "hand", "💞": "heart", "💡": "bulb", "🧩": "puzzle",
+  "🏙": "city", "🏠": "home", "📍": "pin", "✋": "hand", "🙌": "hand", "💞": "twoHearts", "💡": "bulb", "🧩": "puzzle",
   "🎯": "target", "💬": "chat", "🗣": "chat", "☕": "cup", "🌊": "wave", "🚀": "rocket", "🧠": "brain", "⚡": "bolt",
   "🧲": "magnet", "🐢": "turtle", "🪧": "sign", "🫷": "hand", "🫢": "hide", "🤔": "question", "🤨": "question",
-  "🎬": "mask", "🎭": "mask", "🎤": "mic", "👯": "heart", "🤝": "link", "🫵": "target", "🫣": "hide", "🫂": "heart",
+  "🎬": "mask", "🎭": "mask", "🎤": "mic", "👯": "twoHearts", "🤝": "link", "🫵": "target", "🫣": "hide", "🫂": "hug",
   "🌶": "pepper", "👽": "ghost", "🔮": "sparkle", "🫧": "sparkle", "🤜": "hand", "🤿": "wave", "📚": "book",
-  "📖": "book", "📸": "camera", "🎶": "music", "🎸": "music", "🎧": "music", "🪩": "sparkle", "🕯": "sparkle", "😏": "mask",
+  "📖": "book", "📸": "camera", "🫙": "jar", "🪁": "kite", "💌": "loveLetter", "🚦": "trafficLight", "🫶": "heartHands", "💚": "heart", "🌹": "rose", "🚩": "flag", "💔": "brokenHeart", "🪪": "idCard", "🎶": "music", "🎸": "music", "🎧": "music", "🪩": "sparkle", "🕯": "sparkle", "😏": "mask",
   "😇": "sparkle", "🎉": "sparkle", "🙂": "sparkle", "😜": "mask", "🟢": "check", "🟡": "bolt", "🪓": "knife",
   "📰": "book", "🐉": "ghost", "💉": "bolt", "🎺": "megaphone", "📣": "megaphone",
   // места, профессии и страны «Шпиона»

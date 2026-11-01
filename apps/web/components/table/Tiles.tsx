@@ -52,7 +52,7 @@ export function PartyTile({ href, label }: { href: string; label: string }) {
 /** Романтика: розовый конверт с восковой печатью, розой и маркой. */
 export function LoveTile({ href, label }: { href: string; label: string }) {
   return (
-    <SectionTile href={href} section="love" label={label}>
+    <SectionTile href={href} section="love" label={label} onOpen={() => setOpeningSection("love")}>
       <Art html={LOVE_MAT} />
       <svg className="gt-love-body" viewBox="0 0 146 175" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
         <defs>

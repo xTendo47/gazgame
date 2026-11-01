@@ -1,6 +1,8 @@
 /* Шрифты дизайна v6.4 (Fontsource, без Google Fonts). Подключаются из globals.css.
    Только нужные начертания и подсеты: кириллица + латиница.
    У Bungee, Bungee Inline и Rye кириллицы нет — ими набраны латинские надписи (G A Z, ADMIT ONE). */
+@import "@fontsource/playfair-display/latin-400.css";
+@import "@fontsource/playfair-display/cyrillic-400.css";
 @import "@fontsource/playfair-display/latin-700.css";
 @import "@fontsource/playfair-display/cyrillic-700.css";
 @import "@fontsource/playfair-display/latin-900.css";
