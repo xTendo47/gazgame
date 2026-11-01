@@ -309,9 +309,11 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
             animate={{ opacity: 1, y: 0, rotate: 0 }}
             exit={{ opacity: 0, x: -140, rotate: -6 }}
             transition={{ duration: 0.25 }}
-            className="flex min-h-64 cursor-grab touch-pan-y flex-col items-center justify-center gap-3 rounded-card bg-surface p-5 text-center select-none active:cursor-grabbing"
+            className="cg-rebus flex min-h-64 cursor-grab touch-pan-y flex-col items-center justify-center gap-3 rounded-card bg-surface p-5 text-center select-none active:cursor-grabbing"
           >
-            <p className="text-[clamp(2.75rem,16vw,4.5rem)] leading-[1.1] break-all" aria-label="Ребус из эмодзи">
+            <GIcon name="spade" size={16} className="cg-rebus-pip cg-rebus-tl" />
+            <GIcon name="spade" size={16} className="cg-rebus-pip cg-rebus-br" />
+            <p className="cg-rebus-face text-[clamp(2.75rem,16vw,4.5rem)] leading-[1.1] break-all" aria-label="Ребус из эмодзи">
               {card?.text}
             </p>
             {state.hint && hint && (
