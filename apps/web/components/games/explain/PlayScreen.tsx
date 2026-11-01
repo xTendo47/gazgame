@@ -138,8 +138,8 @@ export function PlayScreen({
 
       <div aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-surface">
         <i
-          className={cn("today-smooth block h-full rounded-full transition-[width] duration-1000 ease-linear", hot ? "bg-orange" : "bg-lime")}
-          style={{ width: `${Math.min(100, (left / settings.time) * 100)}%` }}
+          className={cn("today-smooth block h-full w-full origin-left rounded-full transition-transform duration-1000 ease-linear", hot ? "bg-orange" : "bg-lime")}
+          style={{ transform: `scaleX(${Math.min(1, left / settings.time)})` }}
         />
       </div>
 
