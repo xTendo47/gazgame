@@ -4,9 +4,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Game } from "@gazgame/content";
 import { Button, buttonVariants } from "@gazgame/ui";
+import { GIcon } from "@/components/casino/GIcon";
 import { DeeperButton } from "../DeeperButton";
 
-/** Общий финал игры: «Глубже 💎», «Ещё раз», «Связанное». */
+/** Общий финал игры: «Глубже», «Ещё раз», «Связанное». */
 export function GameOver({
   game,
   onRestart,
@@ -23,7 +24,7 @@ export function GameOver({
       {children}
       <DeeperButton id={game.id} kind="game" source="game-over" />
       <Button variant="ghost" onClick={onRestart}>
-        Сыграть ещё раз 🔄
+        Сыграть ещё раз <GIcon name="refresh" />
       </Button>
       <Link href="/" className={buttonVariants({ variant: "outline", size: "md" })}>
         В меню

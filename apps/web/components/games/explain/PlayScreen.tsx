@@ -151,7 +151,7 @@ export function PlayScreen({
           ref={front}
           role="group"
           aria-label={`Слово: ${word}`}
-          className="explain-rise absolute inset-0 flex cursor-grab flex-col items-center justify-center gap-2.5 rounded-[28px] border-[1.5px] border-line bg-[linear-gradient(165deg,#2C2533,#211C26)] p-5 text-center shadow-[0_18px_40px_rgb(0_0_0/0.45)] active:cursor-grabbing"
+          className="cg-playcard explain-rise absolute inset-0 flex cursor-grab flex-col items-center justify-center gap-2.5 rounded-[28px] border-[1.5px] border-line bg-[linear-gradient(165deg,#2C2533,#211C26)] p-5 text-center shadow-[0_18px_40px_rgb(0_0_0/0.45)] active:cursor-grabbing"
           onPointerDown={(e) => {
             if (drag.current.busy) return;
             drag.current.x0 = e.clientX;

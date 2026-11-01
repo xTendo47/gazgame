@@ -32,12 +32,14 @@ import { CardFace } from "./mafia/RoleCard";
 import { Dealer } from "./mafia/Dealer";
 import { DiscussionTimer } from "./mafia/DiscussionTimer";
 import { LockedExtras, Stepper } from "./mafia/parts";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 type Stage = "start" | "rules" | "roles" | "players" | "lineup" | "deal" | "host" | "final";
 
 const PROBLEM_TEXT: Record<LineupProblem, string> = {
   "too-many-roles": "Ролей больше, чем игроков: убери кого-нибудь или добавь игроков",
-  "no-mafia": "Нужна хотя бы одна мафия 🔪",
+  "no-mafia": "Нужна хотя бы одна мафия",
   "mafia-majority": "Мафии слишком много: её должно быть меньше, чем остальных игроков",
 };
 
@@ -87,7 +89,7 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
       <section className="flex flex-col gap-4">
         <p className="rounded-card bg-surface p-5 text-center font-display text-xl font-bold leading-snug">{game.texts.start}</p>
         <Button variant="primary" onClick={() => setStage("players")}>
-          Играть 🔪
+          Играть <GIcon name="knife" />
         </Button>
         <Button variant="ghost" onClick={() => setStage("rules")}>
           Правила
@@ -107,14 +109,14 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
         </h2>
         <ol className="flex list-inside list-decimal flex-col gap-2 rounded-card bg-surface p-5 leading-snug marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
-            <li key={rule}>{rule}</li>
+            <li key={rule}>{stripEmoji(rule)}</li>
           ))}
         </ol>
         <Button variant="primary" onClick={() => setStage("players")}>
-          Играть 🔪
+          Играть <GIcon name="knife" />
         </Button>
         <Button variant="ghost" size="md" onClick={() => setStage("start")}>
-          ← Назад
+          <GIcon name="arrowBack" /> Назад
         </Button>
       </section>
     );
@@ -131,12 +133,12 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
             <CardFace key={r.id} role={r} compact className="max-w-none" />
           ))}
         </div>
-        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="Открыто ✓" onOpen={openDeeper} />
+        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="Открыто" onOpen={openDeeper} />
         <Button variant="primary" onClick={() => setStage("players")}>
-          Играть 🔪
+          Играть <GIcon name="knife" />
         </Button>
         <Button variant="ghost" size="md" onClick={() => setStage("start")}>
-          ← Назад
+          <GIcon name="arrowBack" /> Назад
         </Button>
       </section>
     );
@@ -159,10 +161,10 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
         />
         <p className="text-center text-muted">{game.playersHint}</p>
         <Button variant="primary" onClick={() => setStage("lineup")}>
-          Дальше 👉
+          Дальше <GIcon name="next" />
         </Button>
         <Button variant="ghost" size="md" onClick={() => setStage("start")}>
-          ← Назад
+          <GIcon name="arrowBack" /> Назад
         </Button>
       </section>
     );
@@ -203,7 +205,7 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
           ))}
           <div className="flex min-h-14 items-center gap-3 border-t border-line pt-2">
             <span aria-hidden="true" className="w-8 text-center text-2xl">
-              {civilians.emoji}
+              <Glyph emoji={civilians.emoji} />
             </span>
             <span className="flex-1 font-semibold">
               {civilians.title} <span className="text-sm font-normal text-muted">· считаются сами</span>
@@ -213,15 +215,15 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
             </span>
           </div>
         </div>
-        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="Открыто ✓" onOpen={openDeeper} />
+        <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="Открыто" onOpen={openDeeper} />
         <p role="status" className={cn("min-h-6 text-center text-[15px] font-semibold", check.ok ? "text-muted" : "text-orange")}>
-          {check.ok ? `🔪 ${check.mafia} против 🏠 ${check.others}` : PROBLEM_TEXT[check.problem as LineupProblem]}
+          {check.ok ? <><GIcon name="knife" /> {check.mafia} против <GIcon name="home" /> {check.others}</> : PROBLEM_TEXT[check.problem as LineupProblem]}
         </p>
         <Button variant="primary" disabled={!check.ok} onClick={deal}>
-          Раздать 🃏
+          Раздать <GIcon name="cards" />
         </Button>
         <Button variant="ghost" size="md" onClick={() => setStage("players")}>
-          ← Сколько вас
+          <GIcon name="arrowBack" /> Сколько вас
         </Button>
       </section>
     );
@@ -235,17 +237,17 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
         total={cards.length}
         face={(i) => <CardFace role={role(cards[i] ?? "")} />}
         faceLabel={(i) => `Твоя роль: ${role(cards[i] ?? "").title}`}
-        texts={{ deal: game.texts.deal, hide: "Скрыть 🙈", pass: game.texts.pass, cardBack: game.texts.cardBack }}
+        texts={{ deal: game.texts.deal, hide: <>Скрыть <GIcon name="hide" /></>, pass: game.texts.pass, cardBack: game.texts.cardBack }}
         done={
           <div className="flex flex-col gap-5">
             <div className="flex flex-col items-center gap-3 rounded-card bg-surface p-8 text-center">
               <div aria-hidden="true" className="text-6xl">
-                🌙
+                <GIcon name="moon" />
               </div>
               <p className="font-display text-2xl font-bold leading-snug">{game.texts.dealt}</p>
             </div>
             <Button variant="primary" onClick={() => setStage("host")}>
-              К ведущему 🎙️
+              К ведущему <GIcon name="mic" />
             </Button>
           </div>
         }
@@ -267,12 +269,12 @@ export function MafiaGame({ game, related }: { game: MafiaGameData; related?: Re
           )}
         >
           <div aria-hidden="true" className="text-7xl leading-none">
-            {win === "city" ? "🏙️" : "🔪"}
+            <GIcon name={win === "city" ? "city" : "knife"} size={64} />
           </div>
           <h2 className="font-display text-3xl font-black leading-tight">{title}</h2>
         </section>
         <Button variant="primary" onClick={deal}>
-          Ещё партия 🔄
+          Ещё партия <GIcon name="refresh" />
         </Button>
         <FlexMenu
           linkPath={`/game/${game.slug}`}
@@ -332,11 +334,11 @@ function HostPanel({
         className="sticky top-2 z-20 flex items-center justify-center gap-3 rounded-full bg-surface-2 px-4 py-2 font-display text-xl font-black"
       >
         <span>
-          {mafiaEmoji} {sides.mafia}
+          <Glyph emoji={mafiaEmoji} /> {sides.mafia}
         </span>
         <span className="text-muted">·</span>
         <span>
-          {cityEmoji} {sides.city}
+          <Glyph emoji={cityEmoji} /> {sides.city}
         </span>
         <span className="sr-only">
           живых: мафии {sides.mafia}, города {sides.city}
@@ -379,19 +381,19 @@ function HostPanel({
                   <span className="w-20 shrink-0 text-muted">Игрок {i + 1}</span>
                   <span aria-hidden="true">—</span>
                   <span className={cn("font-semibold", r.side === "mafia" && "text-[#FF6B7A]")}>
-                    {r.emoji} {r.title}
+                    <Glyph emoji={r.emoji} label={r.title} /> {r.title}
                   </span>
                 </li>
               );
             })}
           </ol>
-          <h3 className="mt-2 font-display text-base font-bold">Ночь 🌙</h3>
+          <h3 className="mt-2 font-display text-base font-bold">Ночь <GIcon name="moon" /></h3>
           <ol className="flex list-inside list-decimal flex-col gap-1 text-[15px] leading-snug marker:text-lime">
             {game.nightScript.map((line) => (
               <li key={line}>{line}</li>
             ))}
           </ol>
-          <h3 className="mt-2 font-display text-base font-bold">Утро ☀️</h3>
+          <h3 className="mt-2 font-display text-base font-bold">Утро <GIcon name="sun" /></h3>
           <p className="text-[15px] leading-snug">{game.morningHint}</p>
         </section>
       )}
@@ -417,7 +419,7 @@ function HostPanel({
                 }}
               >
                 <span aria-hidden="true" className="w-7 text-center text-xl">
-                  {r.emoji}
+                  <Glyph emoji={r.emoji} />
                 </span>
                 <span className="flex-1">{r.title}</span>
                 <span className="text-muted">живых: {alive[r.id] ?? 0}</span>
@@ -429,7 +431,7 @@ function HostPanel({
         </section>
       ) : (
         <Button variant="primary" onClick={() => setPicking(true)}>
-          Кто выбыл? ☠️
+          Кто выбыл? <GIcon name="skull" />
         </Button>
       )}
       {match.eliminated.length > 0 && (
@@ -459,7 +461,7 @@ function RoleStepper({
   return (
     <div className="flex min-h-14 items-center gap-3">
       <span aria-hidden="true" className="w-8 text-center text-2xl">
-        {role.emoji}
+        <Glyph emoji={role.emoji} />
       </span>
       <span className="flex-1 font-semibold">{role.title}</span>
       <button

@@ -13,13 +13,14 @@ import {
 } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { haptic } from "@/lib/haptics";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 /** Цвета команд по очереди. */
-export const TEAM_COLORS = ["#FF5A1F", "#D4FF3A", "#62D2FF", "#FFC83A"] as const;
+export const TEAM_COLORS = ["#E8483A", "#F6E3A1", "#62D2FF", "#4FD08A"] as const;
 
 export const BIG_BUTTON =
   "gaz-press min-h-14 w-full rounded-2xl bg-orange px-2.5 py-[15px] text-center font-display text-base font-extrabold text-bg shadow-[0_8px_24px_rgb(255_90_31/0.25)]";
-export const GHOST_BUTTON = "gaz-press min-h-12 w-full rounded-2xl border border-line bg-[#2A2531] px-2.5 py-[15px] text-center text-sm font-extrabold";
+export const GHOST_BUTTON = "cg-ghost gaz-press min-h-12 w-full rounded-2xl border border-line bg-[#2A2531] px-2.5 py-[15px] text-center text-sm font-extrabold";
 
 const label = "text-[10px] font-bold tracking-[0.14em] text-muted uppercase";
 
@@ -112,7 +113,7 @@ export function Setup({
           // В режиме «Жестами» уровень без колоды (Тяжёлый 💎) неактивен с подписью «Только словами»
           options={game.levels.map((l) => ({
             value: l.id,
-            label: l.tier === "premium" ? `${l.title} 💎` : l.title,
+            label: l.tier === "premium" ? `${l.title} ◆` : l.title,
             premium: l.tier === "premium",
             disabled: settings.mode === "gestures" && !modeAllowed(l, "gestures"),
           }))}
@@ -151,7 +152,7 @@ export function Setup({
                 }}
                 className="grid size-11 shrink-0 place-items-center rounded-[14px] border border-line bg-surface text-lg"
               >
-                🎲
+                <GIcon name="dice" />
               </button>
               {teams.length > EXPLAIN_MIN_TEAMS && (
                 <button
@@ -211,7 +212,7 @@ export function Setup({
       </div>
 
       <button type="button" onClick={onStart} className={BIG_BUTTON}>
-        Погнали 🔥
+        Погнали <GIcon name="fire" />
       </button>
       <p className="text-center text-xs text-muted">От 4 человек · 2–4 команды</p>
     </section>
@@ -241,7 +242,7 @@ export function Rules({ settings, onNext }: { settings: ExplainSettings; onNext:
         {rules.map((r) => (
           <li key={r.title} className="flex items-start gap-3 rounded-[18px] border border-line bg-surface px-3.5 py-3">
             <span aria-hidden="true" className="text-2xl leading-[1.1]">
-              {r.emoji}
+              <Glyph emoji={r.emoji} />
             </span>
             <span>
               <b className="block font-display text-sm leading-[1.25] font-semibold">{r.title}</b>

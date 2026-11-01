@@ -7,6 +7,8 @@ import type { Deck, DeckGame as DeckGameData } from "@gazgame/content";
 import { ANY_TYPE, createDeckState, currentCard, deckReducer, isExhausted, remaining } from "@gazgame/engine";
 import { Button } from "@gazgame/ui";
 import { getProgress } from "@/lib/progress";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 import { GameOver } from "./GameOver";
 
 export function DeckGame({ game, deck, related }: { game: DeckGameData; deck: Deck; related?: ReactNode }) {
@@ -32,9 +34,7 @@ export function DeckGame({ game, deck, related }: { game: DeckGameData; deck: De
         }}
       >
         <div className="py-6 text-center">
-          <div aria-hidden="true" className="text-6xl">
-            🎉
-          </div>
+          <GIcon name="sparkle" size={64} className="mx-auto text-gold-2" />
           <h2 className="mt-3 font-display text-2xl font-bold">Колода пройдена!</h2>
           <p className="mt-2 text-muted">Сыграно карточек: {state.drawn}. Хотите ещё острее?</p>
         </div>
@@ -45,7 +45,7 @@ export function DeckGame({ game, deck, related }: { game: DeckGameData; deck: De
   return (
     <div className="flex flex-col gap-5">
       <div className="text-sm font-bold text-muted" aria-live="polite">
-        {deck.emoji} {deck.title} · карточка {state.drawn} из {state.total}
+        <Glyph emoji={deck.emoji} label={deck.title} /> {stripEmoji(deck.title)} · карточка {state.drawn} из {state.total}
       </div>
 
       <div className="relative min-h-64">
@@ -63,14 +63,14 @@ export function DeckGame({ game, deck, related }: { game: DeckGameData; deck: De
               <>
                 {cardType && (
                   <span className="text-sm font-extrabold uppercase tracking-wide">
-                    {cardType.emoji} {cardType.title}
+                    <Glyph emoji={cardType.emoji} label={cardType.title} /> {stripEmoji(cardType.title)}
                   </span>
                 )}
                 <p className="font-display text-2xl font-bold leading-snug">{card.text}</p>
               </>
             ) : (
               <p className="font-display text-2xl font-bold leading-snug">
-                {typed ? "Выбирай: правда или действие?" : "Тяни первую карточку 👇"}
+                {typed ? "Выбирай: правда или действие?" : "Тяни первую карточку"}
               </p>
             )}
           </motion.div>
@@ -79,7 +79,7 @@ export function DeckGame({ game, deck, related }: { game: DeckGameData; deck: De
 
       {isExhausted(state) ? (
         <Button variant="accent" onClick={finish}>
-          Финиш 🏁
+          Финиш <GIcon name="flag" />
         </Button>
       ) : typed && game.cardTypes ? (
         <div className="grid grid-cols-2 gap-3">
@@ -90,13 +90,13 @@ export function DeckGame({ game, deck, related }: { game: DeckGameData; deck: De
               disabled={remaining(state, t.id) === 0}
               onClick={() => dispatch({ type: "draw", cardType: t.id })}
             >
-              {t.emoji} {t.title}
+              <Glyph emoji={t.emoji} label={t.title} /> {stripEmoji(t.title)}
             </Button>
           ))}
         </div>
       ) : (
         <Button variant="primary" onClick={() => dispatch({ type: "draw", cardType: ANY_TYPE })}>
-          {state.drawn === 0 ? "Газ! 🔥" : "Следующая 👉"}
+          {state.drawn === 0 ? <>Газ! <GIcon name="fire" /></> : <>Следующая <GIcon name="next" /></>}
         </Button>
       )}
 

@@ -4,6 +4,8 @@
 import { Lock, Minus, Plus } from "lucide-react";
 import { Badge, Button, cn } from "@gazgame/ui";
 import { usePremium } from "@/lib/premium";
+import { Glyph } from "@/components/casino/GIcon";
+import { stripEmoji } from "@/lib/text";
 
 export function Stepper({
   label,
@@ -41,7 +43,7 @@ export function Stepper({
 }
 
 /**
- * Роли, темы или наборы по подписке: видно, нажатие ведёт на «Глубже 💎».
+ * Роли, темы или наборы по подписке: видно, нажатие ведёт на «Глубже».
  * С Premium замка нет: строка с пометкой premiumText («Открыто ✓» у Мафии, «скоро» у Шпиона — там наборов ещё нет).
  */
 export function LockedExtras({
@@ -63,10 +65,10 @@ export function LockedExtras({
         {extras.map((extra) => (
           <div key={extra.title} className="flex min-h-14 items-center gap-3 rounded-card bg-surface px-4 py-2">
             <span aria-hidden="true" className="w-8 text-center text-2xl">
-              {extra.emoji}
+              <Glyph emoji={extra.emoji} />
             </span>
-            <span className="flex-1 font-semibold">{extra.title}</span>
-            <span className="text-sm font-bold text-[#62D2FF]">{premiumText}</span>
+            <span className="flex-1 font-semibold">{stripEmoji(extra.title)}</span>
+            <span className="text-sm font-bold text-[#62D2FF]">{stripEmoji(premiumText)}</span>
           </div>
         ))}
       </section>
@@ -83,11 +85,11 @@ export function LockedExtras({
           className="diamond-glow flex min-h-14 items-center gap-3 rounded-card bg-surface px-4 py-2 text-left"
         >
           <span aria-hidden="true" className="w-8 text-center text-2xl">
-            {extra.emoji}
+            <Glyph emoji={extra.emoji} />
           </span>
-          <span className="flex-1 font-semibold">{extra.title}</span>
+          <span className="flex-1 font-semibold">{stripEmoji(extra.title)}</span>
           <Badge tone="premium">
-            <Lock aria-hidden="true" size={12} /> {lockedText}
+            <Lock aria-hidden="true" size={12} /> {stripEmoji(lockedText)}
           </Badge>
         </button>
       ))}

@@ -12,7 +12,7 @@ import { RulesHelp } from "@/components/RulesSheet";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { getSection } from "@/lib/sections";
-import { stripEmoji } from "@/lib/text";
+import { stripEmoji, stripGameEmoji } from "@/lib/text";
 
 export const dynamicParams = false;
 
@@ -28,8 +28,11 @@ export async function generateMetadata({
 }
 
 export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
-  const game = findGame(getCatalog(), (await params).slug, visibility);
-  if (!game) notFound();
+  const found = findGame(getCatalog(), (await params).slug, visibility);
+  if (!found) notFound();
+  // Игры «Тусовки» оформлены в стиле казино (сукно, золото); остальные — как были
+  const casino = found.sections.includes("company");
+  const game = casino ? stripGameEmoji(found) : found;
   const section = getSection(game.sections[0] ?? "company");
   const layouts = getCatalog().sectionLayouts;
   const rules = layouts?.rules[game.slug];
@@ -44,8 +47,6 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
     game.mechanic === "rebus" ||
     game.mechanic === "verdict";
 
-  // Игры «Тусовки» оформлены в стиле казино (сукно, золото); остальные — как были
-  const casino = game.sections.includes("company");
 
   return (
     <>
@@ -63,9 +64,9 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
               </BackLink>
             )
           }
-          title={game.title}
+          title={stripEmoji(game.title)}
           emoji={casino ? undefined : game.emoji}
-          subtitle={game.description}
+          subtitle={stripEmoji(game.description)}
           badge={
             <span className="flex flex-wrap gap-2">
               <Badge>
@@ -96,7 +97,7 @@ export default async function GamePage({ params }: PageProps<"/game/[slug]">) {
         {game.rules.length > 0 && !rulesOnOwnScreen && (
           <ol className="flex list-inside list-decimal flex-col gap-1 rounded-card bg-surface p-4 text-[15px] text-muted marker:font-bold marker:text-lime">
             {game.rules.map((rule) => (
-              <li key={rule}>{rule}</li>
+              <li key={rule}>{stripEmoji(rule)}</li>
             ))}
           </ol>
         )}

@@ -3,6 +3,7 @@
 // Таймер обсуждения: длительность меняется шагом (−/+), «Старт» и «Ещё раз». По нулю — «Время!» и вибрация.
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@gazgame/ui";
+import { GIcon } from "@/components/casino/GIcon";
 
 export const formatTimer = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
 
@@ -61,7 +62,7 @@ export function DiscussionTimer({ defaultSec, stepSec }: { defaultSec: number; s
   return (
     <section aria-labelledby="timer-title" className="flex flex-col gap-3 rounded-card bg-surface p-5">
       <h2 id="timer-title" className="font-display text-lg font-bold">
-        Обсуждение ⏱️
+        Обсуждение <GIcon name="timer" />
       </h2>
       <div className="flex items-center justify-between gap-3">
         <Button variant="ghost" size="md" className="w-14 bg-surface-2" aria-label={`Меньше на ${stepSec} секунд`} disabled={running} onClick={() => change(-stepSec)}>

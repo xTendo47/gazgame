@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import type { Deck, DeckBasedGame, Game } from "@gazgame/content";
 import { deckAccess } from "@gazgame/engine";
 import { Button } from "@gazgame/ui";
+import { GIcon } from "@/components/casino/GIcon";
 import { tierFor, usePremium } from "@/lib/premium";
 import { DeckGame } from "./DeckGame";
 import { DeckPicker } from "./DeckPicker";
@@ -80,7 +81,7 @@ function DecksScreen({ game, related }: { game: DeckBasedGame; related?: ReactNo
   if (single && deckAccess(single, { userTier: tierFor(premium) }).open) {
     return (
       <Button variant="primary" onClick={() => setDeckId(single.id)}>
-        Газ! 🔥
+        Газ! <GIcon name="fire" />
       </Button>
     );
   }

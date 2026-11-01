@@ -1,22 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Plus, X } from "lucide-react";
 import { Button } from "@gazgame/ui";
+import { GIcon } from "@/components/casino/GIcon";
 
 interface PlayersFormProps {
   min: number;
   max: number;
   /** Подписи для полей, например ["Ты", "Партнёр"]. */
   placeholders?: string[];
-  submitLabel?: string;
+  submitLabel?: ReactNode;
   /** Уже известные имена (например, сохранённые на устройстве). */
   initial?: readonly string[];
   onSubmit: (names: string[]) => void;
 }
 
 /** Ввод имён игроков. Все играют с одного телефона. */
-export function PlayersForm({ min, max, placeholders = [], submitLabel = "Газ! 🔥", initial = [], onSubmit }: PlayersFormProps) {
+export function PlayersForm({ min, max, placeholders = [], submitLabel, initial = [], onSubmit }: PlayersFormProps) {
   const [names, setNames] = useState<string[]>(() =>
     Array.from({ length: Math.max(min, Math.min(initial.length, max)) }, (_, i) => initial[i] ?? ""),
   );
@@ -66,7 +67,7 @@ export function PlayersForm({ min, max, placeholders = [], submitLabel = "Газ
       )}
       {!unique && <p className="text-sm text-orange">Имена повторяются — сделайте их разными.</p>}
       <Button type="submit" variant="primary" disabled={!ready} className="mt-2">
-        {submitLabel}
+        {submitLabel ?? <>Газ! <GIcon name="fire" /></>}
       </Button>
       {!ready && unique && <p className="text-center text-sm text-muted">Нужно минимум {min} имени</p>}
     </form>

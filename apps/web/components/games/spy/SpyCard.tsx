@@ -5,6 +5,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@gazgame/ui";
 import { CARD_SHAPE } from "../mafia/RoleCard";
+import { Glyph } from "@/components/casino/GIcon";
 
 /** Размер слова по самому длинному слову: «Великобритания» должна влезть в одну строку. */
 function titleSize(title: string): string {
@@ -38,13 +39,13 @@ function Face({
       )}
     >
       <span aria-hidden="true" className="absolute top-3 left-4 text-xl">
-        {emoji}
+        <Glyph emoji={emoji} label={title} />
       </span>
       <span aria-hidden="true" className="absolute right-4 bottom-3 rotate-180 text-xl">
-        {emoji}
+        <Glyph emoji={emoji} label={title} />
       </span>
       <span aria-hidden="true" className="text-7xl leading-none">
-        {emoji}
+        <Glyph emoji={emoji} label={title} />
       </span>
       <span lang="ru" className={cn("w-full font-display font-black leading-tight text-balance", titleSize(title))}>
         {title}

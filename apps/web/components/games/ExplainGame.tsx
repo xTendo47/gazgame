@@ -39,6 +39,7 @@ import { usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { PlayScreen } from "./explain/PlayScreen";
 import { BIG_BUTTON, GHOST_BUTTON, Rules, ScoreTable, Setup, TEAM_COLORS } from "./explain/parts";
+import { GIcon } from "@/components/casino/GIcon";
 
 type Stage = "setup" | "rules" | "game";
 
@@ -105,7 +106,7 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
     haptic("double");
     trackExplainHardClick();
     trackDeeperClick({ id: game.id, kind: "game", source: "locked-deck" });
-    setHardMessage("Тяжёлый уровень скоро в Premium 💎");
+    setHardMessage("Тяжёлый уровень скоро в Premium");
   }
 
   function toRules() {
@@ -176,7 +177,7 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
   if (state.phase === "turn") {
     return (
       <section className="today-pop flex flex-col gap-4" aria-label="Ход команды">
-        <div className="flex flex-col gap-2 rounded-3xl border-[1.5px] border-orange/50 bg-[linear-gradient(160deg,#2A1F22,#1B1822)] px-[18px] py-[22px] text-center shadow-[0_0_30px_rgb(255_90_31/0.15)]">
+        <div className="cg-felt flex flex-col gap-2 rounded-3xl border-[1.5px] border-orange/50 bg-[linear-gradient(160deg,#2A1F22,#1B1822)] px-[18px] py-[22px] text-center shadow-[0_0_30px_rgb(255_90_31/0.15)]">
           <span className="text-[10px] font-bold tracking-[0.14em] text-muted uppercase">Ход команды</span>
           <h2 className="font-display text-[30px] leading-[1.1] font-extrabold [overflow-wrap:anywhere]">{team}</h2>
           <p className="text-sm text-muted">
@@ -187,12 +188,12 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
         </div>
         {state.tie && (
           <p role="status" className="today-pop rounded-[14px] border border-orange/50 bg-orange/10 px-3 py-2.5 text-sm font-bold text-orange">
-            Ничья! Ещё круг 🔥
+            Ничья! Ещё круг <GIcon name="fire" />
           </p>
         )}
         <ScoreTable teams={s.teams} scores={state.scores} goal={s.goal} now={state.cur} />
         <button type="button" onClick={startTurn} className={BIG_BUTTON}>
-          Старт ⏱
+          Старт <GIcon name="timer" />
         </button>
         {s.goal === 0 && state.cur === 0 && state.rounds > 0 && (
           <button type="button" onClick={finishGame} className={GHOST_BUTTON}>
@@ -301,7 +302,7 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
         </ul>
         <ScoreTable teams={s.teams} scores={scoresAfterRound(state)} goal={s.goal} label="Счёт после раунда" />
         <button type="button" onClick={nextTeam} className={BIG_BUTTON}>
-          {roundEndsGame(state) ? "Итоги 👑" : `Ход команды ${nextName}`}
+          {roundEndsGame(state) ? <>Итоги <GIcon name="crown" /></> : `Ход команды ${nextName}`}
         </button>
       </section>
     );
@@ -313,7 +314,7 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
     <section className="today-pop flex flex-col gap-4" aria-label="Победа">
       <div className="flex flex-col items-center gap-2 rounded-[28px] border-[1.5px] border-[#FFC83A] bg-[radial-gradient(120%_90%_at_50%_0%,rgb(255_200_58/0.22),transparent_60%),#221E27] px-[18px] py-[26px] text-center">
         <span aria-hidden="true" className="explain-bob text-[54px] leading-none">
-          👑
+          <GIcon name="crown" />
         </span>
         <span className="text-[10px] font-bold tracking-[0.14em] text-muted uppercase">Победа</span>
         <h2 className="font-display text-[30px] leading-[1.1] font-extrabold [overflow-wrap:anywhere]">{s.teams[winner]}</h2>
@@ -332,7 +333,7 @@ export function ExplainGame({ game, related }: { game: ExplainGameData; related?
           Другие настройки
         </button>
         <button type="button" onClick={() => setState(rematchExplain(state))} className={BIG_BUTTON}>
-          Реванш 🔥
+          Реванш <GIcon name="fire" />
         </button>
       </div>
       {related}

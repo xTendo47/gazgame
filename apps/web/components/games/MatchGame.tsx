@@ -31,6 +31,8 @@ import { FlexMenu } from "../result/FlexMenu";
 import { DeckPicker } from "./DeckPicker";
 import { useSavedPlayers } from "./GuessPartnerGame";
 import { PlayersForm } from "./PlayersForm";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 type Players = [string, string];
 
@@ -38,7 +40,7 @@ type Players = [string, string];
 const NAMES_KEY = "know-each-other";
 
 /** Половины экрана: первый вариант — оранжевая (светлый текст), второй — салатовая (тёмный текст). */
-const HALF = ["bg-orange text-cream", "bg-lime text-bg"] as const;
+const HALF = ["cg-half bg-orange text-cream", "cg-half bg-lime text-bg"] as const;
 
 /** Подставляет {a}, {b}, {pct}, {link}. */
 const fill = (template: string, values: Record<string, string | number>) =>
@@ -97,7 +99,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
         <section className="flex flex-col gap-4">
           <SplitBanner top="Играют" bottom={`${saved[0]} + ${saved[1]}`} />
           <Button variant="primary" onClick={() => setPlayers(saved)}>
-            Дальше 👉
+            Дальше <GIcon name="next" />
           </Button>
           <Button variant="ghost" size="md" onClick={() => setEditingNames(true)}>
             Поправить имена
@@ -111,7 +113,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
         max={2}
         initial={saved ?? []}
         placeholders={["Имя первого", "Имя второго"]}
-        submitLabel="Дальше 👉"
+        submitLabel={<>Дальше <GIcon name="next" /></>}
         onSubmit={([a = "", b = ""]) => {
           const names: Players = [a, b];
           getProgress().savePlayers(NAMES_KEY, names);
@@ -141,15 +143,15 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
     return (
       <section aria-labelledby="match-rules" className="flex flex-col gap-4">
         <h2 id="match-rules" className="font-display text-2xl font-bold">
-          Правила {deck.emoji}
+          Правила <Glyph emoji={deck.emoji} label={deck.title} />
         </h2>
         <ol className="flex list-inside list-decimal flex-col gap-2 rounded-card bg-surface p-5 text-[17px] leading-snug marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
-            <li key={rule}>{rule}</li>
+            <li key={rule}>{stripEmoji(rule)}</li>
           ))}
         </ol>
         <Button variant="primary" onClick={() => setRulesSeen(true)}>
-          Газ! 🔥
+          Газ! <GIcon name="fire" />
         </Button>
       </section>
     );
@@ -200,15 +202,14 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
       <div className="flex flex-col gap-4">
         <section
           aria-live="polite"
-          className="flex flex-col items-center gap-2 overflow-hidden rounded-card p-6 text-center text-bg"
-          style={{ backgroundImage: "linear-gradient(160deg, #FF5A1F 0%, #FF5A1F 48%, #D4FF3A 52%, #D4FF3A 100%)" }}
+          className="cg-hero flex flex-col items-center gap-2 overflow-hidden rounded-card bg-[linear-gradient(160deg,#FF5A1F_0%,#FF5A1F_48%,#D4FF3A_52%,#D4FF3A_100%)] p-6 text-center text-bg"
         >
           <div className="text-sm font-extrabold uppercase tracking-wide">
-            {first} + {second} · {deck.title} {deck.emoji}
+            {first} + {second} · {deck.title} <Glyph emoji={deck.emoji} label={deck.title} />
           </div>
           <div className="font-display text-7xl font-black leading-none">{score.percent}%</div>
           <div aria-hidden="true" className="mt-2 text-5xl leading-none">
-            {rank.emoji}
+            <Glyph emoji={rank.emoji} />
           </div>
           <h2 className="font-display text-2xl font-black leading-tight text-balance">{rank.title}</h2>
           <p className="font-semibold text-balance">{rank.text}</p>
@@ -285,7 +286,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
         {next &&
           (nextOpen ? (
             <Button variant="accent" onClick={() => start(next)}>
-              {game.texts.next} {next.title} {next.emoji}
+              {game.texts.next} {next.title} <Glyph emoji={next.emoji} label={next.title} />
             </Button>
           ) : (
             <Button
@@ -298,7 +299,7 @@ export function MatchGame({ game, related }: { game: MatchGameData; related?: Re
               }}
             >
               <Lock aria-hidden="true" size={18} className="shrink-0" />
-              {game.texts.next} {next.title} {next.emoji}
+              {game.texts.next} {next.title} <Glyph emoji={next.emoji} label={next.title} />
             </Button>
           ))}
         <FlexMenu

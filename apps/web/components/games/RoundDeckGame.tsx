@@ -10,6 +10,8 @@ import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import type { Deck, DeckGame as DeckGameData } from "@gazgame/content";
 import { createRoundState, pickHint, pickRound, roundReducer } from "@gazgame/engine";
 import { Button, buttonVariants, cn } from "@gazgame/ui";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
+import { stripEmoji } from "@/lib/text";
 import { trackDeeperClick } from "@/lib/analytics";
 import { usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
@@ -78,11 +80,11 @@ export function RoundDeckGame({
     return (
       <section aria-labelledby="rules-title" className="flex flex-col gap-4">
         <h2 id="rules-title" className="font-display text-2xl font-bold">
-          Правила {deck.emoji}
+          Правила <Glyph emoji={deck.emoji} label={deck.title} />
         </h2>
         <ol className="flex list-inside list-decimal flex-col gap-2 rounded-card bg-surface p-5 text-[17px] leading-snug marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
-            <li key={rule}>{rule}</li>
+            <li key={rule}>{stripEmoji(rule)}</li>
           ))}
         </ol>
         <Button
@@ -92,7 +94,7 @@ export function RoundDeckGame({
             dispatch({ type: "start" });
           }}
         >
-          Газ! 🔥
+          Газ! <GIcon name="fire" />
         </Button>
       </section>
     );
@@ -102,7 +104,7 @@ export function RoundDeckGame({
     return (
       <div className="flex flex-col gap-5">
         <div className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-card bg-surface p-6 text-center">
-          <p className="font-display text-2xl font-bold leading-snug">{game.handoffText ?? "Передай телефон дальше 👉"}</p>
+          <p className="font-display text-2xl font-bold leading-snug">{stripEmoji(game.handoffText ?? "Передай телефон дальше")}</p>
         </div>
         <Button variant="primary" onClick={() => dispatch({ type: "next" })}>
           Дальше
@@ -116,18 +118,18 @@ export function RoundDeckGame({
       <div className="flex flex-col gap-4">
         <section className={cn("flex flex-col items-center gap-3 rounded-card p-6 text-center", accent)}>
           <div aria-hidden="true" className="text-6xl leading-none">
-            {finale?.emoji ?? "🎉"}
+            {finale?.emoji ? <Glyph emoji={finale.emoji} size={64} /> : <GIcon name="sparkle" size={64} />}
           </div>
-          <h2 className="font-display text-3xl font-black">{finale?.title ?? "Раунд сыгран!"}</h2>
-          {finale?.text && <p className="text-lg font-semibold">{finale.text}</p>}
-          {finale?.note && <p className="text-[15px] font-semibold opacity-80">{finale.note}</p>}
-          {deck.finaleNote && <p className="text-sm font-semibold opacity-80">{deck.finaleNote}</p>}
+          <h2 className="font-display text-3xl font-black">{stripEmoji(finale?.title ?? "Раунд сыгран!")}</h2>
+          {finale?.text && <p className="text-lg font-semibold">{stripEmoji(finale.text)}</p>}
+          {finale?.note && <p className="text-[15px] font-semibold opacity-80">{stripEmoji(finale.note)}</p>}
+          {deck.finaleNote && <p className="text-sm font-semibold opacity-80">{stripEmoji(deck.finaleNote)}</p>}
         </section>
 
         {finale && finale.hints.length > 0 && (
           <div className="flex flex-col gap-2">
             <Button variant="accent" onClick={() => setHint(pickHint(finale.hints, hint))}>
-              {finale.hintButton}
+              {stripEmoji(finale.hintButton)}
             </Button>
             <p role="status" className="min-h-6 text-center text-lg font-semibold">
               {hint}
@@ -146,7 +148,7 @@ export function RoundDeckGame({
               dispatch({ type: "newRound", cards: round.cards });
             }}
           >
-            Ещё раунд 🔄
+            Ещё раунд <GIcon name="refresh" />
           </Button>
           {onChangeDeck && (
             <Button variant="outline" className="px-3 text-base whitespace-nowrap" onClick={onChangeDeck}>
@@ -168,7 +170,7 @@ export function RoundDeckGame({
             onClick={() => trackDeeperClick({ id: game.id, kind: "game", source: "game-over" })}
             className="diamond-glow min-h-11 self-center rounded-full bg-surface px-5 py-2.5 text-center text-[15px] font-semibold text-cream"
           >
-            {deck.upsellText}
+            {stripEmoji(deck.upsellText)}
           </Link>
         )}
 
@@ -190,7 +192,7 @@ export function RoundDeckGame({
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between text-sm font-bold text-muted" aria-live="polite">
         <span>
-          {deck.emoji} {deck.title}
+          <Glyph emoji={deck.emoji} label={deck.title} /> {stripEmoji(deck.title)}
         </span>
         <span className="font-display text-base text-cream">
           {state.index + 1} / {state.cards.length}
@@ -224,7 +226,7 @@ export function RoundDeckGame({
                 deck.accent === "blue" ? "bg-cream/10 text-cream" : "bg-bg/15 text-bg",
               )}
             >
-              {game.cardButton}
+              {stripEmoji(game.cardButton)}
             </button>
           )}
         </motion.div>
@@ -243,18 +245,18 @@ export function RoundDeckGame({
             transition={{ duration: 0.15 }}
           >
             <motion.span
-              className="text-[160px] leading-none"
+              className="text-gold-2"
               initial={{ scale: 0.3, rotate: -20 }}
               animate={{ scale: [0.3, 1.25, 1], rotate: [-20, 12, -6, 0], x: [0, -14, 14, 0] }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              👀
+              <GIcon name="eyes" size={160} />
             </motion.span>
           </motion.div>
         )}
       </AnimatePresence>
       <Button variant="primary" onClick={next}>
-        {state.index + 1 < state.cards.length ? "Готово 👉" : "К финалу 🏁"}
+        {state.index + 1 < state.cards.length ? <>Готово <GIcon name="next" /></> : <>К финалу <GIcon name="flag" /></>}
       </Button>
     </div>
   );

@@ -6,6 +6,7 @@ import { useId, useState } from "react";
 import { Image as ImageIcon, Link2 } from "lucide-react";
 import { Button, type ShareCardProps } from "@gazgame/ui";
 import { ShareResult } from "@/components/ShareResult";
+import { GIcon } from "@/components/casino/GIcon";
 import { copyText } from "@/lib/clipboard";
 
 type View = "closed" | "menu" | "card";
@@ -45,7 +46,7 @@ export function FlexMenu({
         aria-controls={menuId}
         onClick={() => setView(view === "menu" ? "closed" : "menu")}
       >
-        Пофлексить 🧊
+        Пофлексить <GIcon name="diamond" />
       </Button>
 
       {view === "menu" && (

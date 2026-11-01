@@ -13,6 +13,7 @@ import { Button, buttonVariants, cn } from "@gazgame/ui";
 import { getProgress } from "@/lib/progress";
 import { FlexMenu } from "../result/FlexMenu";
 import { DeckPicker } from "./DeckPicker";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 /** Таймер в секундах: тикает раз в секунду, пока идёт. */
 function useTimer(seconds: number) {
@@ -92,7 +93,7 @@ export function QuestionsGame({ game, related }: { game: LadderGame; related?: R
       <div className="flex flex-col gap-4">
         <section className="flex flex-col items-center gap-3 rounded-card bg-lime p-6 text-center text-bg">
           <div aria-hidden="true" className="text-6xl leading-none">
-            {done.emoji}
+            <Glyph emoji={done.emoji} />
           </div>
           <h2 className="font-display text-3xl font-black">{done.title}</h2>
           <p className="text-lg font-semibold">{done.text}</p>
@@ -125,7 +126,7 @@ export function QuestionsGame({ game, related }: { game: LadderGame; related?: R
     <div className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-3 rounded-card bg-orange p-6 text-center text-bg">
         <div aria-hidden="true" className="text-6xl leading-none">
-          {finale.after.emoji}
+          <Glyph emoji={finale.after.emoji} />
         </div>
         <h2 className="font-display text-3xl font-black">{finale.after.title}</h2>
         <p className="text-lg font-semibold">{finale.after.text}</p>
@@ -170,7 +171,7 @@ function LevelCard({
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between text-sm font-bold text-muted" aria-live="polite">
         <span>
-          {deck.emoji} {deck.title}
+          <Glyph emoji={deck.emoji} label={deck.title} /> {deck.title}
         </span>
         <span className="font-display text-base text-cream">
           {index + 1} / {deck.cards.length}
@@ -208,7 +209,7 @@ function LevelCard({
           {t.pass}
         </Button>
         <Button variant="primary" onClick={onNext}>
-          {last ? "К итогам 🏁" : t.next}
+          {last ? <>К итогам <GIcon name="flag" /></> : t.next}
         </Button>
       </div>
     </div>
@@ -229,7 +230,7 @@ function EyesFinale({ game, onDone }: { game: LadderGame; onDone: () => void }) 
     <div className="flex flex-col gap-4">
       <section className="flex flex-col items-center gap-3 rounded-card bg-surface p-6 text-center">
         <div aria-hidden="true" className="text-6xl leading-none">
-          {finale.emoji}
+          <Glyph emoji={finale.emoji} />
         </div>
         <h2 className="font-display text-3xl font-black">{finale.title}</h2>
         <p className="font-display text-6xl font-black tabular-nums" role="timer" aria-label={clock(timer.remaining)}>

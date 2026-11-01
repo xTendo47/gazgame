@@ -3,6 +3,8 @@
 // «Как играть за 10 секунд»: шторка с названием, тремя пунктами с оранжевыми цифрами, «Играть →» и «Не сейчас».
 // Открывается тапом по игре или тесту в разделе и кнопкой «?» внутри игры (тот же текст).
 import { useState } from "react";
+import { Glyph } from "@/components/casino/GIcon";
+import { stripEmoji } from "@/lib/text";
 import { cn } from "@gazgame/ui";
 import { trackRulesOpen } from "@/lib/analytics";
 import { Sheet } from "./Sheet";
@@ -31,12 +33,12 @@ export function RulesSheet({
   return (
     <Sheet label={`${name}: ${texts.title}`} onClose={onClose}>
       <h3 className="font-display text-xl font-extrabold">
-        <span aria-hidden="true">{emoji}</span> {name}
+        <Glyph emoji={emoji} label={name} /> {stripEmoji(name)}
       </h3>
       <p className="-mt-2 text-[13px] text-muted">{texts.title}</p>
       <ol className="flex list-decimal flex-col gap-2 pl-[22px] marker:font-extrabold marker:text-orange">
         {lines.map((line) => (
-          <li key={line}>{line}</li>
+          <li key={line}>{stripEmoji(line)}</li>
         ))}
       </ol>
       <button type="button" onClick={onPlay} className="gaz-press min-h-14 w-full rounded-2xl bg-orange px-3 py-3.5 font-display text-[15px] font-extrabold text-bg">

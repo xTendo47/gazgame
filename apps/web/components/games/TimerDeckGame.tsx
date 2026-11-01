@@ -29,6 +29,8 @@ import { tierFor, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { FlexMenu } from "../result/FlexMenu";
 import { BIG_BUTTON, ScoreTable } from "./explain/parts";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 type Stage = "setup" | "rules" | "play";
 
@@ -223,7 +225,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
                   )}
                 >
                   <span aria-hidden="true" className="text-3xl leading-none">
-                    {d.emoji}
+                    <Glyph emoji={d.emoji} label={d.title} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block font-display text-base font-bold">{d.title}</b>
@@ -243,7 +245,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
           onClick={() => setChain(!chain)}
           className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 text-left"
         >
-          <span className="font-display text-base font-bold">{t.chainSwitch} 🔗</span>
+          <span className="font-display text-base font-bold">{t.chainSwitch} <GIcon name="link" /></span>
           <span aria-hidden="true" className={cn("flex h-7 w-12 items-center rounded-full p-1 transition", chain ? "justify-end bg-lime" : "justify-start bg-surface-2")}>
             <span className="size-5 rounded-full bg-bg" />
           </span>
@@ -270,11 +272,11 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
     return (
       <section aria-labelledby="rules-title" className="flex flex-col gap-4">
         <h2 id="rules-title" className="font-display text-2xl font-bold">
-          {t.rulesTitle} ⏱️
+          {t.rulesTitle} <GIcon name="timer" />
         </h2>
         <ol className="flex list-inside list-decimal flex-col gap-2 rounded-card bg-surface p-5 text-[17px] leading-snug marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
-            <li key={rule}>{rule}</li>
+            <li key={rule}>{stripEmoji(rule)}</li>
           ))}
         </ol>
         <button type="button" className={BIG_BUTTON} onClick={() => setStage("play")}>
@@ -294,7 +296,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
       <div className="flex flex-col gap-4">
         <section className="flex flex-col items-center gap-2 rounded-card bg-lime p-6 text-center text-bg">
           <div aria-hidden="true" className="text-6xl leading-none">
-            {top.emoji}
+            <Glyph emoji={top.emoji} />
           </div>
           <h2 className="font-display text-3xl font-black">{top.title}</h2>
           <p className="font-display text-xl font-extrabold">{winnerNames}</p>
@@ -304,7 +306,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
         {st.last.length > 0 && (
           <section className="flex flex-col items-center gap-1 rounded-card border border-line bg-surface p-5 text-center">
             <div aria-hidden="true" className="text-4xl leading-none">
-              {game.finale.last.emoji}
+              <Glyph emoji={game.finale.last.emoji} />
             </div>
             <h3 className="font-display text-xl font-bold">{game.finale.last.title}</h3>
             <p className="font-display text-lg font-extrabold text-orange">{lastNames}</p>
@@ -312,7 +314,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
           </section>
         )}
         <Button variant="primary" onClick={() => launch({ players, perPlayer: state.settings.perPlayer, deck, chain: state.settings.chain }, false)}>
-          {t.again} 🔄
+          {t.again} <GIcon name="refresh" />
         </Button>
         <Button variant="outline" onClick={() => setStage("setup")}>
           {t.changeDeck}
@@ -352,7 +354,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between text-sm font-bold text-muted" aria-live="polite">
           <span>
-            {deck.emoji} {deck.title}
+            <Glyph emoji={deck.emoji} label={deck.title} /> {deck.title}
           </span>
           <span className="font-display text-base text-cream">
             {state.index + 1} / {state.cards.length}
@@ -373,7 +375,7 @@ export function TimerDeckGame({ game, related }: { game: TimerDeckData; related?
               className="flex min-h-56 items-center justify-center rounded-card border-2 border-lime/40 bg-surface text-7xl"
               style={{ backgroundImage: "repeating-linear-gradient(45deg, rgb(255 255 255 / 0.04) 0 10px, transparent 10px 20px)" }}
             >
-              ⏱️
+              <GIcon name="timer" />
             </div>
             <button type="button" className={BIG_BUTTON} onClick={begin}>
               {t.start}
@@ -469,7 +471,7 @@ function Ring({ seconds, left, hot, over, resetKey }: { seconds: number; left: n
           fill="none"
           strokeWidth="9"
           strokeLinecap="round"
-          stroke={over || hot ? "#FF5A1F" : "#D4FF3A"}
+          stroke={over || hot ? "#E8483A" : "#F6E3A1"}
           initial={{ pathLength: 1 }}
           animate={{ pathLength: 0 }}
           transition={{ duration: seconds, ease: "linear" }}

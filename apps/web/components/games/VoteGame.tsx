@@ -17,6 +17,7 @@ import { Button } from "@gazgame/ui";
 import { getProgress } from "@/lib/progress";
 import { GameOver } from "./GameOver";
 import { PlayersForm } from "./PlayersForm";
+import { GIcon } from "@/components/casino/GIcon";
 
 export function VoteGame({ game, deck, related }: { game: VoteGameData; deck: Deck; related?: ReactNode }) {
   const [state, setState] = useState<VoteState | null>(null);
@@ -62,10 +63,10 @@ export function VoteGame({ game, deck, related }: { game: VoteGameData; deck: De
           setState(createVoteState(players, deck));
         }}
       >
-        <h2 className="text-center font-display text-2xl font-bold">Итоги вечера 🏆</h2>
+        <h2 className="text-center font-display text-2xl font-bold">Итоги вечера <GIcon name="trophy" /></h2>
         {summary.stars.length > 0 && (
           <div className="rounded-card bg-orange p-5 text-center text-bg">
-            <div className="text-sm font-extrabold uppercase">Звезда вечера ⭐</div>
+            <div className="text-sm font-extrabold uppercase">Звезда вечера <GIcon name="star" /></div>
             <div className="mt-1 font-display text-2xl font-black">
               {summary.stars.map((i) => summary.players[i]?.name).join(" и ")}
             </div>
@@ -79,7 +80,7 @@ export function VoteGame({ game, deck, related }: { game: VoteGameData; deck: De
                 <span className="text-sm text-muted">голосов: {p.totalVotes}</span>
               </div>
               <p className="mt-1 text-[15px]">
-                {p.awards.length > 0 ? p.awards.join(" · ") : <span className="text-muted">Тёмная лошадка 🐴</span>}
+                {p.awards.length > 0 ? p.awards.join(" · ") : <span className="text-muted">Тёмная лошадка <GIcon name="horse" /></span>}
               </p>
             </li>
           ))}
@@ -115,7 +116,7 @@ export function VoteGame({ game, deck, related }: { game: VoteGameData; deck: De
           ))}
         </ul>
         <Button variant="primary" onClick={() => dispatch({ type: "next" })}>
-          {state.round + 1 < state.questions.length ? "Следующий вопрос 👉" : "Итоги 🏆"}
+          {state.round + 1 < state.questions.length ? <>Следующий вопрос <GIcon name="next" /></> : <>Итоги <GIcon name="trophy" /></>}
         </Button>
         {state.round + 1 < state.questions.length && (
           <Button variant="ghost" size="md" onClick={() => dispatch({ type: "finish" })}>
@@ -134,10 +135,10 @@ export function VoteGame({ game, deck, related }: { game: VoteGameData; deck: De
         {header}
         <div className="flex flex-col items-center gap-3 py-8 text-center">
           <div aria-hidden="true" className="text-6xl">
-            📱
+            <GIcon name="phone" />
           </div>
           <h2 className="font-display text-2xl font-bold">Передай телефон: {voter}</h2>
-          <p className="text-muted">Голосуем тайно — остальные не подглядывают 🙈</p>
+          <p className="text-muted">Голосуем тайно — остальные не подглядывают <GIcon name="hide" /></p>
         </div>
         <Button variant="primary" onClick={() => setVoting(true)}>
           Я {voter}, голосую

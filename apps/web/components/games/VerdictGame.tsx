@@ -32,6 +32,8 @@ import { haptic } from "@/lib/haptics";
 import { tierFor, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { FlexMenu } from "../result/FlexMenu";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 const usedKey = (game: VerdictData, deck: Deck) => `${game.id}/${deck.id}`;
 const noopSubscribe = () => () => {};
@@ -201,7 +203,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
                   )}
                 >
                   <span aria-hidden="true" className="text-3xl leading-none">
-                    {d.emoji}
+                    <Glyph emoji={d.emoji} label={d.title} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block font-display text-base font-bold">{d.title}</b>
@@ -239,11 +241,11 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
       <div className="flex flex-col gap-4">
         <section aria-live="polite" className="flex flex-col items-center gap-2 rounded-card bg-lime p-6 text-center text-bg">
           <div aria-hidden="true" className="text-6xl leading-none">
-            {game.finale.emoji}
+            <Glyph emoji={game.finale.emoji} />
           </div>
           <h2 className="font-display text-3xl font-black text-balance">{title}</h2>
           <p className="text-sm font-extrabold uppercase tracking-wide">
-            {deck.emoji} {deck.title}
+            <Glyph emoji={deck.emoji} label={deck.title} /> {deck.title}
           </p>
         </section>
 
@@ -275,7 +277,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
                       const v = state.history[i]?.[pi];
                       return (
                         <span key={pi} className={cn("rounded-full px-2.5 py-1 text-[13px] font-bold", v ? TONE[v] : "bg-surface-2")}>
-                          {p} {v === "norm" ? "👍" : "👎"}
+                          {p} <GIcon name={v === "norm" ? "thumbUp" : "thumbDown"} />
                         </span>
                       );
                     })}
@@ -287,7 +289,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
         </section>
 
         <Button variant="primary" onClick={() => launch(players, deck)}>
-          {game.finale.again} 🔄
+          {game.finale.again} <GIcon name="refresh" />
         </Button>
         <Button variant="outline" onClick={() => setState(null)}>
           {game.finale.changeDeck}
@@ -327,7 +329,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
     return (
       <div className="flex flex-col gap-3">
         <p className="text-center text-sm font-bold text-muted">
-          {progress} · {deck.emoji} {deck.title}
+          {progress} · <Glyph emoji={deck.emoji} label={deck.title} /> {deck.title}
         </p>
         <div className="flex flex-col gap-2" style={{ minHeight: "min(34rem, calc(100dvh - 14rem))" }}>
           <Half game={game} situation={situation} choice={state.votes[1] ?? null} revealed={revealed} flipped onVote={(c) => vote(1, c)} name={players[1] ?? ""} />
@@ -340,7 +342,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
                 </Button>
               </>
             ) : (
-              <span className="text-sm text-muted">{game.title} 🤔</span>
+              <span className="text-sm text-muted">{stripEmoji(game.title)}</span>
             )}
           </div>
           <Half game={game} situation={situation} choice={state.votes[0] ?? null} revealed={revealed} onVote={(c) => vote(0, c)} name={players[0] ?? ""} />
@@ -352,7 +354,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
   return (
     <div className="flex flex-col gap-4">
       <p className="text-center text-sm font-bold text-muted">
-        {progress} · {deck.emoji} {deck.title}
+        {progress} · <Glyph emoji={deck.emoji} label={deck.title} /> {deck.title}
       </p>
       <section className="flex min-h-40 items-center justify-center rounded-card border-2 border-line bg-surface p-6 text-center">
         <h2 className="font-display text-2xl font-extrabold leading-tight text-balance">{situation}</h2>
@@ -375,7 +377,7 @@ export function VerdictGame({ game, related }: { game: VerdictData; related?: Re
                 )}
               >
                 {p}
-                <span aria-hidden="true">{revealed ? (v === "norm" ? "👍" : "👎") : v ? "✓" : ""}</span>
+                <span aria-hidden="true">{revealed ? <GIcon name={v === "norm" ? "thumbUp" : "thumbDown"} /> : v ? <GIcon name="check" /> : ""}</span>
               </button>
             </li>
           );

@@ -1,19 +1,21 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { GIcon } from "@/components/casino/GIcon";
 import { Lock } from "lucide-react";
 import { Button } from "@gazgame/ui";
 import { trackDeeperClick, type DeeperClickEvent } from "@/lib/analytics";
 
 /** «Глубже 💎»: оплаты пока нет — отправляем событие и показываем экран «Скоро» (или экран upsell теста через href). */
 export function DeeperButton({
-  label = "Глубже 💎",
+  label,
   href = "/deeper",
   keepQuery = false,
   locked = false,
   ...event
 }: DeeperClickEvent & {
-  label?: string;
+  label?: ReactNode;
   href?: string;
   /** Передать дальше параметры текущего адреса (например, баллы шкал — для подстановки {weakestScale}). */
   keepQuery?: boolean;
@@ -32,7 +34,7 @@ export function DeeperButton({
       }}
     >
       {locked && <Lock aria-hidden="true" size={18} className="shrink-0" />}
-      {label}
+      {label ?? <>Глубже <GIcon name="diamond" /></>}
     </Button>
   );
 }

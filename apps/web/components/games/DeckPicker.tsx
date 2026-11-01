@@ -9,6 +9,8 @@ import { Lock } from "lucide-react";
 import type { Deck, DeckBasedGame } from "@gazgame/content";
 import { deckAccess } from "@gazgame/engine";
 import { Badge, cn, Tile } from "@gazgame/ui";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
+import { stripEmoji } from "@/lib/text";
 import { trackDeeperClick } from "@/lib/analytics";
 import { haptic } from "@/lib/haptics";
 import { getProgress } from "@/lib/progress";
@@ -88,7 +90,7 @@ export function DeckTile({
   if (access.open) {
     return (
       <button type="button" className={cn("group block rounded-card text-left", justUnlocked && "unlock-glow")} onClick={() => onPick(deck)}>
-        <Tile emoji={deck.emoji} title={deck.title} subtitle={subtitle} accent={accent} size="md" />
+        <Tile emoji={<Glyph emoji={deck.emoji} label={deck.title} />} title={stripEmoji(deck.title)} subtitle={subtitle} accent={accent} size="md" />
       </button>
     );
   }
@@ -108,13 +110,13 @@ export function DeckTile({
         className={cn("group block rounded-card text-left", shake > 0 && "premium-shake")}
       >
         <Tile
-          emoji={deck.emoji}
-          title={deck.title}
+          emoji={<Glyph emoji={deck.emoji} label={deck.title} />}
+          title={stripEmoji(deck.title)}
           subtitle={`${subtitle}
 ${access.text}`}
           accent="none"
           size="md"
-          badge={<span aria-hidden="true" className="text-xl">🔒</span>}
+          badge={<GIcon name="lock" size={22} />}
           className="whitespace-pre-line"
           dimmed
         />
@@ -129,7 +131,7 @@ ${access.text}`}
 ${access.text}` : subtitle;
   const lock = (
     <Badge tone={access.reason === "subscription" ? "premium" : "soon"} className="max-w-32 text-right">
-      <Lock aria-hidden="true" size={12} className="shrink-0" /> {longLock ? (access.reason === "subscription" ? "💎" : "") : access.text}
+      <Lock aria-hidden="true" size={12} className="shrink-0" /> {longLock ? (access.reason === "subscription" ? <GIcon name="diamond" size={12} /> : "") : stripEmoji(access.text)}
     </Badge>
   );
 
@@ -144,7 +146,7 @@ ${access.text}` : subtitle;
           router.push("/deeper");
         }}
       >
-        <Tile emoji={deck.emoji} title={deck.title} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" />
+        <Tile emoji={<Glyph emoji={deck.emoji} label={deck.title} />} title={stripEmoji(deck.title)} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" />
       </button>
     );
   }
@@ -152,7 +154,7 @@ ${access.text}` : subtitle;
   // «Скоро» — нажимать некуда, просто показываем замок.
   return (
     <div role="group" aria-label={`Уровень «${deck.title}» закрыт: ${access.text}`} aria-disabled="true">
-      <Tile emoji={deck.emoji} title={deck.title} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" dimmed />
+      <Tile emoji={<Glyph emoji={deck.emoji} label={deck.title} />} title={stripEmoji(deck.title)} subtitle={lockedSubtitle} accent="none" size="md" badge={lock} className="whitespace-pre-line" dimmed />
     </div>
   );
 }

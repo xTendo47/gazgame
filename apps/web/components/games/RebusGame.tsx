@@ -30,6 +30,8 @@ import { tierFor, usePremium } from "@/lib/premium";
 import { getProgress } from "@/lib/progress";
 import { FlexMenu } from "../result/FlexMenu";
 import { BIG_BUTTON, Field, ScoreTable, Seg, TEAM_COLORS } from "./explain/parts";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 type Stage = "setup" | "rules" | "play";
 
@@ -128,7 +130,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
                   )}
                 >
                   <span aria-hidden="true" className="text-3xl leading-none">
-                    {d.emoji}
+                    <Glyph emoji={d.emoji} label={d.title} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <b className="block font-display text-base font-bold">{d.title}</b>
@@ -163,7 +165,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
                   }}
                   className="grid size-11 shrink-0 place-items-center rounded-[14px] border border-line bg-bg text-lg"
                 >
-                  🎲
+                  <GIcon name="dice" />
                 </button>
               </div>
             ))}
@@ -198,11 +200,11 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
     return (
       <section aria-labelledby="rules-title" className="flex flex-col gap-4">
         <h2 id="rules-title" className="font-display text-2xl font-bold">
-          {t.rulesTitle} 🧩
+          {t.rulesTitle} <GIcon name="puzzle" />
         </h2>
         <ol className="flex list-inside list-decimal flex-col gap-2 rounded-card bg-surface p-5 text-[17px] leading-snug marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
-            <li key={rule}>{rule}</li>
+            <li key={rule}>{stripEmoji(rule)}</li>
           ))}
         </ol>
         <button type="button" className={BIG_BUTTON} onClick={() => setStage("play")}>
@@ -220,11 +222,11 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
       <div className="flex flex-col gap-4">
         <section className="flex flex-col items-center gap-2 rounded-card bg-lime p-6 text-center text-bg">
           <div aria-hidden="true" className="text-6xl leading-none">
-            {game.finale.emoji}
+            <Glyph emoji={game.finale.emoji} />
           </div>
           <h2 className="font-display text-3xl font-black">{game.finale.title}</h2>
           <p className="font-display text-5xl font-black tabular-nums">
-            {state.guessed} / {total} ✅
+            {state.guessed} / {total} <GIcon name="check" />
           </p>
         </section>
         <Button variant="primary" onClick={() => launch(state.settings, false)}>
@@ -233,7 +235,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
         <Button variant="outline" onClick={() => setStage("setup")}>
           {game.finale.otherDeck}
         </Button>
-        <FlexMenu linkPath={`/game/${game.slug}`} fileName={`gazgame-${game.slug}`} shareText={flex} card={{ label: game.title, emoji: game.emoji, title: `${state.guessed} / ${total} ✅`, text: flex }} />
+        <FlexMenu linkPath={`/game/${game.slug}`} fileName={`gazgame-${game.slug}`} shareText={flex} card={{ label: game.title, emoji: game.emoji, title: `${state.guessed} / ${total}`, text: flex }} />
         <Upsell game={game} deck={deck} premium={premium} />
         <Link href="/" className={buttonVariants({ variant: "ghost", size: "md" })}>
           В меню
@@ -251,7 +253,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
       <div className="flex flex-col gap-4">
         <section className="flex flex-col items-center gap-2 rounded-card bg-lime p-6 text-center text-bg">
           <div aria-hidden="true" className="text-6xl leading-none">
-            {game.win.emoji}
+            <Glyph emoji={game.win.emoji} />
           </div>
           <h2 className="font-display text-3xl font-black">{winner ? fill(game.win.title, { team: winner }) : game.win.tie}</h2>
         </section>
@@ -288,7 +290,7 @@ export function RebusGame({ game, related }: { game: RebusData; related?: ReactN
         )}
         <div className="flex items-center justify-between text-sm font-bold text-muted" aria-live="polite">
           <span>
-            {deck.emoji} {deck.title}
+            <Glyph emoji={deck.emoji} label={deck.title} /> {deck.title}
           </span>
           <span className="font-display text-base text-cream">
             {state.settings.teams ? fill(t.turn, { team: teamNames[state.team] }) : `${state.index + 1} / ${state.cards.length}`}

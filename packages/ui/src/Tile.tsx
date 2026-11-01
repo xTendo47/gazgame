@@ -11,7 +11,7 @@ const ACCENTS: Record<TileAccent, string> = {
 };
 
 export interface TileProps {
-  emoji: string;
+  emoji: ReactNode;
   title: string;
   subtitle?: string;
   accent?: TileAccent;

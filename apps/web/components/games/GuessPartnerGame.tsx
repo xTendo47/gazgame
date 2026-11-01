@@ -27,6 +27,7 @@ import { ShareResult } from "../ShareResult";
 import { DeckPicker, DeckTile } from "./DeckPicker";
 import { GameOver } from "./GameOver";
 import { PlayersForm } from "./PlayersForm";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 type Players = [string, string];
 
@@ -105,7 +106,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
             </div>
           </div>
           <Button variant="primary" onClick={() => choosePlayers(saved)}>
-            Дальше 👉
+            Дальше <GIcon name="next" />
           </Button>
           <Button variant="ghost" size="md" onClick={() => setEditingNames(true)}>
             Сменить
@@ -119,7 +120,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
         max={2}
         initial={saved ?? []}
         placeholders={["Имя первого", "Имя второго"]}
-        submitLabel="Дальше 👉"
+        submitLabel={<>Дальше <GIcon name="next" /></>}
         onSubmit={([a = "", b = ""]) => {
           const names: Players = [a, b];
           getProgress().savePlayers(game.id, names);
@@ -155,7 +156,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
         emoji="🙈"
         title={`Сейчас ${subject} отвечает про себя`}
         text={`${guesser}, не подглядывай! Потом будешь угадывать.`}
-        button="Газ! 🔥"
+        button={<>Газ! <GIcon name="fire" /></>}
         onContinue={() => setIntroSeen(state.round === 0 ? [true, introSeen[1]] : [introSeen[0], true])}
       />
     );
@@ -178,13 +179,13 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-center gap-3 py-6 text-center">
           <div aria-hidden="true" className="text-6xl">
-            🔄
+            <GIcon name="refresh" />
           </div>
           <h2 className="font-display text-2xl font-bold">Первый раунд сыгран</h2>
           <p className="text-muted">Меняемся местами или смотрим результат?</p>
         </div>
         <Button variant="primary" onClick={() => dispatch({ type: "continue" })}>
-          Теперь {first} угадывает {second} →
+          Теперь {first} угадывает {second} <GIcon name="arrow" />
         </Button>
         <Button variant="ghost" onClick={() => dispatch({ type: "finish" })}>
           Показать результат сейчас
@@ -205,7 +206,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
             {first} + {second} · {deck.title}
           </div>
           <div aria-hidden="true" className="text-6xl leading-none">
-            {rank.emoji}
+            <Glyph emoji={rank.emoji} />
           </div>
           <div className="font-display text-3xl font-black">{rank.title}</div>
           <p className="font-semibold">{rank.text}</p>
@@ -268,7 +269,7 @@ export function GuessPartnerGame({ game, related }: { game: GuessPartnerGameData
                   : "self-start rounded-full bg-orange px-3 py-1 text-sm font-extrabold text-bg"
               }
             >
-              {isSelf ? `${subject}, про себя 🤫` : `${guesser}, угадывай`}
+              {isSelf ? <>{subject}, про себя <GIcon name="lips" /></> : `${guesser}, угадывай`}
             </span>
             <span className="font-display text-2xl font-bold leading-tight">{view?.text}</span>
           </legend>
@@ -293,14 +294,14 @@ function Pause({
   emoji: string;
   title: string;
   text: string;
-  button: string;
+  button: ReactNode;
   onContinue: () => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col items-center gap-3 py-8 text-center">
         <div aria-hidden="true" className="text-6xl">
-          {emoji}
+          <Glyph emoji={emoji} />
         </div>
         <h2 className="font-display text-2xl font-bold">{title}</h2>
         <p className="text-muted">{text}</p>

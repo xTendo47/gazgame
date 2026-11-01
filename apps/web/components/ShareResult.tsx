@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { GIcon } from "@/components/casino/GIcon";
 import { Download, Share2 } from "lucide-react";
 import { Button, ShareCard, type ShareCardProps } from "@gazgame/ui";
 import { downloadImage, renderCardImage, shareImage } from "@/lib/share";
@@ -44,7 +45,7 @@ export function ShareResult({
   if (!open) {
     return (
       <Button variant="outline" onClick={() => setOpen(true)}>
-        📸 Карточка для сторис
+        <GIcon name="camera" /> Карточка для сторис
       </Button>
     );
   }
@@ -62,7 +63,7 @@ export function ShareResult({
       </div>
       <p role="status" className="min-h-5 text-sm text-muted">
         {status === "working" && "Рисуем картинку…"}
-        {status === "done" && "Готово! Выкладывай в сторис 🔥"}
+        {status === "done" && <>Готово! Выкладывай в сторис <GIcon name="fire" /></>}
         {status === "error" && "Не получилось. Попробуй ещё раз или сделай скриншот."}
       </p>
     </section>

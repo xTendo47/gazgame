@@ -32,7 +32,7 @@ export interface CasinoDeck {
 const noSubscribe = () => () => {};
 
 /** Плашка «от N игроков» по колоде (в данных подпись другая, а на колоде в макете именно такая). */
-const PLATE: Record<string, string> = {
+export const PLATE: Record<string, string> = {
   own: "от 2 игроков",
   band: "от 4 игроков",
 };
@@ -195,7 +195,9 @@ export function PadlockIcon() {
 }
 
 /** Название «Тусовка» дугой, золотой градиент с переливом (SMIL; без анимации, если включено «Уменьшить движение»). */
-export function GoldTitle({ text, still, size = 84 }: { text: string; still: boolean; size?: number }) {
+/** light — название колоды: тоньше и светлее, чем большая вывеска раздела. */
+export function GoldTitle({ text, still, size = 84, light = false }: { text: string; still: boolean; size?: number; light?: boolean }) {
+  const weight = light ? 700 : 900;
   return (
     <svg
       className="cs-title"
@@ -212,12 +214,12 @@ export function GoldTitle({ text, still, size = 84 }: { text: string; still: boo
           x2="390"
           y2="0"
         >
-          <stop offset="0" stopColor="#8a6420" />
-          <stop offset=".22" stopColor="#f6e3a1" />
-          <stop offset=".45" stopColor="#b8913f" />
+          <stop offset="0" stopColor={light ? "#c9a24e" : "#8a6420"} />
+          <stop offset=".22" stopColor={light ? "#fff6d0" : "#f6e3a1"} />
+          <stop offset=".45" stopColor={light ? "#e6c978" : "#b8913f"} />
           <stop offset=".62" stopColor="#fff1c4" />
-          <stop offset=".82" stopColor="#9c7426" />
-          <stop offset="1" stopColor="#f6e3a1" />
+          <stop offset=".82" stopColor={light ? "#d6b560" : "#9c7426"} />
+          <stop offset="1" stopColor={light ? "#fff6d0" : "#f6e3a1"} />
           {!still && (
             <animateTransform
               attributeName="gradientTransform"
@@ -234,11 +236,11 @@ export function GoldTitle({ text, still, size = 84 }: { text: string; still: boo
       <text
         fontFamily="Playfair Display, serif"
         fontStyle="italic"
-        fontWeight="900"
+        fontWeight={weight}
         fontSize={size}
         textAnchor="middle"
         stroke="#2a1c06"
-        strokeWidth="2.400"
+        strokeWidth={light ? 1.600 : 2.400}
         fill="#000"
         opacity=".5"
         transform="translate(0 4)"
@@ -250,12 +252,12 @@ export function GoldTitle({ text, still, size = 84 }: { text: string; still: boo
       <text
         fontFamily="Playfair Display, serif"
         fontStyle="italic"
-        fontWeight="900"
+        fontWeight={weight}
         fontSize={size}
         textAnchor="middle"
         fill="url(#cs-gold-title)"
         stroke="#5e4210"
-        strokeWidth=".8"
+        strokeWidth={light ? ".5" : ".8"}
       >
         <textPath href="#cs-title-arc" startOffset="50%">
           {text}

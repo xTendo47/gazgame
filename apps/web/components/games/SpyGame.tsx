@@ -35,6 +35,8 @@ import { formatTimer, useCountdown } from "./mafia/DiscussionTimer";
 import { CardBack } from "./mafia/RoleCard";
 import { LockedExtras, Stepper } from "./mafia/parts";
 import { SpyCardFace, WordCardFace } from "./spy/SpyCard";
+import { stripEmoji } from "@/lib/text";
+import { GIcon, Glyph } from "@/components/casino/GIcon";
 
 /** Подпись сложности под таймером. */
 const TIMER_HINT = { easy: "timerEasy", fair: "timerFair", hard: "timerHard" } as const;
@@ -131,7 +133,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
       <section className="flex flex-col gap-4">
         <p className="rounded-card bg-surface p-5 text-center font-display text-xl font-bold leading-snug">{game.texts.start}</p>
         <Button variant="primary" onClick={() => setStage("deck")}>
-          Играть 🕵️
+          Играть <GIcon name="spy" />
         </Button>
         <Button variant="ghost" onClick={() => setStage("rules")}>
           Правила
@@ -148,14 +150,14 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
         </h2>
         <ol className="flex list-inside list-decimal flex-col gap-2 rounded-card bg-surface p-5 leading-snug marker:font-bold marker:text-lime">
           {game.rules.map((rule) => (
-            <li key={rule}>{rule}</li>
+            <li key={rule}>{stripEmoji(rule)}</li>
           ))}
         </ol>
         <Button variant="primary" onClick={() => setStage("deck")}>
-          Играть 🕵️
+          Играть <GIcon name="spy" />
         </Button>
         <Button variant="ghost" size="md" onClick={() => setStage("start")}>
-          ← Назад
+          <GIcon name="arrowBack" /> Назад
         </Button>
       </section>
     );
@@ -183,12 +185,12 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
               setStage("players");
             }}
           >
-            <Tile emoji={t.emoji} title={t.title} subtitle={t.subtitle} accent={t.id === game.mix.id ? "lime" : "orange"} size="md" />
+            <Tile emoji={<Glyph emoji={t.emoji} label={t.title} />} title={t.title} subtitle={t.subtitle} accent={t.id === game.mix.id ? "lime" : "orange"} size="md" />
           </button>
         ))}
         <LockedExtras extras={game.lockedExtras} lockedText={game.lockedText} premiumText="скоро" onOpen={openDeeper} />
         <Button variant="ghost" size="md" onClick={() => setStage("start")}>
-          ← Назад
+          <GIcon name="arrowBack" /> Назад
         </Button>
       </section>
     );
@@ -205,7 +207,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
         </h2>
         {chosen && (
           <p className="-mt-2 text-muted">
-            Набор: {chosen.title} {chosen.emoji}
+            Набор: {chosen.title} <Glyph emoji={chosen.emoji} label={chosen.title} />
           </p>
         )}
         <div className="flex flex-col gap-2 rounded-card bg-surface p-4">
@@ -226,14 +228,14 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
                 disabled={n > spiesMax}
                 onClick={() => setSpies(n)}
               >
-                {"🕵️".repeat(n)} {n}
+                {Array.from({ length: n }, (_, i) => <GIcon key={i} name="spy" />)} {n}
               </Button>
             ))}
           </div>
           <p className="text-center text-sm text-muted">{game.spies.hint}</p>
         </div>
         <div className="flex flex-col gap-2 rounded-card bg-surface p-4">
-          <h3 className="font-display text-base font-bold">Таймер ⏱️</h3>
+          <h3 className="font-display text-base font-bold">Таймер <GIcon name="timer" /></h3>
           <Stepper
             label="Таймер"
             value={timerSec}
@@ -249,10 +251,10 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
           </p>
         </div>
         <Button variant="primary" onClick={() => deal()}>
-          Раздать 🃏
+          Раздать <GIcon name="cards" />
         </Button>
         <Button variant="ghost" size="md" onClick={() => setStage("deck")}>
-          ← Набор
+          <GIcon name="arrowBack" /> Набор
         </Button>
       </section>
     );
@@ -260,7 +262,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
 
   if (!card || !deckOfCard) return null;
   const startedHint = fill(game.texts.startedHint, { name: `Игрок ${starter + 1}` });
-  const deckLabel = fill(game.texts.deckLabel, { title: deckOfCard.title, emoji: deckOfCard.emoji });
+  const deckLabel = fill(game.texts.deckLabel, { title: deckOfCard.title, emoji: "" });
   const numbers = (onPick: (player: number) => void) => (
     <PlayerGrid players={players} disabled={match.caught} onPick={onPick} />
   );
@@ -284,7 +286,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
           <div className="flex flex-col gap-5">
             <div className="flex flex-col items-center gap-3 rounded-card bg-surface p-8 text-center">
               <div aria-hidden="true" className="text-6xl">
-                🎯
+                <GIcon name="target" />
               </div>
               <p className="font-display text-2xl font-bold leading-snug">{fill(game.texts.dealt, { n: starter + 1 })}</p>
             </div>
@@ -295,7 +297,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
                 timer.start();
               }}
             >
-              Поехали ⏱️
+              Поехали <GIcon name="timer" />
             </Button>
           </div>
         }
@@ -347,7 +349,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
           className={cn("flex flex-col items-center gap-3 rounded-card p-8 text-center", cityWon ? "bg-lime text-bg" : "bg-[#B3132B] text-cream")}
         >
           <div aria-hidden="true" className="text-7xl leading-none">
-            {cityWon ? "🎯" : "🕵️"}
+            <GIcon name={cityWon ? "target" : "spy"} size={64} />
           </div>
           <h2 className="font-display text-3xl font-black leading-tight">{title}</h2>
           {match.outcome?.winner === "spy" && match.outcome.reason === "wrong-vote" && (
@@ -355,7 +357,7 @@ export function SpyGame({ game, related }: { game: SpyGameData; related?: ReactN
           )}
         </section>
         <section className="flex flex-col gap-1 rounded-card bg-surface p-5 text-center">
-          <p className="font-display text-xl font-bold">{fill(game.texts.finalCard, { emoji: card.emoji, title: card.title })}</p>
+          <p className="font-display text-xl font-bold">{fill(game.texts.finalCard, { emoji: "", title: card.title })}</p>
           <p className="text-muted">
             {spyNumbers.length === 1
               ? fill(game.texts.finalSpy, { n: spyNumbers[0] ?? 1 })
@@ -519,7 +521,7 @@ function VoteScreen({
         {extra}
         {onCancel && (
           <Button variant="ghost" size="md" onClick={onCancel}>
-            ← Назад в игру
+            <GIcon name="arrowBack" /> Назад в игру
           </Button>
         )}
       </section>
@@ -550,15 +552,15 @@ function VoteScreen({
         </div>
         {flipped ? (
           <Button variant="primary" onClick={() => onDone(picked)}>
-            Дальше 👉
+            Дальше <GIcon name="next" />
           </Button>
         ) : (
           <>
             <Button variant="primary" onClick={() => setFlipped(true)}>
-              Перевернуть 🃏
+              Перевернуть <GIcon name="cards" />
             </Button>
             <Button variant="ghost" size="md" onClick={() => setPicked(null)}>
-              ← Другой номер
+              <GIcon name="arrowBack" /> Другой номер
             </Button>
           </>
         )}
@@ -594,7 +596,7 @@ function RevealScreen({
         </h2>
         {grid((player) => (isActiveSpy(match, player) ? setSpy(player) : onNotSpy()))}
         <Button variant="ghost" size="md" onClick={onCancel}>
-          ← Назад в игру
+          <GIcon name="arrowBack" /> Назад в игру
         </Button>
       </section>
     );
@@ -604,7 +606,7 @@ function RevealScreen({
     <section aria-labelledby="spy-say" className="flex flex-col gap-4">
       <div className="flex flex-col items-center gap-3 rounded-card bg-[#B3132B] p-8 text-center text-cream">
         <div aria-hidden="true" className="text-6xl leading-none">
-          🕵️
+          <GIcon name="spy" />
         </div>
         <h2 id="spy-say" className="font-display text-2xl font-black leading-tight">
           {game.texts.revealSay}

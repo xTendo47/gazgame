@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ContentItem } from "@gazgame/content";
 import { itemPath } from "@gazgame/engine";
+import { Glyph } from "@/components/casino/GIcon";
+import { stripEmoji } from "@/lib/text";
 import { Badge, Tile, type TileAccent } from "@gazgame/ui";
 
 /** Плитка теста или игры со ссылкой на неё. У тестов ни числа вопросов, ни минут — только «Тест». */
@@ -16,9 +18,9 @@ export function ItemTile({ item, accent = "orange", size = "lg" }: { item: Conte
   return (
     <Link href={itemPath(item)} className="group block rounded-card">
       <Tile
-        emoji={item.emoji}
-        title={item.title}
-        subtitle={size === "lg" ? `${item.description}\n${meta}` : meta}
+        emoji={<Glyph emoji={item.emoji} label={item.title} />}
+        title={stripEmoji(item.title)}
+        subtitle={size === "lg" ? `${stripEmoji(item.description)}\n${meta}` : meta}
         accent={accent}
         size={size}
         className="whitespace-pre-line"

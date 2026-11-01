@@ -11,7 +11,7 @@ import { prefersReducedMotion } from "@/lib/gaz";
 import { sfx } from "@/lib/sfx";
 import { BilliardBall, CasinoTable, Suit } from "./CasinoArt";
 import { GameIcon } from "./CasinoIcons";
-import { GoldTitle, PadlockIcon, WHEEL_SVG } from "./CasinoScene";
+import { GoldTitle, PadlockIcon, PLATE, WHEEL_SVG } from "./CasinoScene";
 import "./casino.css";
 import "./casino-deck.css";
 
@@ -54,6 +54,16 @@ function OfficialStamp() {
           ОФИЦИАЛЬНО
         </text>
       </g>
+    </svg>
+  );
+}
+
+/** Золотое «крылышко» в углу карты (в эталоне — по четыре на каждой карте). */
+function Wing() {
+  return (
+    <svg viewBox="0 0 22 18" aria-hidden="true">
+      <path d="M1.500 16C2 8 8 2.500 20 2c-3.500 2-5 4.500-5.500 7 2.500-1.500 4.500-2 6-1.500-3.500 2-5.500 5-6 7.500 2-.8 3.500-1 4.500-.8-4 3.500-9.500 5-17.500 1.800z" fill="url(#cd-wing-gold)" />
+      <path d="M4 14.500c2-5 6-8 12-9.500" fill="none" stroke="#6b4a10" strokeOpacity=".5" strokeWidth=".7" />
     </svg>
   );
 }
@@ -166,14 +176,23 @@ export function CasinoDeckView({
 
           {deckId === "band" && <GoldSplash />}
           {deckId === "band" && <OfficialStamp />}
-          <GoldTitle text={title} still={still} size={title.length > 10 ? 46 : 62} />
+          <GoldTitle text={title} still={still} size={title.length > 10 ? 46 : 62} light />
           <BilliardBall n="1" color="#e6b830" className="cd-ball" />
           <p className="cs-plate">
             <Suit kind="spade" size={11} color="#f2dc9a" />
-            <span>от 2 игроков</span>
+            <span>{PLATE[deckId] ?? "от 2 игроков"}</span>
             <Suit kind="diamond" size={11} color="#f2dc9a" />
           </p>
 
+          <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
+            <defs>
+              <linearGradient id="cd-wing-gold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#fff1c4" />
+                <stop offset=".5" stopColor="#d9ae4a" />
+                <stop offset="1" stopColor="#8a6420" />
+              </linearGradient>
+            </defs>
+          </svg>
           <ul className="cd-grid">
             {cards.map((c, i) => {
               const theme = deckId === "prem" ? 6 : i % 7;
@@ -200,6 +219,11 @@ export function CasinoDeckView({
                     }}
                   >
                     <span className="cd-pat" aria-hidden="true" />
+                    {[1, 2, 3, 4].map((n) => (
+                      <span key={n} className={`cd-wing cd-w${n}`} aria-hidden="true">
+                        <Wing />
+                      </span>
+                    ))}
                     <span className="cd-corner cd-tl" aria-hidden="true">
                       {corner}
                     </span>

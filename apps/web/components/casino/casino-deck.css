@@ -335,3 +335,37 @@
     transition: none;
   }
 }
+
+/* золотые «крылышки» в углах карты: по одному в каждом, нижние повёрнуты на 180° */
+.cd-wing {
+  position: absolute;
+  z-index: 1;
+  width: 18px;
+  height: 15px;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+}
+.cd-wing svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cd-w1 {
+  left: 27px;
+  top: 7px;
+}
+.cd-w2 {
+  right: 7px;
+  top: 7px;
+  transform: scaleX(-1);
+}
+.cd-w3 {
+  left: 7px;
+  bottom: 7px;
+  transform: scaleY(-1);
+}
+.cd-w4 {
+  right: 27px;
+  bottom: 7px;
+  transform: scale(-1, -1);
+}
