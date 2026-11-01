@@ -8,16 +8,36 @@
 // (с Premium открывает то, что уже есть). Экрана «Сколько вас?» больше нет: если игре нужно больше людей, это в подписи.
 import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import type { LockedTest, PremiumFile, SectionItem, SectionLayout, SectionsFile, SectionTab } from "@gazgame/content";
-import { boldParts, sectionGroups, toggleKind, type SectionTarget } from "@gazgame/engine";
+import type {
+  LockedTest,
+  PremiumFile,
+  SectionItem,
+  SectionLayout,
+  SectionsFile,
+  SectionTab,
+} from "@gazgame/content";
+import {
+  boldParts,
+  sectionGroups,
+  toggleKind,
+  type SectionTarget,
+} from "@gazgame/engine";
 import { BackTag, cn } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
+import { CasinoDeckView } from "@/components/casino/CasinoDeckView";
 import { CasinoScene } from "@/components/casino/CasinoScene";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
 import { RulesSheet } from "@/components/RulesSheet";
-import { trackDeeperClick, trackPreviewOpen, trackRulesOpen, trackRulesPlay, trackSoonClick } from "@/lib/analytics";
+import {
+  trackDeeperClick,
+  trackPreviewOpen,
+  trackRulesOpen,
+  trackRulesPlay,
+  trackSoonClick,
+} from "@/lib/analytics";
 import { haptic } from "@/lib/haptics";
 import { usePremium } from "@/lib/premium";
+import { randomIndex } from "@/lib/random";
 import { stripEmoji } from "@/lib/text";
 
 const noopSubscribe = () => () => {};
@@ -43,6 +63,7 @@ export function SectionScreen({
   section,
   texts,
   targets,
+  players,
   lockedTests,
   previewTexts,
   rules,
@@ -52,6 +73,8 @@ export function SectionScreen({
   texts: SectionsFile["texts"];
   /** Куда ведёт каждая карточка: targets[tabId][номер карточки] (посчитано на сервере по контенту). */
   targets: Record<string, SectionTarget[]>;
+  /** Подпись «сколько игроков» по карточкам: players[tabId][номер карточки] (null — неизвестно). */
+  players: Record<string, (string | null)[]>;
   /** Платные тесты для шторки превью. */
   lockedTests: LockedTest[];
   previewTexts?: PremiumFile["preview"];
@@ -63,17 +86,35 @@ export function SectionScreen({
   const router = useRouter();
   const premium = usePremium();
   // Вкладка: выбранная тапом, иначе из адреса (?tab=compat — с кнопки «Сравниться с партнёром 💎»), иначе первая
-  const urlTab = useSyncExternalStore(noopSubscribe, () => new URLSearchParams(window.location.search).get("tab") ?? "", () => "");
-  const [picked, setPicked] = useState<string | null>(openLocked ? (section.tabs.find((t) => t.items.some((i) => i.ref?.lockedTest === openLocked))?.id ?? null) : null);
-  const tabId = picked ?? (section.tabs.some((t) => t.id === urlTab) ? urlTab : section.tabs[0]!.id);
+  const urlTab = useSyncExternalStore(
+    noopSubscribe,
+    () => new URLSearchParams(window.location.search).get("tab") ?? "",
+    () => "",
+  );
+  const [picked, setPicked] = useState<string | null>(
+    openLocked
+      ? (section.tabs.find((t) =>
+          t.items.some((i) => i.ref?.lockedTest === openLocked),
+        )?.id ?? null)
+      : null,
+  );
+  const tabId =
+    picked ??
+    (section.tabs.some((t) => t.id === urlTab) ? urlTab : section.tabs[0]!.id);
   const tab = section.tabs.find((t) => t.id === tabId) ?? section.tabs[0]!;
   // «Тусовка»: сначала сцена казино с тремя колодами (это вкладки раздела), после выбора колоды — список игр
   const casino = section.id === "company";
   const [casinoView, setCasinoView] = useState<"decks" | "games" | null>(null);
-  const showDecks = casino && (casinoView ?? (picked || urlTab || openLocked ? "games" : "decks")) === "decks";
+  const showDecks =
+    casino &&
+    (casinoView ?? (picked || urlTab || openLocked ? "games" : "decks")) ===
+      "decks";
 
   // Мини-кнопка «во что»: выбранная группа этой вкладки (при смене вкладки показываем все группы)
-  const [kindSel, setKindSel] = useState<{ tab: string; kind: string | null }>({ tab: "", kind: null });
+  const [kindSel, setKindSel] = useState<{ tab: string; kind: string | null }>({
+    tab: "",
+    kind: null,
+  });
   const selKind = kindSel.tab === tab.id ? kindSel.kind : null;
   const groups = sectionGroups(tab, selKind);
 
@@ -93,8 +134,16 @@ export function SectionScreen({
 
   /** Как замки 💎: считаем «Глубже 💎» и ведём на экран «Глубже». */
   function lockedTap(target: SectionTarget, title: string) {
-    const ref = target.kind === "link" ? target.href.split("/").pop() ?? title : title;
-    trackDeeperClick({ id: ref, kind: target.kind === "link" && target.href.startsWith("/test/") ? "test" : "game", source: "locked-deck" });
+    const ref =
+      target.kind === "link" ? (target.href.split("/").pop() ?? title) : title;
+    trackDeeperClick({
+      id: ref,
+      kind:
+        target.kind === "link" && target.href.startsWith("/test/")
+          ? "test"
+          : "game",
+      source: "locked-deck",
+    });
     router.push("/deeper");
   }
 
@@ -108,16 +157,26 @@ export function SectionScreen({
   }
 
   /** Шторка «Как играть за 10 секунд» перед игрой или тестом: что открыть и ключ правил. */
-  const [rulesFor, setRulesFor] = useState<{ item: SectionItem; href: string; key: string } | null>(null);
+  const [rulesFor, setRulesFor] = useState<{
+    item: SectionItem;
+    href: string;
+    key: string;
+  } | null>(null);
 
   function tap(item: SectionItem, target: SectionTarget) {
     if (target.kind === "soon") return countSoon(item.title);
     // Платные тесты открывают своё превью (как раньше), остальные Premium-карточки — как замки 💎
-    if (item.premium && !premium && target.kind !== "locked-test") return lockedTap(target, item.title);
+    if (item.premium && !premium && target.kind !== "locked-test")
+      return lockedTap(target, item.title);
     // Игра или тест: сначала три строки «как играть», потом «Играть →»
-    const key = item.ref?.game ?? (item.ref?.cards ? "cards" : item.ref?.test ? "test" : undefined);
+    const key =
+      item.ref?.game ??
+      (item.ref?.cards ? "cards" : item.ref?.test ? "test" : undefined);
     if (target.kind === "link" && key && rules[key]) {
-      trackRulesOpen({ id: key === "test" ? (item.ref?.test ?? key) : key, source: "section" });
+      trackRulesOpen({
+        id: key === "test" ? (item.ref?.test ?? key) : key,
+        source: "section",
+      });
       setRulesFor({ item, href: target.href, key });
       return;
     }
@@ -125,12 +184,20 @@ export function SectionScreen({
   }
 
   /** Тап по чипу уровня: голубой 💎 и «Сравниться 💎» объясняют себя и считаются «Глубже 💎»; с Premium чип — часть карточки. */
-  function chipTap(e: { stopPropagation: () => void }, item: SectionItem, level: NonNullable<SectionItem["levels"]>[number]) {
+  function chipTap(
+    e: { stopPropagation: () => void },
+    item: SectionItem,
+    level: NonNullable<SectionItem["levels"]>[number],
+  ) {
     if (!level.premium || premium) return;
     e.stopPropagation();
     haptic("double");
     const id = item.ref?.game ?? item.ref?.test ?? item.title;
-    trackDeeperClick({ id, kind: item.ref?.test ? "test" : "game", source: level.compare ? "compat" : "locked-deck" });
+    trackDeeperClick({
+      id,
+      kind: item.ref?.test ? "test" : "game",
+      source: level.compare ? "compat" : "locked-deck",
+    });
     say(level.compare ? texts.compareHint : texts.premiumHint);
   }
 
@@ -163,7 +230,9 @@ export function SectionScreen({
           <span
             className={cn(
               "absolute top-2.5 right-3 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-[0.04em]",
-              item.premium ? "border-[#62D2FF]/40 bg-[#62D2FF]/10 text-[#62D2FF]" : "border-lime/35 bg-lime/8 text-lime",
+              item.premium
+                ? "border-[#62D2FF]/40 bg-[#62D2FF]/10 text-[#62D2FF]"
+                : "border-lime/35 bg-lime/8 text-lime",
             )}
           >
             {texts.soon}
@@ -173,8 +242,17 @@ export function SectionScreen({
           {item.emoji}
         </span>
         <span className="min-w-0">
-          <b className={cn("block font-display text-[14.5px] leading-[1.25] font-bold", soon && "pr-14")}>{item.title}</b>
-          <small className="mt-0.5 block text-[12.5px] text-muted">{item.text}</small>
+          <b
+            className={cn(
+              "block font-display text-[14.5px] leading-[1.25] font-bold",
+              soon && "pr-14",
+            )}
+          >
+            {item.title}
+          </b>
+          <small className="mt-0.5 block text-[12.5px] text-muted">
+            {item.text}
+          </small>
           {item.levels && (
             <span className="mt-[7px] flex flex-wrap gap-[5px]">
               {item.levels.map((l) => (
@@ -183,7 +261,11 @@ export function SectionScreen({
                   onClick={(e) => chipTap(e, item, l)}
                   className={cn(
                     "rounded-full px-2 py-[3px] text-[10.5px] font-bold",
-                    l.premium ? "bg-[#62D2FF]/10 text-[#62D2FF]" : l.free ? "bg-lime/10 text-lime" : "bg-cream/7 text-muted",
+                    l.premium
+                      ? "bg-[#62D2FF]/10 text-[#62D2FF]"
+                      : l.free
+                        ? "bg-lime/10 text-lime"
+                        : "bg-cream/7 text-muted",
                   )}
                 >
                   {l.label}
@@ -198,11 +280,109 @@ export function SectionScreen({
 
   const sheetTest = lockedTests.find((t) => t.slug === sheet);
 
+  /** «Наугад»: случайная из доступных карточек колоды (не «скоро» и не закрытая Premium). */
+  function randomTap(list: { item: SectionItem; target: SectionTarget }[]) {
+    const pick = list[randomIndex(list.length)];
+    if (pick) tap(pick.item, pick.target);
+  }
+
+  const overlays = (
+    <>
+      {rulesFor && (
+        <RulesSheet
+          emoji={rulesFor.item.emoji}
+          name={rulesFor.item.title}
+          lines={rules[rulesFor.key] ?? []}
+          texts={{
+            title: texts.rulesTitle,
+            play: texts.play,
+            later: texts.later,
+          }}
+          onClose={() => setRulesFor(null)}
+          onPlay={() => {
+            trackRulesPlay({
+              id:
+                rulesFor.item.ref?.game ??
+                rulesFor.item.ref?.test ??
+                rulesFor.key,
+            });
+            router.push(rulesFor.href);
+          }}
+        />
+      )}
+
+      {previewTexts && (
+        <LockedPreviewSheet
+          test={sheetTest}
+          texts={previewTexts}
+          onClose={() => setSheet(null)}
+        />
+      )}
+
+      <div
+        aria-live="polite"
+        className="pointer-events-none fixed inset-x-0 bottom-[calc(20px+env(safe-area-inset-bottom))] z-40 flex justify-center px-4"
+      >
+        {toast && (
+          <p
+            key={toast.id}
+            className="max-w-full rounded-[14px] border border-line bg-surface-2 px-3.5 py-2.5 text-[13px] shadow-[0_10px_24px_rgb(0_0_0/0.5)]"
+          >
+            {toast.text}
+          </p>
+        )}
+      </div>
+    </>
+  );
+
+  // «Тусовка», колода открыта: казино-карты вместо списка. Что делает тап по карточке — те же tap/countSoon/lockedTap выше
+  if (casino && !showDecks) {
+    const items = tab.items.map((item, index) => {
+      const target =
+        targets[tab.id]?.[index] ?? ({ kind: "soon" } as SectionTarget);
+      return { item, index, target };
+    });
+    const playable = items.filter(
+      ({ item, target }) =>
+        target.kind === "link" && !(item.premium && !premium),
+    );
+    return (
+      <>
+        <CasinoDeckView
+          deckId={tab.id}
+          title={stripEmoji(tab.name)}
+          cards={items.map(({ item, index, target }) => ({
+            index,
+            title: item.title,
+            emoji: item.emoji,
+            kind: tab.kinds
+              ?.find((k) => k.id === item.kind)
+              ?.name.toUpperCase(),
+            players: players[tab.id]?.[index] ?? null,
+            soon: target.kind === "soon",
+            locked: !!item.premium && !premium,
+          }))}
+          onBack={() => setCasinoView("decks")}
+          onPick={(index) => {
+            const found = items[index];
+            if (found) tap(found.item, found.target);
+          }}
+          onRandom={playable.length > 0 ? () => randomTap(playable) : null}
+        />
+        {overlays}
+      </>
+    );
+  }
+
   if (showDecks) {
     return (
       <CasinoScene
         title={stripEmoji(section.title)}
-        decks={section.tabs.map((t) => ({ id: t.id, name: t.name, premium: !!t.premium }))}
+        decks={section.tabs.map((t) => ({
+          id: t.id,
+          name: t.name,
+          premium: !!t.premium,
+        }))}
         premium={premium}
         onPick={(id) => {
           const t = section.tabs.find((x) => x.id === id);
@@ -218,19 +398,27 @@ export function SectionScreen({
       <header className="flex flex-col gap-1">
         {casino ? (
           <div>
-            <BackTag onClick={() => setCasinoView("decks")}>← К колодам</BackTag>
+            <BackTag onClick={() => setCasinoView("decks")}>
+              ← К колодам
+            </BackTag>
           </div>
         ) : (
           <BackLink href="/">Главная</BackLink>
         )}
-        <h1 className="mt-1 font-display text-[26px] leading-[1.1] font-extrabold">{section.title}</h1>
+        <h1 className="mt-1 font-display text-[26px] leading-[1.1] font-extrabold">
+          {section.title}
+        </h1>
         <p className="text-[15px] leading-[1.45] text-muted">
           <Rich text={section.lead} />
         </p>
       </header>
 
       {/* Три плитки-вкладки */}
-      <div role="tablist" aria-label="Подразделы" className="grid grid-cols-3 gap-2">
+      <div
+        role="tablist"
+        aria-label="Подразделы"
+        className="grid grid-cols-3 gap-2"
+      >
         {section.tabs.map((t) => {
           const on = t.id === tab.id;
           return (
@@ -257,10 +445,18 @@ export function SectionScreen({
                 {t.emoji}
               </span>
               {/* на узком телефоне шрифт чуть меньше, чтобы «Поверхность» и «Погружение» не рвались посреди слова */}
-              <b className="font-display text-[min(12.5px,3.2vw)] leading-[1.15] font-bold hyphens-manual" lang="ru">
+              <b
+                className="font-display text-[min(12.5px,3.2vw)] leading-[1.15] font-bold hyphens-manual"
+                lang="ru"
+              >
                 {t.name}
               </b>
-              <small className={cn("text-[10.5px] font-bold", t.premium ? "text-[#62D2FF]" : "text-muted")}>
+              <small
+                className={cn(
+                  "text-[10.5px] font-bold",
+                  t.premium ? "text-[#62D2FF]" : "text-muted",
+                )}
+              >
                 {t.tag ?? (t.premium ? texts.premium : texts.free)}
               </small>
             </button>
@@ -271,7 +467,11 @@ export function SectionScreen({
       {/* Три мини-кнопки «во что»: тап оставляет одну группу, повторный тап возвращает все (у Premium-плитки их нет) */}
       {tab.kinds && (
         <div className="flex flex-col gap-2">
-          <div role="group" aria-label="Во что играем" className="grid grid-cols-3 gap-1.5">
+          <div
+            role="group"
+            aria-label="Во что играем"
+            className="grid grid-cols-3 gap-1.5"
+          >
             {tab.kinds.map((k) => (
               <button
                 key={k.id}
@@ -280,7 +480,9 @@ export function SectionScreen({
                 onClick={() => pickKind(k.id)}
                 className={cn(
                   "flex min-h-[58px] flex-col items-center justify-center gap-[3px] rounded-[14px] border px-1 py-2 text-center text-[11.5px] leading-[1.15] font-bold transition-colors",
-                  selKind === k.id ? "border-orange bg-orange/14" : "border-line",
+                  selKind === k.id
+                    ? "border-orange bg-orange/14"
+                    : "border-line",
                 )}
               >
                 <span aria-hidden="true" className="text-lg leading-none">
@@ -290,12 +492,20 @@ export function SectionScreen({
               </button>
             ))}
           </div>
-          <p className="text-xs text-muted">{selKind ? texts.kindsOne : texts.kindsAll}</p>
+          <p className="text-xs text-muted">
+            {selKind ? texts.kindsOne : texts.kindsAll}
+          </p>
         </div>
       )}
 
       {/* Список выбранной вкладки */}
-      <section id="section-panel" role="tabpanel" aria-labelledby={`tab-${tab.id}`} key={tab.id} className="section-pop flex flex-col gap-2.5">
+      <section
+        id="section-panel"
+        role="tabpanel"
+        aria-labelledby={`tab-${tab.id}`}
+        key={tab.id}
+        className="section-pop flex flex-col gap-2.5"
+      >
         {tab.head && tab.side && <PanelHead title={tab.head} side={tab.side} />}
 
         {tab.note && tab.premium && (
@@ -322,39 +532,24 @@ export function SectionScreen({
         )}
       </section>
 
-      {rulesFor && (
-        <RulesSheet
-          emoji={rulesFor.item.emoji}
-          name={rulesFor.item.title}
-          lines={rules[rulesFor.key] ?? []}
-          texts={{ title: texts.rulesTitle, play: texts.play, later: texts.later }}
-          onClose={() => setRulesFor(null)}
-          onPlay={() => {
-            trackRulesPlay({ id: rulesFor.item.ref?.game ?? rulesFor.item.ref?.test ?? rulesFor.key });
-            router.push(rulesFor.href);
-          }}
-        />
-      )}
-
-      {previewTexts && <LockedPreviewSheet test={sheetTest} texts={previewTexts} onClose={() => setSheet(null)} />}
-
-      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(20px+env(safe-area-inset-bottom))] z-40 flex justify-center px-4">
-        {toast && (
-          <p key={toast.id} className="max-w-full rounded-[14px] border border-line bg-surface-2 px-3.5 py-2.5 text-[13px] shadow-[0_10px_24px_rgb(0_0_0/0.5)]">
-            {toast.text}
-          </p>
-        )}
-      </div>
+      {overlays}
     </div>
   );
 }
 
-function PanelHead({ title, side }: { title: string; side: string }): ReactNode {
+function PanelHead({
+  title,
+  side,
+}: {
+  title: string;
+  side: string;
+}): ReactNode {
   return (
     <div className="flex items-baseline justify-between gap-2">
-      <h2 className="font-display text-base leading-[1.2] font-bold">{title}</h2>
+      <h2 className="font-display text-base leading-[1.2] font-bold">
+        {title}
+      </h2>
       <span className="text-xs text-muted">{side}</span>
     </div>
   );
 }
-

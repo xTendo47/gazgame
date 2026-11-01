@@ -380,3 +380,48 @@
     transition: none;
   }
 }
+
+/* ---------- игра и итоги «Тусовки» в стиле казино ---------- */
+.cg-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 55% at 50% 30%, #1a7a4e, #0b4a2e 62%, #031a10),
+    var(--gz-pnoise);
+}
+.cg-wood {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 54px;
+  background: linear-gradient(180deg, #3a2414, #1a0e07);
+  border-top: 4px solid #b8913f;
+  box-shadow: 0 -6px 14px rgb(0 0 0 / 0.4);
+}
+/* внутри страницы игры карточки и плашки становятся тёмным сукном с золотой рамкой, заголовок — золото */
+.cg-skin {
+  --color-surface: rgb(6 36 24 / 0.86);
+  --color-surface-2: rgb(10 54 36 / 0.92);
+  --color-line: rgb(201 161 78 / 0.5);
+  --color-muted: #d3e3cc;
+  padding-bottom: 80px;
+}
+.cg-skin h1 {
+  font-family: var(--font-playfair);
+  font-style: italic;
+  font-weight: 900;
+  color: transparent;
+  background: linear-gradient(100deg, #8a6420, #f6e3a1 35%, #b8913f 55%, #fff1c4 70%, #9c7426);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 2px 0 #000);
+  letter-spacing: 0.01em;
+}
+.cg-skin a:focus-visible,
+.cg-skin button:focus-visible {
+  outline: 3px solid #d4ff3a;
+  outline-offset: 2px;
+}

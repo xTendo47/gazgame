@@ -38,7 +38,7 @@ const PLATE: Record<string, string> = {
 };
 
 /** Рулетка из рисунка макета: берём только круг колеса (остальное из сцены обрезаем). */
-const WHEEL_SVG = PARTY_SCENE.replace(
+export const WHEEL_SVG = PARTY_SCENE.replace(
   'viewBox="0 0 160 160"',
   'viewBox="27 21 106 106"',
 ).replace(/♥/g, "");
@@ -156,7 +156,7 @@ function IceCracks() {
 }
 
 /** Висячий замок. */
-function PadlockIcon() {
+export function PadlockIcon() {
   return (
     <svg viewBox="0 0 26 32" width="26" height="32" aria-hidden="true">
       <defs>
@@ -195,7 +195,7 @@ function PadlockIcon() {
 }
 
 /** Название «Тусовка» дугой, золотой градиент с переливом (SMIL; без анимации, если включено «Уменьшить движение»). */
-function GoldTitle({ text, still }: { text: string; still: boolean }) {
+export function GoldTitle({ text, still, size = 84 }: { text: string; still: boolean; size?: number }) {
   return (
     <svg
       className="cs-title"
@@ -235,7 +235,7 @@ function GoldTitle({ text, still }: { text: string; still: boolean }) {
         fontFamily="Playfair Display, serif"
         fontStyle="italic"
         fontWeight="900"
-        fontSize="84"
+        fontSize={size}
         textAnchor="middle"
         stroke="#2a1c06"
         strokeWidth="2.400"
@@ -251,7 +251,7 @@ function GoldTitle({ text, still }: { text: string; still: boolean }) {
         fontFamily="Playfair Display, serif"
         fontStyle="italic"
         fontWeight="900"
-        fontSize="84"
+        fontSize={size}
         textAnchor="middle"
         fill="url(#cs-gold-title)"
         stroke="#5e4210"

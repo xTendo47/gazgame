@@ -5,6 +5,7 @@ import type { Section } from "@gazgame/content";
 import { sectionTarget } from "@gazgame/engine";
 import { Screen } from "@gazgame/ui";
 import { getCatalog, visibility } from "@/lib/catalog";
+import { playersLabel } from "@/lib/players-label";
 import { SectionScreen } from "./SectionScreen";
 
 export function SectionPage({ sectionId, openLocked }: { sectionId: Section; openLocked?: string }) {
@@ -13,6 +14,17 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
   const section = layouts?.sections.find((s) => s.id === sectionId);
   if (!layouts || !section) notFound();
   const targets = Object.fromEntries(section.tabs.map((t) => [t.id, t.items.map((item) => sectionTarget(catalog, item, visibility))]));
+  // Подпись «сколько игроков» для карточек: берётся из файла игры; у «Карточных игр» нет числа — 2+
+  const players = Object.fromEntries(
+    section.tabs.map((t) => [
+      t.id,
+      t.items.map((item) => {
+        const game = item.ref?.game ? catalog.games.find((g) => g.slug === item.ref?.game) : undefined;
+        if (game) return playersLabel(game.players);
+        return item.ref?.cards ? playersLabel({ min: 2, max: 20 }) : null;
+      }),
+    ]),
+  );
 
   return (
     <Screen>
@@ -20,6 +32,7 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
         section={section}
         texts={layouts.texts}
         targets={targets}
+        players={players}
         lockedTests={catalog.lockedTests ?? []}
         previewTexts={catalog.premium?.preview}
         rules={layouts.rules}
