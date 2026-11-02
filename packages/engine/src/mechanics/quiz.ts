@@ -9,6 +9,15 @@ import { dayIndex } from "../today";
 
 export type QuizMode = "solo" | "duo" | "party";
 
+/** Банк вопросов: категория или артист (id — slug артиста). */
+export interface QuizBank {
+  id: string;
+  questions: readonly QuizQuestion[];
+}
+
+/** Сколько вопросов каждого уровня в раунде про артиста: 5 лёгких → 5 средних → 5 сложных. */
+export const ARTIST_PER_LEVEL = 5;
+
 /** Секунд на обычный вопрос с вариантами; у вопроса с вводом своё время (time). */
 export const QUIZ_TIME = 15;
 
@@ -85,13 +94,37 @@ function pickFresh(pool: readonly QuizQuestion[], seen: ReadonlySet<string>, tak
 }
 
 /** Раунд категории: по одному случайному вопросу каждого уровня из банка, без показанных раньше. Порядок вариантов перемешан. */
-export function buildRound(category: QuizCategory, random: Random = Math.random, seen: ReadonlySet<string> = new Set()): QuizQuestion[] {
+export function buildRound(category: QuizBank, random: Random = Math.random, seen: ReadonlySet<string> = new Set()): QuizQuestion[] {
   const round: QuizQuestion[] = [];
   for (const level of QUIZ_LEVELS) {
     const pick = pickFresh(category.questions.filter((q) => q.level === level), seen, new Set(), random);
     if (pick) round.push(shuffleOptions(pick, random));
   }
   return round;
+}
+
+/**
+ * Раунд про артиста: 5 лёгких → 5 средних → 5 сложных, случайные из банка артиста, без показанных раньше (пока есть непоказанные).
+ * Если вопросов уровня меньше пяти (заглушки), берём сколько есть, без повторов. Порядок вариантов перемешан.
+ */
+export function buildArtistRound(artist: QuizBank, random: Random = Math.random, seen: ReadonlySet<string> = new Set()): QuizQuestion[] {
+  const round: QuizQuestion[] = [];
+  for (const level of QUIZ_LEVELS) {
+    const pool = artist.questions.filter((q) => q.level === level);
+    const taken = new Set<string>();
+    for (let i = 0; i < ARTIST_PER_LEVEL; i++) {
+      const pick = pickFresh(pool, seen, taken, random);
+      if (!pick) break;
+      taken.add(pick.id);
+      round.push(shuffleOptions(pick, random));
+    }
+  }
+  return round;
+}
+
+/** Звание по проценту верных ответов: с наибольшим minPercent, который не больше процента игрока. */
+export function pickRank<T extends { minPercent: number }>(ranks: readonly T[], percent: number): T | undefined {
+  return [...ranks].sort((a, b) => b.minPercent - a.minPercent).find((r) => percent >= r.minPercent);
 }
 
 /** Вопросы супер-квиза из банков категорий from: ступени идут по возрастанию уровня (треть на каждый), категории чередуются, без повторов и показанных раньше. */
@@ -114,7 +147,7 @@ export function buildSuperRound(file: QuizSuper, categories: readonly QuizCatego
  * Какие id считать показанными после раунда. Если банк уровня был исчерпан (все вопросы уровня уже показаны), он начинается заново:
  * старые отметки этого уровня сбрасываются, и остаётся только что показанный вопрос.
  */
-export function nextSeen(categories: readonly QuizCategory[], round: readonly QuizQuestion[], seen: ReadonlySet<string>): Set<string> {
+export function nextSeen(categories: readonly QuizBank[], round: readonly QuizQuestion[], seen: ReadonlySet<string>): Set<string> {
   const next = new Set(seen);
   for (const q of round) {
     const bank = categories.find((c) => c.questions.some((x) => x.id === q.id));
@@ -126,8 +159,11 @@ export function nextSeen(categories: readonly QuizCategory[], round: readonly Qu
 }
 
 /** Вопрос дня: один и тот же у всех в этот день, по кругу по всем вопросам банков. Варианты перемешиваются при показе (shuffleOptions). */
-export function dailyQuestion(categories: readonly QuizCategory[], now: Date): QuizQuestion | undefined {
-  const all = categories.flatMap((c) => c.questions);
+export function dailyQuestion(categories: readonly QuizBank[], now: Date): QuizQuestion | undefined {
+  const every = categories.flatMap((c) => c.questions);
+  // заглушки (draft) в «Вопрос дня» не попадают, пока есть настоящие вопросы
+  const real = every.filter((q) => q.draft !== true);
+  const all = real.length > 0 ? real : every;
   if (all.length === 0) return undefined;
   const i = dayIndex(now);
   return all[((i % all.length) + all.length) % all.length];
