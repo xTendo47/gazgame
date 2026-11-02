@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@gazgame/ui";
 import { useTodayData } from "@/lib/today";
+import { Em } from "@/components/Em";
 
 const dateFormat = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
@@ -13,11 +14,11 @@ export function AnswersList() {
     return (
       <section className="flex flex-col items-center gap-4 rounded-card bg-surface p-6 text-center">
         <div aria-hidden="true" className="text-5xl">
-          📖
+          <Em text="📖" />
         </div>
         <p className="text-lg font-semibold">Пока пусто. Ответь на вопрос дня, и он появится здесь.</p>
         <Link href="/today" className={buttonVariants({ variant: "primary" })}>
-          Газ! 🔥
+          <Em text="Газ! 🔥" />
         </Link>
       </section>
     );
