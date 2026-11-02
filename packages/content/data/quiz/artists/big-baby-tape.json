@@ -1,54 +1,232 @@
 {
   "$schema": "../../schema/quiz-artist.schema.json",
-  "_note": "Заглушки (draft): по одному вопросу на уровень. Настоящие вопросы пришлёт основатель: по 5+ на каждый уровень (в раунде 5 лёгких, 5 средних, 5 сложных), поддерживаются choice и input.",
   "name": "Big Baby Tape",
   "slug": "big-baby-tape",
-  "draft": true,
   "questions": [
     {
-      "id": "big-baby-tape-1-1",
+      "id": "big-baby-tape-1-01",
       "level": 1,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 1 про артиста Big Baby Tape",
+      "text": "Как настоящее имя Big Baby Tape?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Олег Нечипоренко",
+        "Егор Ракитин",
+        "Глеб Голубин",
+        "Григорий Ляхов"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 1,
+      "explain": "Егор Олегович Ракитин.",
+      "draft": false
     },
     {
-      "id": "big-baby-tape-2-1",
+      "id": "big-baby-tape-1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города Big Baby Tape?",
+      "options": [
+        "Москва",
+        "Санкт-Петербург",
+        "Тюмень",
+        "Томск"
+      ],
+      "correct": 0,
+      "explain": "Москва — и отсюда вся его эстетика.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "С кем Big Baby Tape выпустил «Bandana I»?",
+      "options": [
+        "С Pharaoh",
+        "С OG Buda",
+        "С Feduk",
+        "С Кизару"
+      ],
+      "correct": 3,
+      "explain": "Альбом 2021 года.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "С каким треком он ворвался в чарты в 2018 году?",
+      "options": [
+        "«Hustle Tales»",
+        "«Trap Luv»",
+        "«Gimme the Loot»",
+        "«Kari»"
+      ],
+      "correct": 2,
+      "explain": "Тот самый трек с «Dragonborn».",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "Как называется его дебютный студийный альбом?",
+      "options": [
+        "«Varskva»",
+        "«Dragonborn»",
+        "«Hoodrich Tales»",
+        "«Peekaboo»"
+      ],
+      "correct": 1,
+      "explain": "Ноябрь 2018 года.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-2-01",
       "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 2 про артиста Big Baby Tape",
+      "text": "В каком году родился Big Baby Tape?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "2000",
+        "1998",
+        "2002",
+        "1996"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "5 января 2000 года.",
+      "draft": false
     },
     {
-      "id": "big-baby-tape-3-1",
-      "level": 3,
+      "id": "big-baby-tape-2-02",
+      "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 3 про артиста Big Baby Tape",
+      "text": "Неофициальным лидером какой банды его называют?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Haunted Family",
+        "Dead Dynasty",
+        "Melon Music",
+        "Benzo Gang"
+      ],
+      "correct": 3,
+      "explain": "Benzo Gang — его тусовка.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "С кем он записал «Hustle Tales» в 2018 году?",
+      "options": [
+        "С Face",
+        "С Pharaoh",
+        "С Feduk",
+        "С Кизару"
+      ],
+      "correct": 2,
+      "explain": "Один из первых его громких фитов.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "С кем он выпустил совместный альбом «Peekaboo» в 2024 году?",
+      "options": [
+        "С Кизару",
+        "С Aarne",
+        "С Arut",
+        "С OG Buda"
+      ],
+      "correct": 1,
+      "explain": "Самый прослушиваемый альбом лета 2024 года по данным МТС.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется его альбом 2023 года?",
+      "options": [
+        "«Varskva»",
+        "«Dragonborn»",
+        "«Arguments & Facts»",
+        "«LaFlare»"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "Варшавка — шоссе в Москве.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "Под каким именем он выступал в 15 лет?",
+      "options": [
+        "Tape LaFlare",
+        "Baby Benz",
+        "Lil Tape",
+        "DJ Tape"
+      ],
+      "correct": 3,
+      "explain": "Планировался даже инструментальный альбом «DJ Tape 2000», но он так и не вышел.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Во сколько лет он начал делать биты?",
+      "options": [
+        "В 16",
+        "В 10",
+        "В 12",
+        "В 18"
+      ],
+      "correct": 2,
+      "explain": "В FL Studio.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "Какое издание назвало «Dragonborn» лучшим русским рэп-альбомом 2019 года?",
+      "options": [
+        "Rolling Stone",
+        "The New York Times",
+        "Pitchfork",
+        "Billboard"
+      ],
+      "correct": 1,
+      "explain": "Неожиданное признание из Америки.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "Как Кизару появился на презентации «Bandana I» в Москве?",
+      "options": [
+        "Голограммой",
+        "По видеосвязи",
+        "В маске",
+        "Никак — его не было"
+      ],
+      "correct": 0,
+      "explain": "В Россию он приехать не мог.",
+      "draft": false
+    },
+    {
+      "id": "big-baby-tape-3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется его мини-альбом 2019 года?",
+      "options": [
+        "«Hoodrich Tales»",
+        "«Cookin' Anthems»",
+        "«Bandana II»",
+        "«Arguments & Facts»"
+      ],
+      "correct": 3,
+      "explain": "Игра слов с газетой «Аргументы и факты».",
+      "draft": false
     }
   ]
 }

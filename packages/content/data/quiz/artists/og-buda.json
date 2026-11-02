@@ -1,54 +1,232 @@
 {
   "$schema": "../../schema/quiz-artist.schema.json",
-  "_note": "Заглушки (draft): по одному вопросу на уровень. Настоящие вопросы пришлёт основатель: по 5+ на каждый уровень (в раунде 5 лёгких, 5 средних, 5 сложных), поддерживаются choice и input.",
   "name": "OG Buda",
   "slug": "og-buda",
-  "draft": true,
   "questions": [
     {
-      "id": "og-buda-1-1",
+      "id": "og-buda-1-01",
       "level": 1,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 1 про артиста OG Buda",
+      "text": "Как настоящее имя OG Buda?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Григорий Ляхов",
+        "Егор Ракитин",
+        "Марк Серков",
+        "Александр Романов"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "Григорий Алексеевич Ляхов.",
+      "draft": false
     },
     {
-      "id": "og-buda-2-1",
+      "id": "og-buda-1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города OG Buda?",
+      "options": [
+        "Томск",
+        "Москва",
+        "Екатеринбург",
+        "Тюмень"
+      ],
+      "correct": 3,
+      "explain": "Родился там в 1994 году.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "В каком объединении OG Buda?",
+      "options": [
+        "Dead Dynasty",
+        "Benzo Gang",
+        "Melon Music",
+        "Haunted Family"
+      ],
+      "correct": 2,
+      "explain": "Вместе с Платиной и Mayot.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "С кем OG Buda выпустил EP «Sweet Dreams»?",
+      "options": [
+        "С Mayot",
+        "С Платиной",
+        "С Feduk",
+        "С Big Baby Tape"
+      ],
+      "correct": 1,
+      "explain": "2018 год.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто его давний друг и наставник, назвавший его одним из самых перспективных рэперов у Дудя?",
+      "options": [
+        "Feduk",
+        "Баста",
+        "Скриптонит",
+        "Face"
+      ],
+      "correct": 0,
+      "explain": "Feduk появился и в его клипе камео.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-2-01",
       "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 2 про артиста OG Buda",
+      "text": "В каком году родился OG Buda?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "1997",
+        "2000",
+        "1991",
+        "1994"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 3,
+      "explain": "10 января 1994 года.",
+      "draft": false
     },
     {
-      "id": "og-buda-3-1",
-      "level": 3,
+      "id": "og-buda-2-02",
+      "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 3 про артиста OG Buda",
+      "text": "Как называется альбом OG Buda 2019 года?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "«Sexy Drill»",
+        "«SZN»",
+        "«OPG City»",
+        "«Pox Vawё»"
+      ],
+      "correct": 2,
+      "explain": "С ним он поехал в большой тур.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется серия его альбомов с номерами?",
+      "options": [
+        "«OPG City»",
+        "«FreeRio»",
+        "«Bandana»",
+        "«Tourlife»"
+      ],
+      "correct": 1,
+      "explain": "Вышли части 1, 2 и 3.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "В каком году OG Buda попал в список Forbes «30 до 30»?",
+      "options": [
+        "2022",
+        "2020",
+        "2023",
+        "2019"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "Категория «Музыка».",
+      "draft": false
+    },
+    {
+      "id": "og-buda-2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "Кого OG Buda сыграл в сериале «Сказки Пушкина. Для взрослых»?",
+      "options": [
+        "Балду",
+        "Гвидона",
+        "Черномора",
+        "Елисея"
+      ],
+      "correct": 3,
+      "explain": "2021 год.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "Как назывался его самый первый релиз?",
+      "options": [
+        "«Tourlife»",
+        "«Bandits»",
+        "«1000 Freestyle»",
+        "«Welcome»"
+      ],
+      "correct": 2,
+      "explain": "2017 год.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Как назывался его трибьют XXXTentacion 2018 года?",
+      "options": [
+        "«Moonlight»",
+        "«Tourlife (RIP X)»",
+        "«SAD (RIP X)»",
+        "«Johnny D»"
+      ],
+      "correct": 1,
+      "explain": "Трек расширил его аудиторию.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "Какие два альбома OG Buda вышли в один день — 30 апреля 2021 года?",
+      "options": [
+        "«Sexy Drill» и «FreeRio»",
+        "«OPG City» и «SZN»",
+        "«FreeRio 2» и «FreeRio 3»",
+        "«Pox Vawё» и «Sweet Dreams»"
+      ],
+      "correct": 0,
+      "explain": "Двойной удар в один день.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "Что особенного в дате выхода альбома «SZN» (10 января 2025 года)?",
+      "options": [
+        "Это годовщина первого трека",
+        "Это день основания Melon Music",
+        "Ничего",
+        "Это его день рождения"
+      ],
+      "correct": 3,
+      "explain": "Он родился 10 января.",
+      "draft": false
+    },
+    {
+      "id": "og-buda-3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом OG Buda 2023 года?",
+      "options": [
+        "«FreeRio 3»",
+        "«OPG City»",
+        "«Missing You but Working»",
+        "«Sexy Drill»"
+      ],
+      "correct": 2,
+      "explain": "В том же году вышел и «Pox Vawё».",
+      "draft": false
     }
   ]
 }

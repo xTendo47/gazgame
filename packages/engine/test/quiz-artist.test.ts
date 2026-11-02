@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { QuizQuestion } from "@gazgame/content";
+import bbt from "@gazgame/content/data/quiz/artists/big-baby-tape.json";
+import kizaru from "@gazgame/content/data/quiz/artists/kizaru.json";
+import pharaoh from "@gazgame/content/data/quiz/artists/pharaoh.json";
+import ogBuda from "@gazgame/content/data/quiz/artists/og-buda.json";
+import thug from "@gazgame/content/data/quiz/artists/friendly-thug-52-ngg.json";
+import madk1d from "@gazgame/content/data/quiz/artists/madk1d.json";
 import { ARTIST_PER_LEVEL, buildArtistRound, dailyQuestion, nextSeen, pickRank, type QuizBank } from "../src";
+
+const artistFiles: Record<string, unknown> = { "big-baby-tape": bbt, kizaru, pharaoh, "og-buda": ogBuda, "friendly-thug-52-ngg": thug, madk1d };
 
 const bank = (id: string, perLevel: number, draft = false): QuizBank => ({
   id,
@@ -68,5 +76,20 @@ describe("квиз $HOW: раунд про артиста", () => {
       expect(q?.draft).not.toBe(true);
     }
     expect(dailyQuestion([stub], new Date("2026-10-13T09:00:00Z"))?.draft).toBe(true);
+  });
+});
+
+describe("квиз $HOW: настоящие банки артистов", () => {
+  it("раунд про каждого артиста — 15 вопросов: 5 лёгких → 5 средних → 5 сложных, внутри уровня порядок случайный", () => {
+    for (const slug of ["big-baby-tape", "kizaru", "pharaoh", "og-buda", "friendly-thug-52-ngg", "madk1d"]) {
+      const file = artistFiles[slug] as { questions: QuizQuestion[] };
+      const round = buildArtistRound({ id: slug, questions: file.questions });
+      expect(round.map((q) => q.level)).toEqual([...Array(5).fill(1), ...Array(5).fill(2), ...Array(5).fill(3)]);
+      expect(new Set(round.map((q) => q.id)).size).toBe(15);
+    }
+    // порядок внутри уровня меняется от раза к разу
+    const file = artistFiles["kizaru"] as { questions: QuizQuestion[] };
+    const orders = new Set(Array.from({ length: 12 }, () => buildArtistRound({ id: "kizaru", questions: file.questions }).slice(0, 5).map((q) => q.id).join()));
+    expect(orders.size).toBeGreaterThan(1);
   });
 });

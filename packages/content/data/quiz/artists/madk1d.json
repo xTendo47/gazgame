@@ -1,54 +1,232 @@
 {
   "$schema": "../../schema/quiz-artist.schema.json",
-  "_note": "Заглушки (draft): по одному вопросу на уровень. Настоящие вопросы пришлёт основатель: по 5+ на каждый уровень (в раунде 5 лёгких, 5 средних, 5 сложных), поддерживаются choice и input.",
   "name": "Madk1d",
   "slug": "madk1d",
-  "draft": true,
   "questions": [
     {
-      "id": "madk1d-1-1",
+      "id": "madk1d-1-01",
       "level": 1,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 1 про артиста Madk1d",
+      "text": "Из какого города Madk1d?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Тюмень",
+        "Пермь",
+        "Томск",
+        "Омск"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 2,
+      "explain": "Сибирь.",
+      "draft": false
     },
     {
-      "id": "madk1d-2-1",
+      "id": "madk1d-1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "С каким треком Madk1d завирусился в TikTok?",
+      "options": [
+        "«Барыга»",
+        "«Катюха»",
+        "«Цена»",
+        "«давно»"
+      ],
+      "correct": 1,
+      "explain": "Именно с него всё началось.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "С кем он записал «Катюху»?",
+      "options": [
+        "С LILCAK3",
+        "С CUPSIZE",
+        "С kantaa",
+        "С GRILLYAZH"
+      ],
+      "correct": 0,
+      "explain": "Трек, который разлетелся по TikTok.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "Какой трек стал его первым большим хитом в чартах?",
+      "options": [
+        "«Катюха»",
+        "«1 мая»",
+        "«умираю»",
+        "«Толпы»"
+      ],
+      "correct": 3,
+      "explain": "На него реагировал даже xxxmanera.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "Как называется альбом Madk1d 2025 года?",
+      "options": [
+        "«Он сказал поехали!»",
+        "«мир, труд, май»",
+        "«sexyswag»",
+        "«Толпы»"
+      ],
+      "correct": 2,
+      "explain": "Вышел в марте 2025-го.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-2-01",
       "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 2 про артиста Madk1d",
+      "text": "Как настоящее имя Madk1d?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Александр Романов",
+        "Марк Серков",
+        "Арсений Несатый",
+        "Егор Ракитин"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 1,
+      "explain": "Марк Робертович Серков.",
+      "draft": false
     },
     {
-      "id": "madk1d-3-1",
-      "level": 3,
+      "id": "madk1d-2-02",
+      "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 3 про артиста Madk1d",
+      "text": "В каком году родился Madk1d?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "2002",
+        "2000",
+        "2004",
+        "1999"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "11 апреля 2002 года.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется его первый полноформатный альбом?",
+      "options": [
+        "«sexyswag»",
+        "«мир, труд, май»",
+        "«ИЗВИНИТЕ ЗА ВНИМАНИЕ»",
+        "«Он сказал поехали!»"
+      ],
+      "correct": 3,
+      "explain": "2024 год, отсылка к Гагарину.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется его мини-альбом 2023 года?",
+      "options": [
+        "«Он сказал поехали!»",
+        "«sexyswag»",
+        "«мир, труд, май»",
+        "«Барыга»"
+      ],
+      "correct": 2,
+      "explain": "Название — советский лозунг.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "Из какого объединения Madk1d?",
+      "options": [
+        "Melon Music",
+        "Squad Badmood",
+        "Benzo Gang",
+        "Haunted Family"
+      ],
+      "correct": 1,
+      "explain": "От него остался в основном Discord-сервер.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется его EP 2024 года?",
+      "options": [
+        "«ИЗВИНИТЕ ЗА ВНИМАНИЕ»",
+        "«мир, труд, май»",
+        "«sexyswag»",
+        "«Он сказал поехали!»"
+      ],
+      "correct": 0,
+      "explain": "Название капсом.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Сколько треков в альбоме «Он сказал поехали!»?",
+      "options": [
+        "12",
+        "7",
+        "15",
+        "9"
+      ],
+      "correct": 3,
+      "explain": "Девять.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "С кем он записал «Круче чем вы» и «1 мая»?",
+      "options": [
+        "С LILCAK3",
+        "С kantaa",
+        "С CUPSIZE",
+        "С GRILLYAZH"
+      ],
+      "correct": 2,
+      "explain": "Два трека с одним артистом.",
+      "draft": false
+    },
+    {
+      "id": "madk1d-3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "С кем он записал «последним летом»?",
+      "options": [
+        "С CUPSIZE",
+        "С GRILLYAZH",
+        "С kantaa",
+        "С LILCAK3"
+      ],
+      "correct": 1,
+      "explain": "Трек с «sexyswag».",
+      "draft": false
+    },
+    {
+      "id": "madk1d-3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "С кем он записал «умираю»?",
+      "options": [
+        "С kantaa",
+        "С CUPSIZE",
+        "С GRILLYAZH",
+        "С xxxmanera"
+      ],
+      "correct": 0,
+      "explain": "Ещё один его фит.",
+      "draft": false
     }
   ]
 }

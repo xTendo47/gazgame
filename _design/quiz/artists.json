@@ -1,0 +1,1412 @@
+{
+ "titles": [
+  {
+   "min": 0,
+   "max": 33,
+   "title": "Слышали пару треков в такси"
+  },
+  {
+   "min": 34,
+   "max": 66,
+   "title": "Шарите, но без фанатизма"
+  },
+  {
+   "min": 67,
+   "max": 99,
+   "title": "Знаете дискографию лучше лейбла"
+  },
+  {
+   "min": 100,
+   "max": 100,
+   "title": "Вы точно из одного подъезда"
+  }
+ ],
+ "artists": [
+  {
+   "name": "Big Baby Tape",
+   "slug": "big-baby-tape",
+   "questions": [
+    {
+     "id": "big-baby-tape-1-01",
+     "level": 1,
+     "type": "choice",
+     "text": "Как настоящее имя Big Baby Tape?",
+     "options": [
+      "Олег Нечипоренко",
+      "Егор Ракитин",
+      "Глеб Голубин",
+      "Григорий Ляхов"
+     ],
+     "correct": 1,
+     "explain": "Егор Олегович Ракитин.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-1-02",
+     "level": 1,
+     "type": "choice",
+     "text": "Из какого города Big Baby Tape?",
+     "options": [
+      "Москва",
+      "Санкт-Петербург",
+      "Тюмень",
+      "Томск"
+     ],
+     "correct": 0,
+     "explain": "Москва — и отсюда вся его эстетика.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-1-03",
+     "level": 1,
+     "type": "choice",
+     "text": "С кем Big Baby Tape выпустил «Bandana I»?",
+     "options": [
+      "С Pharaoh",
+      "С OG Buda",
+      "С Feduk",
+      "С Кизару"
+     ],
+     "correct": 3,
+     "explain": "Альбом 2021 года.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-1-04",
+     "level": 1,
+     "type": "choice",
+     "text": "С каким треком он ворвался в чарты в 2018 году?",
+     "options": [
+      "«Hustle Tales»",
+      "«Trap Luv»",
+      "«Gimme the Loot»",
+      "«Kari»"
+     ],
+     "correct": 2,
+     "explain": "Тот самый трек с «Dragonborn».",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-1-05",
+     "level": 1,
+     "type": "choice",
+     "text": "Как называется его дебютный студийный альбом?",
+     "options": [
+      "«Varskva»",
+      "«Dragonborn»",
+      "«Hoodrich Tales»",
+      "«Peekaboo»"
+     ],
+     "correct": 1,
+     "explain": "Ноябрь 2018 года.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-2-01",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году родился Big Baby Tape?",
+     "options": [
+      "2000",
+      "1998",
+      "2002",
+      "1996"
+     ],
+     "correct": 0,
+     "explain": "5 января 2000 года.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-2-02",
+     "level": 2,
+     "type": "choice",
+     "text": "Неофициальным лидером какой банды его называют?",
+     "options": [
+      "Haunted Family",
+      "Dead Dynasty",
+      "Melon Music",
+      "Benzo Gang"
+     ],
+     "correct": 3,
+     "explain": "Benzo Gang — его тусовка.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-2-03",
+     "level": 2,
+     "type": "choice",
+     "text": "С кем он записал «Hustle Tales» в 2018 году?",
+     "options": [
+      "С Face",
+      "С Pharaoh",
+      "С Feduk",
+      "С Кизару"
+     ],
+     "correct": 2,
+     "explain": "Один из первых его громких фитов.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-2-04",
+     "level": 2,
+     "type": "choice",
+     "text": "С кем он выпустил совместный альбом «Peekaboo» в 2024 году?",
+     "options": [
+      "С Кизару",
+      "С Aarne",
+      "С Arut",
+      "С OG Buda"
+     ],
+     "correct": 1,
+     "explain": "Самый прослушиваемый альбом лета 2024 года по данным МТС.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-2-05",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется его альбом 2023 года?",
+     "options": [
+      "«Varskva»",
+      "«Dragonborn»",
+      "«Arguments & Facts»",
+      "«LaFlare»"
+     ],
+     "correct": 0,
+     "explain": "Варшавка — шоссе в Москве.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-3-01",
+     "level": 3,
+     "type": "choice",
+     "text": "Под каким именем он выступал в 15 лет?",
+     "options": [
+      "Tape LaFlare",
+      "Baby Benz",
+      "Lil Tape",
+      "DJ Tape"
+     ],
+     "correct": 3,
+     "explain": "Планировался даже инструментальный альбом «DJ Tape 2000», но он так и не вышел.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-3-02",
+     "level": 3,
+     "type": "choice",
+     "text": "Во сколько лет он начал делать биты?",
+     "options": [
+      "В 16",
+      "В 10",
+      "В 12",
+      "В 18"
+     ],
+     "correct": 2,
+     "explain": "В FL Studio.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-3-03",
+     "level": 3,
+     "type": "choice",
+     "text": "Какое издание назвало «Dragonborn» лучшим русским рэп-альбомом 2019 года?",
+     "options": [
+      "Rolling Stone",
+      "The New York Times",
+      "Pitchfork",
+      "Billboard"
+     ],
+     "correct": 1,
+     "explain": "Неожиданное признание из Америки.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-3-04",
+     "level": 3,
+     "type": "choice",
+     "text": "Как Кизару появился на презентации «Bandana I» в Москве?",
+     "options": [
+      "Голограммой",
+      "По видеосвязи",
+      "В маске",
+      "Никак — его не было"
+     ],
+     "correct": 0,
+     "explain": "В Россию он приехать не мог.",
+     "draft": false
+    },
+    {
+     "id": "big-baby-tape-3-05",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется его мини-альбом 2019 года?",
+     "options": [
+      "«Hoodrich Tales»",
+      "«Cookin' Anthems»",
+      "«Bandana II»",
+      "«Arguments & Facts»"
+     ],
+     "correct": 3,
+     "explain": "Игра слов с газетой «Аргументы и факты».",
+     "draft": false
+    }
+   ]
+  },
+  {
+   "name": "Кизару",
+   "slug": "kizaru",
+   "questions": [
+    {
+     "id": "kizaru-1-01",
+     "level": 1,
+     "type": "choice",
+     "text": "Как настоящее имя Кизару?",
+     "options": [
+      "Олег Савченко",
+      "Егор Ракитин",
+      "Олег Нечипоренко",
+      "Александр Романов"
+     ],
+     "correct": 2,
+     "explain": "Олег Викторович Нечипоренко.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-1-02",
+     "level": 1,
+     "type": "choice",
+     "text": "В каком городе живёт Кизару?",
+     "options": [
+      "Мадрид",
+      "Барселона",
+      "Берлин",
+      "Лос-Анджелес"
+     ],
+     "correct": 1,
+     "explain": "В Испании он с 2014 года.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-1-03",
+     "level": 1,
+     "type": "choice",
+     "text": "С кем Кизару выпустил «Bandana I»?",
+     "options": [
+      "С Big Baby Tape",
+      "С Pharaoh",
+      "С Friendly Thug 52 NGG",
+      "С OG Buda"
+     ],
+     "correct": 0,
+     "explain": "Один из главных русских альбомов 2021 года.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-1-04",
+     "level": 1,
+     "type": "choice",
+     "text": "Как называется объединение, которое основал Кизару?",
+     "options": [
+      "Benzo Gang",
+      "Dead Dynasty",
+      "Squad Badmood",
+      "Haunted Family"
+     ],
+     "correct": 3,
+     "explain": "Он его сооснователь.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-1-05",
+     "level": 1,
+     "type": "choice",
+     "text": "Из какого города Кизару родом?",
+     "options": [
+      "Москва",
+      "Ростов-на-Дону",
+      "Санкт-Петербург",
+      "Мурманск"
+     ],
+     "correct": 2,
+     "explain": "Питер — его родной город.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-2-01",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году родился Кизару?",
+     "options": [
+      "1993",
+      "1989",
+      "1985",
+      "1996"
+     ],
+     "correct": 1,
+     "explain": "21 мая 1989 года.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-2-02",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом Кизару 2020 года?",
+     "options": [
+      "«Born to Trap»",
+      "«Karmageddon»",
+      "«Яд»",
+      "«SIMBA»"
+     ],
+     "correct": 0,
+     "explain": "Самый популярный артист России на Spotify в 2020-м.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-2-03",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом Кизару 2019 года?",
+     "options": [
+      "«Born to Trap»",
+      "«First Day Out»",
+      "«QUAZIMODO»",
+      "«Karmageddon»"
+     ],
+     "correct": 3,
+     "explain": "Карма плюс армагеддон.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-2-04",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом Кизару 2024 года?",
+     "options": [
+      "«SIMBA»",
+      "«Gremlin»",
+      "«QUAZIMODO»",
+      "«Speedy Gonzales»"
+     ],
+     "correct": 2,
+     "explain": "Назван в честь горбуна из «Собора Парижской Богоматери».",
+     "draft": false
+    },
+    {
+     "id": "kizaru-2-05",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом Кизару 2025 года?",
+     "options": [
+      "«QUAZIMODO»",
+      "«SIMBA»",
+      "«Ca$hey»",
+      "«Mas Fuerte»"
+     ],
+     "correct": 1,
+     "explain": "Да, в честь того самого львёнка.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-3-01",
+     "level": 3,
+     "type": "choice",
+     "text": "Как назывался его первый EP 2016 года?",
+     "options": [
+      "«Long Way Up»",
+      "«Mas Fuerte»",
+      "«Яд»",
+      "«SAY NO MO»"
+     ],
+     "correct": 0,
+     "explain": "«Mas Fuerte» вышел в том же году.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-3-02",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется альбом Кизару 2017 года?",
+     "options": [
+      "«Назад в будущее»",
+      "«Karmageddon»",
+      "«Gremlin»",
+      "«Яд»"
+     ],
+     "correct": 3,
+     "explain": "Короткое и злое название.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-3-03",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется альбом Кизару 2018 года?",
+     "options": [
+      "«Яд»",
+      "«Born to Trap»",
+      "«Назад в будущее»",
+      "«First Day Out»"
+     ],
+     "correct": 2,
+     "explain": "Как фильм с ДеЛорианом.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-3-04",
+     "level": 3,
+     "type": "choice",
+     "text": "С какого года Кизару живёт в Барселоне?",
+     "options": [
+      "С 2010",
+      "С 2014",
+      "С 2018",
+      "С 2020"
+     ],
+     "correct": 1,
+     "explain": "Уже больше десяти лет.",
+     "draft": false
+    },
+    {
+     "id": "kizaru-3-05",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется его альбом 2022 года с самым длинным названием?",
+     "options": [
+      "«Тебя любят там, где меня нет»",
+      "«Дежавю»",
+      "«First Day Out»",
+      "«Назад в будущее»"
+     ],
+     "correct": 0,
+     "explain": "В 2022-м он выпустил сразу несколько релизов.",
+     "draft": false
+    }
+   ]
+  },
+  {
+   "name": "Pharaoh",
+   "slug": "pharaoh",
+   "questions": [
+    {
+     "id": "pharaoh-1-01",
+     "level": 1,
+     "type": "choice",
+     "text": "Как настоящее имя Pharaoh?",
+     "options": [
+      "Егор Ракитин",
+      "Арсений Несатый",
+      "Олег Нечипоренко",
+      "Глеб Голубин"
+     ],
+     "correct": 3,
+     "explain": "Глеб Геннадьевич Голубин.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-1-02",
+     "level": 1,
+     "type": "choice",
+     "text": "Из какого города Pharaoh?",
+     "options": [
+      "Санкт-Петербург",
+      "Тюмень",
+      "Москва",
+      "Уфа"
+     ],
+     "correct": 2,
+     "explain": "Коренной москвич.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-1-03",
+     "level": 1,
+     "type": "choice",
+     "text": "С каким объединением связан Pharaoh?",
+     "options": [
+      "Benzo Gang",
+      "Dead Dynasty",
+      "Melon Music",
+      "Haunted Family"
+     ],
+     "correct": 1,
+     "explain": "Через него прошёл и Saluki.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-1-04",
+     "level": 1,
+     "type": "choice",
+     "text": "Чей трек «Black Siemens», припев которого стал мемом?",
+     "options": [
+      "Pharaoh",
+      "Face",
+      "Big Baby Tape",
+      "Кизару"
+     ],
+     "correct": 0,
+     "explain": "2015 год, около 10 миллионов просмотров клипа до удаления.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-1-05",
+     "level": 1,
+     "type": "choice",
+     "text": "С какой певицей Pharaoh записал «Boom Boom» в 2020 году?",
+     "options": [
+      "С Ёлкой",
+      "С Zivert",
+      "С Мари Краймбрери",
+      "Со Светланой Лободой"
+     ],
+     "correct": 3,
+     "explain": "Неожиданный дуэт с поп-звездой.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-2-01",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году родился Pharaoh?",
+     "options": [
+      "1994",
+      "1998",
+      "1996",
+      "2000"
+     ],
+     "correct": 2,
+     "explain": "30 января 1996 года.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-2-02",
+     "level": 2,
+     "type": "choice",
+     "text": "Какой факультет МГУ окончил Pharaoh?",
+     "options": [
+      "Экономический",
+      "Журналистики",
+      "Юридический",
+      "Философский"
+     ],
+     "correct": 1,
+     "explain": "Диплом он получил в 2017 году.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-2-03",
+     "level": 2,
+     "type": "choice",
+     "text": "С кем Pharaoh выпустил мини-альбом «Кондитерская» в 2016 году?",
+     "options": [
+      "С ЛСП",
+      "С Feduk",
+      "С Boulevard Depo",
+      "Со Скриптонитом"
+     ],
+     "correct": 0,
+     "explain": "Москва плюс Минск.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-2-04",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом Pharaoh 2017 года?",
+     "options": [
+      "«Phosphor»",
+      "«Phuneral»",
+      "«Rule»",
+      "«Pink Phloyd»"
+     ],
+     "correct": 3,
+     "explain": "Отсылка к Pink Floyd.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-2-05",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом Pharaoh 2018 года?",
+     "options": [
+      "«Phlora»",
+      "«Philarmonia»",
+      "«Phuneral»",
+      "«10:13»"
+     ],
+     "correct": 2,
+     "explain": "Почти все его альбомы начинаются на Ph.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-3-01",
+     "level": 3,
+     "type": "choice",
+     "text": "С каким американским рэпером Pharaoh записал «OMEGA» в 2024 году?",
+     "options": [
+      "С Playboi Carti",
+      "С Destroy Lonely",
+      "С Travis Scott",
+      "С Lil Uzi Vert"
+     ],
+     "correct": 1,
+     "explain": "Destroy Lonely — с лейбла Opium.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-3-02",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется альбом Pharaoh 2025 года?",
+     "options": [
+      "«10:13»",
+      "«PHREQUENCY»",
+      "«Million Dollar Depression»",
+      "«Rule»"
+     ],
+     "correct": 0,
+     "explain": "Название заранее угадали по слитому треку.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-3-03",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется альбом Pharaoh 2020 года?",
+     "options": [
+      "«Phuneral»",
+      "«Pink Phloyd»",
+      "«Dolor»",
+      "«Rule»"
+     ],
+     "correct": 3,
+     "explain": "По-русски — «Правило».",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-3-04",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется альбом Pharaoh 2021 года?",
+     "options": [
+      "«Philarmonia»",
+      "«10:13»",
+      "«Million Dollar Depression»",
+      "«Phosphor»"
+     ],
+     "correct": 2,
+     "explain": "Миллион долларов и депрессия в одном названии.",
+     "draft": false
+    },
+    {
+     "id": "pharaoh-3-05",
+     "level": 3,
+     "type": "choice",
+     "text": "После какого клипа Pharaoh стал известен в 2014 году?",
+     "options": [
+      "«Black Siemens»",
+      "«Nothing Has Changed»",
+      "«Дико, например»",
+      "«Smart»"
+     ],
+     "correct": 1,
+     "explain": "Год, с которого всё началось.",
+     "draft": false
+    }
+   ]
+  },
+  {
+   "name": "OG Buda",
+   "slug": "og-buda",
+   "questions": [
+    {
+     "id": "og-buda-1-01",
+     "level": 1,
+     "type": "choice",
+     "text": "Как настоящее имя OG Buda?",
+     "options": [
+      "Григорий Ляхов",
+      "Егор Ракитин",
+      "Марк Серков",
+      "Александр Романов"
+     ],
+     "correct": 0,
+     "explain": "Григорий Алексеевич Ляхов.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-1-02",
+     "level": 1,
+     "type": "choice",
+     "text": "Из какого города OG Buda?",
+     "options": [
+      "Томск",
+      "Москва",
+      "Екатеринбург",
+      "Тюмень"
+     ],
+     "correct": 3,
+     "explain": "Родился там в 1994 году.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-1-03",
+     "level": 1,
+     "type": "choice",
+     "text": "В каком объединении OG Buda?",
+     "options": [
+      "Dead Dynasty",
+      "Benzo Gang",
+      "Melon Music",
+      "Haunted Family"
+     ],
+     "correct": 2,
+     "explain": "Вместе с Платиной и Mayot.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-1-04",
+     "level": 1,
+     "type": "choice",
+     "text": "С кем OG Buda выпустил EP «Sweet Dreams»?",
+     "options": [
+      "С Mayot",
+      "С Платиной",
+      "С Feduk",
+      "С Big Baby Tape"
+     ],
+     "correct": 1,
+     "explain": "2018 год.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-1-05",
+     "level": 1,
+     "type": "choice",
+     "text": "Кто его давний друг и наставник, назвавший его одним из самых перспективных рэперов у Дудя?",
+     "options": [
+      "Feduk",
+      "Баста",
+      "Скриптонит",
+      "Face"
+     ],
+     "correct": 0,
+     "explain": "Feduk появился и в его клипе камео.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-2-01",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году родился OG Buda?",
+     "options": [
+      "1997",
+      "2000",
+      "1991",
+      "1994"
+     ],
+     "correct": 3,
+     "explain": "10 января 1994 года.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-2-02",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется альбом OG Buda 2019 года?",
+     "options": [
+      "«Sexy Drill»",
+      "«SZN»",
+      "«OPG City»",
+      "«Pox Vawё»"
+     ],
+     "correct": 2,
+     "explain": "С ним он поехал в большой тур.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-2-03",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется серия его альбомов с номерами?",
+     "options": [
+      "«OPG City»",
+      "«FreeRio»",
+      "«Bandana»",
+      "«Tourlife»"
+     ],
+     "correct": 1,
+     "explain": "Вышли части 1, 2 и 3.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-2-04",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году OG Buda попал в список Forbes «30 до 30»?",
+     "options": [
+      "2022",
+      "2020",
+      "2023",
+      "2019"
+     ],
+     "correct": 0,
+     "explain": "Категория «Музыка».",
+     "draft": false
+    },
+    {
+     "id": "og-buda-2-05",
+     "level": 2,
+     "type": "choice",
+     "text": "Кого OG Buda сыграл в сериале «Сказки Пушкина. Для взрослых»?",
+     "options": [
+      "Балду",
+      "Гвидона",
+      "Черномора",
+      "Елисея"
+     ],
+     "correct": 3,
+     "explain": "2021 год.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-3-01",
+     "level": 3,
+     "type": "choice",
+     "text": "Как назывался его самый первый релиз?",
+     "options": [
+      "«Tourlife»",
+      "«Bandits»",
+      "«1000 Freestyle»",
+      "«Welcome»"
+     ],
+     "correct": 2,
+     "explain": "2017 год.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-3-02",
+     "level": 3,
+     "type": "choice",
+     "text": "Как назывался его трибьют XXXTentacion 2018 года?",
+     "options": [
+      "«Moonlight»",
+      "«Tourlife (RIP X)»",
+      "«SAD (RIP X)»",
+      "«Johnny D»"
+     ],
+     "correct": 1,
+     "explain": "Трек расширил его аудиторию.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-3-03",
+     "level": 3,
+     "type": "choice",
+     "text": "Какие два альбома OG Buda вышли в один день — 30 апреля 2021 года?",
+     "options": [
+      "«Sexy Drill» и «FreeRio»",
+      "«OPG City» и «SZN»",
+      "«FreeRio 2» и «FreeRio 3»",
+      "«Pox Vawё» и «Sweet Dreams»"
+     ],
+     "correct": 0,
+     "explain": "Двойной удар в один день.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-3-04",
+     "level": 3,
+     "type": "choice",
+     "text": "Что особенного в дате выхода альбома «SZN» (10 января 2025 года)?",
+     "options": [
+      "Это годовщина первого трека",
+      "Это день основания Melon Music",
+      "Ничего",
+      "Это его день рождения"
+     ],
+     "correct": 3,
+     "explain": "Он родился 10 января.",
+     "draft": false
+    },
+    {
+     "id": "og-buda-3-05",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется альбом OG Buda 2023 года?",
+     "options": [
+      "«FreeRio 3»",
+      "«OPG City»",
+      "«Missing You but Working»",
+      "«Sexy Drill»"
+     ],
+     "correct": 2,
+     "explain": "В том же году вышел и «Pox Vawё».",
+     "draft": false
+    }
+   ]
+  },
+  {
+   "name": "Friendly Thug 52 NGG",
+   "slug": "friendly-thug-52-ngg",
+   "questions": [
+    {
+     "id": "friendly-thug-52-ngg-1-01",
+     "level": 1,
+     "type": "choice",
+     "text": "Из какого города Friendly Thug 52 NGG?",
+     "options": [
+      "Нижний Новгород",
+      "Санкт-Петербург",
+      "Москва",
+      "Томск"
+     ],
+     "correct": 1,
+     "explain": "Хотя 52 — это код Нижегородской области.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-1-02",
+     "level": 1,
+     "type": "choice",
+     "text": "С кодом какой страны фанаты связывают его «52»?",
+     "options": [
+      "Мексика",
+      "Бразилия",
+      "Испания",
+      "Колумбия"
+     ],
+     "correct": 0,
+     "explain": "+52 — код Мексики, поэтому на концертах мексиканские флаги.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-1-03",
+     "level": 1,
+     "type": "choice",
+     "text": "Как называется его крю, где у всех в имени «52»?",
+     "options": [
+      "Benzo Gang",
+      "Melon Music",
+      "Haunted Family",
+      "«52»"
+     ],
+     "correct": 3,
+     "explain": "Alblak 52, MyDee 52, Glocki 52 и другие.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-1-04",
+     "level": 1,
+     "type": "choice",
+     "text": "С кем он записал «Лагерную» в 2024 году?",
+     "options": [
+      "С Кизару",
+      "С Pharaoh",
+      "С Saluki",
+      "С OG Buda"
+     ],
+     "correct": 2,
+     "explain": "Один из громких фитов 2024-го.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-1-05",
+     "level": 1,
+     "type": "choice",
+     "text": "Какой его трек 2022 года собрал миллионы просмотров клипа?",
+     "options": [
+      "«Lost Angeles»",
+      "«Calmer»",
+      "«Maestro»",
+      "«Legit Check»"
+     ],
+     "correct": 1,
+     "explain": "Клип сделал его заметным.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-2-01",
+     "level": 2,
+     "type": "choice",
+     "text": "Как настоящее имя Friendly Thug 52 NGG?",
+     "options": [
+      "Александр Романов",
+      "Марк Серков",
+      "Григорий Ляхов",
+      "Егор Ракитин"
+     ],
+     "correct": 0,
+     "explain": "Александр Романов.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-2-02",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году он родился?",
+     "options": [
+      "1998",
+      "2002",
+      "1996",
+      "2000"
+     ],
+     "correct": 3,
+     "explain": "28 мая 2000 года.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-2-03",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется его альбом 2022 года?",
+     "options": [
+      "«Cristoforo Colombo»",
+      "«$aint $treet»",
+      "«Cruiser Aurora»",
+      "«JUNKIE KIS2»"
+     ],
+     "correct": 2,
+     "explain": "Крейсер «Аврора» — символ Петербурга.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-2-04",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется его альбом 2023 года?",
+     "options": [
+      "«Cruiser Aurora»",
+      "«Cristoforo Colombo»",
+      "«Graf Monte-Cristo»",
+      "«Холодные земли»"
+     ],
+     "correct": 1,
+     "explain": "14 треков.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-2-05",
+     "level": 2,
+     "type": "choice",
+     "text": "С кем он записал «Дом с привидениями» в 2023 году?",
+     "options": [
+      "С Obladaet",
+      "С T-Fest",
+      "С Yanix",
+      "С White Punk"
+     ],
+     "correct": 0,
+     "explain": "Ещё один громкий фит.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-3-01",
+     "level": 3,
+     "type": "choice",
+     "text": "Под каким именем он выкладывал первые треки в 2017 году?",
+     "options": [
+      "Lil Romanov",
+      "Thug 2000",
+      "Sasha 52",
+      "Vernalcry"
+     ],
+     "correct": 3,
+     "explain": "До того как стать Friendly Thug.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-3-02",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется его альбом 2020 года?",
+     "options": [
+      "«JUNKIE KIS2»",
+      "«Cruiser Aurora»",
+      "«$aint $treet»",
+      "«Cristoforo Colombo»"
+     ],
+     "correct": 2,
+     "explain": "Знаки доллара вместо S.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-3-03",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется его альбом 2021 года?",
+     "options": [
+      "«$aint $treet»",
+      "«JUNKIE KIS2»",
+      "«Холодные земли»",
+      "«Maestro»"
+     ],
+     "correct": 1,
+     "explain": "Между «$aint $treet» и «Авророй».",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-3-04",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется его альбом 2025 года?",
+     "options": [
+      "«Graf Monte-Cristo»",
+      "«Cristoforo Colombo»",
+      "«Cruiser Aurora»",
+      "«Lost Angeles»"
+     ],
+     "correct": 0,
+     "explain": "Морская тема продолжается.",
+     "draft": false
+    },
+    {
+     "id": "friendly-thug-52-ngg-3-05",
+     "level": 3,
+     "type": "choice",
+     "text": "С кем он записал «Legit Check»?",
+     "options": [
+      "С Кизару",
+      "Со Скриптонитом",
+      "С Madk1d",
+      "С Big Baby Tape"
+     ],
+     "correct": 3,
+     "explain": "Трек с альбома «Cristoforo Colombo».",
+     "draft": false
+    }
+   ]
+  },
+  {
+   "name": "Madk1d",
+   "slug": "madk1d",
+   "questions": [
+    {
+     "id": "madk1d-1-01",
+     "level": 1,
+     "type": "choice",
+     "text": "Из какого города Madk1d?",
+     "options": [
+      "Тюмень",
+      "Пермь",
+      "Томск",
+      "Омск"
+     ],
+     "correct": 2,
+     "explain": "Сибирь.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-1-02",
+     "level": 1,
+     "type": "choice",
+     "text": "С каким треком Madk1d завирусился в TikTok?",
+     "options": [
+      "«Барыга»",
+      "«Катюха»",
+      "«Цена»",
+      "«давно»"
+     ],
+     "correct": 1,
+     "explain": "Именно с него всё началось.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-1-03",
+     "level": 1,
+     "type": "choice",
+     "text": "С кем он записал «Катюху»?",
+     "options": [
+      "С LILCAK3",
+      "С CUPSIZE",
+      "С kantaa",
+      "С GRILLYAZH"
+     ],
+     "correct": 0,
+     "explain": "Трек, который разлетелся по TikTok.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-1-04",
+     "level": 1,
+     "type": "choice",
+     "text": "Какой трек стал его первым большим хитом в чартах?",
+     "options": [
+      "«Катюха»",
+      "«1 мая»",
+      "«умираю»",
+      "«Толпы»"
+     ],
+     "correct": 3,
+     "explain": "На него реагировал даже xxxmanera.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-1-05",
+     "level": 1,
+     "type": "choice",
+     "text": "Как называется альбом Madk1d 2025 года?",
+     "options": [
+      "«Он сказал поехали!»",
+      "«мир, труд, май»",
+      "«sexyswag»",
+      "«Толпы»"
+     ],
+     "correct": 2,
+     "explain": "Вышел в марте 2025-го.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-2-01",
+     "level": 2,
+     "type": "choice",
+     "text": "Как настоящее имя Madk1d?",
+     "options": [
+      "Александр Романов",
+      "Марк Серков",
+      "Арсений Несатый",
+      "Егор Ракитин"
+     ],
+     "correct": 1,
+     "explain": "Марк Робертович Серков.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-2-02",
+     "level": 2,
+     "type": "choice",
+     "text": "В каком году родился Madk1d?",
+     "options": [
+      "2002",
+      "2000",
+      "2004",
+      "1999"
+     ],
+     "correct": 0,
+     "explain": "11 апреля 2002 года.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-2-03",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется его первый полноформатный альбом?",
+     "options": [
+      "«sexyswag»",
+      "«мир, труд, май»",
+      "«ИЗВИНИТЕ ЗА ВНИМАНИЕ»",
+      "«Он сказал поехали!»"
+     ],
+     "correct": 3,
+     "explain": "2024 год, отсылка к Гагарину.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-2-04",
+     "level": 2,
+     "type": "choice",
+     "text": "Как называется его мини-альбом 2023 года?",
+     "options": [
+      "«Он сказал поехали!»",
+      "«sexyswag»",
+      "«мир, труд, май»",
+      "«Барыга»"
+     ],
+     "correct": 2,
+     "explain": "Название — советский лозунг.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-2-05",
+     "level": 2,
+     "type": "choice",
+     "text": "Из какого объединения Madk1d?",
+     "options": [
+      "Melon Music",
+      "Squad Badmood",
+      "Benzo Gang",
+      "Haunted Family"
+     ],
+     "correct": 1,
+     "explain": "От него остался в основном Discord-сервер.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-3-01",
+     "level": 3,
+     "type": "choice",
+     "text": "Как называется его EP 2024 года?",
+     "options": [
+      "«ИЗВИНИТЕ ЗА ВНИМАНИЕ»",
+      "«мир, труд, май»",
+      "«sexyswag»",
+      "«Он сказал поехали!»"
+     ],
+     "correct": 0,
+     "explain": "Название капсом.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-3-02",
+     "level": 3,
+     "type": "choice",
+     "text": "Сколько треков в альбоме «Он сказал поехали!»?",
+     "options": [
+      "12",
+      "7",
+      "15",
+      "9"
+     ],
+     "correct": 3,
+     "explain": "Девять.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-3-03",
+     "level": 3,
+     "type": "choice",
+     "text": "С кем он записал «Круче чем вы» и «1 мая»?",
+     "options": [
+      "С LILCAK3",
+      "С kantaa",
+      "С CUPSIZE",
+      "С GRILLYAZH"
+     ],
+     "correct": 2,
+     "explain": "Два трека с одним артистом.",
+     "draft": false
+    },
+    {
+     "id": "madk1d-3-04",
+     "level": 3,
+     "type": "choice",
+     "text": "С кем он записал «последним летом»?",
+     "options": [
+      "С CUPSIZE",
+      "С GRILLYAZH",
+      "С kantaa",
+      "С LILCAK3"
+     ],
+     "correct": 1,
+     "explain": "Трек с «sexyswag».",
+     "draft": false
+    },
+    {
+     "id": "madk1d-3-05",
+     "level": 3,
+     "type": "choice",
+     "text": "С кем он записал «умираю»?",
+     "options": [
+      "С kantaa",
+      "С CUPSIZE",
+      "С GRILLYAZH",
+      "С xxxmanera"
+     ],
+     "correct": 0,
+     "explain": "Ещё один его фит.",
+     "draft": false
+    }
+   ]
+  }
+ ]
+}

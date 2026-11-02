@@ -1,0 +1,232 @@
+{
+  "$schema": "../../schema/quiz-artist.schema.json",
+  "name": "Pharaoh",
+  "slug": "pharaoh",
+  "questions": [
+    {
+      "id": "pharaoh-1-01",
+      "level": 1,
+      "type": "choice",
+      "text": "Как настоящее имя Pharaoh?",
+      "options": [
+        "Егор Ракитин",
+        "Арсений Несатый",
+        "Олег Нечипоренко",
+        "Глеб Голубин"
+      ],
+      "correct": 3,
+      "explain": "Глеб Геннадьевич Голубин.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города Pharaoh?",
+      "options": [
+        "Санкт-Петербург",
+        "Тюмень",
+        "Москва",
+        "Уфа"
+      ],
+      "correct": 2,
+      "explain": "Коренной москвич.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "С каким объединением связан Pharaoh?",
+      "options": [
+        "Benzo Gang",
+        "Dead Dynasty",
+        "Melon Music",
+        "Haunted Family"
+      ],
+      "correct": 1,
+      "explain": "Через него прошёл и Saluki.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "Чей трек «Black Siemens», припев которого стал мемом?",
+      "options": [
+        "Pharaoh",
+        "Face",
+        "Big Baby Tape",
+        "Кизару"
+      ],
+      "correct": 0,
+      "explain": "2015 год, около 10 миллионов просмотров клипа до удаления.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "С какой певицей Pharaoh записал «Boom Boom» в 2020 году?",
+      "options": [
+        "С Ёлкой",
+        "С Zivert",
+        "С Мари Краймбрери",
+        "Со Светланой Лободой"
+      ],
+      "correct": 3,
+      "explain": "Неожиданный дуэт с поп-звездой.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-2-01",
+      "level": 2,
+      "type": "choice",
+      "text": "В каком году родился Pharaoh?",
+      "options": [
+        "1994",
+        "1998",
+        "1996",
+        "2000"
+      ],
+      "correct": 2,
+      "explain": "30 января 1996 года.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-2-02",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой факультет МГУ окончил Pharaoh?",
+      "options": [
+        "Экономический",
+        "Журналистики",
+        "Юридический",
+        "Философский"
+      ],
+      "correct": 1,
+      "explain": "Диплом он получил в 2017 году.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "С кем Pharaoh выпустил мини-альбом «Кондитерская» в 2016 году?",
+      "options": [
+        "С ЛСП",
+        "С Feduk",
+        "С Boulevard Depo",
+        "Со Скриптонитом"
+      ],
+      "correct": 0,
+      "explain": "Москва плюс Минск.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Pharaoh 2017 года?",
+      "options": [
+        "«Phosphor»",
+        "«Phuneral»",
+        "«Rule»",
+        "«Pink Phloyd»"
+      ],
+      "correct": 3,
+      "explain": "Отсылка к Pink Floyd.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Pharaoh 2018 года?",
+      "options": [
+        "«Phlora»",
+        "«Philarmonia»",
+        "«Phuneral»",
+        "«10:13»"
+      ],
+      "correct": 2,
+      "explain": "Почти все его альбомы начинаются на Ph.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "С каким американским рэпером Pharaoh записал «OMEGA» в 2024 году?",
+      "options": [
+        "С Playboi Carti",
+        "С Destroy Lonely",
+        "С Travis Scott",
+        "С Lil Uzi Vert"
+      ],
+      "correct": 1,
+      "explain": "Destroy Lonely — с лейбла Opium.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом Pharaoh 2025 года?",
+      "options": [
+        "«10:13»",
+        "«PHREQUENCY»",
+        "«Million Dollar Depression»",
+        "«Rule»"
+      ],
+      "correct": 0,
+      "explain": "Название заранее угадали по слитому треку.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом Pharaoh 2020 года?",
+      "options": [
+        "«Phuneral»",
+        "«Pink Phloyd»",
+        "«Dolor»",
+        "«Rule»"
+      ],
+      "correct": 3,
+      "explain": "По-русски — «Правило».",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом Pharaoh 2021 года?",
+      "options": [
+        "«Philarmonia»",
+        "«10:13»",
+        "«Million Dollar Depression»",
+        "«Phosphor»"
+      ],
+      "correct": 2,
+      "explain": "Миллион долларов и депрессия в одном названии.",
+      "draft": false
+    },
+    {
+      "id": "pharaoh-3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "После какого клипа Pharaoh стал известен в 2014 году?",
+      "options": [
+        "«Black Siemens»",
+        "«Nothing Has Changed»",
+        "«Дико, например»",
+        "«Smart»"
+      ],
+      "correct": 1,
+      "explain": "Год, с которого всё началось.",
+      "draft": false
+    }
+  ]
+}

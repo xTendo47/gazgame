@@ -1,54 +1,232 @@
 {
   "$schema": "../../schema/quiz-artist.schema.json",
-  "_note": "Заглушки (draft): по одному вопросу на уровень. Настоящие вопросы пришлёт основатель: по 5+ на каждый уровень (в раунде 5 лёгких, 5 средних, 5 сложных), поддерживаются choice и input.",
   "name": "Кизару",
   "slug": "kizaru",
-  "draft": true,
   "questions": [
     {
-      "id": "kizaru-1-1",
+      "id": "kizaru-1-01",
       "level": 1,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 1 про артиста Кизару",
+      "text": "Как настоящее имя Кизару?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Олег Савченко",
+        "Егор Ракитин",
+        "Олег Нечипоренко",
+        "Александр Романов"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 2,
+      "explain": "Олег Викторович Нечипоренко.",
+      "draft": false
     },
     {
-      "id": "kizaru-2-1",
+      "id": "kizaru-1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "В каком городе живёт Кизару?",
+      "options": [
+        "Мадрид",
+        "Барселона",
+        "Берлин",
+        "Лос-Анджелес"
+      ],
+      "correct": 1,
+      "explain": "В Испании он с 2014 года.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "С кем Кизару выпустил «Bandana I»?",
+      "options": [
+        "С Big Baby Tape",
+        "С Pharaoh",
+        "С Friendly Thug 52 NGG",
+        "С OG Buda"
+      ],
+      "correct": 0,
+      "explain": "Один из главных русских альбомов 2021 года.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "Как называется объединение, которое основал Кизару?",
+      "options": [
+        "Benzo Gang",
+        "Dead Dynasty",
+        "Squad Badmood",
+        "Haunted Family"
+      ],
+      "correct": 3,
+      "explain": "Он его сооснователь.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города Кизару родом?",
+      "options": [
+        "Москва",
+        "Ростов-на-Дону",
+        "Санкт-Петербург",
+        "Мурманск"
+      ],
+      "correct": 2,
+      "explain": "Питер — его родной город.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-2-01",
       "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 2 про артиста Кизару",
+      "text": "В каком году родился Кизару?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "1993",
+        "1989",
+        "1985",
+        "1996"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 1,
+      "explain": "21 мая 1989 года.",
+      "draft": false
     },
     {
-      "id": "kizaru-3-1",
-      "level": 3,
+      "id": "kizaru-2-02",
+      "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 3 про артиста Кизару",
+      "text": "Как называется альбом Кизару 2020 года?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "«Born to Trap»",
+        "«Karmageddon»",
+        "«Яд»",
+        "«SIMBA»"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "Самый популярный артист России на Spotify в 2020-м.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Кизару 2019 года?",
+      "options": [
+        "«Born to Trap»",
+        "«First Day Out»",
+        "«QUAZIMODO»",
+        "«Karmageddon»"
+      ],
+      "correct": 3,
+      "explain": "Карма плюс армагеддон.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Кизару 2024 года?",
+      "options": [
+        "«SIMBA»",
+        "«Gremlin»",
+        "«QUAZIMODO»",
+        "«Speedy Gonzales»"
+      ],
+      "correct": 2,
+      "explain": "Назван в честь горбуна из «Собора Парижской Богоматери».",
+      "draft": false
+    },
+    {
+      "id": "kizaru-2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Кизару 2025 года?",
+      "options": [
+        "«QUAZIMODO»",
+        "«SIMBA»",
+        "«Ca$hey»",
+        "«Mas Fuerte»"
+      ],
+      "correct": 1,
+      "explain": "Да, в честь того самого львёнка.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "Как назывался его первый EP 2016 года?",
+      "options": [
+        "«Long Way Up»",
+        "«Mas Fuerte»",
+        "«Яд»",
+        "«SAY NO MO»"
+      ],
+      "correct": 0,
+      "explain": "«Mas Fuerte» вышел в том же году.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом Кизару 2017 года?",
+      "options": [
+        "«Назад в будущее»",
+        "«Karmageddon»",
+        "«Gremlin»",
+        "«Яд»"
+      ],
+      "correct": 3,
+      "explain": "Короткое и злое название.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом Кизару 2018 года?",
+      "options": [
+        "«Яд»",
+        "«Born to Trap»",
+        "«Назад в будущее»",
+        "«First Day Out»"
+      ],
+      "correct": 2,
+      "explain": "Как фильм с ДеЛорианом.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "С какого года Кизару живёт в Барселоне?",
+      "options": [
+        "С 2010",
+        "С 2014",
+        "С 2018",
+        "С 2020"
+      ],
+      "correct": 1,
+      "explain": "Уже больше десяти лет.",
+      "draft": false
+    },
+    {
+      "id": "kizaru-3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется его альбом 2022 года с самым длинным названием?",
+      "options": [
+        "«Тебя любят там, где меня нет»",
+        "«Дежавю»",
+        "«First Day Out»",
+        "«Назад в будущее»"
+      ],
+      "correct": 0,
+      "explain": "В 2022-м он выпустил сразу несколько релизов.",
+      "draft": false
     }
   ]
 }

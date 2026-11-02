@@ -1,54 +1,232 @@
 {
   "$schema": "../../schema/quiz-artist.schema.json",
-  "_note": "Заглушки (draft): по одному вопросу на уровень. Настоящие вопросы пришлёт основатель: по 5+ на каждый уровень (в раунде 5 лёгких, 5 средних, 5 сложных), поддерживаются choice и input.",
   "name": "Friendly Thug 52 NGG",
   "slug": "friendly-thug-52-ngg",
-  "draft": true,
   "questions": [
     {
-      "id": "friendly-thug-52-ngg-1-1",
+      "id": "friendly-thug-52-ngg-1-01",
       "level": 1,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 1 про артиста Friendly Thug 52 NGG",
+      "text": "Из какого города Friendly Thug 52 NGG?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Нижний Новгород",
+        "Санкт-Петербург",
+        "Москва",
+        "Томск"
       ],
-      "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "correct": 1,
+      "explain": "Хотя 52 — это код Нижегородской области.",
+      "draft": false
     },
     {
-      "id": "friendly-thug-52-ngg-2-1",
+      "id": "friendly-thug-52-ngg-1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "С кодом какой страны фанаты связывают его «52»?",
+      "options": [
+        "Мексика",
+        "Бразилия",
+        "Испания",
+        "Колумбия"
+      ],
+      "correct": 0,
+      "explain": "+52 — код Мексики, поэтому на концертах мексиканские флаги.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "Как называется его крю, где у всех в имени «52»?",
+      "options": [
+        "Benzo Gang",
+        "Melon Music",
+        "Haunted Family",
+        "«52»"
+      ],
+      "correct": 3,
+      "explain": "Alblak 52, MyDee 52, Glocki 52 и другие.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "С кем он записал «Лагерную» в 2024 году?",
+      "options": [
+        "С Кизару",
+        "С Pharaoh",
+        "С Saluki",
+        "С OG Buda"
+      ],
+      "correct": 2,
+      "explain": "Один из громких фитов 2024-го.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "Какой его трек 2022 года собрал миллионы просмотров клипа?",
+      "options": [
+        "«Lost Angeles»",
+        "«Calmer»",
+        "«Maestro»",
+        "«Legit Check»"
+      ],
+      "correct": 1,
+      "explain": "Клип сделал его заметным.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-2-01",
       "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 2 про артиста Friendly Thug 52 NGG",
+      "text": "Как настоящее имя Friendly Thug 52 NGG?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "Александр Романов",
+        "Марк Серков",
+        "Григорий Ляхов",
+        "Егор Ракитин"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "Александр Романов.",
+      "draft": false
     },
     {
-      "id": "friendly-thug-52-ngg-3-1",
-      "level": 3,
+      "id": "friendly-thug-52-ngg-2-02",
+      "level": 2,
       "type": "choice",
-      "text": "[черновик] Вопрос уровня 3 про артиста Friendly Thug 52 NGG",
+      "text": "В каком году он родился?",
       "options": [
-        "Вариант А",
-        "Вариант Б",
-        "Вариант В",
-        "Вариант Г"
+        "1998",
+        "2002",
+        "1996",
+        "2000"
+      ],
+      "correct": 3,
+      "explain": "28 мая 2000 года.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется его альбом 2022 года?",
+      "options": [
+        "«Cristoforo Colombo»",
+        "«$aint $treet»",
+        "«Cruiser Aurora»",
+        "«JUNKIE KIS2»"
+      ],
+      "correct": 2,
+      "explain": "Крейсер «Аврора» — символ Петербурга.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется его альбом 2023 года?",
+      "options": [
+        "«Cruiser Aurora»",
+        "«Cristoforo Colombo»",
+        "«Graf Monte-Cristo»",
+        "«Холодные земли»"
+      ],
+      "correct": 1,
+      "explain": "14 треков.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "С кем он записал «Дом с привидениями» в 2023 году?",
+      "options": [
+        "С Obladaet",
+        "С T-Fest",
+        "С Yanix",
+        "С White Punk"
       ],
       "correct": 0,
-      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
-      "draft": true
+      "explain": "Ещё один громкий фит.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "Под каким именем он выкладывал первые треки в 2017 году?",
+      "options": [
+        "Lil Romanov",
+        "Thug 2000",
+        "Sasha 52",
+        "Vernalcry"
+      ],
+      "correct": 3,
+      "explain": "До того как стать Friendly Thug.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется его альбом 2020 года?",
+      "options": [
+        "«JUNKIE KIS2»",
+        "«Cruiser Aurora»",
+        "«$aint $treet»",
+        "«Cristoforo Colombo»"
+      ],
+      "correct": 2,
+      "explain": "Знаки доллара вместо S.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется его альбом 2021 года?",
+      "options": [
+        "«$aint $treet»",
+        "«JUNKIE KIS2»",
+        "«Холодные земли»",
+        "«Maestro»"
+      ],
+      "correct": 1,
+      "explain": "Между «$aint $treet» и «Авророй».",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется его альбом 2025 года?",
+      "options": [
+        "«Graf Monte-Cristo»",
+        "«Cristoforo Colombo»",
+        "«Cruiser Aurora»",
+        "«Lost Angeles»"
+      ],
+      "correct": 0,
+      "explain": "Морская тема продолжается.",
+      "draft": false
+    },
+    {
+      "id": "friendly-thug-52-ngg-3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "С кем он записал «Legit Check»?",
+      "options": [
+        "С Кизару",
+        "Со Скриптонитом",
+        "С Madk1d",
+        "С Big Baby Tape"
+      ],
+      "correct": 3,
+      "explain": "Трек с альбома «Cristoforo Colombo».",
+      "draft": false
     }
   ]
 }

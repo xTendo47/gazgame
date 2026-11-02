@@ -22,7 +22,7 @@ const NAMES_KEY = "show";
 type View = { kind: "hub" } | { kind: "names"; make: (names?: string[]) => void } | { kind: "play"; config: QuizRoundConfig; key: number } | { kind: "court" } | { kind: "artists" };
 
 /** Порядок артистов в списке (как задал основатель); незнакомые — в конце по алфавиту. */
-const ARTIST_ORDER = ["big-baby-tape", "kizaru", "scriptonite", "basta", "lsp", "saluki", "madk1d", "friendly-thug-52-ngg", "og-buda", "eminem", "drake", "playboi-carti", "ye"];
+const ARTIST_ORDER = ["big-baby-tape", "kizaru", "pharaoh", "og-buda", "friendly-thug-52-ngg", "madk1d"];
 const artistRank = (slug: string) => (ARTIST_ORDER.includes(slug) ? ARTIST_ORDER.indexOf(slug) : ARTIST_ORDER.length);
 
 export function ShowScreen({ quiz, artists: artistFiles, serverMs }: { quiz: QuizFile[]; artists: QuizArtist[]; serverMs: number }) {

@@ -261,7 +261,7 @@
    "id": "h1-18",
    "level": 1,
    "type": "choice",
-   "text": "В каком объединении начинал Pharaoh?",
+   "text": "С каким объединением связан Pharaoh?",
    "options": [
     "Dead Dynasty",
     "Melon Music",
@@ -269,7 +269,7 @@
     "Газгольдер"
    ],
    "correct": 0,
-   "explain": "Он сам его и основал.",
+   "explain": "Через него прошёл и Saluki.",
    "draft": false
   },
   {
@@ -486,7 +486,7 @@
    "id": "h2-03",
    "level": 2,
    "type": "choice",
-   "text": "Как называется лейбл Кизару?",
+   "text": "Как называется объединение, которое основал Кизару?",
    "options": [
     "Dead Dynasty",
     "Haunted Family",
@@ -494,7 +494,7 @@
     "Musica36"
    ],
    "correct": 1,
-   "explain": "Там же выходили его протеже.",
+   "explain": "Он его сооснователь.",
    "draft": false
   },
   {
@@ -869,7 +869,7 @@
     "Моргенштерн"
    ],
    "correct": 0,
-   "explain": "2019 год.",
+   "explain": "2020 год.",
    "draft": false
   },
   {
