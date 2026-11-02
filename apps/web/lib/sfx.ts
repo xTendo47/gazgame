@@ -1,14 +1,15 @@
 // Звуки интерфейса GAZ: синтез на Web Audio (шум и тона), файлов нет. Набор и параметры — из макета v6.4 (объект SFX).
 // Контекст создаётся при первом касании пальцем или клавишей (браузер иначе не даст играть звук).
-// Громкость и выключатель «Звуки» (ползунки, сохранение) — Этап 3; пока звук включён, общая громкость 0.5.
+// Громкость «Звуки» (ползунок на панели музыки) запоминается на устройстве (audio-prefs); по умолчанию 0.5.
+import { readAudioPrefs, writeAudioPrefs } from "./audio-prefs";
 import { haptic } from "./haptics";
-
-const MASTER_VOLUME = 0.5;
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let noise: AudioBuffer | null = null;
 let enabled = true;
+/** Громкость звуков 0..1: читается с устройства при создании контекста. */
+let volume = 0.5;
 let armed = false;
 
 interface WindowWithWebkitAudio extends Window {
@@ -30,7 +31,8 @@ function unlock(): void {
     return;
   }
   master = ctx.createGain();
-  master.gain.value = enabled ? MASTER_VOLUME : 0;
+  volume = readAudioPrefs().sfx;
+  master.gain.value = enabled ? volume : 0;
   const comp = ctx.createDynamicsCompressor();
   comp.threshold.value = -20;
   comp.ratio.value = 4;
@@ -262,13 +264,40 @@ export const sfx = {
     nz({ dur: 0.32, type: "bandpass", f: 1800, f2: 5200, q: 1.2, g: 0.07, a: 0.02 });
     sfx.rustle(5, 0.25);
   },
+  /** Верный ответ: два чистых звонких тона и стук фишки. */
+  right() {
+    arm();
+    nz({ dur: 0.04, f: 3000, q: 6, g: 0.07, a: 0.001 });
+    tn({ at: 0.02, dur: 0.22, type: "triangle", f: 784, g: 0.07, a: 0.003 });
+    tn({ at: 0.12, dur: 0.34, type: "triangle", f: 1175, g: 0.07, a: 0.003 });
+    sfx.chips(0.18);
+  },
+  /** Неверный ответ: низкий глухой «бом-бом» вниз. */
+  wrong() {
+    arm();
+    tn({ dur: 0.18, type: "triangle", f: 220, f2: 150, g: 0.09, a: 0.004 });
+    tn({ at: 0.14, dur: 0.3, type: "triangle", f: 165, f2: 100, g: 0.09, a: 0.004 });
+    nz({ at: 0.02, dur: 0.08, type: "lowpass", f: 600, g: 0.06, a: 0.002 });
+  },
+  /** Тап по кнопке: тихий короткий щелчок (ставится на все кнопки в AudioBoot). */
+  soft() {
+    arm();
+    nz({ dur: 0.022, type: "bandpass", f: 2400, q: 3, g: 0.045, a: 0.001 });
+  },
   /** Звук интерфейса включён? */
   isOn: () => enabled,
   /** Включить или выключить все звуки (ползунки «Звуки» — Этап 3). */
   set(on: boolean) {
     enabled = on;
-    if (master && ctx) master.gain.setTargetAtTime(on ? MASTER_VOLUME : 0, ctx.currentTime, 0.03);
+    if (master && ctx) master.gain.setTargetAtTime(on ? volume : 0, ctx.currentTime, 0.03);
   },
+  /** Громкость звуков 0..1 (запоминается). */
+  setVolume(v: number) {
+    volume = Math.min(1, Math.max(0, v));
+    writeAudioPrefs({ sfx: volume });
+    if (master && ctx && enabled) master.gain.setTargetAtTime(volume, ctx.currentTime, 0.02);
+  },
+  getVolume: () => readAudioPrefs().sfx,
   /** Подготовить звук заранее (например, при показе экрана), чтобы первый звук не опоздал. */
   arm,
   /** Тактильный отклик вместе со звуком. */

@@ -87,10 +87,10 @@ export function QuizPlay({
       if (next === s) return s;
       const right = choice >= 0 && choice === s.questions[s.index]?.correct;
       if (right) {
-        sfx.chips();
+        sfx.right();
         haptic("yes");
       } else {
-        sfx.clunk();
+        sfx.wrong();
         haptic("no");
       }
       return next;
