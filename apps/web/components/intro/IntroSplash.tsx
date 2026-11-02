@@ -6,6 +6,7 @@
 // Показывается один раз (флаг в ProgressStore). Время дропа берём из audio.currentTime;
 // если звук не завёлся (запрет браузера) — идём по таймеру.
 import { useRef, useState, useSyncExternalStore } from "react";
+import { GIcon } from "@/components/casino/GIcon";
 import { getProgress } from "@/lib/progress";
 import { startMusic } from "@/lib/music";
 import "./intro.css";
@@ -90,7 +91,9 @@ export function IntroSplash() {
       <span className="gz-intro-flash" aria-hidden="true" />
       <button type="button" className="gz-intro-start" onClick={run}>
         <span className="gz-intro-lbl">СТАРТ</span>
-        <small>лучше со звуком 🎧</small>
+        <small>
+          лучше со звуком <GIcon name="headphones" size="1.1em" />
+        </small>
       </button>
     </div>
   );
