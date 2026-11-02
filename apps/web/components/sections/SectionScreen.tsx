@@ -150,7 +150,7 @@ export function SectionScreen({
     say(texts.soonToast);
   }
 
-  /** Как замки 💎: считаем «Глубже 💎» и ведём на экран «Глубже». */
+  /** Как замки 💎: считаем «Глубже» и ведём на экран Premium. */
   function lockedTap(target: SectionTarget, title: string) {
     const ref =
       target.kind === "link" ? (target.href.split("/").pop() ?? title) : title;
@@ -162,7 +162,7 @@ export function SectionScreen({
           : "game",
       source: "locked-deck",
     });
-    router.push("/deeper");
+    router.push("/premium");
   }
 
   function open(target: SectionTarget) {
@@ -377,7 +377,10 @@ export function SectionScreen({
           onBack={() => setCasinoView("decks")}
           onPick={(index) => {
             const found = items[index];
-            if (found) tap(found.item, found.target);
+            if (!found) return;
+            // «Глубже»: закрытая карточка (в том числе «скоро») ведёт на экран Premium
+            if (tab.id === "deep" && found.item.premium && !premium) return lockedTap(found.target, found.item.title);
+            tap(found.item, found.target);
           }}
           onRandom={playable.length > 0 ? () => randomTap(playable) : null}
         />
