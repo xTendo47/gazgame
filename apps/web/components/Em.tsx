@@ -26,6 +26,19 @@ const EXTRA: Record<string, GIconName> = {
   "✅": "check",
   "🃏": "cards",
   "✨": "sparkle",
+  "❄": "snowflake",
+  "⚔": "swords",
+  "💭": "bubble",
+  "🙋": "hand",
+  "🫵": "hand",
+  "⏱": "clock",
+  "🚀": "rocket",
+  "⚙": "gear",
+  "🙂": "smile",
+  "👤": "user",
+  "📖": "notepad",
+  "📭": "notepad",
+  "🧩": "puzzle",
 };
 
 export function Em({ text, size = "1.05em" }: { text: string; size?: number | string }) {

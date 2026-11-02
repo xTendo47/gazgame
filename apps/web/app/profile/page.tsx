@@ -2,7 +2,8 @@
 // Пока прогресс хранится только на этом устройстве (ProgressStore в lib/progress.ts).
 import type { Metadata } from "next";
 import { isVisible } from "@gazgame/engine";
-import { PageHeader, Screen } from "@gazgame/ui";
+import { PageHeader } from "@gazgame/ui";
+import { TestSkin } from "@/components/diary/TestSkin";
 import { BackLink } from "@/components/BackLink";
 import { MyResults, type TestSummary } from "@/components/MyResults";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
@@ -23,7 +24,7 @@ export default function ProfilePage() {
     }));
 
   return (
-    <Screen>
+    <TestSkin theme="diary">
       <PageHeader
         back={<BackLink href="/collection">Коллекция</BackLink>}
         title="Мои результаты"
@@ -32,6 +33,6 @@ export default function ProfilePage() {
       />
       <ProfileNameField />
       <MyResults tests={tests} emptyHref="/solo" />
-    </Screen>
+    </TestSkin>
   );
 }

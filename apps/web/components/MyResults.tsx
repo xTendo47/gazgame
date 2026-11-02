@@ -6,6 +6,8 @@ import { useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { ProgressData } from "@gazgame/engine";
 import { buttonVariants } from "@gazgame/ui";
+import { Glyph, GIcon } from "@/components/casino/GIcon";
+import { Em } from "@/components/Em";
 import { getProgress } from "@/lib/progress";
 
 export interface TestSummary {
@@ -44,11 +46,11 @@ export function MyResults({ tests, emptyHref }: { tests: TestSummary[]; emptyHre
     return (
       <section className="flex flex-col items-center gap-4 rounded-card bg-surface p-6 text-center">
         <div aria-hidden="true" className="text-5xl">
-          📭
+          <GIcon name="notepad" />
         </div>
         <p className="text-lg font-semibold">Пока пусто. Пройди первый тест — результат появится здесь.</p>
         <Link href={emptyHref} className={buttonVariants({ variant: "primary" })}>
-          Газ! 🔥
+          <Em text="Газ! 🔥" />
         </Link>
       </section>
     );
@@ -63,11 +65,11 @@ export function MyResults({ tests, emptyHref }: { tests: TestSummary[]; emptyHre
             className="flex items-center gap-4 rounded-card bg-surface p-4 transition hover:bg-surface-2 active:scale-[0.98]"
           >
             <span aria-hidden="true" className="w-12 shrink-0 text-center text-4xl leading-none">
-              {result.emoji}
+              <Glyph emoji={result.emoji} label={result.title} size="1em" />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="text-sm font-bold text-muted">
-                {test.emoji} {test.title}
+                <Em text={test.emoji} /> {test.title}
               </span>
               <span className="font-display text-lg font-bold leading-tight">{result.title}</span>
               <time dateTime={date.toISOString()} className="text-sm text-muted">

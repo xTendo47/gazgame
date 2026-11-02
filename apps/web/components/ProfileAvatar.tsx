@@ -1,8 +1,9 @@
 "use client";
 
-// Аватарка в «Профиле». С Premium — голубое светящееся кольцо и подпись «💎 Premium».
+// Аватарка в «Профиле». С Premium — голубое светящееся кольцо и подпись «Premium».
 import Link from "next/link";
 import { cn } from "@gazgame/ui";
+import { GIcon } from "@/components/casino/GIcon";
 import { usePremium } from "@/lib/premium";
 
 export function ProfileAvatar() {
@@ -16,11 +17,11 @@ export function ProfileAvatar() {
           premium && "premium-ring",
         )}
       >
-        👤
+        <GIcon name="user" />
       </span>
       {premium && (
         <Link href="/premium" className="text-sm font-bold text-[#62D2FF]">
-          💎 Premium включён
+          <GIcon name="diamond" /> Premium включён
         </Link>
       )}
     </div>
