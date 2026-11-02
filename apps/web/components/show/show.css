@@ -1135,3 +1135,117 @@
 .sw-q:has(.sw-input input:focus) .sw-inner {
   padding-bottom: calc(46vh + env(safe-area-inset-bottom));
 }
+
+/* ---------- режим «Знаешь артиста?»: выбор артиста и звание на итогах ---------- */
+.sw-q[data-th="artist"] {
+  --th: #ff5fa0;
+}
+.sw-cat[data-c="artist"] .sw-cat-art,
+.sw-q[data-th="artist"] .sw-deco-art {
+  filter: hue-rotate(290deg) saturate(1.1);
+}
+.sw-cat[data-c="artist"] .sw-cat-t b {
+  font-family: "Manrope Variable", sans-serif;
+  font-weight: 800;
+  color: #ff9ac4;
+}
+.sw-picker-title {
+  margin: 4px 0 0;
+  font: 400 clamp(30px, 9.5vw, 38px) / 1.05 "Bungee", sans-serif;
+  color: var(--gold-l);
+  text-shadow: 0 3px 8px rgb(0 0 0 / 0.6);
+}
+.sw-picker-sub {
+  margin: 0;
+  font: 700 13px / 1.35 "Manrope Variable", sans-serif;
+  color: #b9c4f0;
+}
+.sw-artists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sw-artist {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 100%;
+  min-height: 92px;
+  padding: 12px 12px 12px;
+  text-align: left;
+  color: #fff;
+  background:
+    radial-gradient(80% 90% at 85% 10%, rgb(255 95 160 / 0.35), transparent 70%),
+    linear-gradient(160deg, #2a1646, #120a2a);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1.5px rgb(255 154 196 / 0.55),
+    0 10px 16px -8px rgb(0 0 0 / 0.7);
+  transition: transform 0.14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sw-artist:active {
+  transform: scale(0.97);
+}
+.sw-artist b {
+  font: 800 clamp(16px, 5vw, 19px) / 1.1 "Manrope Variable", sans-serif;
+  overflow-wrap: anywhere;
+}
+.sw-artist small {
+  font: 700 10.5px / 1.2 "Manrope Variable", sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffb3d4;
+}
+.sw-artist[data-demo]::after {
+  content: "ДЕМО";
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 3px 6px 2px;
+  font: 800 9px / 1 "Manrope Variable", sans-serif;
+  letter-spacing: 0.12em;
+  color: #0b0907;
+  background: var(--gold);
+  border-radius: 3px;
+}
+.sw-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgb(8 13 40 / 0.9);
+  box-shadow: inset 0 0 0 1.5px var(--th, var(--led));
+}
+.sw-rank > span {
+  font: 800 12px / 1 "Manrope Variable", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--th, var(--led));
+}
+.sw-rank b {
+  font: 800 22px / 1.15 "Manrope Variable", sans-serif;
+  color: var(--gold);
+}
+.sw-rank p {
+  margin: 0;
+  font: 700 14px / 1.35 "Manrope Variable", sans-serif;
+  color: #dfe5ff;
+}
+.sw-rank small {
+  font: 700 11px / 1.2 "Manrope Variable", sans-serif;
+  color: #8e97c8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sw-artist {
+    transition: none;
+  }
+}

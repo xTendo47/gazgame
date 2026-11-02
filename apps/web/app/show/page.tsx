@@ -10,7 +10,7 @@ const serverNowMs = () => Date.now();
 export const metadata: Metadata = { title: "$HOW" };
 
 export default function ShowPage() {
-  const quiz = getCatalog().quiz;
+  const { quiz, quizArtists } = getCatalog();
   if (!quiz || quiz.length === 0) notFound();
-  return <ShowScreen quiz={quiz} serverMs={serverNowMs()} />;
+  return <ShowScreen quiz={quiz} artists={quizArtists ?? []} serverMs={serverNowMs()} />;
 }

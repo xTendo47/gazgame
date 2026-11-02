@@ -14,6 +14,7 @@ import {
   currentPlayer,
   currentQuestion,
   nextQuiz,
+  pickRank,
   quizSummary,
   startQuiz,
   toggleRisk,
@@ -29,7 +30,7 @@ import { sfx } from "@/lib/sfx";
 import { SHOW_CAM_L, SHOW_CAM_R, SHOW_CAT_GENERAL, SHOW_CAT_KINO, SHOW_CAT_MUSIC, SHOW_CAT_RIDDLE, SHOW_CAT_SUPER } from "./show-art";
 import "./show.css";
 
-const THEME_ART: Record<string, string> = { kino: SHOW_CAT_KINO, "rap-ru": SHOW_CAT_MUSIC, swag: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, super: SHOW_CAT_SUPER };
+const THEME_ART: Record<string, string> = { kino: SHOW_CAT_KINO, "rap-ru": SHOW_CAT_MUSIC, swag: SHOW_CAT_MUSIC, artist: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, super: SHOW_CAT_SUPER };
 const LEVEL_COLORS = ["#ff4d4d", "#4de0ff", "#f2c94c"];
 
 export interface QuizRoundConfig {
@@ -46,6 +47,8 @@ export interface QuizRoundConfig {
   safe?: number[];
   /** Вопрос дня: одна ступень, итог записывается в серию. */
   daily?: boolean;
+  /** Режим «знаешь ли ты артиста»: slug артиста (для «Ещё раз») и звания по проценту верных ответов. */
+  artist?: { slug: string; ranks: { minPercent: number; title: string; text?: string; draft?: boolean }[] };
 }
 
 const MODE_NAMES: Record<QuizMode, string> = { solo: "Соло", duo: "Вдвоём", party: "Компания" };
@@ -187,6 +190,21 @@ export function QuizPlay({
             <p className="sw-res-line">
               {summary.correct === summary.max ? "Чистая победа" : summary.correct === 0 ? "В следующий раз повезёт" : `Верных ответов: ${summary.correct} из ${summary.max}`}
             </p>
+            {config.artist && (
+              <div className="sw-rank">
+                <span>{Math.round((summary.correct / Math.max(1, summary.max)) * 100)}% верных</span>
+                {(() => {
+                  const rank = pickRank(config.artist.ranks, Math.round((summary.correct / Math.max(1, summary.max)) * 100));
+                  return rank ? (
+                    <>
+                      <b>{rank.title}</b>
+                      {rank.text && <p>{rank.text}</p>}
+                      {rank.draft && <small>заглушка: настоящие звания добавим позже</small>}
+                    </>
+                  ) : null;
+                })()}
+              </div>
+            )}
             {config.mode !== "solo" && (
               <ul className="sw-players">
                 {summary.scores.map((s, i) => (
@@ -204,7 +222,7 @@ export function QuizPlay({
               </p>
             )}
             {config.ladder && <p className="sw-res-demo">Демо: {summary.max} вопросов из {config.ladder.length}. Полная лестница появится с настоящими вопросами</p>}
-            {!config.ladder && <p className="sw-res-demo">Демо-раунд. Настоящие вопросы добавим позже</p>}
+            {!config.ladder && !config.artist && <p className="sw-res-demo">Демо-раунд. Настоящие вопросы добавим позже</p>}
             <div className="sw-row">
               {!config.daily && (
                 <button type="button" className="sw-btn" onClick={onAgain}>
@@ -258,7 +276,7 @@ export function QuizPlay({
               const isSafe = config.safe?.includes(r.n);
               return (
                 <li key={r.n} data-s={cls || undefined} data-safe={isSafe || undefined}>
-                  {ladder ? <em>{r.n}</em> : <i style={{ "--c": LEVEL_COLORS[i % 3] } as CSSProperties} />}
+                  {ladder ? <em>{r.n}</em> : <i style={{ "--c": LEVEL_COLORS[((state.questions[i]?.level ?? 1) - 1) % 3] } as CSSProperties} />}
                   <span>{r.label}</span>
                 </li>
               );

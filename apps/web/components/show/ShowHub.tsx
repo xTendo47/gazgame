@@ -26,7 +26,7 @@ import {
 } from "./show-art";
 import "./show.css";
 
-const ART: Record<string, string> = { kino: SHOW_CAT_KINO, "rap-ru": SHOW_CAT_MUSIC, swag: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, court: SHOW_CAT_COURT, super: SHOW_CAT_SUPER };
+const ART: Record<string, string> = { kino: SHOW_CAT_KINO, "rap-ru": SHOW_CAT_MUSIC, swag: SHOW_CAT_MUSIC, artist: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, court: SHOW_CAT_COURT, super: SHOW_CAT_SUPER };
 
 export const MODES: { id: QuizMode; label: string; admit: string; no: string }[] = [
   { id: "solo", label: "Соло", admit: "ADMIT ONE", no: "№ 001" },
@@ -71,6 +71,7 @@ export function ShowHub({
   onCategory,
   onSuper,
   onCourt,
+  onArtists,
 }: {
   categories: QuizCategory[];
   court?: QuizCourt;
@@ -86,6 +87,8 @@ export function ShowHub({
   onCategory: (id: string) => void;
   onSuper: () => void;
   onCourt: () => void;
+  /** Режим «Насколько хорошо ты знаешь исполнителя?»: список артистов; нет артистов — карточки нет. */
+  onArtists?: () => void;
 }) {
   // порядок карточек как в эталоне: Кино, Русский хип-хоп, Общее, Западный swag (Загадки — отдельной широкой карточкой)
   const ORDER = ["kino", "rap-ru", "general", "swag"];
@@ -193,7 +196,7 @@ export function ShowHub({
             <button
               key={c.id}
               type="button"
-              className="sw-cat"
+              className={c.id === "court" ? "sw-cat sw-wide" : "sw-cat"}
               data-c={c.id}
               onClick={() => {
                 sfx.page();
@@ -225,6 +228,24 @@ export function ShowHub({
             </button>
           )}
         </div>
+
+        {onArtists && (
+          <button
+            type="button"
+            className="sw-cat sw-wide"
+            data-c="artist"
+            onClick={() => {
+              sfx.page();
+              onArtists();
+            }}
+          >
+            <Art html={ART.artist ?? ""} className="sw-cat-art" />
+            <span className="sw-cat-t">
+              <b>Знаешь артиста?</b>
+              <small>15 вопросов про одного · 5 + 5 + 5</small>
+            </span>
+          </button>
+        )}
 
         {sup && (
           <button
