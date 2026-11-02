@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { buildCatalog, inspectContent, type ContentReport, type ExtraContentFiles, type RawContentFile, type RawDataFile } from "./validate";
 import type { Catalog } from "./schema";
+import { expandEmojiKeys } from "./emoji-keys";
 
 const FOLDERS = { tests: "test", games: "game" } as const;
 
@@ -36,7 +37,7 @@ export function readContentFiles(contentDir = findContentDir()): RawContentFile[
       const shown = `packages/content/data/${folder}/${name}`;
       const raw = fs.readFileSync(filePath, "utf8");
       try {
-        files.push({ path: shown, kind, data: JSON.parse(raw) as unknown });
+        files.push({ path: shown, kind, data: expandEmojiKeys(JSON.parse(raw) as unknown) });
       } catch (error) {
         files.push({ path: shown, kind, data: undefined, parseError: (error as Error).message });
       }
@@ -52,7 +53,7 @@ function readDataFile(contentDir: string, name: string): RawDataFile | undefined
   const shown = `packages/content/data/${name}`;
   const raw = fs.readFileSync(filePath, "utf8");
   try {
-    return { path: shown, data: JSON.parse(raw) as unknown };
+    return { path: shown, data: expandEmojiKeys(JSON.parse(raw) as unknown) };
   } catch (error) {
     return { path: shown, data: undefined, parseError: (error as Error).message };
   }
@@ -70,7 +71,7 @@ function readDataDir(contentDir: string, folder: string): RawDataFile[] {
       const shown = `packages/content/data/${folder}/${name}`;
       const raw = fs.readFileSync(path.join(dir, name), "utf8");
       try {
-        return { path: shown, data: JSON.parse(raw) as unknown };
+        return { path: shown, data: expandEmojiKeys(JSON.parse(raw) as unknown) };
       } catch (error) {
         return { path: shown, data: undefined, parseError: (error as Error).message };
       }

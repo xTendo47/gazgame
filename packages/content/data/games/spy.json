@@ -8,7 +8,7 @@
   "status": "draft",
   "title": "Шпион",
   "description": "Все знают, о чём речь. Кроме одного.",
-  "emoji": "🕵️",
+  "emoji": "spy",
   "sections": [
     "company"
   ],
@@ -34,7 +34,7 @@
     "Телефон называет, кто начинает. Он задаёт любому короткий вопрос про слово, ответивший спрашивает следующего. Называть слово нельзя.",
     "Примеры: «Там можно поесть?» — «Да». «Там можно поспать?» — «Нет». Кто отвечает невпопад, тот, скорее всего, шпион.",
     "Отвечай так, чтобы свои поняли, что ты в теме, а шпион не догадался.",
-    "В любой момент можно нажать «Стоп! Голосуем ✋» и вскрыть того, кого подозреваете.",
+    "В любой момент можно нажать «Стоп! Голосуем :hand:» и вскрыть того, кого подозреваете.",
     "Шпион в любой момент может раскрыться и назвать слово вслух.",
     "Шпиона поймали — победили все. Вскрыли не того, шпион угадал слово или время вышло — победил шпион."
   ],
@@ -42,7 +42,7 @@
   "spies": {
     "max": 2,
     "twoFrom": 8,
-    "hint": "Два шпиона не знают друг друга 👀"
+    "hint": "Два шпиона не знают друг друга :eyes:"
   },
   "timer": {
     "perPlayerSec": 60,
@@ -53,7 +53,7 @@
   "decks": [
     {
       "id": "places",
-      "emoji": "📍",
+      "emoji": "pin",
       "title": "Места",
       "examples": [
         "Там можно поесть?",
@@ -63,269 +63,269 @@
       "cards": [
         {
           "id": "metro-v-chas-pik",
-          "emoji": "🚇",
+          "emoji": "metro",
           "title": "Метро в час пик"
         },
         {
           "id": "shaurmichnaya",
-          "emoji": "🌯",
+          "emoji": "shawarma",
           "title": "Шаурмичная"
         },
         {
           "id": "kofeynya",
-          "emoji": "☕",
+          "emoji": "cup",
           "title": "Кофейня"
         },
         {
           "id": "supermarket",
-          "emoji": "🛒",
+          "emoji": "cart",
           "title": "Супермаркет"
         },
         {
           "id": "barbershop",
-          "emoji": "💈",
+          "emoji": "barber",
           "title": "Барбершоп"
         },
         {
           "id": "salon-krasoty",
-          "emoji": "💅",
+          "emoji": "nailPolish",
           "title": "Салон красоты"
         },
         {
           "id": "bank",
-          "emoji": "🏦",
+          "emoji": "bank",
           "title": "Банк"
         },
         {
           "id": "politseyskiy-uchastok",
-          "emoji": "🚓",
+          "emoji": "policeCar",
           "title": "Полицейский участок"
         },
         {
           "id": "taksi",
-          "emoji": "🚕",
+          "emoji": "taxi",
           "title": "Такси"
         },
         {
           "id": "zapravka",
-          "emoji": "⛽",
+          "emoji": "fuel",
           "title": "Заправка"
         },
         {
           "id": "avtoservis",
-          "emoji": "🔧",
+          "emoji": "wrench",
           "title": "Автосервис"
         },
         {
           "id": "stroyka",
-          "emoji": "🚧",
+          "emoji": "barrier",
           "title": "Стройка"
         },
         {
           "id": "ofis",
-          "emoji": "💼",
+          "emoji": "briefcase",
           "title": "Офис"
         },
         {
           "id": "rynok",
-          "emoji": "🍉",
+          "emoji": "melon",
           "title": "Рынок"
         },
         {
           "id": "tatu-salon",
-          "emoji": "🖋️",
+          "emoji": "penNib",
           "title": "Тату-салон"
         },
         {
           "id": "shkola",
-          "emoji": "🏫",
+          "emoji": "school",
           "title": "Школа"
         },
         {
           "id": "univer-na-pare",
-          "emoji": "📖",
+          "emoji": "book",
           "title": "Универ на паре"
         },
         {
           "id": "biblioteka",
-          "emoji": "📚",
+          "emoji": "book2",
           "title": "Библиотека"
         },
         {
           "id": "bolnitsa",
-          "emoji": "🏥",
+          "emoji": "hospital",
           "title": "Больница"
         },
         {
           "id": "stomatologiya",
-          "emoji": "🦷",
+          "emoji": "tooth",
           "title": "Стоматология"
         },
         {
           "id": "vetklinika",
-          "emoji": "🐶",
+          "emoji": "dog2",
           "title": "Ветклиника"
         },
         {
           "id": "nochnoy-klub",
-          "emoji": "🎧",
+          "emoji": "music",
           "title": "Ночной клуб"
         },
         {
           "id": "kinoteatr",
-          "emoji": "🎬",
+          "emoji": "mask",
           "title": "Кинотеатр"
         },
         {
           "id": "kontsert-na-stadione",
-          "emoji": "🎸",
+          "emoji": "music2",
           "title": "Концерт на стадионе"
         },
         {
           "id": "futbolnyy-match",
-          "emoji": "⚽",
+          "emoji": "football",
           "title": "Футбольный матч"
         },
         {
           "id": "sportzal",
-          "emoji": "🏋️",
+          "emoji": "dumbbell",
           "title": "Спортзал"
         },
         {
           "id": "akvapark",
-          "emoji": "💦",
+          "emoji": "waterDrops",
           "title": "Аквапарк"
         },
         {
           "id": "park-attraktsionov",
-          "emoji": "🎢",
+          "emoji": "coaster",
           "title": "Парк аттракционов"
         },
         {
           "id": "katok",
-          "emoji": "⛸️",
+          "emoji": "iceSkate",
           "title": "Каток"
         },
         {
           "id": "kompyuternyy-klub",
-          "emoji": "🎮",
+          "emoji": "gamepad",
           "title": "Компьютерный клуб"
         },
         {
           "id": "kvest-komnata",
-          "emoji": "🔐",
+          "emoji": "lockKey",
           "title": "Квест-комната"
         },
         {
           "id": "karaoke",
-          "emoji": "🎤",
+          "emoji": "mic",
           "title": "Караоке"
         },
         {
           "id": "bouling",
-          "emoji": "🎳",
+          "emoji": "bowling",
           "title": "Боулинг"
         },
         {
           "id": "muzey",
-          "emoji": "🖼️",
+          "emoji": "picture",
           "title": "Музей"
         },
         {
           "id": "zoopark",
-          "emoji": "🦁",
+          "emoji": "lion",
           "title": "Зоопарк"
         },
         {
           "id": "tsirk",
-          "emoji": "🎪",
+          "emoji": "circusTent",
           "title": "Цирк"
         },
         {
           "id": "aeroport",
-          "emoji": "✈️",
+          "emoji": "plane",
           "title": "Аэропорт"
         },
         {
           "id": "platskart",
-          "emoji": "🚆",
+          "emoji": "trainCar",
           "title": "Плацкарт"
         },
         {
           "id": "otel",
-          "emoji": "🏨",
+          "emoji": "hotel",
           "title": "Отель"
         },
         {
           "id": "plyazh",
-          "emoji": "🏖️",
+          "emoji": "beachUmbrella",
           "title": "Пляж"
         },
         {
           "id": "gornolyzhnyy-kurort",
-          "emoji": "🎿",
+          "emoji": "ski",
           "title": "Горнолыжный курорт"
         },
         {
           "id": "kruiznyy-layner",
-          "emoji": "🛳️",
+          "emoji": "cruise",
           "title": "Круизный лайнер"
         },
         {
           "id": "dacha",
-          "emoji": "🏡",
+          "emoji": "cottage",
           "title": "Дача"
         },
         {
           "id": "banya",
-          "emoji": "🔥",
+          "emoji": "fire",
           "title": "Баня"
         },
         {
           "id": "detskiy-lager",
-          "emoji": "🏕️",
+          "emoji": "campTent2",
           "title": "Детский лагерь"
         },
         {
           "id": "svadba",
-          "emoji": "💍",
+          "emoji": "ring",
           "title": "Свадьба"
         },
         {
           "id": "novogodniy-korporativ",
-          "emoji": "🎄",
+          "emoji": "fir",
           "title": "Новогодний корпоратив"
         },
         {
           "id": "semki-tiktoka",
-          "emoji": "📱",
+          "emoji": "phone",
           "title": "Съёмки тиктока"
         },
         {
           "id": "kosmicheskaya-stantsiya",
-          "emoji": "🚀",
+          "emoji": "rocket",
           "title": "Космическая станция"
         },
         {
           "id": "piratskiy-korabl",
-          "emoji": "🏴‍☠️",
+          "emoji": "pirateFlag",
           "title": "Пиратский корабль"
         },
         {
           "id": "podvodnaya-lodka",
-          "emoji": "⚓",
+          "emoji": "anchor",
           "title": "Подводная лодка"
         },
         {
           "id": "polyarnaya-stantsiya",
-          "emoji": "🐧",
+          "emoji": "penguin",
           "title": "Полярная станция"
         }
       ]
     },
     {
       "id": "jobs",
-      "emoji": "💼",
+      "emoji": "briefcase",
       "title": "Профессии",
       "examples": [
         "Нужна форма?",
@@ -335,269 +335,269 @@
       "cards": [
         {
           "id": "hirurg",
-          "emoji": "🩺",
+          "emoji": "stethoscope",
           "title": "Хирург"
         },
         {
           "id": "uchitel",
-          "emoji": "📝",
+          "emoji": "notepad",
           "title": "Учитель"
         },
         {
           "id": "politseyskiy",
-          "emoji": "🚓",
+          "emoji": "policeCar",
           "title": "Полицейский"
         },
         {
           "id": "pozharnyy",
-          "emoji": "🚒",
+          "emoji": "fireTruck",
           "title": "Пожарный"
         },
         {
           "id": "povar",
-          "emoji": "🍳",
+          "emoji": "fryingPan",
           "title": "Повар"
         },
         {
           "id": "kurer",
-          "emoji": "📦",
+          "emoji": "parcel",
           "title": "Курьер"
         },
         {
           "id": "taksist",
-          "emoji": "🚕",
+          "emoji": "taxi",
           "title": "Таксист"
         },
         {
           "id": "programmist",
-          "emoji": "💻",
+          "emoji": "laptop",
           "title": "Программист"
         },
         {
           "id": "bloger",
-          "emoji": "🤳",
+          "emoji": "selfie",
           "title": "Блогер"
         },
         {
           "id": "barista",
-          "emoji": "☕",
+          "emoji": "cup",
           "title": "Бариста"
         },
         {
           "id": "parikmaher",
-          "emoji": "✂️",
+          "emoji": "scissors",
           "title": "Парикмахер"
         },
         {
           "id": "stomatolog",
-          "emoji": "🦷",
+          "emoji": "tooth",
           "title": "Стоматолог"
         },
         {
           "id": "pilot",
-          "emoji": "✈️",
+          "emoji": "plane",
           "title": "Пилот"
         },
         {
           "id": "bortprovodnik",
-          "emoji": "🧳",
+          "emoji": "suitcase",
           "title": "Бортпроводник"
         },
         {
           "id": "kosmonavt",
-          "emoji": "🚀",
+          "emoji": "rocket",
           "title": "Космонавт"
         },
         {
           "id": "stroitel",
-          "emoji": "🏗️",
+          "emoji": "crane",
           "title": "Строитель"
         },
         {
           "id": "elektrik",
-          "emoji": "💡",
+          "emoji": "bulb",
           "title": "Электрик"
         },
         {
           "id": "santehnik",
-          "emoji": "🚿",
+          "emoji": "shower",
           "title": "Сантехник"
         },
         {
           "id": "avtomehanik",
-          "emoji": "🔧",
+          "emoji": "wrench",
           "title": "Автомеханик"
         },
         {
           "id": "dalnoboyschik",
-          "emoji": "🚛",
+          "emoji": "truck",
           "title": "Дальнобойщик"
         },
         {
           "id": "fermer",
-          "emoji": "🚜",
+          "emoji": "tractor",
           "title": "Фермер"
         },
         {
           "id": "veterinar",
-          "emoji": "🐾",
+          "emoji": "paws",
           "title": "Ветеринар"
         },
         {
           "id": "feldsher-skoroy",
-          "emoji": "🚑",
+          "emoji": "ambulance",
           "title": "Фельдшер скорой"
         },
         {
           "id": "pevets",
-          "emoji": "🎤",
+          "emoji": "mic",
           "title": "Певец"
         },
         {
           "id": "akter",
-          "emoji": "🎭",
+          "emoji": "mask3",
           "title": "Актёр"
         },
         {
           "id": "rezhisser",
-          "emoji": "🎬",
+          "emoji": "mask",
           "title": "Режиссёр"
         },
         {
           "id": "fotograf",
-          "emoji": "📸",
+          "emoji": "camera",
           "title": "Фотограф"
         },
         {
           "id": "dizayner",
-          "emoji": "🎨",
+          "emoji": "palette",
           "title": "Дизайнер"
         },
         {
           "id": "tatu-master",
-          "emoji": "🖋️",
+          "emoji": "penNib",
           "title": "Тату-мастер"
         },
         {
           "id": "didzhey",
-          "emoji": "🎧",
+          "emoji": "music",
           "title": "Диджей"
         },
         {
           "id": "futbolist",
-          "emoji": "⚽",
+          "emoji": "football",
           "title": "Футболист"
         },
         {
           "id": "fitnes-trener",
-          "emoji": "🏋️",
+          "emoji": "dumbbell",
           "title": "Фитнес-тренер"
         },
         {
           "id": "yurist",
-          "emoji": "⚖️",
+          "emoji": "scales",
           "title": "Юрист"
         },
         {
           "id": "sudya",
-          "emoji": "🔨",
+          "emoji": "gavel",
           "title": "Судья"
         },
         {
           "id": "buhgalter",
-          "emoji": "🧮",
+          "emoji": "abacus",
           "title": "Бухгалтер"
         },
         {
           "id": "kassir",
-          "emoji": "🛒",
+          "emoji": "cart",
           "title": "Кассир"
         },
         {
           "id": "ohrannik",
-          "emoji": "🛡️",
+          "emoji": "shield",
           "title": "Охранник"
         },
         {
           "id": "pochtalon",
-          "emoji": "✉️",
+          "emoji": "envelope",
           "title": "Почтальон"
         },
         {
           "id": "bibliotekar",
-          "emoji": "📚",
+          "emoji": "book2",
           "title": "Библиотекарь"
         },
         {
           "id": "zhurnalist",
-          "emoji": "🗞️",
+          "emoji": "newspaper",
           "title": "Журналист"
         },
         {
           "id": "uchenyy",
-          "emoji": "🔬",
+          "emoji": "microscope",
           "title": "Учёный"
         },
         {
           "id": "arheolog",
-          "emoji": "🦴",
+          "emoji": "bone",
           "title": "Археолог"
         },
         {
           "id": "detektiv",
-          "emoji": "🔍",
+          "emoji": "magnifier",
           "title": "Детектив"
         },
         {
           "id": "moryak",
-          "emoji": "⚓",
+          "emoji": "anchor",
           "title": "Моряк"
         },
         {
           "id": "rybak",
-          "emoji": "🎣",
+          "emoji": "fishing",
           "title": "Рыбак"
         },
         {
           "id": "strimer",
-          "emoji": "🎮",
+          "emoji": "gamepad",
           "title": "Стример"
         },
         {
           "id": "model",
-          "emoji": "👠",
+          "emoji": "heel",
           "title": "Модель"
         },
         {
           "id": "vizazhist",
-          "emoji": "💄",
+          "emoji": "lipstick",
           "title": "Визажист"
         },
         {
           "id": "ofitsiant",
-          "emoji": "🍽️",
+          "emoji": "platter",
           "title": "Официант"
         },
         {
           "id": "animator",
-          "emoji": "🎈",
+          "emoji": "balloon",
           "title": "Аниматор"
         },
         {
           "id": "psiholog",
-          "emoji": "🛋️",
+          "emoji": "couch",
           "title": "Психолог"
         },
         {
           "id": "rieltor",
-          "emoji": "🔑",
+          "emoji": "key2",
           "title": "Риелтор"
         }
       ]
     },
     {
       "id": "countries",
-      "emoji": "🌍",
+      "emoji": "globe",
       "title": "Страны",
       "examples": [
         "Там тепло зимой?",
@@ -607,262 +607,262 @@
       "cards": [
         {
           "id": "rossiya",
-          "emoji": "🐻",
+          "emoji": "bear",
           "title": "Россия"
         },
         {
           "id": "yaponiya",
-          "emoji": "🍣",
+          "emoji": "sushi",
           "title": "Япония"
         },
         {
           "id": "italiya",
-          "emoji": "🍕",
+          "emoji": "pizza",
           "title": "Италия"
         },
         {
           "id": "frantsiya",
-          "emoji": "🥐",
+          "emoji": "croissant",
           "title": "Франция"
         },
         {
           "id": "ssha",
-          "emoji": "🗽",
+          "emoji": "liberty",
           "title": "США"
         },
         {
           "id": "kitay",
-          "emoji": "🐼",
+          "emoji": "panda",
           "title": "Китай"
         },
         {
           "id": "egipet",
-          "emoji": "🐫",
+          "emoji": "camel",
           "title": "Египет"
         },
         {
           "id": "turtsiya",
-          "emoji": "🧿",
+          "emoji": "evilEye",
           "title": "Турция"
         },
         {
           "id": "tailand",
-          "emoji": "🐘",
+          "emoji": "elephant",
           "title": "Таиланд"
         },
         {
           "id": "indiya",
-          "emoji": "🛕",
+          "emoji": "temple",
           "title": "Индия"
         },
         {
           "id": "braziliya",
-          "emoji": "🦜",
+          "emoji": "parrot",
           "title": "Бразилия"
         },
         {
           "id": "meksika",
-          "emoji": "🌮",
+          "emoji": "taco",
           "title": "Мексика"
         },
         {
           "id": "ispaniya",
-          "emoji": "💃",
+          "emoji": "dancer",
           "title": "Испания"
         },
         {
           "id": "germaniya",
-          "emoji": "🥨",
+          "emoji": "pretzel",
           "title": "Германия"
         },
         {
           "id": "velikobritaniya",
-          "emoji": "💂",
+          "emoji": "guard",
           "title": "Великобритания"
         },
         {
           "id": "kanada",
-          "emoji": "🍁",
+          "emoji": "maple",
           "title": "Канада"
         },
         {
           "id": "avstraliya",
-          "emoji": "🦘",
+          "emoji": "kangaroo",
           "title": "Австралия"
         },
         {
           "id": "gretsiya",
-          "emoji": "🏛️",
+          "emoji": "columns",
           "title": "Греция"
         },
         {
           "id": "gruziya",
-          "emoji": "🍇",
+          "emoji": "grapes",
           "title": "Грузия"
         },
         {
           "id": "kazahstan",
-          "emoji": "🦅",
+          "emoji": "eagle",
           "title": "Казахстан"
         },
         {
           "id": "armeniya",
-          "emoji": "⛰️",
+          "emoji": "mountain",
           "title": "Армения"
         },
         {
           "id": "uzbekistan",
-          "emoji": "🍚",
+          "emoji": "riceBowl",
           "title": "Узбекистан"
         },
         {
           "id": "belarus",
-          "emoji": "🥔",
+          "emoji": "potato",
           "title": "Беларусь"
         },
         {
           "id": "norvegiya",
-          "emoji": "🌌",
+          "emoji": "aurora",
           "title": "Норвегия"
         },
         {
           "id": "finlyandiya",
-          "emoji": "🎅",
+          "emoji": "santaHat",
           "title": "Финляндия"
         },
         {
           "id": "shveytsariya",
-          "emoji": "🧀",
+          "emoji": "cheese",
           "title": "Швейцария"
         },
         {
           "id": "niderlandy",
-          "emoji": "🌷",
+          "emoji": "tulip",
           "title": "Нидерланды"
         },
         {
           "id": "shvetsiya",
-          "emoji": "🛋️",
+          "emoji": "couch",
           "title": "Швеция"
         },
         {
           "id": "islandiya",
-          "emoji": "🌋",
+          "emoji": "volcano",
           "title": "Исландия"
         },
         {
           "id": "oae",
-          "emoji": "🏙️",
+          "emoji": "city",
           "title": "ОАЭ"
         },
         {
           "id": "yuzhnaya-koreya",
-          "emoji": "🎤",
+          "emoji": "mic",
           "title": "Южная Корея"
         },
         {
           "id": "vetnam",
-          "emoji": "🍜",
+          "emoji": "noodles",
           "title": "Вьетнам"
         },
         {
           "id": "indoneziya",
-          "emoji": "🌴",
+          "emoji": "palm",
           "title": "Индонезия"
         },
         {
           "id": "maldivy",
-          "emoji": "🏝️",
+          "emoji": "island",
           "title": "Мальдивы"
         },
         {
           "id": "kuba",
-          "emoji": "🎺",
+          "emoji": "megaphone2",
           "title": "Куба"
         },
         {
           "id": "argentina",
-          "emoji": "🥩",
+          "emoji": "steak",
           "title": "Аргентина"
         },
         {
           "id": "irlandiya",
-          "emoji": "☘️",
+          "emoji": "clover2",
           "title": "Ирландия"
         },
         {
           "id": "portugaliya",
-          "emoji": "🏄",
+          "emoji": "surfer",
           "title": "Португалия"
         },
         {
           "id": "chehiya",
-          "emoji": "🏰",
+          "emoji": "castle",
           "title": "Чехия"
         },
         {
           "id": "polsha",
-          "emoji": "🥟",
+          "emoji": "dumpling",
           "title": "Польша"
         },
         {
           "id": "chernogoriya",
-          "emoji": "⛵",
+          "emoji": "sailboat",
           "title": "Черногория"
         },
         {
           "id": "keniya",
-          "emoji": "🦒",
+          "emoji": "giraffe",
           "title": "Кения"
         },
         {
           "id": "yuar",
-          "emoji": "🦁",
+          "emoji": "lion",
           "title": "ЮАР"
         },
         {
           "id": "peru",
-          "emoji": "🦙",
+          "emoji": "llama",
           "title": "Перу"
         },
         {
           "id": "novaya-zelandiya",
-          "emoji": "🥝",
+          "emoji": "kiwi",
           "title": "Новая Зеландия"
         },
         {
           "id": "mongoliya",
-          "emoji": "🐎",
+          "emoji": "horseHead",
           "title": "Монголия"
         },
         {
           "id": "vatikan",
-          "emoji": "⛪",
+          "emoji": "church",
           "title": "Ватикан"
         },
         {
           "id": "singapur",
-          "emoji": "🌆",
+          "emoji": "skyline",
           "title": "Сингапур"
         },
         {
           "id": "yamayka",
-          "emoji": "🎶",
+          "emoji": "music3",
           "title": "Ямайка"
         },
         {
           "id": "marokko",
-          "emoji": "🕌",
+          "emoji": "mosque",
           "title": "Марокко"
         },
         {
           "id": "avstriya",
-          "emoji": "🎻",
+          "emoji": "violin",
           "title": "Австрия"
         },
         {
           "id": "kipr",
-          "emoji": "🏖️",
+          "emoji": "beachUmbrella",
           "title": "Кипр"
         }
       ]
@@ -870,63 +870,63 @@
   ],
   "mix": {
     "id": "mix",
-    "emoji": "🎲",
+    "emoji": "dice",
     "title": "Всё вперемешку"
   },
   "lockedExtras": [
     {
-      "emoji": "🎬",
+      "emoji": "mask",
       "title": "Кино"
     },
     {
-      "emoji": "📺",
+      "emoji": "tv",
       "title": "Сериалы"
     },
     {
-      "emoji": "⭐",
+      "emoji": "star2",
       "title": "Знаменитости"
     }
   ],
-  "lockedText": "По подписке 💎",
+  "lockedText": "По подписке :diamond:",
   "texts": {
     "start": "Все знают, о чём речь. Кроме одного.",
     "pickDeck": "Выбери набор",
-    "deal": "Игрок {n} из {total}. Нажми, чтобы увидеть 🙈",
+    "deal": "Игрок {n} из {total}. Нажми, чтобы увидеть :hide:",
     "hide": "Скрыть",
-    "pass": "Передай следующему 👉",
+    "pass": "Передай следующему :next:",
     "wordHint": "Найди шпиона. Не называй слово вслух",
     "spyTitle": "Ты шпион",
     "spyHint": "Слушай ответы и угадай, что на карте. Не спались",
-    "dealt": "Все карты розданы. Начинает Игрок {n} 🎯",
-    "started": "Игра началась 🕵️",
+    "dealt": "Все карты розданы. Начинает Игрок {n} :target:",
+    "started": "Игра началась :spy:",
     "startedHint": "Спрашивайте друг друга в любом порядке. Начинает {name}",
-    "timerEasy": "Шпиону проще: времени мало 🕵️",
-    "timerFair": "Честная игра ⚖️",
-    "timerHard": "Шпиону сложнее: успеете допросить всех 🔍",
+    "timerEasy": "Шпиону проще: времени мало :spy:",
+    "timerFair": "Честная игра :scales:",
+    "timerHard": "Шпиону сложнее: успеете допросить всех :magnifier:",
     "deckLabel": "Набор: {title} {emoji}",
-    "vote": "Стоп! Голосуем ✋",
+    "vote": "Стоп! Голосуем :hand:",
     "voteHint": "Договоритесь, кого подозреваете, и выберите его номер",
-    "isSpy": "Это шпион 🎯",
-    "notSpy": "Не шпион ❌",
+    "isSpy": "Это шпион :target:",
+    "notSpy": "Не шпион :cross:",
     "oneCaught": "Один есть! Ищите второго",
-    "reveal": "Шпион раскрывается 🕵️",
+    "reveal": "Шпион раскрывается :spy:",
     "revealWho": "Какой ты игрок?",
-    "revealNotSpy": "Ты не шпион 😄 Играем дальше",
+    "revealNotSpy": "Ты не шпион :grin: Играем дальше",
     "revealSay": "Шпион, назови слово вслух",
-    "guessed": "Угадал 😱",
-    "missed": "Мимо 🎯",
-    "timeUp": "Время вышло ⏰ Последний шанс: договоритесь, кого вскрываете",
+    "guessed": "Угадал :scream:",
+    "missed": "Мимо :target:",
+    "timeUp": "Время вышло :alarm: Последний шанс: договоритесь, кого вскрываете",
     "noVote": "Не голосуем",
-    "cityWins": "Шпион пойман 🎯",
-    "spyWins": "Шпион победил 🕵️",
+    "cityWins": "Шпион пойман :target:",
+    "spyWins": "Шпион победил :spy:",
     "wrongVote": "Вы вскрыли своего",
     "finalCard": "Было: {emoji} {title}",
     "finalSpy": "Шпион: Игрок {n}",
     "finalSpies": "Шпионы: Игроки {a} и {b}",
-    "again": "Ещё партия 🔄",
+    "again": "Ещё партия :refresh:",
     "changeDeck": "Сменить набор",
-    "flexCity": "Мы вычислили шпиона 🎯 Было: {title} {emoji}",
-    "flexSpy": "Шпион нас переиграл 🕵️ Было: {title} {emoji}",
+    "flexCity": "Мы вычислили шпиона :target: Было: {title} {emoji}",
+    "flexSpy": "Шпион нас переиграл :spy: Было: {title} {emoji}",
     "cardBack": "GAZ GAME"
   }
 }

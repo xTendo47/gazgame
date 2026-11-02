@@ -16,3 +16,4 @@ export {
   type RawDataFile,
   type ExtraContentFiles,
 } from "./validate";
+export * from "./emoji-keys";

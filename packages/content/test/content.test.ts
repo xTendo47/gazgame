@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { buildCatalog, ContentError, inspectContent } from "../src/index";
+import { buildCatalog, ContentError, expandEmojiKeys, inspectContent } from "../src/index";
 import { loadCatalog } from "../src/node";
 
 const validTest = {
@@ -221,7 +221,7 @@ describe("игра guess-partner: уровни и вопросы «про себ
 
 describe("игра «Мафия» (mechanic: mafia)", () => {
   const mafiaFile = () =>
-    JSON.parse(readFileSync(new URL("../data/games/mafia.json", import.meta.url), "utf-8")) as Record<string, unknown> & {
+    expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/games/mafia.json", import.meta.url), "utf-8"))) as Record<string, unknown> & {
       roles: Record<string, unknown>[];
       defaults: { from: number; to: number; roles: Record<string, number> }[];
     };
@@ -251,7 +251,7 @@ describe("игра «Мафия» (mechanic: mafia)", () => {
 
 describe("игра «Шпион» (mechanic: spy)", () => {
   type SpyFile = Record<string, unknown> & { decks: { id: string; cards: { id: string }[] }[] };
-  const spyFile = () => JSON.parse(readFileSync(new URL("../data/games/spy.json", import.meta.url), "utf-8")) as SpyFile;
+  const spyFile = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/games/spy.json", import.meta.url), "utf-8"))) as SpyFile;
   const build = (data: unknown) => buildCatalog([{ path: "spy.json", kind: "game", data: { ...(data as object), related: [] } }]);
 
   it("настоящий файл проходит: три набора по 52 карты", () => {
@@ -338,7 +338,7 @@ describe("игра «Совпадём?» (mechanic: match)", () => {
     decks: { questionsPerGame?: number; cards: { options?: string[] }[] }[];
     ranks: { minPercent: number }[];
   };
-  const matchFile = () => JSON.parse(readFileSync(new URL("../data/games/match-us.json", import.meta.url), "utf-8")) as MatchFile;
+  const matchFile = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/games/match-us.json", import.meta.url), "utf-8"))) as MatchFile;
   const build = (data: unknown) => buildCatalog([{ path: "match-us.json", kind: "game", data: { ...(data as object), related: [] } }]);
 
   it("настоящий файл проходит", () => {
@@ -366,7 +366,7 @@ describe("игра «Совпадём?» (mechanic: match)", () => {
 
 describe("«Карточные игры» (data/card-games.json)", () => {
   const cardsFile = () =>
-    JSON.parse(readFileSync(new URL("../data/card-games.json", import.meta.url), "utf-8")) as { games: { id: string; players: { min: number; max: number } }[] };
+    expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/card-games.json", import.meta.url), "utf-8"))) as { games: { id: string; players: { min: number; max: number } }[] };
   const build = (data: unknown) => buildCatalog([], { cardGames: { path: "card-games.json", data } });
 
   it("настоящий файл загружается вместе с каталогом: 8 игр", () => {
@@ -435,7 +435,7 @@ describe("Ultimate (data/ultimate.json)", () => {
   });
 
   it("лишние поля и пустые тексты не проходят", () => {
-    const ultimateFile = () => JSON.parse(readFileSync(new URL("../data/ultimate.json", import.meta.url), "utf-8")) as Record<string, unknown>;
+    const ultimateFile = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/ultimate.json", import.meta.url), "utf-8"))) as Record<string, unknown>;
     const build = (data: unknown) => buildCatalog([], { ultimate: { path: "ultimate.json", data } });
     expect(() => build(ultimateFile())).not.toThrow();
     expect(() => build({ ...ultimateFile(), extra: 1 })).toThrow(ContentError);
@@ -444,7 +444,7 @@ describe("Ultimate (data/ultimate.json)", () => {
 });
 
 describe("GAZ 🚀 (data/gaz.json)", () => {
-  const gazFile = () => JSON.parse(readFileSync(new URL("../data/gaz.json", import.meta.url), "utf-8")) as {
+  const gazFile = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/gaz.json", import.meta.url), "utf-8"))) as {
     bored: Record<string, unknown>[];
     roulette: Record<string, unknown>[];
     [key: string]: unknown;
@@ -484,12 +484,12 @@ describe("GAZ 🚀 (data/gaz.json)", () => {
 });
 
 describe("Сегодня 🔥 (data/today.json)", () => {
-  const todayFile = () => JSON.parse(readFileSync(new URL("../data/today.json", import.meta.url), "utf-8")) as {
+  const todayFile = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/today.json", import.meta.url), "utf-8"))) as {
     battles: Record<string, unknown>[];
     ladder: Record<string, unknown>[];
     [key: string]: unknown;
   };
-  const gazFile = () => JSON.parse(readFileSync(new URL("../data/gaz.json", import.meta.url), "utf-8")) as unknown;
+  const gazFile = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/gaz.json", import.meta.url), "utf-8"))) as unknown;
   const build = (today: unknown, gaz: unknown = gazFile()) =>
     buildCatalog([], { gaz: { path: "gaz.json", data: gaz }, today: { path: "today.json", data: today } });
 
@@ -514,7 +514,7 @@ describe("Сегодня 🔥 (data/today.json)", () => {
 });
 
 describe("Объясни 🪧 (data/games/explain.json)", () => {
-  const explainFile = () => ({ ...JSON.parse(readFileSync(new URL("../data/games/explain.json", import.meta.url), "utf-8")), related: [] }) as {
+  const explainFile = () => ({ ...expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/games/explain.json", import.meta.url), "utf-8"))), related: [] }) as {
     levels: { id: string; words: string[]; tier?: string }[];
     teamNames: string[];
     [key: string]: unknown;
@@ -574,7 +574,7 @@ describe("Объясни 🪧 (data/games/explain.json)", () => {
 describe("Разделы: мини-кнопки «во что» (data/sections.json)", () => {
   type Tab = { kinds?: { id: string }[]; items: { kind?: string }[]; [key: string]: unknown };
   type Layout = { sections: { id: string; tabs: Tab[] }[]; [key: string]: unknown };
-  const layout = () => JSON.parse(readFileSync(new URL("../data/sections.json", import.meta.url), "utf-8")) as Layout;
+  const layout = () => expandEmojiKeys(JSON.parse(readFileSync(new URL("../data/sections.json", import.meta.url), "utf-8"))) as Layout;
   const build = (data: unknown) => buildCatalog([], { sectionLayouts: { path: "sections.json", data } });
   const company = (l: Layout) => l.sections.find((x) => x.id === "company")!;
 
