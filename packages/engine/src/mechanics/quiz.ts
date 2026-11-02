@@ -310,20 +310,45 @@ export function quizSummary(state: QuizState): QuizSummary {
 // ---------- Суд присяжных ----------
 
 export type CourtVote = "guilty" | "free";
+export type CourtCase = QuizCourt["cases"][number];
 
-export interface CourtResult {
-  /** Процент «виновен». */
-  guiltyPercent: number;
-  freePercent: number;
-  majority: CourtVote;
-  /** Совпал ли голос с большинством — за это очко. */
-  withMajority: boolean;
+/** Дело для суда: случайное из непоказанных (id в seen); когда все показаны — снова из всех. */
+export function pickCourtCase(cases: readonly CourtCase[], seen: ReadonlySet<string>, random: Random = Math.random): CourtCase | undefined {
+  const fresh = cases.filter((c) => !seen.has(c.id));
+  const source = fresh.length > 0 ? fresh : cases;
+  return source[Math.floor(random() * source.length)];
 }
 
-/** Итог голоса по делу: проценты берутся из дела (демо), очко — за совпадение с большинством. */
-export function courtResult(item: QuizCourt["cases"][number], vote: CourtVote): CourtResult {
-  const majority: CourtVote = item.guiltyPercent >= 50 ? "guilty" : "free";
-  return { guiltyPercent: item.guiltyPercent, freePercent: 100 - item.guiltyPercent, majority, withMajority: vote === majority };
+/** Какие дела считать показанными после этого: круг закончился — отметки сбрасываются, остаётся только что показанное дело. */
+export function nextCourtSeen(cases: readonly CourtCase[], picked: CourtCase, seen: ReadonlySet<string>): Set<string> {
+  const next = new Set(seen);
+  if (cases.length > 0 && cases.every((c) => next.has(c.id))) for (const c of cases) next.delete(c.id);
+  next.add(picked.id);
+  return next;
+}
+
+export interface CourtVerdict {
+  /** Сколько голосов «виновен» и «оправдан». */
+  guilty: number;
+  free: number;
+  /** Решение присяжных. «tie» — голоса поровну (очков нет), «none» — большинства нет (один игрок и нет настоящих голосов). */
+  majority: CourtVote | "tie" | "none";
+  /** У каждого игрока: совпал ли голос с большинством (за это очко). */
+  matched: boolean[];
+}
+
+/**
+ * Итог голосования по делу. Очко получает тот, чей голос совпал с большинством. Голоса поровну — ничья, очков нет.
+ * Один игрок: большинства нет, если у дела нет guiltyPercent (настоящих голосов); с ним сравнивается голос игрока.
+ */
+export function courtVerdict(votes: readonly CourtVote[], guiltyPercent?: number): CourtVerdict {
+  const guilty = votes.filter((v) => v === "guilty").length;
+  const free = votes.length - guilty;
+  let majority: CourtVerdict["majority"];
+  if (votes.length === 1 && guiltyPercent === undefined) majority = "none";
+  else if (votes.length === 1 && guiltyPercent !== undefined) majority = guiltyPercent === 50 ? "tie" : guiltyPercent > 50 ? "guilty" : "free";
+  else majority = guilty === free ? "tie" : guilty > free ? "guilty" : "free";
+  return { guilty, free, majority, matched: votes.map((v) => (majority === "guilty" || majority === "free") && v === majority) };
 }
 
 // ---------- Вопрос дня: что хранится на устройстве ----------

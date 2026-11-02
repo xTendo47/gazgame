@@ -19,7 +19,7 @@ import { ShowHub } from "./ShowHub";
 /** Ключ сохранённых имён игроков $HOW на устройстве. */
 const NAMES_KEY = "show";
 
-type View = { kind: "hub" } | { kind: "names"; make: (names?: string[]) => void } | { kind: "play"; config: QuizRoundConfig; key: number } | { kind: "court" } | { kind: "artists" };
+type View = { kind: "hub" } | { kind: "names"; make: (names?: string[]) => void } | { kind: "play"; config: QuizRoundConfig; key: number } | { kind: "court"; players: number; names?: string[] } | { kind: "artists" };
 
 /** Порядок артистов в списке (как задал основатель); незнакомые — в конце по алфавиту. */
 const ARTIST_ORDER = ["big-baby-tape", "kizaru", "pharaoh", "og-buda", "friendly-thug-52-ngg", "madk1d"];
@@ -121,7 +121,7 @@ export function ShowScreen({ quiz, artists: artistFiles, serverMs }: { quiz: Qui
       />
     );
 
-  if (view.kind === "court" && court) return <CourtPlay court={court} onExit={() => setView({ kind: "hub" })} />;
+  if (view.kind === "court" && court) return <CourtPlay court={court} players={view.players} names={view.names} onExit={() => setView({ kind: "hub" })} />;
 
   if (view.kind === "play") {
     const { config } = view;
@@ -155,7 +155,7 @@ export function ShowScreen({ quiz, artists: artistFiles, serverMs }: { quiz: Qui
       onDaily={playDaily}
       onCategory={playCategory}
       onSuper={playSuper}
-      onCourt={() => setView({ kind: "court" })}
+      onCourt={() => begin((names) => setView({ kind: "court", players: names?.length ?? quizPlayers(mode, party), names }))}
       onArtists={artists.length > 0 ? () => setView({ kind: "artists" }) : undefined}
     />
   );

@@ -241,6 +241,8 @@ function inspectQuizArtists(files: RawDataFile[] | undefined, quiz: readonly Qui
 
 /** Сколько настоящих (не draft) вопросов должно быть в каждом уровне каждой категории квиза. */
 export const QUIZ_BANK_MIN = 30;
+/** Сколько настоящих (не draft) дел должно быть в «Суде». */
+export const COURT_CASES_MIN = 30;
 /** Сколько вопросов каждого уровня берётся в раунде про артиста. */
 export const QUIZ_ARTIST_PER_LEVEL = 5;
 
@@ -254,6 +256,11 @@ export function quizBankWarnings(quiz: readonly QuizFile[] | undefined, artists:
     }
   }
   for (const file of quiz ?? []) {
+    if (file.kind === "court") {
+      const real = file.cases.filter((c) => c.draft !== true).length;
+      if (real < COURT_CASES_MIN) warnings.push(`⚠️ «${file.title}»: дел без draft ${real} из ${COURT_CASES_MIN}`);
+      continue;
+    }
     if (file.kind !== "category") continue;
     for (const level of [1, 2, 3]) {
       const real = file.questions.filter((q) => q.level === level && q.draft !== true).length;

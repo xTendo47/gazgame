@@ -1249,3 +1249,52 @@
     transition: none;
   }
 }
+
+/* ---------- суд: речи сторон, голосующий ---------- */
+.sw-case-src {
+  margin: -2px 0 8px !important;
+  font: 700 13px / 1.3 "Manrope Variable", sans-serif !important;
+  color: #7a5a2a;
+}
+.sw-case p b {
+  font-weight: 800;
+}
+.sw-speech {
+  padding: 14px;
+  border-radius: 10px;
+  background: rgb(8 13 40 / 0.88);
+  animation: sw-in 0.3s ease-out;
+}
+.sw-speech[data-side="pro"] {
+  box-shadow: inset 0 0 0 1.5px #c23a2a;
+}
+.sw-speech[data-side="def"] {
+  box-shadow: inset 0 0 0 1.5px #2a9a6a;
+}
+.sw-speech small {
+  display: block;
+  margin-bottom: 6px;
+  font: 800 10px / 1 "Manrope Variable", sans-serif;
+  letter-spacing: 0.2em;
+}
+.sw-speech[data-side="pro"] small {
+  color: #ff8a7a;
+}
+.sw-speech[data-side="def"] small {
+  color: #6fe0a8;
+}
+.sw-speech p {
+  margin: 0;
+  font: 700 15px / 1.4 "Manrope Variable", sans-serif;
+  color: #f1ecde;
+}
+.sw-court-btn {
+  width: 100%;
+}
+.sw-voter {
+  margin: 0;
+  text-align: center;
+  font: 800 14px / 1.2 "Manrope Variable", sans-serif;
+  letter-spacing: 0.06em;
+  color: var(--gold-l);
+}

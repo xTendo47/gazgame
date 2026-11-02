@@ -1862,25 +1862,42 @@ export const quizSuperSchema = z
     if (file.count > file.ladder.length) ctx.addIssue({ code: "custom", path: ["count"], message: "вопросов больше, чем ступеней в лестнице" });
   });
 
-/** «Суд присяжных»: дела, по которым нет верного ответа — очки за совпадение с мнением большинства. */
-export const quizCourtSchema = z.strictObject({
-  ...quizHead,
-  kind: z.literal("court"),
-  cases: z
-    .array(
-      z.strictObject({
-        id: quizId,
-        /** «Шрек против Лорда Фаркуада». */
-        title: text,
-        /** Обвинение, защита, роль присяжного. */
-        text,
-        /** Сколько процентов присяжных считают «виновен» (демо-число, пока нет голосов). */
-        guiltyPercent: z.number().int().min(0).max(100),
-        draft: z.boolean().optional(),
-      }),
-    )
-    .min(1),
-});
+/**
+ * «Суд присяжных»: дела над героями фильмов, мультфильмов и книг. Верного ответа нет: очко — за совпадение с большинством присяжных.
+ * Экран дела: подсудимый и откуда он, обвинение (charge), «слово обвинению» (prosecution), «слово защите» (defense), голосование.
+ */
+export const quizCourtSchema = z
+  .strictObject({
+    ...quizHead,
+    kind: z.literal("court"),
+    cases: z
+      .array(
+        z.strictObject({
+          id: quizId,
+          /** Подсудимый: «Роза Дьюитт Бьюкейтер». */
+          defendant: text,
+          /** Откуда он: ««Титаник»». */
+          source: text,
+          /** В чём обвиняют (показывается сразу). */
+          charge: text,
+          /** «Слово обвинению». */
+          prosecution: text,
+          /** «Слово защите». */
+          defense: text,
+          /** Необязательно: процент «виновен» по настоящим голосам. Если есть, в соло-режиме с ним сравнивается голос игрока. */
+          guiltyPercent: z.number().int().min(0).max(100).optional(),
+          draft: z.boolean().optional(),
+        }),
+      )
+      .min(1),
+  })
+  .superRefine((file, ctx) => {
+    const ids = new Set<string>();
+    file.cases.forEach((c, i) => {
+      if (ids.has(c.id)) ctx.addIssue({ code: "custom", path: ["cases", i, "id"], message: `дело "${c.id}" повторяется` });
+      ids.add(c.id);
+    });
+  });
 
 /** Звания по проценту верных ответов в режиме «Насколько хорошо ты знаешь исполнителя?» (data/quiz/artist-ranks.json). Звание — с наибольшим minPercent, который не больше процента игрока. */
 export const quizRanksSchema = z

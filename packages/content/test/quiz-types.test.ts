@@ -26,3 +26,25 @@ describe("Квиз $HOW: два типа вопросов (choice и input)", ()
     expect(() => build(bank([{ id: "c9", level: 1, type: "choice", text: "в", options: ["a", "b", "c", "d"], correct: 0, answers: ["а"] }]))).toThrow();
   });
 });
+
+describe("Квиз $HOW: суд (data/quiz/court.json)", () => {
+  const head = { id: "court", kind: "court", title: "Суд", subtitle: "над героем" };
+  const item = (id: string) => ({ id, defendant: "П", source: "С", charge: "О", prosecution: "ПР", defense: "ЗА" });
+  const build = (cases: unknown[]) => buildCatalog([], { quiz: [{ path: "quiz/court.json", data: { ...head, cases } }] });
+
+  it("дело: подсудимый, откуда, обвинение, слово обвинению и слово защите обязательны", () => {
+    expect(() => build([item("c1")])).not.toThrow();
+    for (const field of ["defendant", "source", "charge", "prosecution", "defense"]) {
+      const broken: Record<string, unknown> = { ...item("c1") };
+      delete broken[field];
+      expect(() => build([broken])).toThrow();
+    }
+  });
+
+  it("id дел не повторяются, чужих полей нет, guiltyPercent необязателен", () => {
+    expect(() => build([item("c1"), item("c1")])).toThrow(/повторяется/);
+    expect(() => build([{ ...item("c1"), text: "старое поле" }])).toThrow();
+    expect(() => build([{ ...item("c1"), guiltyPercent: 40 }])).not.toThrow();
+    expect(() => build([{ ...item("c1"), guiltyPercent: 140 }])).toThrow();
+  });
+});

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { quizBankWarnings, quizFileSchema, type QuizCategory, type QuizChoiceQuestion, type QuizCourt, type QuizQuestion, type QuizSuper } from "@gazgame/content";
+import { quizBankWarnings, quizFileSchema, type QuizCategory, type QuizChoiceQuestion, type QuizQuestion, type QuizSuper } from "@gazgame/content";
 import kinoJson from "@gazgame/content/data/quiz/kino.json";
 import ruhiphopJson from "@gazgame/content/data/quiz/ruhiphop.json";
 import swagJson from "@gazgame/content/data/quiz/swag.json";
@@ -11,7 +11,6 @@ import {
   answerQuiz,
   buildRound,
   buildSuperRound,
-  courtResult,
   currentPlayer,
   dailyAnswered,
   dailyQuestion,
@@ -128,16 +127,6 @@ describe("квиз $HOW: раунд", () => {
 
   it("квиз без вопросов сразу готов", () => {
     expect(startQuiz([], "solo").phase).toBe("done");
-  });
-});
-
-describe("квиз $HOW: суд присяжных", () => {
-  const court = quiz.find((q): q is QuizCourt => q.kind === "court") as QuizCourt;
-  it("очко — за совпадение с большинством", () => {
-    const c = court.cases[0]!;
-    expect(courtResult(c, "free").withMajority).toBe(true);
-    expect(courtResult(c, "guilty").withMajority).toBe(false);
-    expect(courtResult(c, "guilty").guiltyPercent + courtResult(c, "guilty").freePercent).toBe(100);
   });
 });
 
