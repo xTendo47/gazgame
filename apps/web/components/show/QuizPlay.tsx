@@ -3,11 +3,14 @@
 // Вопрос $HOW: тема категории на фоне, таймер по кругу, вопрос и лестница уровней (у супер-квиза — лестница сумм),
 // варианты A–D, подсказки (50:50, спроси зал, дай телефон другу, риск ×2), экран ответа с пояснением и итоги со счётом.
 // Подсчёт и порядок — в движке (mechanics/quiz.ts); здесь только показ, таймер и звуки.
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import type { QuizQuestion } from "@gazgame/content";
 import {
   QUIZ_TIME,
   answerQuiz,
+  answerText,
+  isInputQuestion,
+  quizTime,
   currentPlayer,
   currentQuestion,
   nextQuiz,
@@ -68,10 +71,15 @@ export function QuizPlay({
   const [state, setState] = useState<QuizState>(() => startQuiz(config.questions, config.mode, config.players));
   const [left, setLeft] = useState(QUIZ_TIME);
   const [toast, setToast] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
   const leftRef = useRef(QUIZ_TIME);
+  const inputRef = useRef<HTMLInputElement>(null);
   const finishedRef = useRef(false);
 
   const q = currentQuestion(state);
+  const isInput = !!q && isInputQuestion(q);
+  /** Сколько секунд на этот вопрос: у вопроса с вводом своё время (time), у остальных 15. */
+  const total = q ? quizTime(q) : QUIZ_TIME;
   const player = currentPlayer(state);
   const nameOf = (i: number) => config.names?.[i] || `Игрок ${i + 1}`;
   const who = state.players > 1 ? nameOf(player) : null;
@@ -85,8 +93,23 @@ export function QuizPlay({
     setState((s) => {
       const next = answerQuiz(s, choice);
       if (next === s) return s;
-      const right = choice >= 0 && choice === s.questions[s.index]?.correct;
-      if (right) {
+      if (next.results[next.results.length - 1]) {
+        sfx.right();
+        haptic("yes");
+      } else {
+        sfx.wrong();
+        haptic("no");
+      }
+      return next;
+    });
+  }, []);
+
+  /** Ответ печатным текстом (вопрос с вводом): кнопка «Ответить» или Enter. */
+  const submitText = useCallback((text: string) => {
+    setState((s) => {
+      const next = answerText(s, text);
+      if (next === s) return s;
+      if (next.results[next.results.length - 1]) {
         sfx.right();
         haptic("yes");
       } else {
@@ -100,8 +123,13 @@ export function QuizPlay({
   // таймер: на экране вопроса тикает раз в секунду; последние пять — щелчки; ноль — «время вышло»
   useEffect(() => {
     if (state.phase !== "question") return;
-    leftRef.current = QUIZ_TIME;
-    const reset = window.setTimeout(() => setLeft(QUIZ_TIME), 0);
+    const current = state.questions[state.index];
+    const seconds = current ? quizTime(current) : QUIZ_TIME;
+    leftRef.current = seconds;
+    const reset = window.setTimeout(() => {
+      setLeft(seconds);
+      setDraft("");
+    }, 0);
     const timer = window.setInterval(() => {
       leftRef.current -= 1;
       setLeft(leftRef.current);
@@ -118,7 +146,16 @@ export function QuizPlay({
       window.clearTimeout(reset);
       window.clearInterval(timer);
     };
-  }, [state.phase, state.index, answer]);
+  }, [state.phase, state.index, state.questions, answer]);
+
+  // экранная клавиатура: поле ввода и таймер должны оставаться на виду
+  useEffect(() => {
+    if (!isInput || state.phase !== "question") return;
+    const vv = window.visualViewport;
+    const keep = () => inputRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    vv?.addEventListener("resize", keep);
+    return () => vv?.removeEventListener("resize", keep);
+  }, [isInput, state.phase, state.index]);
 
   useEffect(() => {
     if (state.phase === "done" && !finishedRef.current) {
@@ -201,7 +238,7 @@ export function QuizPlay({
             {config.daily ? "ВОПРОС ДНЯ" : `${config.title} · ${MODE_NAMES[config.mode]}`.toUpperCase()}
             {who && <small>{who}</small>}
           </span>
-          <span className="sw-timer" data-low={lowTime || undefined} style={{ "--p": answered ? 0 : (left / QUIZ_TIME) * 100 } as CSSProperties} role="timer" aria-label={`Осталось ${left} с`}>
+          <span className="sw-timer" data-low={lowTime || undefined} style={{ "--p": answered ? 0 : (left / total) * 100 } as CSSProperties} role="timer" aria-label={`Осталось ${left} с`}>
             <span>{answered ? "·" : left}</span>
           </span>
         </div>
@@ -229,33 +266,82 @@ export function QuizPlay({
           </ol>
         </div>
 
-        <div className="sw-ans" role="group" aria-label="Варианты ответа">
-          {q.options.map((opt, i) => {
-            const gone = state.hidden.includes(i);
-            const status = answered ? (i === q.correct ? "ok" : i === state.picked ? "bad" : undefined) : undefined;
-            return (
-              <button
-                key={i}
-                type="button"
-                data-l={"ABCD"[i]}
-                data-st={status}
-                data-gone={gone || undefined}
-                disabled={answered || gone}
-                onClick={() => {
-                  sfx.tap();
-                  answer(i);
-                }}
-              >
-                {opt}
+        {q && isInputQuestion(q) ? (
+          <form
+            className="sw-input"
+            data-st={answered ? (state.picked === 0 ? "ok" : "bad") : undefined}
+            onSubmit={(e: FormEvent) => {
+              e.preventDefault();
+              if (!answered && draft.trim() !== "") {
+                sfx.tap();
+                submitText(draft);
+              }
+            }}
+          >
+            <label htmlFor="sw-answer" className="sw-input-label">
+              Твой ответ
+            </label>
+            <input
+              id="sw-answer"
+              ref={inputRef}
+              key={state.index}
+              type="text"
+              value={answered ? (state.typed ?? "") : draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onFocus={() => window.setTimeout(() => inputRef.current?.scrollIntoView({ block: "center", behavior: "smooth" }), 250)}
+              disabled={answered}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              spellCheck={false}
+              enterKeyHint="send"
+              placeholder="Напиши ответ"
+              maxLength={60}
+            />
+            {!answered && (
+              <button type="submit" className="sw-btn" disabled={draft.trim() === ""}>
+                Ответить
               </button>
-            );
-          })}
-        </div>
+            )}
+          </form>
+        ) : (
+          q && (
+            <div className="sw-ans" role="group" aria-label="Варианты ответа">
+              {q.options.map((opt, i) => {
+                const gone = state.hidden.includes(i);
+                const status = answered ? (i === q.correct ? "ok" : i === state.picked ? "bad" : undefined) : undefined;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    data-l={"ABCD"[i]}
+                    data-st={status}
+                    data-gone={gone || undefined}
+                    disabled={answered || gone}
+                    onClick={() => {
+                      sfx.tap();
+                      answer(i);
+                    }}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          )
+        )}
 
         {answered ? (
           <div className="sw-explain" role="status">
-            <b>{state.picked === q.correct ? "Верно!" : state.picked === -1 ? "Время вышло" : "Мимо"}</b>
-            {state.picked !== q.correct && <p>Верный ответ: {q.options[q.correct]}</p>}
+            <b>{state.results[state.results.length - 1] ? "Верно!" : state.picked === -1 ? "Время вышло" : "Мимо"}</b>
+            {isInputQuestion(q) ? (
+              <>
+                {!state.results[state.results.length - 1] && state.typed && <p>Твой ответ: {state.typed}</p>}
+                <p>Правильный ответ: {q.answers[0]}</p>
+              </>
+            ) : (
+              state.picked !== q.correct && <p>Верный ответ: {q.options[q.correct]}</p>
+            )}
             {q.explain && <p className="sw-explain-t">{q.explain}</p>}
             {state.players > 1 && state.index + 1 < state.questions.length && <p className="sw-explain-pass">Передай телефон: следующий — {nameOf((state.index + 1) % state.players)}</p>}
             <button
@@ -272,7 +358,8 @@ export function QuizPlay({
         ) : (
           <div className="sw-help">
             {HELPS.map((h) => {
-              const used = h.id === "risk" ? !!riskUsed : state.helps[h.id];
+              const blocked = isInput && (h.id === "fifty" || h.id === "hall");
+              const used = blocked || (h.id === "risk" ? !!riskUsed : state.helps[h.id]);
               const pressed = h.id === "risk" ? state.riskArmed : undefined;
               return (
                 <button
@@ -280,6 +367,7 @@ export function QuizPlay({
                   type="button"
                   data-used={used || undefined}
                   aria-pressed={pressed}
+                  aria-label={blocked ? `${h.main} ${h.sub}: недоступно для вопроса с вводом` : undefined}
                   disabled={used}
                   onClick={() => {
                     sfx.tap();

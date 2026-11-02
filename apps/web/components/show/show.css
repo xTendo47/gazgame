@@ -1052,3 +1052,77 @@
   top: 40px;
   opacity: 0.4;
 }
+
+/* ---------- вопрос с вводом ответа ---------- */
+.sw-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #121a44, #0a0f2a);
+  box-shadow: inset 0 0 0 1.5px var(--th, var(--led));
+  scroll-margin-bottom: 45vh;
+}
+.sw-input-label {
+  font: 800 10px / 1 "Manrope Variable", sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--th, var(--led));
+}
+.sw-input input {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 16px;
+  /* не меньше 16px: иначе iPhone приближает страницу при фокусе */
+  font: 700 19px / 1.2 "Manrope Variable", sans-serif;
+  color: #fff;
+  background: rgb(255 255 255 / 0.07);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1.5px rgb(120 150 255 / 0.5);
+  outline: none;
+}
+.sw-input input::placeholder {
+  color: #8e97c8;
+  font-weight: 600;
+}
+.sw-input input:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+.sw-input .sw-btn:disabled {
+  opacity: 0.4;
+  box-shadow: none;
+}
+.sw-input[data-st="ok"] input {
+  color: #06140c;
+  background: linear-gradient(180deg, #3ddc84, #1a8a4a);
+  box-shadow: 0 0 18px rgb(61 220 132 / 0.5);
+  animation: sw-pop 0.4s ease-out;
+}
+.sw-input[data-st="bad"] input {
+  background: linear-gradient(180deg, #ff6a6a, #a81e1e);
+  animation: sw-shake 0.4s ease-out;
+}
+.sw-input input:disabled {
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+}
+.sw-help button:disabled {
+  cursor: not-allowed;
+}
+
+/* таймер и вопрос не уезжают под экранную клавиатуру: верхняя полоса закреплена, внизу есть запас для прокрутки */
+.sw-q {
+  overflow: clip;
+}
+.sw-q .sw-qtop {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  padding: 6px 0;
+  background: linear-gradient(180deg, rgb(8 12 36 / 0.96), rgb(8 12 36 / 0.7));
+  backdrop-filter: blur(6px);
+}
+.sw-q:has(.sw-input input:focus) .sw-inner {
+  padding-bottom: calc(46vh + env(safe-area-inset-bottom));
+}
