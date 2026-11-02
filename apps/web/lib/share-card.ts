@@ -64,8 +64,8 @@ export function glowColor(testId: string, resultId: string): string {
 
 export type ShareFormat = "story" | "preview";
 export const SHARE_SIZE: Record<ShareFormat, { width: number; height: number }> = {
-  // одна компактная картинка 4:5 — для сторис, чата и «Сохранить картинку»
-  story: { width: 1080, height: 1350 },
+  // вертикальная картинка 9:16 — для сторис, чата и «Сохранить картинку»
+  story: { width: 1080, height: 1920 },
   preview: { width: 1200, height: 630 },
 };
 

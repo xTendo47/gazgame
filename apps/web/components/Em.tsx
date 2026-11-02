@@ -26,6 +26,9 @@ const EXTRA: Record<string, GIconName> = {
   "✅": "check",
   "🃏": "cards",
   "✨": "sparkle",
+  "👇": "next",
+  "📌": "pin",
+  "⚠": "bolt",
   "❄": "snowflake",
   "⚔": "swords",
   "💭": "bubble",
@@ -40,6 +43,11 @@ const EXTRA: Record<string, GIconName> = {
   "📭": "notepad",
   "🧩": "puzzle",
 };
+
+/** Имя значка для одного эмодзи (запасные пары, потом общий словарь GIcon). */
+export function emojiIconName(part: string): GIconName | undefined {
+  return EXTRA[part.replace(/[️‍]/gu, "")] ?? glyphName(part);
+}
 
 export function Em({ text, size = "1.05em" }: { text: string; size?: number | string }) {
   const parts = text.split(EMOJI);

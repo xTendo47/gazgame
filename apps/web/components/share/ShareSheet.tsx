@@ -261,7 +261,7 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
 
         {/* Превью — настоящий PNG, который уйдёт в сторис */}
         <div className="flex justify-center">
-          <div className="relative aspect-[4/5] h-[min(46dvh,440px)] overflow-hidden rounded-2xl bg-bg">
+          <div className="relative aspect-[9/16] h-[min(52dvh,460px)] overflow-hidden rounded-2xl bg-bg">
             {image ? (
               // eslint-disable-next-line @next/next/no-img-element -- это blob из нашего же маршрута, оптимизатор не нужен
               <img src={image.url} alt="Картинка для сторис" className="size-full object-contain" />

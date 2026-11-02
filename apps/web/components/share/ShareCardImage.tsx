@@ -1,10 +1,11 @@
-// Картинки для next/og (Satori): итог теста — карточка 4:5 (1080×1350) и превью ссылки 1200×630,
+// Картинки для next/og (Satori): итог теста — карточка 9:16 (1080×1920) и превью ссылки 1200×630,
 // обложки 1200×630 для превью ссылки на тест и на главную.
 // У каждого теста свой «костюм» среднего блока (share.style): банка газировки, батарейки, чек,
 // карточка героя, «Об устройстве», карточка игрока, профиль в мессенджере. Фон общий: пятна цвета, зерно, огромный эмодзи и своя текстура.
 // Satori понимает только flexbox и часть CSS: у каждого блока с несколькими детьми — display: flex.
 import type { ReactNode } from "react";
 import { OG_BODY, OG_DISPLAY } from "@/lib/og-fonts";
+import { OgGlyph, OgText } from "./og-emoji";
 import type { CardBar, CardStyle, ShareCard, ShareFormat } from "@/lib/share-card";
 
 const BG = "#141217";
@@ -154,7 +155,8 @@ function Backdrop({ card, w, h, emojiSize }: { card: Pick<ShareCard, "color" | "
   const accent = card.color.toUpperCase() === ORANGE ? LIME : ORANGE;
   const tex = texture(card.style, w, h, card.color);
   return (
-    <>
+    // Satori кладёт абсолютный блок без left/top внутрь рамки с padding: задаём left/top явно, фон закрывает всю карточку
+    <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex" }}>
       <Blob color={card.color} w={w} h={h} x="50%" y="18%" size={Math.round(w * 0.62)} alpha="7A" />
       <Blob color={accent} w={w} h={h} x="92%" y="88%" size={Math.round(w * 0.42)} alpha="55" />
       <Blob color={card.color} w={w} h={h} x="4%" y="62%" size={Math.round(w * 0.3)} alpha="44" />
@@ -171,11 +173,11 @@ function Backdrop({ card, w, h, emojiSize }: { card: Pick<ShareCard, "color" | "
           transform: "rotate(-12deg)",
         }}
       >
-        {card.emoji}
+        <OgGlyph emoji={card.emoji} size={emojiSize} />
       </div>
       {tex && <Layer src={tex} w={w} h={h} />}
       <Layer src={grain(w, h)} w={w} h={h} opacity={0.07} />
-    </>
+    </div>
   );
 }
 
@@ -254,7 +256,7 @@ function Bars({ bars, s, color }: { bars: CardBar[]; s: Scale; color: string }) 
       {bars.map((b) => (
         <div key={b.label} style={{ display: "flex", flexDirection: "column", gap: s(8) }}>
           <div style={{ display: "flex", alignItems: "center", gap: s(12) }}>
-            <div style={{ display: "flex", fontSize: s(30) }}>{b.emoji}</div>
+            <OgGlyph emoji={b.emoji} size={s(30)} />
             <div style={{ display: "flex", flex: 1, fontWeight: 800, fontSize: s(30), color: b.main ? CREAM : MUTED }}>{b.label}</div>
             <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(30), color: b.main ? CREAM : MUTED }}>{b.value}</div>
           </div>
@@ -286,7 +288,7 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
         <Panel s={s} border={`3px solid ${card.color}`}>
           <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(36), letterSpacing: 1 }}>СОСТАВ ХАРАКТЕРА</div>
           {bars ? <Bars bars={bars} s={s} color={card.color} /> : card.ingredients && <Text s={s} weight={600} size={30}>{`Состав: ${card.ingredients}`}</Text>}
-          {card.line && <Text s={s}>{`⚠️ ${card.line}`}</Text>}
+          {card.line && <Text s={s}><OgText text={`⚠️ ${card.line}`} size={s(30)} /></Text>}
           <Caption s={s}>Изготовлено в GAZ</Caption>
         </Panel>
       );
@@ -326,7 +328,7 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
       return (
         <Panel s={s} background="rgba(28,26,32,0.92)">
           <Caption s={s}>‹ Настройки · Об устройстве</Caption>
-          <Row s={s} label="Модель" value={`${card.title} ${card.emoji}`} />
+          <Row s={s} label="Модель" value={<OgText text={`${card.title} ${card.emoji}`} size={s(30)} />} />
           {bars && <Caption s={s} color={card.color}>Загрузка процессора</Caption>}
           {bars && <Bars bars={bars} s={s} color={card.color} />}
           {card.line && <Text s={s}>{card.line}</Text>}
@@ -337,7 +339,7 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
       // карточка игрока из футбольного симулятора
       return (
         <Panel s={s} border={`3px solid ${card.color}`}>
-          <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(36) }}>{`Позиция: ${card.title} ${card.emoji}`}</div>
+          <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(36) }}><OgText text={`Позиция: ${card.title} ${card.emoji}`} size={s(36)} /></div>
           {bars && <Caption s={s}>Состав тебя</Caption>}
           {bars && <Bars bars={bars} s={s} color={card.color} />}
           {card.line && <Text s={s}>{card.line}</Text>}
@@ -345,7 +347,7 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
           {card.danger && <Text s={s} weight={600}>{`Опасно тусить с: ${card.danger}`}</Text>}
           {card.duo && (
             <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(34), lineHeight: 1.15, color: LIME }}>
-              {`Отметь, кто у вас ${card.duo} 👇`}
+              <OgText text={`Отметь, кто у вас ${card.duo} 👇`} size={s(34)} />
             </div>
           )}
         </Panel>
@@ -354,7 +356,7 @@ function Costume({ card, s }: { card: ShareCard; s: Scale }) {
       // профиль контакта: закреплённые сообщения пузырями, как в чате
       return (
         <Panel s={s} background="rgba(24,22,28,0.9)">
-          <Caption s={s}>📌 Закреплённые</Caption>
+          <Caption s={s}><OgText text="📌 Закреплённые" size={s(22)} /></Caption>
           <div style={{ display: "flex", flexDirection: "column", gap: s(12) }}>
             {(card.pinned ?? []).map((text) => (
               <Bubble key={text} text={text} color={card.color} s={s} />
@@ -412,7 +414,7 @@ function Avatar({ card, size }: { card: ShareCard; size: number }) {
         lineHeight: 1,
       }}
     >
-      {card.emoji}
+      <OgGlyph emoji={card.emoji} size={Math.round(size * 0.52)} label={card.title} />
     </div>
   );
 }
@@ -449,7 +451,7 @@ function StatusLine({ text, size }: { text: string; size: number }) {
   );
 }
 
-function Row({ s, label, value }: { s: Scale; label: string; value: string }) {
+function Row({ s, label, value }: { s: Scale; label: string; value: ReactNode }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: s(10), borderBottom: "1px solid rgba(243,238,230,0.14)" }}>
       <div style={{ display: "flex", fontWeight: 600, fontSize: s(28), color: MUTED }}>{label}</div>
@@ -464,7 +466,7 @@ function Battery({ bar, s }: { bar: CardBar; s: Scale }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: s(14) }}>
       <div style={{ display: "flex", width: s(330), alignItems: "center", gap: s(10), fontWeight: 800, fontSize: s(26) }}>
-        <span>{bar.emoji}</span>
+        <OgGlyph emoji={bar.emoji} size={s(26)} />
         <span>{bar.label}</span>
       </div>
       <div style={{ display: "flex", flex: 1, alignItems: "center" }}>
@@ -498,7 +500,7 @@ function Receipt({ card, s }: { card: ShareCard; s: Scale }) {
         {dashes}
         {card.bars?.map((b) => (
           <div key={b.label} style={{ display: "flex", alignItems: "center", gap: s(8), fontWeight: 800, fontSize: s(26) }}>
-            <span>{`${b.label} ${b.emoji}`}</span>
+            <OgText text={`${b.label} ${b.emoji}`} size={s(26)} />
             <div style={{ display: "flex", flex: 1, overflow: "hidden", whiteSpace: "nowrap", color: "rgba(28,26,32,0.4)" }}>{".".repeat(80)}</div>
             <span>{b.value}</span>
           </div>
@@ -510,10 +512,10 @@ function Receipt({ card, s }: { card: ShareCard; s: Scale }) {
           </div>
         ))}
         {dashes}
-        <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(32) }}>{`ИТОГО: ${card.title} ${card.emoji}`}</div>
+        <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: s(32) }}><OgText text={`ИТОГО: ${card.title} ${card.emoji}`} size={s(32)} /></div>
         {card.line && <div style={{ display: "flex", fontWeight: 800, fontSize: s(26) }}>{card.line}</div>}
         <div style={{ display: "flex", justifyContent: "center", fontWeight: 600, fontSize: s(20), color: "rgba(28,26,32,0.6)" }}>
-          Чек действителен для одного человека 😉
+          <OgText text="Чек действителен для одного человека 😉" size={s(20)} />
         </div>
       </div>
       {/* eslint-disable-next-line @next/next/no-img-element -- разметка для Satori */}
@@ -542,12 +544,12 @@ function PremiumMark({ left, top, size }: { left: number; top: number; size: num
         fontSize: Math.round(size * 0.52),
       }}
     >
-      💎
+      <OgGlyph emoji="💎" size={Math.round(size * 0.52)} color="#0b1a24" />
     </div>
   );
 }
 
-// ---------- Карточка 4:5 и превью ссылки ----------
+// ---------- Карточка 9:16 и превью ссылки ----------
 
 export function ShareCardImage({ card, format }: { card: ShareCard; format: ShareFormat }) {
   if (format === "preview") return <Preview card={card} />;
@@ -578,7 +580,7 @@ function StoryFooter({ card }: { card: ShareCard }) {
  */
 function SwagStory({ card }: { card: ShareCard }) {
   const W = 1080;
-  const H = 1350;
+  const H = 1920;
   const title = heroTitle(card);
   return (
     <div
@@ -617,7 +619,7 @@ function SwagStory({ card }: { card: ShareCard }) {
         {card.style === "messenger" ? (
           <Avatar card={card} size={300} />
         ) : (
-          <div style={{ display: "flex", fontSize: 330, lineHeight: 1 }}>{card.emoji}</div>
+          <OgGlyph emoji={card.emoji} size={330} label={card.title} />
         )}
         <div
           style={{
@@ -659,13 +661,13 @@ function SwagStory({ card }: { card: ShareCard }) {
   );
 }
 
-/** На карточке 4:5 средний блок крупнее базовых размеров; с «Показателями» строк больше — чуть компактнее. */
+/** На карточке 9:16 средний блок крупнее базовых размеров; с «Показателями» строк больше — чуть компактнее. */
 const roomy: Scale = (n) => Math.round(n * 1.16);
 const dense: Scale = (n) => Math.round(n * 1.0);
 
 function Story({ card }: { card: ShareCard }) {
   const W = 1080;
-  const H = 1350;
+  const H = 1920;
   const tight = card.bars !== null;
   const s = tight ? dense : roomy;
   const messenger = card.style === "messenger";
@@ -712,7 +714,7 @@ function Story({ card }: { card: ShareCard }) {
         {messenger ? (
           <Avatar card={card} size={tight ? 170 : 210} />
         ) : (
-          <div style={{ display: "flex", fontSize: tight ? 118 : 150, lineHeight: 1 }}>{card.emoji}</div>
+          <OgGlyph emoji={card.emoji} size={tight ? 118 : 150} label={card.title} />
         )}
         <div
           style={{
@@ -816,7 +818,7 @@ function Preview({ card }: { card: ShareCard }) {
               <Avatar card={card} size={120} />
             </div>
           ) : (
-            <div style={{ display: "flex", marginTop: 16, fontSize: 104, lineHeight: 1 }}>{card.emoji}</div>
+            <div style={{ display: "flex", marginTop: 16 }}><OgGlyph emoji={card.emoji} size={104} label={card.title} /></div>
           )}
           <div
             style={{
@@ -860,12 +862,12 @@ const GOLD = "#FFC83A";
 const taskTextSize = (text: string) => (text.length <= 60 ? 68 : text.length <= 100 ? 58 : 50);
 
 /**
- * Карточка 4:5 «Сделано в GAZ 🔥»: огромный эмодзи, текст задания, «Сделано в GAZ 🔥» и ссылка на сайт.
+ * Карточка 9:16 «Сделано в GAZ 🔥»: огромный эмодзи, текст задания, «Сделано в GAZ 🔥» и ссылка на сайт.
  * Золотая (gold) — задание с усложнением: золотая рамка и плашка. Фон и зерно те же, что у карточек тестов.
  */
 export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; text: string; gold: boolean; shortLink: string }) {
   const W = 1080;
-  const H = 1350;
+  const H = 1920;
   const color = gold ? GOLD : ORANGE;
   return (
     <div
@@ -899,12 +901,12 @@ export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; t
               textTransform: "uppercase",
             }}
           >
-            Золотая карта 🌶️
+            <OgText text="Золотая карта 🌶️" size={24} />
           </div>
         )}
       </div>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-        <div style={{ display: "flex", fontSize: 300, lineHeight: 1 }}>{emoji}</div>
+        <OgGlyph emoji={emoji} size={300} />
         <div
           style={{
             display: "flex",
@@ -927,7 +929,7 @@ export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; t
       </div>
       <div style={{ display: "flex", flexDirection: "column", paddingTop: 24, gap: 10 }}>
         <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 52, lineHeight: 1.1, textShadow: TEXT_SHADOW }}>
-          Сделано в GAZ 🔥
+          <OgText text="Сделано в GAZ 🔥" size={52} gap={14} />
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", fontWeight: 800, fontSize: 28, color: LIME }}>{shortLink}</div>
@@ -941,7 +943,7 @@ export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; t
 // ---------- Батл дня ⚔️ («Сегодня 🔥») ----------
 
 /**
- * Карточка 4:5 батла: огромный эмодзи выбранной половины, вопрос и «Я за {вариант}. А ты?».
+ * Карточка 9:16 батла: огромный эмодзи выбранной половины, вопрос и «Я за {вариант}. А ты?».
  * Цвет — как у половины в приложении: левая оранжевая, правая салатовая.
  */
 export function TodayBattleCard({
@@ -956,7 +958,7 @@ export function TodayBattleCard({
   shortLink: string;
 }) {
   const W = 1080;
-  const H = 1350;
+  const H = 1920;
   const color = lime ? LIME : ORANGE;
   return (
     <div
@@ -987,11 +989,11 @@ export function TodayBattleCard({
             textTransform: "uppercase",
           }}
         >
-          Батл дня ⚔️
+          <OgText text="Батл дня ⚔️" size={24} />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-        <div style={{ display: "flex", fontSize: 300, lineHeight: 1 }}>{pick.emoji}</div>
+        <OgGlyph emoji={pick.emoji} size={300} label={pick.label} />
         <div
           style={{
             display: "flex",
@@ -1037,7 +1039,7 @@ export function TodayBattleCard({
 const RARITY_COLOR = { common: "#8E869A", rare: ORANGE, gold: GOLD } as const;
 
 /**
- * Карточка 4:5 для «В сторис»: карта 2:3 по центру (рамка по редкости), «Моя коллекция в GAZ 🃏» и ссылка.
+ * Карточка 9:16 для «В сторис»: карта 2:3 по центру (рамка по редкости), «Моя коллекция в GAZ 🃏» и ссылка.
  * Эмодзи, название и подпись те же, что на карте в приложении.
  */
 export function CollectionShareCard({
@@ -1048,7 +1050,7 @@ export function CollectionShareCard({
   shortLink: string;
 }) {
   const W = 1080;
-  const H = 1350;
+  const H = 1920;
   const color = RARITY_COLOR[card.rarity];
   const long = card.title.length > 28;
   return (
@@ -1086,9 +1088,9 @@ export function CollectionShareCard({
             textAlign: "center",
           }}
         >
-          <div style={{ display: "flex", fontSize: card.emoji2 ? 150 : 240, lineHeight: 1 }}>
-            {card.emoji}
-            {card.emoji2}
+          <div style={{ display: "flex", gap: 10 }}>
+            <OgGlyph emoji={card.emoji} size={card.emoji2 ? 150 : 240} label={card.title} />
+            {card.emoji2 && <OgGlyph emoji={card.emoji2} size={150} />}
           </div>
           <div
             style={{
@@ -1108,7 +1110,7 @@ export function CollectionShareCard({
       </div>
       <div style={{ display: "flex", flexDirection: "column", paddingTop: 24, gap: 10 }}>
         <div style={{ display: "flex", fontFamily: DISPLAY, fontWeight: 900, fontSize: 46, lineHeight: 1.1, textShadow: TEXT_SHADOW }}>
-          Моя коллекция в GAZ 🃏
+          <OgText text="Моя коллекция в GAZ 🃏" size={46} gap={14} />
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", fontWeight: 800, fontSize: 28, color: LIME }}>{shortLink}</div>
@@ -1168,7 +1170,7 @@ export function TestCover({
     >
       <Glow color={color} width={1200} height={630} x="18%" y="50%" />
       <Layer src={grain(1200, 630)} w={1200} h={630} opacity={0.07} />
-      <div style={{ display: "flex", width: 330, alignItems: "center", justifyContent: "center", fontSize: 220, lineHeight: 1 }}>{emoji}</div>
+      <div style={{ display: "flex", width: 330, alignItems: "center", justifyContent: "center", }}><OgGlyph emoji={emoji} size={220} /></div>
       <div style={{ display: "flex", flexDirection: "column", flex: 1, marginLeft: 40, justifyContent: "center" }}>
         <Logo size={28} />
         <div style={{ display: "flex", marginTop: 26, fontFamily: DISPLAY, fontWeight: 900, fontSize: titleSize(title, 76), lineHeight: 1.05 }}>

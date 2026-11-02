@@ -1,7 +1,7 @@
 // Значки казино для экранов игр «Тусовки»: один цвет (currentColor), SVG вместо эмодзи.
 // <GIcon name="fire" /> — значок по имени; <Glyph emoji="🔪" /> — значок для эмодзи из данных (роли, ранги, колоды):
 // так тексты в JSON остаются как есть, а на экране рисуется SVG. Незнакомое эмодзи → золотая фишка с буквой.
-import type { ReactNode } from "react";
+import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
 const S = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
@@ -462,7 +462,20 @@ const ICONS = {
 
 export type GIconName = keyof typeof ICONS;
 
-export function GIcon({ name, size = "1.15em", className }: { name: GIconName; size?: number | string; className?: string }) {
+/** Убирает обёртки-фрагменты: Satori (картинки для сторис) принимает внутри <svg> только настоящие теги. */
+function unwrap(node: ReactNode): ReactNode[] {
+  return Children.toArray(node).flatMap((child) => (isValidElement(child) && child.type === Fragment ? unwrap((child as ReactElement<{ children?: ReactNode }>).props.children) : [child]));
+}
+
+export function GIcon({ name, size = "1.15em", className, plain }: { name: GIconName; size?: number | string; className?: string; plain?: boolean }) {
+  // plain: без стилей и aria — для картинок next/og (Satori не знает display: inline-block)
+  if (plain) {
+    return (
+      <svg viewBox="0 0 24 24" width={size} height={size}>
+        {unwrap(ICONS[name])}
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" focusable="false" className={className} style={{ display: "inline-block", verticalAlign: "-0.16em", flexShrink: 0 }}>
       {ICONS[name]}
