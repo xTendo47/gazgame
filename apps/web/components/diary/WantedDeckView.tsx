@@ -6,7 +6,7 @@
 // сюда приходит готовый список и обработчики. Всё рисунками SVG и CSS, без картинок и эмодзи.
 import type { CSSProperties } from "react";
 import { BackTag } from "@gazgame/ui";
-import { Glyph } from "@/components/casino/GIcon";
+import { DiaryIcon } from "./DiaryIcons";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
 import type { DiaryEntry } from "./DiaryDeckView";
@@ -199,7 +199,7 @@ export function WantedDeckView({
                     <span className="wd-photo">
                       <Outlaw />
                       <span className="wd-badge">
-                        <Glyph emoji={e.emoji} label={e.title} size="1.5em" />
+                        <DiaryIcon kind="wanted" emoji={e.emoji} label={e.title} />
                       </span>
                     </span>
                     <b className="wd-name">{e.title}</b>

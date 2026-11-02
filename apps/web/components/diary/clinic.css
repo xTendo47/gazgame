@@ -119,6 +119,10 @@
   color: #14707a;
   background: #e6f2f2;
 }
+.cl-photo > svg {
+  width: 62%;
+  height: 62%;
+}
 .cl-photo i {
   position: absolute;
   width: 12px;

@@ -6,7 +6,7 @@
 // Всё SVG и CSS. Логика — в SectionScreen: сюда приходит готовый список и обработчики.
 import type { CSSProperties } from "react";
 import { BackTag } from "@gazgame/ui";
-import { Glyph } from "@/components/casino/GIcon";
+import { DiaryIcon } from "./DiaryIcons";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
 import type { DiaryEntry } from "./DiaryDeckView";
@@ -140,7 +140,7 @@ export function ClinicDeckView({
                       <i className="cl-c2" />
                       <i className="cl-c3" />
                       <i className="cl-c4" />
-                      <Glyph emoji={e.emoji} label={e.title} size="2.6em" />
+                      <DiaryIcon kind="clinic" emoji={e.emoji} label={e.title} />
                     </span>
                     <span className="cl-complaint">ЖАЛОБЫ: ХОЧУ ПОНЯТЬ СЕБЯ</span>
                     <span className="cl-zig" aria-hidden="true" />
