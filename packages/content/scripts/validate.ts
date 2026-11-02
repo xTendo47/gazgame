@@ -1,4 +1,5 @@
 // npm run content:check — проверить все файлы контента и вывести понятный отчёт.
+import { quizBankWarnings } from "../src/validate";
 import { loadCatalog } from "../src/node";
 
 try {
@@ -23,6 +24,9 @@ if (catalog.gaz) {
 if (catalog.quiz) {
     const cats = catalog.quiz.flatMap((q) => (q.kind === "category" ? [q] : []));
     console.log(`🎤 $HOW: категорий — ${cats.length}, вопросов — ${cats.reduce((n, c) => n + c.questions.length, 0)}`);
+  }
+if (catalog.quiz) {
+    for (const w of quizBankWarnings(catalog.quiz)) console.warn(w);
   }
 if (catalog.today) {
     const t = catalog.today;

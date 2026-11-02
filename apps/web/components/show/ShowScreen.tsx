@@ -3,8 +3,9 @@
 // Раздел GAZ GAME $HOW (квиз): хаб → раунд (категория, супер-квиз, вопрос дня) → итоги, или «Суд присяжных».
 // Режим (соло / вдвоём / компания) выбирается на хабе. Вопросы приходят готовыми из data/quiz/*.json (страница /show).
 import { useState } from "react";
-import type { QuizCategory, QuizCourt, QuizFile, QuizSuper } from "@gazgame/content";
-import { QUIZ_PARTY_MAX, QUIZ_PARTY_MIN, buildRound, buildSuperRound, dailyQuestion, quizPlayers, type QuizMode } from "@gazgame/engine";
+import type { QuizCategory, QuizCourt, QuizFile, QuizQuestion, QuizSuper } from "@gazgame/content";
+import { QUIZ_PARTY_MAX, QUIZ_PARTY_MIN, buildRound, buildSuperRound, dailyQuestion, nextSeen, quizPlayers, shuffleOptions, type QuizMode } from "@gazgame/engine";
+import { readQuizSeen, writeQuizSeen } from "@/lib/quiz-seen";
 import { useNow } from "@/lib/gaz";
 import { BackTag, Button } from "@gazgame/ui";
 import { PlayersForm } from "@/components/games/PlayersForm";
@@ -30,6 +31,9 @@ export function ShowScreen({ quiz, serverMs }: { quiz: QuizFile[]; serverMs: num
   const now = useNow(serverMs);
   const daily = dailyQuestion(categories, now);
 
+  /** Запомнить показанные вопросы раунда (id в localStorage): в следующий раз будут другие; кончился банк уровня — круг начнётся заново. */
+  const remember = (questions: QuizQuestion[]) => writeQuizSeen(nextSeen(categories, questions, readQuizSeen()));
+
   const start = (config: QuizRoundConfig) => setView((v) => ({ kind: "play", config, key: (v.kind === "play" ? v.key : 0) + 1 }));
 
   /** Компания: сначала имена игроков, остальные режимы стартуют сразу. */
@@ -41,18 +45,18 @@ export function ShowScreen({ quiz, serverMs }: { quiz: QuizFile[]; serverMs: num
   const playCategory = (id: string) => {
     const category = categories.find((c) => c.id === id);
     if (!category) return;
-    begin((names) => start({ theme: id, title: category.title, mode, players: names?.length ?? quizPlayers(mode, party), names, questions: buildRound(category) }));
+    begin((names) => start({ theme: id, title: category.title, mode, players: names?.length ?? quizPlayers(mode, party), names, questions: (() => { const round = buildRound(category, Math.random, readQuizSeen()); remember(round); return round; })() }));
   };
 
   const playSuper = () => {
     if (!sup) return;
-    begin((names) => start({ theme: "super", title: sup.title, mode, players: names?.length ?? quizPlayers(mode, party), names, questions: buildSuperRound(sup, categories), ladder: sup.ladder, safe: sup.safe }));
+    begin((names) => start({ theme: "super", title: sup.title, mode, players: names?.length ?? quizPlayers(mode, party), names, questions: (() => { const round = buildSuperRound(sup, categories, Math.random, readQuizSeen()); remember(round); return round; })(), ladder: sup.ladder, safe: sup.safe }));
   };
 
   const playDaily = () => {
     if (!daily) return;
     const owner = categories.find((c) => c.questions.some((q) => q.id === daily.id));
-    start({ theme: owner?.id ?? "general", title: "Вопрос дня", mode: "solo", players: 1, questions: [daily], daily: true });
+    start({ theme: owner?.id ?? "general", title: "Вопрос дня", mode: "solo", players: 1, questions: [shuffleOptions(daily)], daily: true });
   };
 
   if (view.kind === "names") {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { quizFileSchema, type QuizCategory, type QuizCourt, type QuizSuper } from "@gazgame/content";
+import { quizBankWarnings, quizFileSchema, type QuizCategory, type QuizCourt, type QuizQuestion, type QuizSuper } from "@gazgame/content";
 import kinoJson from "@gazgame/content/data/quiz/kino.json";
 import musicJson from "@gazgame/content/data/quiz/music.json";
 import generalJson from "@gazgame/content/data/quiz/general.json";
@@ -18,6 +18,8 @@ import {
   quizPlayers,
   quizSummary,
   recordDaily,
+  nextSeen,
+  shuffleOptions,
   showStreak,
   startQuiz,
   toggleRisk,
@@ -154,5 +156,98 @@ describe("квиз $HOW: вопрос дня", () => {
     expect(showStreak(d, day4)).toBe(0);
     expect(recordDaily(d, true, day4).streak).toBe(1);
     expect(recordDaily(d, true, day4).best).toBe(2);
+  });
+});
+
+/** Синтетический банк для проверки механики (не контент): 4 вопроса на каждый из трёх уровней. */
+function syntheticBank(id: string, perLevel = 4): QuizCategory {
+  return {
+    kind: "category",
+    id,
+    title: id,
+    subtitle: id,
+    questions: [1, 2, 3].flatMap((level) =>
+      Array.from({ length: perLevel }, (_, i) => ({
+        id: `${id}-${level}-${i}`,
+        level,
+        text: `вопрос ${id} ${level}.${i}`,
+        options: [`a${i}`, `b${i}`, `c${i}`, `d${i}`],
+        correct: i % 4,
+      })),
+    ),
+  };
+}
+
+describe("квиз $HOW: банки вопросов", () => {
+  it("варианты перемешиваются, верный ответ находится по тексту", () => {
+    const q = syntheticBank("t").questions[2] as QuizQuestion;
+    const rightText = q.options[q.correct];
+    const reversed = shuffleOptions(q, () => 0);
+    expect(reversed.options).not.toEqual(q.options);
+    expect([...reversed.options].sort()).toEqual([...q.options].sort());
+    expect(reversed.options[reversed.correct]).toBe(rightText);
+    for (let n = 0; n < 20; n++) {
+      const s = shuffleOptions(q);
+      expect(s.options[s.correct]).toBe(rightText);
+    }
+  });
+
+  it("при повторном прохождении вопросы другие, пока не кончился банк уровня", () => {
+    const bank = syntheticBank("kino");
+    let seen = new Set<string>();
+    const shown: string[][] = [];
+    for (let run = 0; run < 4; run++) {
+      const round = buildRound(bank, Math.random, seen);
+      expect(round.map((q) => q.level)).toEqual([1, 2, 3]);
+      shown.push(round.map((q) => q.id));
+      seen = nextSeen([bank], round, seen);
+    }
+    // 4 прохода по банку из 4 вопросов на уровень: на каждом уровне все четыре вопроса разные
+    for (let level = 0; level < 3; level++) expect(new Set(shown.map((r) => r[level])).size).toBe(4);
+  });
+
+  it("когда банк уровня закончился, перемешивается и начинается заново", () => {
+    const bank = syntheticBank("music", 2);
+    let seen = new Set<string>();
+    const ids: string[] = [];
+    for (let run = 0; run < 5; run++) {
+      const round = buildRound(bank, Math.random, seen);
+      ids.push(round[0]?.id as string);
+      seen = nextSeen([bank], round, seen);
+    }
+    // в каждой паре подряд идущих проходов (1–2, 3–4) первый уровень не повторяется
+    expect(ids[0]).not.toBe(ids[1]);
+    expect(ids[2]).not.toBe(ids[3]);
+    // отметки не растут бесконечно: после круга остаётся не больше размера банка
+    expect(seen.size).toBeLessThanOrEqual(bank.questions.length);
+  });
+
+  it("супер-квиз берёт вопросы из тех же банков, без повторов, по возрастанию уровня", () => {
+    const banks = ["general", "kino", "music", "riddle"].map((id) => syntheticBank(id));
+    const sup = { kind: "super", id: "super", title: "s", subtitle: "s", from: banks.map((b) => b.id), count: 6, ladder: ["1", "2", "3", "4", "5", "6"], safe: [3], prize: "p" } as QuizSuper;
+    const round = buildSuperRound(sup, banks, Math.random, new Set());
+    expect(round).toHaveLength(6);
+    expect(new Set(round.map((q) => q.id)).size).toBe(6);
+    const levels = round.map((q) => q.level);
+    expect(levels).toEqual([...levels].sort((a, b) => a - b));
+    const bankIds = new Set(banks.flatMap((b) => b.questions.map((q) => q.id)));
+    expect(round.every((q) => bankIds.has(q.id))).toBe(true);
+  });
+
+  it("вопрос дня берётся из банков и не зависит от порядка вариантов", () => {
+    const banks = [syntheticBank("kino"), syntheticBank("general")];
+    const day = new Date("2026-10-20T09:00:00Z");
+    const q = dailyQuestion(banks, day) as QuizQuestion;
+    expect(banks.flatMap((b) => b.questions.map((x) => x.id))).toContain(q.id);
+    expect(dailyQuestion(banks, day)?.id).toBe(q.id);
+  });
+
+  it("предупреждение, если в уровне меньше 30 вопросов без draft", () => {
+    const small = quizBankWarnings([syntheticBank("kino", 29)]);
+    expect(small).toHaveLength(3);
+    expect(small[0]).toMatch(/уровень 1.*29 из 30/);
+    expect(quizBankWarnings([syntheticBank("kino", 30)])).toEqual([]);
+    const drafts: QuizCategory = { ...syntheticBank("kino", 30), questions: syntheticBank("kino", 30).questions.map((q) => ({ ...q, draft: true })) };
+    expect(quizBankWarnings([drafts])).toHaveLength(3);
   });
 });

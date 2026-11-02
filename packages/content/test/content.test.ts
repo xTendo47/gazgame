@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { buildCatalog, ContentError, expandEmojiKeys, inspectContent } from "../src/index";
+import { buildCatalog, ContentError, expandEmojiKeys, inspectContent, quizBankWarnings } from "../src/index";
 import { loadCatalog } from "../src/node";
 
 const validTest = {
@@ -646,5 +646,14 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
 
   it("супер-квиз ссылается только на существующие категории", () => {
     expect(() => build(read("kino"), read("super"))).toThrow(/нет категории/);
+  });
+});
+
+describe("Квиз $HOW: предупреждение о малом банке", () => {
+  it("демо-банк (draft, по одному вопросу на уровень) даёт предупреждения по каждому уровню, но не ошибку", () => {
+    const catalog = loadCatalog();
+    const warnings = quizBankWarnings(catalog.quiz);
+    expect(warnings.length).toBe(4 * 3);
+    expect(warnings[0]).toMatch(/из 30/);
   });
 });

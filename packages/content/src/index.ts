@@ -8,6 +8,8 @@ export {
   buildCatalog,
   ContentError,
   inspectContent,
+  quizBankWarnings,
+  QUIZ_BANK_MIN,
   type ContentIssue,
   type ContentReport,
   type FileReport,

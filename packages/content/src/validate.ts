@@ -212,6 +212,22 @@ function inspectQuiz(files: RawDataFile[] | undefined, problems: string[]): Quiz
   return result;
 }
 
+/** Сколько настоящих (не draft) вопросов должно быть в каждом уровне каждой категории квиза. */
+export const QUIZ_BANK_MIN = 30;
+
+/** Предупреждения (не ошибки): в уровне категории меньше 30 вопросов без draft — банк мал, вопросы будут повторяться. */
+export function quizBankWarnings(quiz: readonly QuizFile[] | undefined): string[] {
+  const warnings: string[] = [];
+  for (const file of quiz ?? []) {
+    if (file.kind !== "category") continue;
+    for (const level of [1, 2, 3]) {
+      const real = file.questions.filter((q) => q.level === level && q.draft !== true).length;
+      if (real < QUIZ_BANK_MIN) warnings.push(`⚠️ квиз «${file.title}», уровень ${level}: вопросов без draft ${real} из ${QUIZ_BANK_MIN}`);
+    }
+  }
+  return warnings;
+}
+
 /** Проверяет необязательный файл (card-games.json, premium.json…): JSON и схема. */
 function inspectDataFile<T>(file: RawDataFile | undefined, schema: z.ZodType<T>, problems: string[]): T | undefined {
   if (!file) return undefined;

@@ -23,29 +23,67 @@ export function quizPlayers(mode: QuizMode, party = QUIZ_PARTY_MIN): number {
   return Math.min(QUIZ_PARTY_MAX, Math.max(QUIZ_PARTY_MIN, Math.round(party)));
 }
 
-/** Раунд категории: по одному вопросу каждого уровня, при нескольких — случайный из них. */
-export function buildRound(category: QuizCategory, random: Random = Math.random): QuizQuestion[] {
+/** Перемешивает варианты ответа при показе; верный находим по тексту, а не по позиции в файле. */
+export function shuffleOptions(question: QuizQuestion, random: Random = Math.random): QuizQuestion {
+  const rightText = question.options[question.correct];
+  const options = [...question.options];
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [options[i], options[j]] = [options[j] as string, options[i] as string];
+  }
+  const correct = options.indexOf(rightText as string);
+  return { ...question, options, correct: correct >= 0 ? correct : question.correct };
+}
+
+/** Вопросы уровня; из них показанные раньше (seen) пропускаем, пока есть непоказанные. Банк кончился — берём весь уровень заново. */
+function pickFresh(pool: readonly QuizQuestion[], seen: ReadonlySet<string>, taken: ReadonlySet<string>, random: Random): QuizQuestion | undefined {
+  const fresh = pool.filter((q) => !seen.has(q.id) && !taken.has(q.id));
+  const source = fresh.length > 0 ? fresh : pool.filter((q) => !taken.has(q.id));
+  return source[Math.floor(random() * source.length)];
+}
+
+/** Раунд категории: по одному случайному вопросу каждого уровня из банка, без показанных раньше. Порядок вариантов перемешан. */
+export function buildRound(category: QuizCategory, random: Random = Math.random, seen: ReadonlySet<string> = new Set()): QuizQuestion[] {
   const round: QuizQuestion[] = [];
   for (const level of QUIZ_LEVELS) {
-    const pool = category.questions.filter((q) => q.level === level);
-    const pick = pool[Math.floor(random() * pool.length)];
-    if (pick) round.push(pick);
+    const pick = pickFresh(category.questions.filter((q) => q.level === level), seen, new Set(), random);
+    if (pick) round.push(shuffleOptions(pick, random));
   }
   return round;
 }
 
-/** Вопросы супер-квиза: из категорий from по возрастанию уровня (при равном уровне — по порядку категорий), первые count штук. */
-export function buildSuperRound(file: QuizSuper, categories: readonly QuizCategory[]): QuizQuestion[] {
-  const pool: { q: QuizQuestion; order: number }[] = [];
-  file.from.forEach((id, order) => {
-    const category = categories.find((c) => c.id === id);
-    for (const q of category?.questions ?? []) pool.push({ q, order });
-  });
-  pool.sort((a, b) => a.q.level - b.q.level || a.order - b.order);
-  return pool.slice(0, file.count).map((p) => p.q);
+/** Вопросы супер-квиза из банков категорий from: ступени идут по возрастанию уровня (треть на каждый), категории чередуются, без повторов и показанных раньше. */
+export function buildSuperRound(file: QuizSuper, categories: readonly QuizCategory[], random: Random = Math.random, seen: ReadonlySet<string> = new Set()): QuizQuestion[] {
+  const banks = file.from.map((id) => categories.find((c) => c.id === id)).filter((c): c is QuizCategory => !!c);
+  const taken = new Set<string>();
+  const round: QuizQuestion[] = [];
+  for (let i = 0; i < file.count && banks.length > 0; i++) {
+    const level = Math.min(QUIZ_LEVELS.length, 1 + Math.floor((i * QUIZ_LEVELS.length) / file.count));
+    const bank = banks[i % banks.length] as QuizCategory;
+    const pick = pickFresh(bank.questions.filter((q) => q.level === level), seen, taken, random) ?? pickFresh(bank.questions, seen, taken, random);
+    if (!pick) continue;
+    taken.add(pick.id);
+    round.push(shuffleOptions(pick, random));
+  }
+  return round;
 }
 
-/** Вопрос дня: один и тот же у всех в этот день, по кругу по всем вопросам категорий. */
+/**
+ * Какие id считать показанными после раунда. Если банк уровня был исчерпан (все вопросы уровня уже показаны), он начинается заново:
+ * старые отметки этого уровня сбрасываются, и остаётся только что показанный вопрос.
+ */
+export function nextSeen(categories: readonly QuizCategory[], round: readonly QuizQuestion[], seen: ReadonlySet<string>): Set<string> {
+  const next = new Set(seen);
+  for (const q of round) {
+    const bank = categories.find((c) => c.questions.some((x) => x.id === q.id));
+    const level = bank?.questions.filter((x) => x.level === q.level) ?? [];
+    if (level.length > 0 && level.every((x) => next.has(x.id))) for (const x of level) next.delete(x.id);
+    next.add(q.id);
+  }
+  return next;
+}
+
+/** Вопрос дня: один и тот же у всех в этот день, по кругу по всем вопросам банков. Варианты перемешиваются при показе (shuffleOptions). */
 export function dailyQuestion(categories: readonly QuizCategory[], now: Date): QuizQuestion | undefined {
   const all = categories.flatMap((c) => c.questions);
   if (all.length === 0) return undefined;
