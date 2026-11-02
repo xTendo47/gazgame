@@ -1,15 +1,56 @@
-// Механика «квиз» (раздел GAZ GAME $HOW): вопрос с четырьмя вариантами и таймером, экран ответа, очки, итоги.
+// Механика «квиз» (раздел GAZ GAME $HOW): вопрос с четырьмя вариантами или с вводом ответа, таймер, экран ответа, очки, итоги.
+// Вопрос с вводом: ответ печатают, он засчитывается без учёта регистра, пробелов, «ё» и знаков препинания и с одной опечаткой у длинных слов.
 // Режимы: соло; вдвоём (команда: игроки отвечают по очереди, счёт общий и у каждого); компания (телефон по кругу, у каждого свой счёт).
 // Раунд категории — по одному вопросу на каждый уровень сложности (1 → 2 → 3). Супер-квиз — лестница вопросов по возрастанию уровня.
 // Подсказки: «50:50» убирает два неверных, «спроси зал» и «дай телефон другу» — напоминания (считаются использованными),
 // «риск ×2» — раз на игрока за раунд: верный ответ даёт два очка. «Суд присяжных»: верного ответа нет, очко — за совпадение с большинством.
-import type { QuizCategory, QuizCourt, QuizQuestion, QuizSuper } from "@gazgame/content";
+import type { QuizCategory, QuizCourt, QuizInputQuestion, QuizQuestion, QuizSuper } from "@gazgame/content";
 import { dayIndex } from "../today";
 
 export type QuizMode = "solo" | "duo" | "party";
 
-/** Секунд на вопрос. */
+/** Секунд на обычный вопрос с вариантами; у вопроса с вводом своё время (time). */
 export const QUIZ_TIME = 15;
+
+export function isInputQuestion(q: QuizQuestion): q is QuizInputQuestion {
+  return q.type === "input";
+}
+
+/** Сколько секунд на этот вопрос. */
+export function quizTime(q: QuizQuestion): number {
+  return isInputQuestion(q) ? q.time : QUIZ_TIME;
+}
+
+/** Ответ для сравнения: без регистра, «ё» = «е», без кавычек и знаков препинания, лишние пробелы убраны. */
+export function normalizeAnswer(text: string): string {
+  return text
+    .toLowerCase()
+    .replaceAll("ё", "е")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Расстояние Левенштейна не больше 1: одна лишняя, пропущенная или неверная буква. */
+function withinOneTypo(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (Math.abs(a.length - b.length) > 1) return false;
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  if (a.length === b.length) return a.slice(i + 1) === b.slice(i + 1);
+  return a.length > b.length ? a.slice(i + 1) === b.slice(i) : b.slice(i + 1) === a.slice(i);
+}
+
+/** Верен ли введённый ответ: совпадает с любым из answers; у ответов длиннее 5 букв прощаем одну опечатку. */
+export function checkAnswer(q: QuizInputQuestion, typed: string): boolean {
+  const t = normalizeAnswer(typed);
+  if (t === "") return false;
+  return q.answers.some((raw) => {
+    const a = normalizeAnswer(raw);
+    if (a === t) return true;
+    return a.replaceAll(" ", "").length > 5 && withinOneTypo(t, a);
+  });
+}
 export const QUIZ_PARTY_MIN = 3;
 export const QUIZ_PARTY_MAX = 8;
 export const QUIZ_LEVELS = [1, 2, 3] as const;
@@ -25,6 +66,7 @@ export function quizPlayers(mode: QuizMode, party = QUIZ_PARTY_MIN): number {
 
 /** Перемешивает варианты ответа при показе; верный находим по тексту, а не по позиции в файле. */
 export function shuffleOptions(question: QuizQuestion, random: Random = Math.random): QuizQuestion {
+  if (isInputQuestion(question)) return question;
   const rightText = question.options[question.correct];
   const options = [...question.options];
   for (let i = options.length - 1; i > 0; i--) {
@@ -105,8 +147,10 @@ export interface QuizState {
   questions: QuizQuestion[];
   index: number;
   phase: QuizPhase;
-  /** Выбранный вариант на экране ответа; -1 — время вышло. */
+  /** Выбранный вариант на экране ответа; -1 — время вышло; у вопроса с вводом: 0 — верно, -2 — неверно (сам ответ в typed). */
   picked: number | null;
+  /** Что напечатали в ответ на вопрос с вводом (пустая строка — время вышло). */
+  typed: string | null;
   /** Убранные подсказкой «50:50» варианты текущего вопроса. */
   hidden: number[];
   /** Очки по игрокам. */
@@ -129,6 +173,7 @@ export function startQuiz(questions: QuizQuestion[], mode: QuizMode, players = q
     index: 0,
     phase: questions.length > 0 ? "question" : "done",
     picked: null,
+    typed: null,
     hidden: [],
     scores: Array.from({ length: players }, () => 0),
     results: [],
@@ -147,30 +192,43 @@ export function currentQuestion(state: QuizState): QuizQuestion | undefined {
   return state.questions[state.index];
 }
 
-/** Ответ игрока; choice −1 — время вышло. Верно: +1 очко (+2 при «риске ×2»). */
+/** Засчитать ответ текущему игроку: +1 очко (+2 при «риске ×2»), если верно. */
+function settle(state: QuizState, right: boolean, picked: number, typed: string | null): QuizState {
+  const player = currentPlayer(state);
+  const scores = state.scores.map((s, i) => (i === player && right ? s + (state.riskArmed ? 2 : 1) : s));
+  const riskUsed = state.riskUsed.map((used, i) => (i === player && state.riskArmed ? true : used));
+  return { ...state, phase: "answer", picked, typed, scores, results: [...state.results, right], riskArmed: false, riskUsed };
+}
+
+/** Ответ игрока вариантом; choice −1 — время вышло (у вопроса с вводом это тоже «мимо»). */
 export function answerQuiz(state: QuizState, choice: number): QuizState {
   const q = currentQuestion(state);
   if (state.phase !== "question" || !q) return state;
+  if (isInputQuestion(q)) return choice === -1 ? settle(state, false, -1, "") : state;
   if (choice >= 0 && state.hidden.includes(choice)) return state;
-  const player = currentPlayer(state);
-  const right = choice === q.correct;
-  const scores = state.scores.map((s, i) => (i === player && right ? s + (state.riskArmed ? 2 : 1) : s));
-  const riskUsed = state.riskUsed.map((used, i) => (i === player && state.riskArmed ? true : used));
-  return { ...state, phase: "answer", picked: choice, scores, results: [...state.results, right], riskArmed: false, riskUsed };
+  return settle(state, choice === q.correct, choice, null);
+}
+
+/** Ответ игрока на вопрос с вводом (печатный текст). На вопросе с вариантами не действует. */
+export function answerText(state: QuizState, text: string): QuizState {
+  const q = currentQuestion(state);
+  if (state.phase !== "question" || !q || !isInputQuestion(q)) return state;
+  const right = checkAnswer(q, text);
+  return settle(state, right, right ? 0 : -2, text.trim());
 }
 
 /** С экрана ответа — к следующему вопросу или к итогам. */
 export function nextQuiz(state: QuizState): QuizState {
   if (state.phase !== "answer") return state;
   const index = state.index + 1;
-  if (index >= state.questions.length) return { ...state, index, phase: "done", picked: null, hidden: [] };
-  return { ...state, index, phase: "question", picked: null, hidden: [], riskArmed: false };
+  if (index >= state.questions.length) return { ...state, index, phase: "done", picked: null, typed: null, hidden: [] };
+  return { ...state, index, phase: "question", picked: null, typed: null, hidden: [], riskArmed: false };
 }
 
 /** «50:50»: убирает два неверных варианта. Один раз за раунд. */
 export function fiftyFifty(state: QuizState, random: Random = Math.random): QuizState {
   const q = currentQuestion(state);
-  if (state.phase !== "question" || !q || state.helps.fifty) return state;
+  if (state.phase !== "question" || !q || isInputQuestion(q) || state.helps.fifty) return state;
   const left = [0, 1, 2, 3].filter((i) => i !== q.correct);
   const hidden: number[] = [];
   while (hidden.length < 2 && left.length > 0) {
@@ -180,9 +238,11 @@ export function fiftyFifty(state: QuizState, random: Random = Math.random): Quiz
   return { ...state, hidden, helps: { ...state.helps, fifty: true } };
 }
 
-/** «Спроси зал» и «дай телефон другу»: подсказки-напоминания, один раз за раунд. */
+/** «Спроси зал» и «дай телефон другу»: подсказки-напоминания, один раз за раунд. «Спроси зал» на вопросе с вводом недоступна. */
 export function takeHelp(state: QuizState, help: "hall" | "friend"): QuizState {
+  const q = currentQuestion(state);
   if (state.phase !== "question" || state.helps[help]) return state;
+  if (help === "hall" && q && isInputQuestion(q)) return state;
   return { ...state, helps: { ...state.helps, [help]: true } };
 }
 

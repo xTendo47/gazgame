@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { quizBankWarnings, quizFileSchema, type QuizCategory, type QuizCourt, type QuizQuestion, type QuizSuper } from "@gazgame/content";
+import { quizBankWarnings, quizFileSchema, type QuizCategory, type QuizChoiceQuestion, type QuizCourt, type QuizQuestion, type QuizSuper } from "@gazgame/content";
 import kinoJson from "@gazgame/content/data/quiz/kino.json";
 import musicJson from "@gazgame/content/data/quiz/music.json";
 import generalJson from "@gazgame/content/data/quiz/general.json";
@@ -28,16 +28,19 @@ import {
   emptyShow,
 } from "../src";
 
+/** Номер верного варианта у вопроса с вариантами (у вопроса с вводом его нет). */
+const right = (q: QuizQuestion): number => (q.type === "input" ? -1 : q.correct);
+
 const quiz = [kinoJson, musicJson, generalJson, riddleJson, superJson, courtJson].map((j) => quizFileSchema.parse(j));
 const categories = quiz.filter((q): q is QuizCategory => q.kind === "category");
 const kino = categories.find((c) => c.id === "kino") as QuizCategory;
 
 describe("квиз $HOW: данные", () => {
-  it("в каждой категории есть вопросы всех трёх уровней; Кино и Общее — настоящие банки по 90, остальные демо с draft", () => {
+  it("в каждой категории есть вопросы всех трёх уровней; Кино, Общее и Загадки — настоящие банки по 90, Музыка — демо с draft", () => {
     expect(categories.map((c) => c.id).sort()).toEqual(["general", "kino", "music", "riddle"]);
     for (const c of categories) {
       expect([...new Set(c.questions.map((q) => q.level))].sort()).toEqual([1, 2, 3]);
-      const real = c.id === "kino" || c.id === "general";
+      const real = c.id !== "music";
       expect(c.questions).toHaveLength(real ? 90 : 3);
       expect(c.questions.every((q) => (q.draft === true) === !real)).toBe(true);
     }
@@ -60,7 +63,7 @@ describe("квиз $HOW: раунд", () => {
   it("соло: очки за верные ответы, итоги", () => {
     let s = startQuiz(buildRound(kino), "solo");
     for (const q of s.questions) {
-      s = nextQuiz(answerQuiz(s, q.correct));
+      s = nextQuiz(answerQuiz(s, right(q)));
     }
     expect(s.phase).toBe("done");
     expect(quizSummary(s)).toMatchObject({ total: 3, max: 3, correct: 3 });
@@ -68,7 +71,7 @@ describe("квиз $HOW: раунд", () => {
 
   it("неверный ответ и «время вышло» очков не дают", () => {
     let s = startQuiz(buildRound(kino), "solo");
-    s = nextQuiz(answerQuiz(s, (s.questions[0]!.correct + 1) % 4));
+    s = nextQuiz(answerQuiz(s, (right(s.questions[0]!) + 1) % 4));
     s = nextQuiz(answerQuiz(s, -1));
     expect(s.scores).toEqual([0]);
     expect(s.results).toEqual([false, false]);
@@ -82,9 +85,9 @@ describe("квиз $HOW: раунд", () => {
   it("вдвоём игроки отвечают по очереди, счёт у каждого свой", () => {
     let s = startQuiz(buildRound(kino), "duo");
     expect(currentPlayer(s)).toBe(0);
-    s = nextQuiz(answerQuiz(s, s.questions[0]!.correct));
+    s = nextQuiz(answerQuiz(s, right(s.questions[0]!)));
     expect(currentPlayer(s)).toBe(1);
-    s = nextQuiz(answerQuiz(s, s.questions[1]!.correct));
+    s = nextQuiz(answerQuiz(s, right(s.questions[1]!)));
     expect(s.scores).toEqual([1, 1]);
     expect(quizSummary(s).total).toBe(2);
   });
@@ -92,7 +95,7 @@ describe("квиз $HOW: раунд", () => {
   it("компания: победитель — у кого больше очков", () => {
     let s = startQuiz(buildRound(kino), "party", quizPlayers("party", 4));
     expect(s.players).toBe(4);
-    for (const q of s.questions) s = nextQuiz(answerQuiz(s, q.correct));
+    for (const q of s.questions) s = nextQuiz(answerQuiz(s, right(q)));
     expect(quizSummary(s).winners).toEqual([0, 1, 2]);
   });
 
@@ -100,12 +103,12 @@ describe("квиз $HOW: раунд", () => {
     const s = startQuiz(buildRound(kino), "solo");
     const f = fiftyFifty(s, () => 0);
     expect(f.hidden).toHaveLength(2);
-    expect(f.hidden).not.toContain(f.questions[0]!.correct);
+    expect(f.hidden).not.toContain(right(f.questions[0]!));
     expect(fiftyFifty(f, () => 0.9)).toBe(f);
     // убранный вариант выбрать нельзя
     expect(answerQuiz(f, f.hidden[0] as number)).toBe(f);
     // на следующем вопросе убранные варианты снова на месте
-    const after = nextQuiz(answerQuiz(f, f.questions[0]!.correct));
+    const after = nextQuiz(answerQuiz(f, right(f.questions[0]!)));
     expect(after.hidden).toEqual([]);
   });
 
@@ -118,7 +121,7 @@ describe("квиз $HOW: раунд", () => {
   it("«риск ×2»: верный ответ даёт два очка, потом риск потрачен", () => {
     let s = toggleRisk(startQuiz(buildRound(kino), "solo"));
     expect(s.riskArmed).toBe(true);
-    s = nextQuiz(answerQuiz(s, s.questions[0]!.correct));
+    s = nextQuiz(answerQuiz(s, right(s.questions[0]!)));
     expect(s.scores).toEqual([2]);
     expect(toggleRisk(s)).toBe(s);
   });
@@ -181,14 +184,14 @@ function syntheticBank(id: string, perLevel = 4): QuizCategory {
 
 describe("квиз $HOW: банки вопросов", () => {
   it("варианты перемешиваются, верный ответ находится по тексту", () => {
-    const q = syntheticBank("t").questions[2] as QuizQuestion;
+    const q = syntheticBank("t").questions[2] as QuizChoiceQuestion;
     const rightText = q.options[q.correct];
-    const reversed = shuffleOptions(q, () => 0);
+    const reversed = shuffleOptions(q, () => 0) as QuizChoiceQuestion;
     expect(reversed.options).not.toEqual(q.options);
     expect([...reversed.options].sort()).toEqual([...q.options].sort());
     expect(reversed.options[reversed.correct]).toBe(rightText);
     for (let n = 0; n < 20; n++) {
-      const s = shuffleOptions(q);
+      const s = shuffleOptions(q) as QuizChoiceQuestion;
       expect(s.options[s.correct]).toBe(rightText);
     }
   });
