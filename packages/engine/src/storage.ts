@@ -4,6 +4,7 @@
 // без переписывания экранов.
 import { normalizeGaz, type GazData } from "./gaz";
 import { normalizeToday, type TodayData } from "./today";
+import { normalizeShow, type ShowData } from "./mechanics/quiz";
 import { normalizeCollection, type CollectionData } from "./collection";
 
 /** Минимальное «хранилище ключ-значение». localStorage подходит под этот интерфейс. */
@@ -59,6 +60,8 @@ export interface ProgressData {
   gaz?: GazData;
   /** «Сегодня 🔥»: серия, заморозка, голоса, дневник ответов, карты за серию. */
   today?: TodayData;
+  /** $HOW: вопрос дня и серия. */
+  show?: ShowData;
   /** «Коллекция 🃏»: какие карты новые и очередь вспышек. Сами карты собираются из остального прогресса. */
   collection?: CollectionData;
   /** Незаконченные тесты по id теста. */
@@ -136,6 +139,9 @@ export interface ProgressStore {
   /** «Сегодня 🔥»: всё, что хранится на устройстве. */
   getToday(): TodayData;
   updateToday(update: (data: TodayData) => TodayData): void;
+  /** $HOW: вопрос дня и серия. */
+  getShow(): ShowData;
+  updateShow(update: (data: ShowData) => ShowData): void;
   /** «Коллекция 🃏»: новые карты и вспышки. */
   getCollection(): CollectionData;
   updateCollection(update: (data: CollectionData) => CollectionData): void;
@@ -180,6 +186,7 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
         ...(data.unlocksSeen ? { unlocksSeen: data.unlocksSeen } : {}),
         ...(data.gaz ? { gaz: data.gaz } : {}),
         ...(data.today ? { today: data.today } : {}),
+        ...(data.show ? { show: data.show } : {}),
         ...(data.collection ? { collection: data.collection } : {}),
         ...(data.testProgress ? { testProgress: data.testProgress } : {}),
         ...(data.gameStarted ? { gameStarted: data.gameStarted } : {}),
@@ -344,6 +351,12 @@ export function createProgressStore(kv: KeyValueStore | null, key = PROGRESS_KEY
     updateToday(update) {
       const data = load();
       data.today = update(normalizeToday(data.today));
+      save(data);
+    },
+    getShow: () => normalizeShow(load().show),
+    updateShow(update) {
+      const data = load();
+      data.show = update(normalizeShow(data.show));
       save(data);
     },
     markUnlockSeen(gameId, deckId) {
