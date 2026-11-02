@@ -1,0 +1,144 @@
+/* Панель «Музыка» под винилом (эталон 14): тёмная плашка, оранжевая кнопка, ползунки с золотым и оранжевым бегунком. */
+.gt-shelf {
+  position: relative;
+}
+.mp-panel {
+  position: absolute;
+  z-index: 8;
+  left: -36px;
+  top: calc(100% + 8px);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "play rows"
+    "track track";
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 8px;
+  width: min(272px, calc(100vw - 32px));
+  padding: 12px 16px 10px;
+  color: #f3eee6;
+  background: linear-gradient(180deg, #1a1612, #0f0c0a);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1.5px #6b5230,
+    0 14px 24px rgb(0 0 0 / 0.6);
+  animation: mp-in 0.18s ease-out;
+}
+.mp-arrow {
+  position: absolute;
+  left: 74px;
+  top: -9px;
+  width: 16px;
+  height: 16px;
+  background: #1a1612;
+  box-shadow: -1.5px -1.5px 0 #6b5230;
+  transform: rotate(45deg);
+}
+.mp-play {
+  grid-area: play;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  color: #1a0c04;
+  background: radial-gradient(circle at 35% 30%, #ff9a3e, #ff7a1a 60%, #d95a08);
+  box-shadow:
+    inset 0 0 0 2px rgb(255 255 255 / 0.25),
+    0 4px 0 #8a3a05;
+}
+.mp-play:active {
+  transform: translateY(2px);
+}
+.mp-rows {
+  grid-area: rows;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.mp-row {
+  display: grid;
+  grid-template-columns: 82px 1fr 26px;
+  align-items: center;
+  gap: 8px;
+  font: 700 15px / 1 "Manrope Variable", system-ui, sans-serif;
+}
+.mp-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f3eee6;
+}
+.mp-row label svg {
+  color: #c9a14e;
+  flex: none;
+}
+.mp-row output {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mp-row input[type="range"] {
+  --fill: #c9a14e;
+  width: 100%;
+  height: 30px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  touch-action: pan-y;
+}
+.mp-row input[data-tone="orange"] {
+  --fill: #ff7a1a;
+}
+.mp-row input[type="range"]::-webkit-slider-runnable-track {
+  height: 7px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--fill) var(--v), #4a4338 var(--v));
+}
+.mp-row input[type="range"]::-moz-range-track {
+  height: 7px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--fill) var(--v), #4a4338 var(--v));
+}
+.mp-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -8.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff1c4, #d9ae4a 60%, #8a6420);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.6);
+}
+.mp-row input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff1c4, #d9ae4a 60%, #8a6420);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.6);
+}
+.mp-row input[type="range"]:focus-visible {
+  outline: 2px solid #d4ff3a;
+  outline-offset: 2px;
+}
+.mp-track {
+  grid-area: track;
+  margin: 0;
+  text-align: center;
+  font: 800 13px / 1 "Manrope Variable", system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  color: #c9a14e;
+}
+@keyframes mp-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mp-panel {
+    animation: none;
+  }
+}

@@ -19,7 +19,9 @@ import { BOX_SKINS, nextBoxSkin, setBoxSkin, useBoxSkin } from "@/lib/box-skin";
 import { setBoxFlight } from "@/lib/box-flight";
 import { prefersReducedMotion, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
-import { isMusicPlaying, subscribeMusic, toggleMusic } from "@/lib/music";
+import { isMusicPlaying, startMusic, subscribeMusic } from "@/lib/music";
+import { readAudioPrefs } from "@/lib/audio-prefs";
+import { MusicPanel } from "./MusicPanel";
 import { sfx } from "@/lib/sfx";
 import { profileInitial, useProfileName } from "@/lib/profile-name";
 import { useTodayData } from "@/lib/today";
@@ -81,6 +83,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
   const streak = currentStreak(todayData, now);
   const playing = useSyncExternalStore(subscribeMusic, isMusicPlaying, () => false);
   const [sheet, setSheet] = useState<"rules" | "wallpaper" | null>(null);
+  const [musicOpen, setMusicOpen] = useState(false);
   const [torn, setTorn] = useState(false);
   const [lifting, setLifting] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -196,11 +199,14 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
           <button
             type="button"
             className="gt-tool"
-            aria-label={playing ? "Музыка: поставить на паузу" : "Музыка: включить"}
-            aria-pressed={playing}
+            data-music-toggle
+            aria-label={playing ? "Музыка играет: открыть панель" : "Музыка: открыть панель"}
+            aria-expanded={musicOpen}
             onClick={() => {
               trackHomeClick({ target: "music" });
-              void toggleMusic();
+              // первое нажатие запускает трек (если его не ставили на паузу руками), дальше — панель с паузой и громкостью
+              if (!musicOpen && !isMusicPlaying() && !readAudioPrefs().paused) void startMusic();
+              setMusicOpen((o) => !o);
             }}
           >
             <VinylIcon playing={playing} />
@@ -242,6 +248,7 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
             <WallsIcon />
             <Plate>обои</Plate>
           </button>
+          {musicOpen && <MusicPanel onClose={() => setMusicOpen(false)} />}
         </div>
 
         {/* Билет «Продолжим» — только если есть что продолжать */}

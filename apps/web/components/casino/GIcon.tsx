@@ -8,6 +8,10 @@ const S = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLineca
 const ICONS = {
   fire: <path d="M12 3c1 3.500 5 5.500 5 10.500a5 5 0 0 1-10 0c0-2 1-3.500 2-4.500.2 1.500.8 2.300 1.700 2.800C10.500 9 10.800 5.500 12 3z" fill="currentColor" />,
   next: <path d="M5 6l6 6-6 6M12 6l6 6-6 6" {...S} />,
+  headphones: <path d="M4 15v-3a8 8 0 0 1 16 0v3M4 15a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zM20 15a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2z" {...S} />,
+  speaker: <path d="M4 9v6h4l5 4V5L8 9zM16.500 9c1.500 1.500 1.500 4.500 0 6M19 6.500c3 3 3 8 0 11" {...S} />,
+  play: <path d="M7 4.500v15a1 1 0 0 0 1.500.9l12-7.500a1 1 0 0 0 0-1.800l-12-7.500A1 1 0 0 0 7 4.500z" fill="currentColor" />,
+  pause: <path d="M7 4h3.500v16H7zM13.500 4H17v16h-3.500z" fill="currentColor" />,
   back: <path d="M19 6l-6 6 6 6M12 6l-6 6 6 6" {...S} />,
   arrow: <path d="M4 12h15M13 6l6 6-6 6" {...S} />,
   arrowBack: <path d="M20 12H5M11 6l-6 6 6 6" {...S} />,
