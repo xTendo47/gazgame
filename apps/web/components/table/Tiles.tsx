@@ -136,7 +136,7 @@ export function DiaryTile({ href, label }: { href: string; label: string }) {
   );
 }
 
-/** $HOW: сцена, ретро-ТВ, шторы, лампа «В ЭФИРЕ». Нажатие раздвигает шторы, потом открывается экран «Скоро». */
+/** $HOW: сцена, ретро-ТВ, шторы, лампа «В ЭФИРЕ». Нажатие раздвигает шторы, потом открывается раздел /show. */
 export function ShowTile({ href, label }: { href: string; label: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -168,16 +168,6 @@ export function ShowTile({ href, label }: { href: string; label: string }) {
           <span className="gt-air-tx">
             <small>КВИЗ-ШОУ</small>
             <b>В ЭФИРЕ</b>
-          </span>
-        </span>
-        {/* лента «СКОРО» в углу: раздел ещё не готов */}
-        <span className="gt-soon" aria-hidden="true">
-          <span className="gt-soon-band">
-            <svg viewBox="0 0 24 28">
-              <path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="#ffd21a" strokeWidth="3" strokeLinecap="round" />
-              <rect x="3" y="11" width="18" height="15" rx="2.5" fill="#ffd21a" />
-            </svg>
-            <b>СКОРО</b>
           </span>
         </span>
       </span>

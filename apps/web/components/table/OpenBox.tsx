@@ -264,7 +264,7 @@ export function OpenBox() {
               <DiaryTile href={solo.href} label={`${solo.title}, ${solo.who.toLowerCase()}`} />
             </li>
             <li>
-              <ShowTile href="/soon/show" label="GAZ GAME $HOW, квиз-шоу: скоро" />
+              <ShowTile href="/show" label="GAZ GAME $HOW, квиз-шоу" />
             </li>
           </ul>
           {/* Папиросная бумага поверх лотка: тап или Enter убирают её */}
