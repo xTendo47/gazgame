@@ -2,7 +2,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { buttonVariants, ComingSoon, Screen } from "@gazgame/ui";
+import { buttonVariants, ComingSoon } from "@gazgame/ui";
+import { Glyph } from "@/components/casino/GIcon";
+import { TestSkin } from "@/components/diary/TestSkin";
+import { Em } from "@/components/Em";
 import { BackLink } from "@/components/BackLink";
 import { getSoonFeature, SOON_FEATURES } from "@/lib/features";
 
@@ -21,13 +24,13 @@ export default async function SoonPage({ params }: PageProps<"/soon/[feature]">)
   if (!feature) notFound();
 
   return (
-    <Screen>
+    <TestSkin theme="diary">
       <BackLink href="/">Меню</BackLink>
-      <ComingSoon emoji={feature.emoji} title={`${feature.title} — скоро`} text={feature.text}>
+      <ComingSoon emoji={<Glyph emoji={feature.emoji} label={feature.title} size="1em" />} title={`${feature.title} — скоро`} text={feature.text}>
         <Link href="/" className={buttonVariants({ variant: "primary" })}>
-          Пока поиграем 🔥
+          <Em text="Пока поиграем 🔥" />
         </Link>
       </ComingSoon>
-    </Screen>
+    </TestSkin>
   );
 }
