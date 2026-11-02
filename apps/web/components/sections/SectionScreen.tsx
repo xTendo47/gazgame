@@ -28,6 +28,7 @@ import { CasinoDeckView } from "@/components/casino/CasinoDeckView";
 import { CasinoScene } from "@/components/casino/CasinoScene";
 import { DiaryDeckView } from "@/components/diary/DiaryDeckView";
 import { DiaryScene } from "@/components/diary/DiaryScene";
+import { WantedDeckView } from "@/components/diary/WantedDeckView";
 import { LoveDeckView } from "@/components/love/LoveDeckView";
 import { LoveScene } from "@/components/love/LoveScene";
 import { LockedPreviewSheet } from "@/components/LockedPreviewSheet";
@@ -352,6 +353,7 @@ export function SectionScreen({
 
   // «Тусовка», колода открыта: казино-карты вместо списка. Что делает тап по карточке — те же tap/countSoon/lockedTap выше
   if (diary && !showDecks) {
+    const DeckView = tab.id === "who" ? WantedDeckView : DiaryDeckView;
     const items = tab.items.map((item, index) => {
       const target = targets[tab.id]?.[index] ?? ({ kind: "soon" } as SectionTarget);
       return { item, index, target };
@@ -359,7 +361,7 @@ export function SectionScreen({
     const playable = items.filter(({ item, target }) => target.kind === "link" && !(item.premium && !premium));
     return (
       <>
-        <DiaryDeckView
+        <DeckView
           title={DIARY_NAMES[tab.id] ?? stripEmoji(tab.name)}
           entries={items.map(({ item, index, target }) => ({
             index,
