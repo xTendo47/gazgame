@@ -612,3 +612,39 @@ describe("«Что ты получишь» (upsell.premium.items)", () => {
     expect(JSON.stringify([catalog.tests, catalog.games, catalog.premium, catalog.lockedTests])).not.toMatch(/Премиум/);
   });
 });
+
+describe("Квиз $HOW (data/quiz/*.json)", () => {
+  const read = (name: string) => JSON.parse(readFileSync(new URL(`../data/quiz/${name}.json`, import.meta.url), "utf-8")) as Record<string, unknown>;
+  const build = (...files: Record<string, unknown>[]) => buildCatalog([], { quiz: files.map((data, i) => ({ path: `quiz/${i}.json`, data })) });
+
+  it("настоящие файлы проходят проверку: четыре категории, супер-квиз и суд", () => {
+    const quiz = loadCatalog().quiz ?? [];
+    expect(quiz.map((q) => q.id).sort()).toEqual(["court", "general", "kino", "music", "riddle", "super"]);
+  });
+
+  it("в каждой категории по 3 вопроса и все помечены draft", () => {
+    for (const q of loadCatalog().quiz ?? []) {
+      if (q.kind !== "category") continue;
+      expect(q.questions).toHaveLength(3);
+      expect(q.questions.every((x) => x.draft === true)).toBe(true);
+    }
+  });
+
+  it("ровно 4 варианта и верный — от 0 до 3", () => {
+    const kino = read("kino") as { questions: { options: string[]; correct: number }[] };
+    const broken = { ...kino, questions: kino.questions.map((q, i) => (i === 0 ? { ...q, options: q.options.slice(0, 3) } : q)) };
+    expect(() => build(broken)).toThrow(/4 варианта/);
+    const wrong = { ...kino, questions: kino.questions.map((q, i) => (i === 0 ? { ...q, correct: 4 } : q)) };
+    expect(() => build(wrong)).toThrow();
+  });
+
+  it("не хватает уровня — ошибка", () => {
+    const kino = read("kino") as { questions: { level: number }[] };
+    const broken = { ...kino, questions: kino.questions.map((q) => ({ ...q, level: 1 })) };
+    expect(() => build(broken)).toThrow(/нет вопроса уровня 2/);
+  });
+
+  it("супер-квиз ссылается только на существующие категории", () => {
+    expect(() => build(read("kino"), read("super"))).toThrow(/нет категории/);
+  });
+});

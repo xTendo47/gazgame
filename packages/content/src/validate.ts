@@ -11,6 +11,8 @@ import {
   ultimateFileSchema,
   gazFileSchema,
   todayFileSchema,
+  quizFileSchema,
+  type QuizFile,
   sectionsFileSchema,
   type CardGamesFile,
   type PremiumFile,
@@ -81,6 +83,8 @@ export interface ContentReport {
   today?: TodayFile;
   /** Разделы: плитки-вкладки и карточки. */
   sectionLayouts?: SectionsFile;
+  /** Квиз $HOW. */
+  quiz?: QuizFile[];
 }
 
 /** Необязательные файлы помимо тестов и игр. */
@@ -93,6 +97,8 @@ export interface ExtraContentFiles {
   gaz?: RawDataFile;
   today?: RawDataFile;
   sectionLayouts?: RawDataFile;
+  /** Файлы data/quiz/*.json. */
+  quiz?: RawDataFile[];
 }
 
 export class ContentError extends Error {
@@ -182,7 +188,28 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
   // Задание дня берётся из колоды «Мне скучно»: без gaz.json «Сегодня» работать не сможет
   if (today && !gaz) problems.push(`❌ ${extras.today?.path}: задание дня берётся из gaz.json, а такого файла нет`);
   const sectionLayouts = inspectDataFile(extras.sectionLayouts, sectionsFileSchema, problems);
-  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, today, sectionLayouts };
+  const quiz = inspectQuiz(extras.quiz, problems);
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, today, sectionLayouts, ...(quiz.length > 0 ? { quiz } : {}) };
+}
+
+/** Проверяет файлы data/quiz/*.json: схема, уникальные id, супер-квиз ссылается на существующие категории. */
+function inspectQuiz(files: RawDataFile[] | undefined, problems: string[]): QuizFile[] {
+  const result: QuizFile[] = [];
+  for (const file of files ?? []) {
+    const item = inspectDataFile(file, quizFileSchema, problems);
+    if (item) result.push(item);
+  }
+  const seen = new Set<string>();
+  for (const item of result) {
+    if (seen.has(item.id)) problems.push(`❌ data/quiz: id "${item.id}" повторяется`);
+    seen.add(item.id);
+  }
+  const categories = new Set(result.filter((q) => q.kind === "category").map((q) => q.id));
+  for (const item of result) {
+    if (item.kind !== "super") continue;
+    for (const id of item.from) if (!categories.has(id)) problems.push(`❌ data/quiz/${item.id}.json: в from нет категории "${id}"`);
+  }
+  return result;
 }
 
 /** Проверяет необязательный файл (card-games.json, premium.json…): JSON и схема. */
@@ -228,7 +255,7 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, today, sectionLayouts } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, today, sectionLayouts, quiz } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
   const catalog: Catalog = {
     tests: [],
@@ -241,6 +268,7 @@ export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles 
     ...(gaz ? { gaz } : {}),
     ...(today ? { today } : {}),
     ...(sectionLayouts ? { sectionLayouts } : {}),
+    ...(quiz ? { quiz } : {}),
   };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);

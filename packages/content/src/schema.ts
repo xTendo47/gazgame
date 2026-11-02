@@ -1773,6 +1773,99 @@ export type LockedTest = z.infer<typeof lockedTestSchema>;
 export type CardGamesFile = z.infer<typeof cardGamesFileSchema>;
 export type PremiumFile = z.infer<typeof premiumFileSchema>;
 export type PremiumRef = z.infer<typeof premiumRefSchema>;
+// ---------- GAZ GAME $HOW: квиз (data/quiz/*.json) ----------
+
+const quizId = z.string().regex(/^[a-z0-9-]+$/, "id: только латиница, цифры и дефис");
+
+/** Один вопрос квиза: уровень 1–3, четыре варианта, номер верного (с нуля) и пояснение к ответу. draft: true — демо-вопрос. */
+export const quizQuestionSchema = z.strictObject({
+  id: quizId,
+  /** Уровень сложности: 1 — лёгкий, 3 — сложный. В раунде по одному вопросу на уровень. */
+  level: z.number().int().min(1).max(3),
+  text,
+  options: z.array(text).length(4, "нужно ровно 4 варианта ответа"),
+  /** Номер верного варианта в options (0–3). */
+  correct: z.number().int().min(0).max(3),
+  /** Что показать на экране ответа. */
+  explain: text.optional(),
+  /** Демо-вопрос: настоящие добавим позже. */
+  draft: z.boolean().optional(),
+});
+
+const quizHead = {
+  $schema: z.string().optional(),
+  _note: z.string().optional(),
+  id: quizId,
+  title: text,
+  subtitle: text,
+  draft: z.boolean().optional(),
+};
+
+/** Категория: Кино, Музыка, Общее, Загадки. */
+export const quizCategorySchema = z
+  .strictObject({
+    ...quizHead,
+    kind: z.literal("category"),
+    questions: z.array(quizQuestionSchema).min(3),
+  })
+  .superRefine((file, ctx) => {
+    const ids = new Set<string>();
+    file.questions.forEach((q, i) => {
+      if (ids.has(q.id)) ctx.addIssue({ code: "custom", path: ["questions", i, "id"], message: `вопрос "${q.id}" повторяется` });
+      ids.add(q.id);
+    });
+    for (const level of [1, 2, 3]) {
+      if (!file.questions.some((q) => q.level === level)) ctx.addIssue({ code: "custom", path: ["questions"], message: `нет вопроса уровня ${level}` });
+    }
+  });
+
+/** Супер-квиз: вопросы берутся из категорий from, лестница сумм, несгораемые ступени. */
+export const quizSuperSchema = z
+  .strictObject({
+    ...quizHead,
+    kind: z.literal("super"),
+    /** Id категорий, из которых набираются вопросы. */
+    from: z.array(quizId).min(1),
+    /** Сколько вопросов в раунде (пока демо: меньше, чем ступеней в лестнице). */
+    count: z.number().int().min(1),
+    /** Суммы по ступеням, снизу вверх. */
+    ladder: z.array(text).min(1),
+    /** Номера несгораемых ступеней (с единицы). */
+    safe: z.array(z.number().int().min(1)),
+    /** Подпись о призе. */
+    prize: text,
+  })
+  .superRefine((file, ctx) => {
+    if (file.count > file.ladder.length) ctx.addIssue({ code: "custom", path: ["count"], message: "вопросов больше, чем ступеней в лестнице" });
+  });
+
+/** «Суд присяжных»: дела, по которым нет верного ответа — очки за совпадение с мнением большинства. */
+export const quizCourtSchema = z.strictObject({
+  ...quizHead,
+  kind: z.literal("court"),
+  cases: z
+    .array(
+      z.strictObject({
+        id: quizId,
+        /** «Шрек против Лорда Фаркуада». */
+        title: text,
+        /** Обвинение, защита, роль присяжного. */
+        text,
+        /** Сколько процентов присяжных считают «виновен» (демо-число, пока нет голосов). */
+        guiltyPercent: z.number().int().min(0).max(100),
+        draft: z.boolean().optional(),
+      }),
+    )
+    .min(1),
+});
+
+export const quizFileSchema = z.discriminatedUnion("kind", [quizCategorySchema, quizSuperSchema, quizCourtSchema]);
+
+export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
+export type QuizCategory = z.infer<typeof quizCategorySchema>;
+export type QuizSuper = z.infer<typeof quizSuperSchema>;
+export type QuizCourt = z.infer<typeof quizCourtSchema>;
+export type QuizFile = z.infer<typeof quizFileSchema>;
 export type UltimateFile = z.infer<typeof ultimateFileSchema>;
 export type GazFile = z.infer<typeof gazFileSchema>;
 export type TodayFile = z.infer<typeof todayFileSchema>;
@@ -1808,4 +1901,6 @@ export interface Catalog {
   today?: TodayFile;
   /** Разделы: плитки-вкладки и карточки (data/sections.json). */
   sectionLayouts?: SectionsFile;
+  /** Квиз $HOW: категории, супер-квиз, суд (data/quiz/*.json). */
+  quiz?: QuizFile[];
 }

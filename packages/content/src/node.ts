@@ -58,6 +58,25 @@ function readDataFile(contentDir: string, name: string): RawDataFile | undefined
   }
 }
 
+/** Все файлы папки data/<folder>/*.json (папки нет — пусто). */
+function readDataDir(contentDir: string, folder: string): RawDataFile[] {
+  const dir = path.join(contentDir, folder);
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .sort()
+    .map((name) => {
+      const shown = `packages/content/data/${folder}/${name}`;
+      const raw = fs.readFileSync(path.join(dir, name), "utf8");
+      try {
+        return { path: shown, data: JSON.parse(raw) as unknown };
+      } catch (error) {
+        return { path: shown, data: undefined, parseError: (error as Error).message };
+      }
+    });
+}
+
 /** Платные тесты под замком: data/locked-tests.json. Файла нет — undefined (это не ошибка). */
 export function readLockedTestsFile(contentDir = findContentDir()): RawDataFile | undefined {
   return readDataFile(contentDir, "locked-tests.json");
@@ -74,6 +93,7 @@ function readExtraFiles(dir: string): ExtraContentFiles {
     gaz: readDataFile(dir, "gaz.json"),
     today: readDataFile(dir, "today.json"),
     sectionLayouts: readDataFile(dir, "sections.json"),
+    quiz: readDataDir(dir, "quiz"),
   };
 }
 
