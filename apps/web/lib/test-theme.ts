@@ -2,7 +2,7 @@
 // Кармашек берётся из sections.json (вкладки раздела solo), сами тесты и их подсчёт не трогаем.
 import { getCatalog } from "@/lib/catalog";
 
-export type TestTheme = "wanted" | "clinic" | "diary";
+export type TestTheme = "wanted" | "clinic" | "diary" | "cosmos";
 
 const BY_TAB: Record<string, TestTheme> = { who: "wanted", psy: "clinic" };
 

@@ -11,7 +11,6 @@ import { DotList } from "@/components/DotList";
 import { UpsellItems } from "@/components/result/UpsellItems";
 import { UpsellText } from "@/components/result/UpsellText";
 import { TestSkin } from "@/components/diary/TestSkin";
-import { testTheme } from "@/lib/test-theme";
 import { Em } from "@/components/Em";
 import { upsellItems } from "@/lib/upsell";
 import { getCatalog, visibility } from "@/lib/catalog";
@@ -43,7 +42,7 @@ export default async function TestDeeperPage({ params }: Props) {
   const textClass = "text-lg leading-relaxed";
 
   return (
-    <TestSkin theme={testTheme(test.slug)}>
+    <TestSkin theme="cosmos">
       <section
         className="flex flex-col gap-4 rounded-card border-2 border-lime bg-surface p-6"
         style={{ backgroundImage: "radial-gradient(circle at 100% 0%, rgba(212,255,58,0.18), transparent 60%)" }}
@@ -66,7 +65,7 @@ export default async function TestDeeperPage({ params }: Props) {
           </Suspense>
         )}
         <Link href="/premium" className={buttonVariants({ variant: "accent", className: "diamond-glow-ring" })}>
-          Хочу Premium 💎
+          <Em text="Хочу Premium 💎" />
         </Link>
       </section>
 

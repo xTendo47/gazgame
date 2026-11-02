@@ -55,7 +55,8 @@ export function ComingSoon({
   text,
   children,
 }: {
-  emoji: string;
+  /** Эмодзи-строка или готовый значок (SVG). */
+  emoji: ReactNode;
   title: string;
   text: string;
   children?: ReactNode;

@@ -30,6 +30,7 @@ export function TestSkin({ theme, children }: { theme: TestTheme; children: Reac
   return (
     <>
       <div className="ts-backdrop" data-theme={theme} aria-hidden="true">
+        {theme === "cosmos" && <span className="ts-planet" />}
         {theme === "wanted" && <span className="ts-holes" />}
         {theme === "clinic" && <Blot className="ts-blot" />}
       </div>
@@ -45,6 +46,12 @@ export function TestSkin({ theme, children }: { theme: TestTheme; children: Reac
             <p className="ts-banner" aria-hidden="true">
               <span>КЛИНИКА GAZ · ВЫПИСНОЙ ЭПИКРИЗ</span>
               <span>ФОРМА № 027/У</span>
+            </p>
+          )}
+          {theme === "cosmos" && (
+            <p className="ts-banner" aria-hidden="true">
+              <span>ГЛУБЖЕ</span>
+              <span>PREMIUM</span>
             </p>
           )}
           {children}

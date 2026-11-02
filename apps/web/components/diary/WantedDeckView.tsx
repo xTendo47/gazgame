@@ -203,7 +203,7 @@ export function WantedDeckView({
                       </span>
                     </span>
                     <b className="wd-name">{e.title}</b>
-                    <span className="wd-reward">{e.soon ? "СКОРО" : e.locked ? "ТОЛЬКО ДЛЯ VIP" : v.rw}</span>
+                    <span className="wd-reward">{e.soon ? "СКОРО" : e.locked ? "PREMIUM" : v.rw}</span>
                     <span className="wd-note">{v.nt}</span>
                   </button>
                 </li>

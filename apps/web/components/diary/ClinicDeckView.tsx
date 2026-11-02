@@ -146,7 +146,7 @@ export function ClinicDeckView({
                     <span className="cl-zig" aria-hidden="true" />
                     <span className="cl-dx">ДИАГНОЗ:</span>
                     <b className="cl-name">{e.title}</b>
-                    <span className="cl-rx">{e.soon ? "назн.: скоро" : e.locked ? "назн.: только для VIP" : `назн.: ${e.meta ?? "тест"}`}</span>
+                    <span className="cl-rx">{e.soon ? "назн.: скоро" : e.locked ? "назн.: Premium" : `назн.: ${e.meta ?? "тест"}`}</span>
                     <Squiggle />
                   </button>
                 </li>
