@@ -1777,20 +1777,35 @@ export type PremiumRef = z.infer<typeof premiumRefSchema>;
 
 const quizId = z.string().regex(/^[a-z0-9-]+$/, "id: только латиница, цифры и дефис");
 
-/** Один вопрос квиза: уровень 1–3, четыре варианта, номер верного (с нуля) и пояснение к ответу. draft: true — демо-вопрос. */
-export const quizQuestionSchema = z.strictObject({
+const quizQuestionBase = {
   id: quizId,
   /** Уровень сложности: 1 — лёгкий, 3 — сложный. В раунде по одному вопросу на уровень. */
   level: z.number().int().min(1).max(3),
   text,
-  options: z.array(text).length(4, "нужно ровно 4 варианта ответа"),
-  /** Номер верного варианта в options (0–3). */
-  correct: z.number().int().min(0).max(3),
   /** Что показать на экране ответа. */
   explain: text.optional(),
   /** Демо-вопрос: настоящие добавим позже. */
   draft: z.boolean().optional(),
+};
+
+/** Вопрос с четырьмя вариантами: номер верного (с нуля) и пояснение к ответу. type: "choice" можно не писать. */
+export const quizChoiceSchema = z.strictObject({
+  ...quizQuestionBase,
+  type: z.literal("choice").optional(),
+  options: z.array(text).length(4, "нужно ровно 4 варианта ответа"),
+  /** Номер верного варианта в options (0–3). */
+  correct: z.number().int().min(0).max(3),
 });
+
+/** Вопрос с вводом: варианты не показываем, ответ печатают. answers — все принимаемые ответы (первый показывается как верный), time — секунд на ответ. */
+export const quizInputSchema = z.strictObject({
+  ...quizQuestionBase,
+  type: z.literal("input"),
+  answers: z.array(text).min(1, "нужен хотя бы один принимаемый ответ"),
+  time: z.number().int().min(5).max(180),
+});
+
+export const quizQuestionSchema = z.union([quizChoiceSchema, quizInputSchema]);
 
 const quizHead = {
   $schema: z.string().optional(),
@@ -1813,6 +1828,11 @@ export const quizCategorySchema = z
     file.questions.forEach((q, i) => {
       if (ids.has(q.id)) ctx.addIssue({ code: "custom", path: ["questions", i, "id"], message: `вопрос "${q.id}" повторяется` });
       ids.add(q.id);
+      if (q.type === "input") {
+        if (q.answers.some((a) => a.trim() === "")) ctx.addIssue({ code: "custom", path: ["questions", i, "answers"], message: "в answers есть пустой ответ" });
+      } else if (new Set(q.options.map((o) => o.trim().toLowerCase())).size !== q.options.length) {
+        ctx.addIssue({ code: "custom", path: ["questions", i, "options"], message: "варианты ответа повторяются" });
+      }
     });
     for (const level of [1, 2, 3]) {
       if (!file.questions.some((q) => q.level === level)) ctx.addIssue({ code: "custom", path: ["questions"], message: `нет вопроса уровня ${level}` });
@@ -1861,6 +1881,8 @@ export const quizCourtSchema = z.strictObject({
 
 export const quizFileSchema = z.discriminatedUnion("kind", [quizCategorySchema, quizSuperSchema, quizCourtSchema]);
 
+export type QuizChoiceQuestion = z.infer<typeof quizChoiceSchema>;
+export type QuizInputQuestion = z.infer<typeof quizInputSchema>;
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
 export type QuizCategory = z.infer<typeof quizCategorySchema>;
 export type QuizSuper = z.infer<typeof quizSuperSchema>;
