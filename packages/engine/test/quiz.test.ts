@@ -33,12 +33,13 @@ const categories = quiz.filter((q): q is QuizCategory => q.kind === "category");
 const kino = categories.find((c) => c.id === "kino") as QuizCategory;
 
 describe("квиз $HOW: данные", () => {
-  it("в каждой категории есть вопросы всех трёх уровней и они помечены draft", () => {
+  it("в каждой категории есть вопросы всех трёх уровней; Кино и Общее — настоящие банки по 90, остальные демо с draft", () => {
     expect(categories.map((c) => c.id).sort()).toEqual(["general", "kino", "music", "riddle"]);
     for (const c of categories) {
-      expect(c.questions).toHaveLength(3);
-      expect(c.questions.map((q) => q.level)).toEqual([1, 2, 3]);
-      expect(c.questions.every((q) => q.draft === true)).toBe(true);
+      expect([...new Set(c.questions.map((q) => q.level))].sort()).toEqual([1, 2, 3]);
+      const real = c.id === "kino" || c.id === "general";
+      expect(c.questions).toHaveLength(real ? 90 : 3);
+      expect(c.questions.every((q) => (q.draft === true) === !real)).toBe(true);
     }
   });
 });
