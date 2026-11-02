@@ -3,7 +3,8 @@
 // Экран «Коллекция 🃏»: /collection. Профиль стал альбомом карт. Сверху вниз: шапка «Собрано N карт» и шестерёнка
 // (в ней всё, что раньше было в профиле), «Пазл личности 💎», полки «Я», «Задания GAZ 🚀», «Награды 🔥» с рекордом серии.
 // Карты собираются из того, что уже хранится на устройстве (engine/collection.ts). Вид — по макету collection.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { GIcon } from "@/components/casino/GIcon";
 import Link from "next/link";
 import {
   buildCollection,
@@ -23,6 +24,7 @@ import { BackLink } from "../BackLink";
 import { CardFace } from "./CardFace";
 import { CardOverlay } from "./CardOverlay";
 import { CollectionFlash } from "./CollectionFlash";
+import { Em } from "@/components/Em";
 
 /** «карта», «карты», «карт». */
 function pluralCards(n: number): string {
@@ -50,7 +52,7 @@ function Shelf({ id, title, hint, children }: { id: string; title: string; hint:
 }
 
 /** Пустой слот: рубашка карты, «???», снизу название. Тап ведёт туда, где карту получить. */
-function Back({ label, mark, lock }: { label: string; mark: string; lock?: boolean }) {
+function Back({ label, mark, lock }: { label: string; mark: ReactNode; lock?: boolean }) {
   return (
     <span className={cn(SLOT, lock ? "coll-lock border-[#62D2FF]/45" : "coll-back border-dashed border-line")}>
       <span aria-hidden="true" className={cn("font-display font-extrabold text-muted", lock ? "text-2xl" : "text-xl")}>
@@ -95,7 +97,7 @@ export function CollectionScreen({ content, serverMs }: { content: CollectionCon
   function puzzle() {
     trackCollectionPuzzleClick();
     trackDeeperClick({ id: "personality-puzzle", kind: "collection", source: "collection-puzzle" });
-    setToast("Скоро в Premium 🔥");
+    setToast("Скоро в Premium");
   }
 
   function renderSlot(slot: CollectionSlot, i: number) {
@@ -112,7 +114,7 @@ export function CollectionScreen({ content, serverMs }: { content: CollectionCon
       return (
         <li key={`locked-${slot.slug}`}>
           <Link href={`/locked/${slot.slug}`} aria-label={`${slot.label}: платный тест`} className="gaz-press block">
-            <Back label={slot.label} mark="💎" lock />
+            <Back label={slot.label} mark={<GIcon name="diamond" />} lock />
           </Link>
         </li>
       );
@@ -149,7 +151,7 @@ export function CollectionScreen({ content, serverMs }: { content: CollectionCon
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="font-display text-[26px] leading-[1.1] font-extrabold">
-            Коллекция <span aria-hidden="true">🃏</span>
+            Коллекция <GIcon name="cards" size="0.9em" />
           </h1>
           <p className="mt-1 text-sm text-muted tabular-nums">
             Собрано{" "}
@@ -164,7 +166,7 @@ export function CollectionScreen({ content, serverMs }: { content: CollectionCon
           aria-label="Настройки"
           className="grid size-11 shrink-0 place-items-center rounded-[14px] border border-line bg-surface text-xl transition hover:bg-surface-2"
         >
-          <span aria-hidden="true">⚙️</span>
+          <span aria-hidden="true"><GIcon name="gear" /></span>
         </Link>
       </header>
 
@@ -175,10 +177,10 @@ export function CollectionScreen({ content, serverMs }: { content: CollectionCon
           className="gaz-press flex w-full items-center gap-3.5 rounded-[22px] border border-[#62D2FF]/50 bg-surface px-4 py-3.5 text-left shadow-[0_0_20px_rgb(98_210_255/0.16)]"
         >
           <span aria-hidden="true" className="text-[34px] leading-none">
-            🧩
+            <Em text="🧩" />
           </span>
           <span className="min-w-0 flex-1">
-            <b className="block font-display text-[15px] font-semibold">Пазл личности 💎</b>
+            <b className="block font-display text-[15px] font-semibold">Пазл личности <GIcon name="diamond" /></b>
             <small className="block text-xs text-muted">Собери карты всех тестов, и GAZ сложит из них твой портрет</small>
             <span aria-hidden="true" className="mt-2 block h-[5px] overflow-hidden rounded-full bg-[#2A2531]">
               <i className="block h-full rounded-full bg-[#62D2FF]" style={{ width: `${Math.round((view.meOwned / Math.max(1, view.meTotal)) * 100)}%` }} />
@@ -199,26 +201,26 @@ export function CollectionScreen({ content, serverMs }: { content: CollectionCon
         <ul className="grid grid-cols-3 gap-2.5">{view.me.map(renderSlot)}</ul>
       </Shelf>
 
-      <Shelf id="coll-tasks" title="Задания GAZ 🚀" hint={String(view.tasks.length)}>
+      <Shelf id="coll-tasks" title="Задания GAZ" hint={String(view.tasks.length)}>
         {view.tasks.length === 0 ? (
           <Link
             href="/gaz"
             className="flex min-h-16 items-center justify-center rounded-2xl border border-dashed border-line px-4 py-4 text-center text-[15px] font-bold text-muted transition hover:bg-surface"
           >
-            Сделай первое задание в разделе GAZ 🚀
+            <Em text="Сделай первое задание в разделе GAZ 🚀" />
           </Link>
         ) : (
           <ul className="grid grid-cols-3 gap-2.5">{taskSlots.map(renderSlot)}</ul>
         )}
       </Shelf>
 
-      <Shelf id="coll-awards" title="Награды 🔥" hint={`${view.awardsOwned} из ${view.awardsTotal}`}>
+      <Shelf id="coll-awards" title="Награды" hint={`${view.awardsOwned} из ${view.awardsTotal}`}>
         {view.awardsOwned === 0 && (
           <Link
             href="/today"
             className="flex min-h-16 items-center justify-center rounded-2xl border border-dashed border-line px-4 py-4 text-center text-[15px] font-bold text-muted transition hover:bg-surface"
           >
-            3 дня подряд в «Сегодня», и здесь появится первая карта 🔥
+            <Em text="3 дня подряд в «Сегодня», и здесь появится первая карта 🔥" />
           </Link>
         )}
         <ul className="grid grid-cols-3 gap-2.5">{view.awards.map(renderSlot)}</ul>

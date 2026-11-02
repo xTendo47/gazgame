@@ -2,6 +2,7 @@
 // Редкость видна по рамке: обычная (серая), редкая (оранжевая со свечением), золотая (золотая, по рамке пробегает блик).
 import type { CardSnap } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
+import { Glyph } from "@/components/casino/GIcon";
 
 const RARITY: Record<CardSnap["rarity"], string> = {
   common: "border-line",
@@ -18,8 +19,8 @@ const RARITY_BIG: Record<CardSnap["rarity"], string> = {
 function Emoji({ card, big }: { card: Pick<CardSnap, "emoji" | "emoji2">; big?: boolean }) {
   return (
     <span aria-hidden="true" className={cn("flex items-center justify-center leading-none", card.emoji2 ? (big ? "gap-1 text-[44px]" : "gap-0.5 text-[22px]") : big ? "text-[76px]" : "text-4xl")}>
-      {card.emoji}
-      {card.emoji2}
+      <Glyph emoji={card.emoji} size="1em" />
+      {card.emoji2 && <Glyph emoji={card.emoji2} size="1em" />}
     </span>
   );
 }
