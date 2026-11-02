@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "_note": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "questions": {
+      "minItems": 3,
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9-]+$"
+              },
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "explain": {
+                "type": "string",
+                "minLength": 1
+              },
+              "draft": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "const": "choice"
+              },
+              "options": {
+                "minItems": 4,
+                "maxItems": 4,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "correct": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3
+              }
+            },
+            "required": [
+              "id",
+              "level",
+              "text",
+              "options",
+              "correct"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9-]+$"
+              },
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "explain": {
+                "type": "string",
+                "minLength": 1
+              },
+              "draft": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "const": "input"
+              },
+              "answers": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "time": {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 180
+              }
+            },
+            "required": [
+              "id",
+              "level",
+              "text",
+              "type",
+              "answers",
+              "time"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "questions"
+  ],
+  "additionalProperties": false
+}

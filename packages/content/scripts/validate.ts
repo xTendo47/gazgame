@@ -26,7 +26,10 @@ if (catalog.quiz) {
     console.log(`🎤 $HOW: категорий — ${cats.length}, вопросов — ${cats.reduce((n, c) => n + c.questions.length, 0)}`);
   }
 if (catalog.quiz) {
-    for (const w of quizBankWarnings(catalog.quiz)) console.warn(w);
+    for (const w of quizBankWarnings(catalog.quiz, catalog.quizArtists)) console.warn(w);
+  }
+if (catalog.quizArtists) {
+    console.log(`🎤 Артистов в квизе: ${catalog.quizArtists.length}`);
   }
 if (catalog.today) {
     const t = catalog.today;

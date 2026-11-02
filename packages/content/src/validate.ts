@@ -12,6 +12,8 @@ import {
   gazFileSchema,
   todayFileSchema,
   quizFileSchema,
+  quizArtistSchema,
+  type QuizArtist,
   type QuizFile,
   sectionsFileSchema,
   type CardGamesFile,
@@ -85,6 +87,8 @@ export interface ContentReport {
   sectionLayouts?: SectionsFile;
   /** Квиз $HOW. */
   quiz?: QuizFile[];
+  /** Артисты квиза. */
+  quizArtists?: QuizArtist[];
 }
 
 /** Необязательные файлы помимо тестов и игр. */
@@ -99,6 +103,8 @@ export interface ExtraContentFiles {
   sectionLayouts?: RawDataFile;
   /** Файлы data/quiz/*.json. */
   quiz?: RawDataFile[];
+  /** Файлы data/quiz/artists/*.json. */
+  quizArtists?: RawDataFile[];
 }
 
 export class ContentError extends Error {
@@ -189,7 +195,8 @@ export function inspectContent(files: RawContentFile[], extras: ExtraContentFile
   if (today && !gaz) problems.push(`❌ ${extras.today?.path}: задание дня берётся из gaz.json, а такого файла нет`);
   const sectionLayouts = inspectDataFile(extras.sectionLayouts, sectionsFileSchema, problems);
   const quiz = inspectQuiz(extras.quiz, problems);
-  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, today, sectionLayouts, ...(quiz.length > 0 ? { quiz } : {}) };
+  const quizArtists = inspectQuizArtists(extras.quizArtists, quiz, problems);
+  return { files: reports, problems, lockedTests, cardGames, premium, premiumCodes: codes?.hashes, ultimate, gaz, today, sectionLayouts, ...(quiz.length > 0 ? { quiz } : {}), ...(quizArtists.length > 0 ? { quizArtists } : {}) };
 }
 
 /** Проверяет файлы data/quiz/*.json: схема, уникальные id, супер-квиз ссылается на существующие категории. */
@@ -212,12 +219,40 @@ function inspectQuiz(files: RawDataFile[] | undefined, problems: string[]): Quiz
   return result;
 }
 
+/** Проверяет файлы data/quiz/artists/*.json: схема, уникальные slug, id вопросов не повторяются ни между артистами, ни с категориями (по id помнят показанное). */
+function inspectQuizArtists(files: RawDataFile[] | undefined, quiz: readonly QuizFile[], problems: string[]): QuizArtist[] {
+  const result: QuizArtist[] = [];
+  for (const file of files ?? []) {
+    const item = inspectDataFile(file, quizArtistSchema, problems);
+    if (item) result.push(item);
+  }
+  const slugs = new Set<string>();
+  const ids = new Set<string>(quiz.flatMap((f) => (f.kind === "category" ? f.questions.map((q) => q.id) : [])));
+  for (const artist of result) {
+    if (slugs.has(artist.slug)) problems.push(`❌ data/quiz/artists: slug "${artist.slug}" повторяется`);
+    slugs.add(artist.slug);
+    for (const q of artist.questions) {
+      if (ids.has(q.id)) problems.push(`❌ data/quiz/artists/${artist.slug}.json: id вопроса "${q.id}" уже есть в другом банке`);
+      ids.add(q.id);
+    }
+  }
+  return result;
+}
+
 /** Сколько настоящих (не draft) вопросов должно быть в каждом уровне каждой категории квиза. */
 export const QUIZ_BANK_MIN = 30;
+/** Сколько вопросов каждого уровня берётся в раунде про артиста. */
+export const QUIZ_ARTIST_PER_LEVEL = 5;
 
 /** Предупреждения (не ошибки): в уровне категории меньше 30 вопросов без draft — банк мал, вопросы будут повторяться. */
-export function quizBankWarnings(quiz: readonly QuizFile[] | undefined): string[] {
+export function quizBankWarnings(quiz: readonly QuizFile[] | undefined, artists: readonly QuizArtist[] = []): string[] {
   const warnings: string[] = [];
+  for (const artist of artists) {
+    for (const level of [1, 2, 3]) {
+      const real = artist.questions.filter((q) => q.level === level && q.draft !== true).length;
+      if (real < QUIZ_ARTIST_PER_LEVEL) warnings.push(`⚠️ артист «${artist.name}», уровень ${level}: вопросов без draft ${real} из ${QUIZ_ARTIST_PER_LEVEL}`);
+    }
+  }
   for (const file of quiz ?? []) {
     if (file.kind !== "category") continue;
     for (const level of [1, 2, 3]) {
@@ -271,7 +306,7 @@ function inspectLockedTests(file: RawDataFile | undefined, items: ContentItem[],
 }
 
 export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles = {}): Catalog {
-  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, today, sectionLayouts, quiz } = inspectContent(files, extras);
+  const { files: reports, problems, lockedTests, cardGames, premium, premiumCodes, ultimate, gaz, today, sectionLayouts, quiz, quizArtists } = inspectContent(files, extras);
   if (problems.length > 0) throw new ContentError(problems);
   const catalog: Catalog = {
     tests: [],
@@ -285,6 +320,7 @@ export function buildCatalog(files: RawContentFile[], extras: ExtraContentFiles 
     ...(today ? { today } : {}),
     ...(sectionLayouts ? { sectionLayouts } : {}),
     ...(quiz ? { quiz } : {}),
+    ...(quizArtists ? { quizArtists } : {}),
   };
   for (const { item } of reports) {
     if (item?.kind === "test") catalog.tests.push(item);

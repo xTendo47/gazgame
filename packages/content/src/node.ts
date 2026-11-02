@@ -95,6 +95,7 @@ function readExtraFiles(dir: string): ExtraContentFiles {
     today: readDataFile(dir, "today.json"),
     sectionLayouts: readDataFile(dir, "sections.json"),
     quiz: readDataDir(dir, "quiz"),
+    quizArtists: readDataDir(dir, "quiz/artists"),
   };
 }
 

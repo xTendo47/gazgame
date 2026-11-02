@@ -617,9 +617,9 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
   const read = (name: string) => JSON.parse(readFileSync(new URL(`../data/quiz/${name}.json`, import.meta.url), "utf-8")) as Record<string, unknown>;
   const build = (...files: Record<string, unknown>[]) => buildCatalog([], { quiz: files.map((data, i) => ({ path: `quiz/${i}.json`, data })) });
 
-  it("настоящие файлы проходят проверку: четыре категории, супер-квиз и суд", () => {
+  it("настоящие файлы проходят проверку: категории, супер-квиз, суд и звания артистов", () => {
     const quiz = loadCatalog().quiz ?? [];
-    expect(quiz.map((q) => q.id).sort()).toEqual(["court", "general", "kino", "rap-ru", "riddle", "super", "swag"]);
+    expect(quiz.map((q) => q.id).sort()).toEqual(["artist-ranks", "court", "general", "kino", "rap-ru", "riddle", "super", "swag"]);
   });
 
   it("Кино, Общее, Загадки и Swag — настоящие банки (по 30 вопросов на уровень, без draft), Русский хип-хоп пока демо (3, draft)", () => {

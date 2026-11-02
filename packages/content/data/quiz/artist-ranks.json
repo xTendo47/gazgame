@@ -1,0 +1,40 @@
+{
+  "$schema": "../schema/quiz.schema.json",
+  "_note": "Звания по проценту верных ответов — заглушки (draft). Настоящие тексты пришлёт основатель вместе с вопросами.",
+  "id": "artist-ranks",
+  "kind": "artist-ranks",
+  "title": "Звания знатока",
+  "draft": true,
+  "ranks": [
+    {
+      "minPercent": 0,
+      "title": "[черновик] Звание 1",
+      "text": "[черновик] Текст звания",
+      "draft": true
+    },
+    {
+      "minPercent": 25,
+      "title": "[черновик] Звание 2",
+      "text": "[черновик] Текст звания",
+      "draft": true
+    },
+    {
+      "minPercent": 50,
+      "title": "[черновик] Звание 3",
+      "text": "[черновик] Текст звания",
+      "draft": true
+    },
+    {
+      "minPercent": 75,
+      "title": "[черновик] Звание 4",
+      "text": "[черновик] Текст звания",
+      "draft": true
+    },
+    {
+      "minPercent": 100,
+      "title": "[черновик] Звание 5",
+      "text": "[черновик] Текст звания",
+      "draft": true
+    }
+  ]
+}

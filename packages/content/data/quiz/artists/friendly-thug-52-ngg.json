@@ -1,0 +1,54 @@
+{
+  "$schema": "../../schema/quiz-artist.schema.json",
+  "_note": "Заглушки (draft): по одному вопросу на уровень. Настоящие вопросы пришлёт основатель: по 5+ на каждый уровень (в раунде 5 лёгких, 5 средних, 5 сложных), поддерживаются choice и input.",
+  "name": "Friendly Thug 52 NGG",
+  "slug": "friendly-thug-52-ngg",
+  "draft": true,
+  "questions": [
+    {
+      "id": "friendly-thug-52-ngg-1-1",
+      "level": 1,
+      "type": "choice",
+      "text": "[черновик] Вопрос уровня 1 про артиста Friendly Thug 52 NGG",
+      "options": [
+        "Вариант А",
+        "Вариант Б",
+        "Вариант В",
+        "Вариант Г"
+      ],
+      "correct": 0,
+      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
+      "draft": true
+    },
+    {
+      "id": "friendly-thug-52-ngg-2-1",
+      "level": 2,
+      "type": "choice",
+      "text": "[черновик] Вопрос уровня 2 про артиста Friendly Thug 52 NGG",
+      "options": [
+        "Вариант А",
+        "Вариант Б",
+        "Вариант В",
+        "Вариант Г"
+      ],
+      "correct": 0,
+      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
+      "draft": true
+    },
+    {
+      "id": "friendly-thug-52-ngg-3-1",
+      "level": 3,
+      "type": "choice",
+      "text": "[черновик] Вопрос уровня 3 про артиста Friendly Thug 52 NGG",
+      "options": [
+        "Вариант А",
+        "Вариант Б",
+        "Вариант В",
+        "Вариант Г"
+      ],
+      "correct": 0,
+      "explain": "[черновик] Пояснение добавим вместе с настоящими вопросами",
+      "draft": true
+    }
+  ]
+}

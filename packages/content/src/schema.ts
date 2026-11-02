@@ -1816,28 +1816,31 @@ const quizHead = {
   draft: z.boolean().optional(),
 };
 
-/** Категория: Кино, Музыка, Общее, Загадки. */
+/** Общая проверка банка вопросов (категория и артист): id не повторяются, есть все три уровня, у ввода нет пустых ответов, варианты не повторяются. */
+function refineQuizQuestions(questions: z.infer<typeof quizQuestionSchema>[], ctx: z.RefinementCtx) {
+  const ids = new Set<string>();
+  questions.forEach((q, i) => {
+    if (ids.has(q.id)) ctx.addIssue({ code: "custom", path: ["questions", i, "id"], message: `вопрос "${q.id}" повторяется` });
+    ids.add(q.id);
+    if (q.type === "input") {
+      if (q.answers.some((a) => a.trim() === "")) ctx.addIssue({ code: "custom", path: ["questions", i, "answers"], message: "в answers есть пустой ответ" });
+    } else if (new Set(q.options.map((o) => o.trim().toLowerCase())).size !== q.options.length) {
+      ctx.addIssue({ code: "custom", path: ["questions", i, "options"], message: "варианты ответа повторяются" });
+    }
+  });
+  for (const level of [1, 2, 3]) {
+    if (!questions.some((q) => q.level === level)) ctx.addIssue({ code: "custom", path: ["questions"], message: `нет вопроса уровня ${level}` });
+  }
+}
+
+/** Категория: Кино, Русский хип-хоп, Общее, Западный swag, Загадки. */
 export const quizCategorySchema = z
   .strictObject({
     ...quizHead,
     kind: z.literal("category"),
     questions: z.array(quizQuestionSchema).min(3),
   })
-  .superRefine((file, ctx) => {
-    const ids = new Set<string>();
-    file.questions.forEach((q, i) => {
-      if (ids.has(q.id)) ctx.addIssue({ code: "custom", path: ["questions", i, "id"], message: `вопрос "${q.id}" повторяется` });
-      ids.add(q.id);
-      if (q.type === "input") {
-        if (q.answers.some((a) => a.trim() === "")) ctx.addIssue({ code: "custom", path: ["questions", i, "answers"], message: "в answers есть пустой ответ" });
-      } else if (new Set(q.options.map((o) => o.trim().toLowerCase())).size !== q.options.length) {
-        ctx.addIssue({ code: "custom", path: ["questions", i, "options"], message: "варианты ответа повторяются" });
-      }
-    });
-    for (const level of [1, 2, 3]) {
-      if (!file.questions.some((q) => q.level === level)) ctx.addIssue({ code: "custom", path: ["questions"], message: `нет вопроса уровня ${level}` });
-    }
-  });
+  .superRefine((file, ctx) => refineQuizQuestions(file.questions, ctx));
 
 /** Супер-квиз: вопросы берутся из категорий from, лестница сумм, несгораемые ступени. */
 export const quizSuperSchema = z
@@ -1879,7 +1882,45 @@ export const quizCourtSchema = z.strictObject({
     .min(1),
 });
 
-export const quizFileSchema = z.discriminatedUnion("kind", [quizCategorySchema, quizSuperSchema, quizCourtSchema]);
+/** Звания по проценту верных ответов в режиме «Насколько хорошо ты знаешь исполнителя?» (data/quiz/artist-ranks.json). Звание — с наибольшим minPercent, который не больше процента игрока. */
+export const quizRanksSchema = z
+  .strictObject({
+    $schema: z.string().optional(),
+    _note: z.string().optional(),
+    id: quizId,
+    kind: z.literal("artist-ranks"),
+    title: text,
+    draft: z.boolean().optional(),
+    ranks: z
+      .array(
+        z.strictObject({
+          /** С какого процента верных ответов (0–100) даётся это звание. */
+          minPercent: z.number().min(0).max(100),
+          title: text,
+          text: text.optional(),
+          /** Заглушка: настоящие тексты пришлёт основатель. */
+          draft: z.boolean().optional(),
+        }),
+      )
+      .min(1),
+  })
+  .superRefine((file, ctx) => {
+    if (!file.ranks.some((r) => r.minPercent === 0)) ctx.addIssue({ code: "custom", path: ["ranks"], message: "нужно звание с minPercent: 0" });
+  });
+
+/** Артист для режима «Насколько хорошо ты знаешь исполнителя?»: data/quiz/artists/<slug>.json. В раунде 15 вопросов про него: 5 лёгких, 5 средних, 5 сложных. */
+export const quizArtistSchema = z
+  .strictObject({
+    $schema: z.string().optional(),
+    _note: z.string().optional(),
+    name: text,
+    slug: quizId,
+    draft: z.boolean().optional(),
+    questions: z.array(quizQuestionSchema).min(3),
+  })
+  .superRefine((file, ctx) => refineQuizQuestions(file.questions, ctx));
+
+export const quizFileSchema = z.discriminatedUnion("kind", [quizCategorySchema, quizSuperSchema, quizCourtSchema, quizRanksSchema]);
 
 export type QuizChoiceQuestion = z.infer<typeof quizChoiceSchema>;
 export type QuizInputQuestion = z.infer<typeof quizInputSchema>;
@@ -1888,6 +1929,8 @@ export type QuizCategory = z.infer<typeof quizCategorySchema>;
 export type QuizSuper = z.infer<typeof quizSuperSchema>;
 export type QuizCourt = z.infer<typeof quizCourtSchema>;
 export type QuizFile = z.infer<typeof quizFileSchema>;
+export type QuizRanks = z.infer<typeof quizRanksSchema>;
+export type QuizArtist = z.infer<typeof quizArtistSchema>;
 export type UltimateFile = z.infer<typeof ultimateFileSchema>;
 export type GazFile = z.infer<typeof gazFileSchema>;
 export type TodayFile = z.infer<typeof todayFileSchema>;
@@ -1925,4 +1968,6 @@ export interface Catalog {
   sectionLayouts?: SectionsFile;
   /** Квиз $HOW: категории, супер-квиз, суд (data/quiz/*.json). */
   quiz?: QuizFile[];
+  /** Артисты режима «Насколько хорошо ты знаешь исполнителя?» (data/quiz/artists/*.json). */
+  quizArtists?: QuizArtist[];
 }

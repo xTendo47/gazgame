@@ -10,6 +10,7 @@ export {
   inspectContent,
   quizBankWarnings,
   QUIZ_BANK_MIN,
+  QUIZ_ARTIST_PER_LEVEL,
   type ContentIssue,
   type ContentReport,
   type FileReport,
