@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { quizBankWarnings, quizFileSchema, type QuizCategory, type QuizChoiceQuestion, type QuizCourt, type QuizQuestion, type QuizSuper } from "@gazgame/content";
 import kinoJson from "@gazgame/content/data/quiz/kino.json";
-import rapJson from "@gazgame/content/data/quiz/rap-ru.json";
+import ruhiphopJson from "@gazgame/content/data/quiz/ruhiphop.json";
 import swagJson from "@gazgame/content/data/quiz/swag.json";
 import generalJson from "@gazgame/content/data/quiz/general.json";
 import riddleJson from "@gazgame/content/data/quiz/riddle.json";
@@ -32,18 +32,17 @@ import {
 /** Номер верного варианта у вопроса с вариантами (у вопроса с вводом его нет). */
 const right = (q: QuizQuestion): number => (q.type === "input" ? -1 : q.correct);
 
-const quiz = [kinoJson, rapJson, swagJson, generalJson, riddleJson, superJson, courtJson].map((j) => quizFileSchema.parse(j));
+const quiz = [kinoJson, ruhiphopJson, swagJson, generalJson, riddleJson, superJson, courtJson].map((j) => quizFileSchema.parse(j));
 const categories = quiz.filter((q): q is QuizCategory => q.kind === "category");
 const kino = categories.find((c) => c.id === "kino") as QuizCategory;
 
 describe("квиз $HOW: данные", () => {
-  it("в каждой категории есть вопросы всех трёх уровней; Кино, Общее, Загадки и Swag — настоящие банки по 90, Русский хип-хоп — демо с draft", () => {
-    expect(categories.map((c) => c.id).sort()).toEqual(["general", "kino", "rap-ru", "riddle", "swag"]);
+  it("в каждой категории есть вопросы всех трёх уровней; все пять категорий — настоящие банки по 90, без draft", () => {
+    expect(categories.map((c) => c.id).sort()).toEqual(["general", "kino", "riddle", "ruhiphop", "swag"]);
     for (const c of categories) {
       expect([...new Set(c.questions.map((q) => q.level))].sort()).toEqual([1, 2, 3]);
-      const real = c.id !== "rap-ru";
-      expect(c.questions).toHaveLength(real ? 90 : 3);
-      expect(c.questions.every((q) => (q.draft === true) === !real)).toBe(true);
+      expect(c.questions).toHaveLength(90);
+      expect(c.questions.some((q) => q.draft === true)).toBe(false);
     }
   });
 });

@@ -26,7 +26,7 @@ import {
 } from "./show-art";
 import "./show.css";
 
-const ART: Record<string, string> = { kino: SHOW_CAT_KINO, "rap-ru": SHOW_CAT_MUSIC, swag: SHOW_CAT_MUSIC, artist: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, court: SHOW_CAT_COURT, super: SHOW_CAT_SUPER };
+const ART: Record<string, string> = { kino: SHOW_CAT_KINO, "ruhiphop": SHOW_CAT_MUSIC, swag: SHOW_CAT_MUSIC, artist: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, court: SHOW_CAT_COURT, super: SHOW_CAT_SUPER };
 
 export const MODES: { id: QuizMode; label: string; admit: string; no: string }[] = [
   { id: "solo", label: "Соло", admit: "ADMIT ONE", no: "№ 001" },
@@ -91,7 +91,7 @@ export function ShowHub({
   onArtists?: () => void;
 }) {
   // порядок карточек как в эталоне: Кино, Русский хип-хоп, Общее, Западный swag (Загадки — отдельной широкой карточкой)
-  const ORDER = ["kino", "rap-ru", "general", "swag"];
+  const ORDER = ["kino", "ruhiphop", "general", "swag"];
   const main = ORDER.flatMap((id) => categories.filter((c) => c.id === id));
   const riddle = categories.find((c) => c.id === "riddle");
   const answered = dailyAnswered(show, now);

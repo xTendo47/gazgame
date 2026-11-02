@@ -62,7 +62,7 @@ describe("квиз $HOW: раунд про артиста", () => {
 
   it("«Вопрос дня» не берёт заглушки, пока есть настоящие вопросы", () => {
     const real = bank("kino", 3);
-    const stub = bank("rap-ru", 3, true);
+    const stub = bank("ruhiphop", 3, true);
     for (let day = 0; day < 20; day++) {
       const q = dailyQuestion([real, stub], new Date(Date.UTC(2026, 9, 13 + day, 9)));
       expect(q?.draft).not.toBe(true);

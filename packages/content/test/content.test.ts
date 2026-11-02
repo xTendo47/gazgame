@@ -619,19 +619,15 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
 
   it("настоящие файлы проходят проверку: категории, супер-квиз, суд и звания артистов", () => {
     const quiz = loadCatalog().quiz ?? [];
-    expect(quiz.map((q) => q.id).sort()).toEqual(["artist-ranks", "court", "general", "kino", "rap-ru", "riddle", "super", "swag"]);
+    expect(quiz.map((q) => q.id).sort()).toEqual(["artist-ranks", "court", "general", "kino", "riddle", "ruhiphop", "super", "swag"]);
   });
 
-  it("Кино, Общее, Загадки и Swag — настоящие банки (по 30 вопросов на уровень, без draft), Русский хип-хоп пока демо (3, draft)", () => {
-    for (const q of loadCatalog().quiz ?? []) {
-      if (q.kind !== "category") continue;
-      if (q.id !== "rap-ru") {
-        expect(q.questions).toHaveLength(90);
-        for (const level of [1, 2, 3]) expect(q.questions.filter((x) => x.level === level && x.draft !== true)).toHaveLength(30);
-      } else {
-        expect(q.questions).toHaveLength(3);
-        expect(q.questions.every((x) => x.draft === true)).toBe(true);
-      }
+  it("все пять категорий — настоящие банки: по 90 вопросов, на каждом уровне 30 без draft", () => {
+    const categories = (loadCatalog().quiz ?? []).filter((q) => q.kind === "category");
+    expect(categories.map((c) => c.id).sort()).toEqual(["general", "kino", "riddle", "ruhiphop", "swag"]);
+    for (const q of categories) {
+      expect(q.questions).toHaveLength(90);
+      for (const level of [1, 2, 3]) expect(q.questions.filter((x) => x.level === level && x.draft !== true)).toHaveLength(30);
     }
   });
 
@@ -655,10 +651,7 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
 });
 
 describe("Квиз $HOW: предупреждение о малом банке", () => {
-  it("предупреждения только по категории без настоящего банка (Русский хип-хоп)", () => {
-    const warnings = quizBankWarnings(loadCatalog().quiz);
-    expect(warnings.length).toBe(3);
-    expect(warnings.some((w) => /Кино|Общее|Загадки/.test(w))).toBe(false);
-    expect(warnings.every((w) => /Русский хип-хоп/.test(w))).toBe(true);
+  it("по категориям предупреждений нет: в каждом уровне каждой категории не меньше 30 вопросов без draft", () => {
+    expect(quizBankWarnings(loadCatalog().quiz)).toEqual([]);
   });
 });

@@ -1,0 +1,1356 @@
+{
+ "category": "ruhiphop",
+ "title": "Русский хип-хоп",
+ "questions": [
+  {
+   "id": "h1-01",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какой страны Скриптонит?",
+   "options": [
+    "Беларусь",
+    "Казахстан",
+    "Украина",
+    "Узбекистан"
+   ],
+   "correct": 1,
+   "explain": "Он из Павлодара.",
+   "draft": false
+  },
+  {
+   "id": "h1-02",
+   "level": 1,
+   "type": "choice",
+   "text": "Как настоящее имя Басты?",
+   "options": [
+    "Василий Вакуленко",
+    "Тимур Юнусов",
+    "Мирон Фёдоров",
+    "Олег Савченко"
+   ],
+   "correct": 0,
+   "explain": "Тимур Юнусов — Тимати, Мирон Фёдоров — Оксимирон, Олег Савченко — ЛСП.",
+   "draft": false
+  },
+  {
+   "id": "h1-03",
+   "level": 1,
+   "type": "choice",
+   "text": "Под каким вторым псевдонимом выступает Баста?",
+   "options": [
+    "Гуф",
+    "Птаха",
+    "Смоки Мо",
+    "Ноггано"
+   ],
+   "correct": 3,
+   "explain": "Ноггано — его более жёсткий и смешной альтер-эго.",
+   "draft": false
+  },
+  {
+   "id": "h1-04",
+   "level": 1,
+   "type": "choice",
+   "text": "В каком телешоу Баста был наставником?",
+   "options": [
+    "«Песни»",
+    "«Фактор А»",
+    "«Голос»",
+    "«Звезда»"
+   ],
+   "correct": 2,
+   "explain": "Он сидел в кресле наставника несколько сезонов.",
+   "draft": false
+  },
+  {
+   "id": "h1-05",
+   "level": 1,
+   "type": "choice",
+   "text": "Как называется лейбл Басты?",
+   "options": [
+    "Black Star",
+    "Газгольдер",
+    "Melon Music",
+    "Musica36"
+   ],
+   "correct": 1,
+   "explain": "В честь него назвали и фильм с Бастой.",
+   "draft": false
+  },
+  {
+   "id": "h1-06",
+   "level": 1,
+   "type": "choice",
+   "text": "В какой стране долго жил Кизару?",
+   "options": [
+    "Испания",
+    "Германия",
+    "США",
+    "Таиланд"
+   ],
+   "correct": 0,
+   "explain": "В Барселоне.",
+   "draft": false
+  },
+  {
+   "id": "h1-07",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какой страны ЛСП?",
+   "options": [
+    "Казахстан",
+    "Латвия",
+    "Россия",
+    "Беларусь"
+   ],
+   "correct": 3,
+   "explain": "Он из Минска.",
+   "draft": false
+  },
+  {
+   "id": "h1-08",
+   "level": 1,
+   "type": "choice",
+   "text": "Чей лейбл Black Star?",
+   "options": [
+    "Басты",
+    "Гуфа",
+    "Тимати",
+    "Моргенштерна"
+   ],
+   "correct": 2,
+   "explain": "Через него прошли Егор Крид и Мот.",
+   "draft": false
+  },
+  {
+   "id": "h1-09",
+   "level": 1,
+   "type": "choice",
+   "text": "Чей хит «I Got Love»?",
+   "options": [
+    "Скриптонит",
+    "Мияги и Эндшпиль",
+    "Макс Корж",
+    "Каста"
+   ],
+   "correct": 1,
+   "explain": "Трек 2016 года, который знают все.",
+   "draft": false
+  },
+  {
+   "id": "h1-10",
+   "level": 1,
+   "type": "choice",
+   "text": "Чей трек «Бургер»?",
+   "options": [
+    "Face",
+    "Pharaoh",
+    "Элджей",
+    "Моргенштерн"
+   ],
+   "correct": 0,
+   "explain": "2017 год, мем на всю страну.",
+   "draft": false
+  },
+  {
+   "id": "h1-11",
+   "level": 1,
+   "type": "choice",
+   "text": "С кем Big Baby Tape выпустил совместный альбом «Bandana I»?",
+   "options": [
+    "С Моргенштерном",
+    "С Pharaoh",
+    "С OG Buda",
+    "С Кизару"
+   ],
+   "correct": 3,
+   "explain": "Альбом вышел в 2021 году.",
+   "draft": false
+  },
+  {
+   "id": "h1-12",
+   "level": 1,
+   "type": "choice",
+   "text": "На какой площадке прошёл баттл Оксимирона и Гнойного в 2017 году?",
+   "options": [
+    "«Рэп-ночь»",
+    "«Битва за респект»",
+    "Versus",
+    "Hip-Hop.ru"
+   ],
+   "correct": 2,
+   "explain": "Видео за сутки посмотрели больше 10 миллионов раз.",
+   "draft": false
+  },
+  {
+   "id": "h1-13",
+   "level": 1,
+   "type": "choice",
+   "text": "Кто победил в баттле Оксимирон против Гнойного?",
+   "options": [
+    "Оксимирон",
+    "Гнойный",
+    "Ничья",
+    "Баттл не закончили"
+   ],
+   "correct": 1,
+   "explain": "Судьи отдали победу Гнойному.",
+   "draft": false
+  },
+  {
+   "id": "h1-14",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какого города группа «Каста»?",
+   "options": [
+    "Ростов-на-Дону",
+    "Москва",
+    "Санкт-Петербург",
+    "Краснодар"
+   ],
+   "correct": 0,
+   "explain": "Как и Баста.",
+   "draft": false
+  },
+  {
+   "id": "h1-15",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какого города Мияги и Эндшпиль?",
+   "options": [
+    "Махачкала",
+    "Грозный",
+    "Нальчик",
+    "Владикавказ"
+   ],
+   "correct": 3,
+   "explain": "Северная Осетия.",
+   "draft": false
+  },
+  {
+   "id": "h1-16",
+   "level": 1,
+   "type": "choice",
+   "text": "Кто записал «Розовое вино» вместе с Элджеем?",
+   "options": [
+    "Скриптонит",
+    "Face",
+    "Feduk",
+    "Платина"
+   ],
+   "correct": 2,
+   "explain": "Один из главных хитов 2017 года.",
+   "draft": false
+  },
+  {
+   "id": "h1-17",
+   "level": 1,
+   "type": "choice",
+   "text": "Как настоящее имя Моргенштерна?",
+   "options": [
+    "Тимур",
+    "Алишер",
+    "Адиль",
+    "Азамат"
+   ],
+   "correct": 1,
+   "explain": "Алишер Моргенштерн.",
+   "draft": false
+  },
+  {
+   "id": "h1-18",
+   "level": 1,
+   "type": "choice",
+   "text": "В каком объединении начинал Pharaoh?",
+   "options": [
+    "Dead Dynasty",
+    "Melon Music",
+    "Black Star",
+    "Газгольдер"
+   ],
+   "correct": 0,
+   "explain": "Он сам его и основал.",
+   "draft": false
+  },
+  {
+   "id": "h1-19",
+   "level": 1,
+   "type": "choice",
+   "text": "Как настоящее имя Скриптонита?",
+   "options": [
+    "Азамат Кудзаев",
+    "Глеб Голубин",
+    "Иван Дрёмин",
+    "Адиль Жалелов"
+   ],
+   "correct": 3,
+   "explain": "Азамат Кудзаев — Мияги, Глеб Голубин — Pharaoh, Иван Дрёмин — Face.",
+   "draft": false
+  },
+  {
+   "id": "h1-20",
+   "level": 1,
+   "type": "choice",
+   "text": "С каким треком Big Baby Tape ворвался в чарты в 2018 году?",
+   "options": [
+    "«Бургер»",
+    "«Розовое вино»",
+    "«Gimme the Loot»",
+    "«Монетка»"
+   ],
+   "correct": 2,
+   "explain": "Трек с альбома «Dragonborn».",
+   "draft": false
+  },
+  {
+   "id": "h1-21",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какой страны Макс Корж?",
+   "options": [
+    "Украина",
+    "Беларусь",
+    "Россия",
+    "Казахстан"
+   ],
+   "correct": 1,
+   "explain": "Он из Мозыря.",
+   "draft": false
+  },
+  {
+   "id": "h1-22",
+   "level": 1,
+   "type": "choice",
+   "text": "В каком объединении OG Buda?",
+   "options": [
+    "Melon Music",
+    "Dead Dynasty",
+    "Black Star",
+    "Газгольдер"
+   ],
+   "correct": 0,
+   "explain": "Вместе с Платиной и Mayot.",
+   "draft": false
+  },
+  {
+   "id": "h1-23",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какого города Friendly Thug 52 NGG?",
+   "options": [
+    "Нижний Новгород",
+    "Москва",
+    "Казань",
+    "Санкт-Петербург"
+   ],
+   "correct": 3,
+   "explain": "Хотя «52» и наводит на мысли о Нижнем — это код региона, но не его.",
+   "draft": false
+  },
+  {
+   "id": "h1-24",
+   "level": 1,
+   "type": "choice",
+   "text": "В какой группе начинал Гуф?",
+   "options": [
+    "«Каста»",
+    "«Многоточие»",
+    "Centr",
+    "Jillzay"
+   ],
+   "correct": 2,
+   "explain": "Группа из Москвы 2000-х.",
+   "draft": false
+  },
+  {
+   "id": "h1-25",
+   "level": 1,
+   "type": "choice",
+   "text": "Кто из этих артистов — девушка?",
+   "options": [
+    "Кизару",
+    "Instasamka",
+    "Saluki",
+    "Madk1d"
+   ],
+   "correct": 1,
+   "explain": "Её хиты гремели на всех вечеринках.",
+   "draft": false
+  },
+  {
+   "id": "h1-26",
+   "level": 1,
+   "type": "choice",
+   "text": "Как называется самый известный трек Басты про круг перерождений?",
+   "options": [
+    "«Сансара»",
+    "«Моя игра»",
+    "«Выпускной»",
+    "«Мама»"
+   ],
+   "correct": 0,
+   "explain": "Слово из индийской философии.",
+   "draft": false
+  },
+  {
+   "id": "h1-27",
+   "level": 1,
+   "type": "choice",
+   "text": "Чей хит «Монетка»?",
+   "options": [
+    "Макс Корж",
+    "Feduk",
+    "Элджей",
+    "ЛСП"
+   ],
+   "correct": 3,
+   "explain": "Трек 2017 года.",
+   "draft": false
+  },
+  {
+   "id": "h1-28",
+   "level": 1,
+   "type": "choice",
+   "text": "Чей альбом «Горгород»?",
+   "options": [
+    "Скриптонит",
+    "Баста",
+    "Оксимирон",
+    "ЛСП"
+   ],
+   "correct": 2,
+   "explain": "Концептуальный альбом-история о вымышленном городе.",
+   "draft": false
+  },
+  {
+   "id": "h1-29",
+   "level": 1,
+   "type": "choice",
+   "text": "Чей трек «Хлопья летят наверх»?",
+   "options": [
+    "Элджей",
+    "Feduk",
+    "Макс Корж",
+    "Face"
+   ],
+   "correct": 1,
+   "explain": "Тот самый зимний хит 2017 года.",
+   "draft": false
+  },
+  {
+   "id": "h1-30",
+   "level": 1,
+   "type": "choice",
+   "text": "Из какого города Big Baby Tape?",
+   "options": [
+    "Москва",
+    "Санкт-Петербург",
+    "Ростов-на-Дону",
+    "Екатеринбург"
+   ],
+   "correct": 0,
+   "explain": "Отсюда и вся его московская эстетика.",
+   "draft": false
+  },
+  {
+   "id": "h2-01",
+   "level": 2,
+   "type": "choice",
+   "text": "Как называется лейбл Скриптонита?",
+   "options": [
+    "Газгольдер",
+    "Haunted Family",
+    "Melon Music",
+    "Musica36"
+   ],
+   "correct": 3,
+   "explain": "36 — отсылка к его району в Павлодаре.",
+   "draft": false
+  },
+  {
+   "id": "h2-02",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Кизару?",
+   "options": [
+    "Олег Савченко",
+    "Егор Ракитин",
+    "Олег Нечипоренко",
+    "Мирон Фёдоров"
+   ],
+   "correct": 2,
+   "explain": "Олег Савченко — это ЛСП.",
+   "draft": false
+  },
+  {
+   "id": "h2-03",
+   "level": 2,
+   "type": "choice",
+   "text": "Как называется лейбл Кизару?",
+   "options": [
+    "Dead Dynasty",
+    "Haunted Family",
+    "Black Star",
+    "Musica36"
+   ],
+   "correct": 1,
+   "explain": "Там же выходили его протеже.",
+   "draft": false
+  },
+  {
+   "id": "h2-04",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Big Baby Tape?",
+   "options": [
+    "Егор Ракитин",
+    "Глеб Голубин",
+    "Иван Дрёмин",
+    "Григорий Ляхов"
+   ],
+   "correct": 0,
+   "explain": "Григорий Ляхов — это OG Buda.",
+   "draft": false
+  },
+  {
+   "id": "h2-05",
+   "level": 2,
+   "type": "choice",
+   "text": "Как называется дебютный альбом Big Baby Tape?",
+   "options": [
+    "«Bandana I»",
+    "«Arcade»",
+    "«Hokage»",
+    "«Dragonborn»"
+   ],
+   "correct": 3,
+   "explain": "2018 год, с хитом «Gimme the Loot».",
+   "draft": false
+  },
+  {
+   "id": "h2-06",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя ЛСП?",
+   "options": [
+    "Олег Нечипоренко",
+    "Максим Корж",
+    "Олег Савченко",
+    "Василий Вакуленко"
+   ],
+   "correct": 2,
+   "explain": "Тёзка Кизару.",
+   "draft": false
+  },
+  {
+   "id": "h2-07",
+   "level": 2,
+   "type": "choice",
+   "text": "На каком альбоме ЛСП вышла «Монетка»?",
+   "options": [
+    "«Magic City»",
+    "«Tragic City»",
+    "«Свиньи»",
+    "«Холостяк»"
+   ],
+   "correct": 1,
+   "explain": "«Tragic City» — продолжение «Magic City».",
+   "draft": false
+  },
+  {
+   "id": "h2-08",
+   "level": 2,
+   "type": "choice",
+   "text": "Как называется дебютный альбом Скриптонита?",
+   "options": [
+    "«Дом с нормальными явлениями»",
+    "«Уроборос»",
+    "«2004»",
+    "«Праздник на улице 36»"
+   ],
+   "correct": 0,
+   "explain": "2015 год, вышел на Газгольдере.",
+   "draft": false
+  },
+  {
+   "id": "h2-09",
+   "level": 2,
+   "type": "choice",
+   "text": "Как называется группа Скриптонита, 104 и Truwer?",
+   "options": [
+    "Centr",
+    "Dead Dynasty",
+    "Melon Music",
+    "Jillzay"
+   ],
+   "correct": 3,
+   "explain": "Собрались ещё в Казахстане.",
+   "draft": false
+  },
+  {
+   "id": "h2-10",
+   "level": 2,
+   "type": "choice",
+   "text": "Из какого объединения вышел Saluki?",
+   "options": [
+    "Melon Music",
+    "Black Star",
+    "Dead Dynasty",
+    "Газгольдер"
+   ],
+   "correct": 2,
+   "explain": "Того самого, где был Pharaoh.",
+   "draft": false
+  },
+  {
+   "id": "h2-11",
+   "level": 2,
+   "type": "choice",
+   "text": "Из какого города Saluki?",
+   "options": [
+    "Минск",
+    "Москва",
+    "Томск",
+    "Тюмень"
+   ],
+   "correct": 1,
+   "explain": "Он родился в 1997 году.",
+   "draft": false
+  },
+  {
+   "id": "h2-12",
+   "level": 2,
+   "type": "choice",
+   "text": "Какой трек принёс Madk1d известность в TikTok?",
+   "options": [
+    "«Катюха»",
+    "«Толпы»",
+    "«Барыга»",
+    "«Цена»"
+   ],
+   "correct": 0,
+   "explain": "Записан вместе с LILCAK3.",
+   "draft": false
+  },
+  {
+   "id": "h2-13",
+   "level": 2,
+   "type": "choice",
+   "text": "Из какого города Madk1d?",
+   "options": [
+    "Тюмень",
+    "Пермь",
+    "Омск",
+    "Томск"
+   ],
+   "correct": 3,
+   "explain": "Сибирь, 2002 год рождения.",
+   "draft": false
+  },
+  {
+   "id": "h2-14",
+   "level": 2,
+   "type": "choice",
+   "text": "Из какого города OG Buda?",
+   "options": [
+    "Томск",
+    "Екатеринбург",
+    "Тюмень",
+    "Новосибирск"
+   ],
+   "correct": 2,
+   "explain": "Родился там в 1994 году.",
+   "draft": false
+  },
+  {
+   "id": "h2-15",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя OG Buda?",
+   "options": [
+    "Егор Ракитин",
+    "Григорий Ляхов",
+    "Александр Романов",
+    "Марк Серков"
+   ],
+   "correct": 1,
+   "explain": "Александр Романов — Friendly Thug 52 NGG, Марк Серков — Madk1d.",
+   "draft": false
+  },
+  {
+   "id": "h2-16",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Мияги?",
+   "options": [
+    "Азамат Кудзаев",
+    "Адиль Жалелов",
+    "Тимур Юнусов",
+    "Алишер Моргенштерн"
+   ],
+   "correct": 0,
+   "explain": "Азамат Кудзаев, Владикавказ.",
+   "draft": false
+  },
+  {
+   "id": "h2-17",
+   "level": 2,
+   "type": "choice",
+   "text": "Кто из этих рэперов в Melon Music?",
+   "options": [
+    "Pharaoh",
+    "Feduk",
+    "ЛСП",
+    "Платина"
+   ],
+   "correct": 3,
+   "explain": "Вместе с OG Buda и Mayot.",
+   "draft": false
+  },
+  {
+   "id": "h2-18",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Оксимирона?",
+   "options": [
+    "Мирон Янович",
+    "Мирон Гнойный",
+    "Мирон Фёдоров",
+    "Мирон Савченко"
+   ],
+   "correct": 2,
+   "explain": "Мирон Янович Фёдоров.",
+   "draft": false
+  },
+  {
+   "id": "h2-19",
+   "level": 2,
+   "type": "choice",
+   "text": "Под каким ещё именем известен Гнойный?",
+   "options": [
+    "Слава Мэрлоу",
+    "Слава КПСС",
+    "Чейни",
+    "Птаха"
+   ],
+   "correct": 1,
+   "explain": "Это один и тот же человек.",
+   "draft": false
+  },
+  {
+   "id": "h2-20",
+   "level": 2,
+   "type": "choice",
+   "text": "Как назывался фильм с Бастой в главной роли?",
+   "options": [
+    "«Газгольдер»",
+    "«Хардкор»",
+    "«Брат 3»",
+    "«Духless»"
+   ],
+   "correct": 0,
+   "explain": "Назван так же, как его лейбл.",
+   "draft": false
+  },
+  {
+   "id": "h2-21",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Pharaoh?",
+   "options": [
+    "Иван Дрёмин",
+    "Арсений Несатый",
+    "Егор Ракитин",
+    "Глеб Голубин"
+   ],
+   "correct": 3,
+   "explain": "Глеб Голубин, Москва.",
+   "draft": false
+  },
+  {
+   "id": "h2-22",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Face?",
+   "options": [
+    "Глеб Голубин",
+    "Алишер Моргенштерн",
+    "Иван Дрёмин",
+    "Олег Нечипоренко"
+   ],
+   "correct": 2,
+   "explain": "Иван Дрёмин из Уфы.",
+   "draft": false
+  },
+  {
+   "id": "h2-23",
+   "level": 2,
+   "type": "choice",
+   "text": "Из какого города Скриптонит?",
+   "options": [
+    "Алматы",
+    "Павлодар",
+    "Астана",
+    "Караганда"
+   ],
+   "correct": 1,
+   "explain": "Отсюда «Праздник на улице 36».",
+   "draft": false
+  },
+  {
+   "id": "h2-24",
+   "level": 2,
+   "type": "choice",
+   "text": "У какого рэпера альбом «Sexy Drill»?",
+   "options": [
+    "OG Buda",
+    "Big Baby Tape",
+    "Кизару",
+    "Платина"
+   ],
+   "correct": 0,
+   "explain": "Вышел в 2021 году.",
+   "draft": false
+  },
+  {
+   "id": "h2-25",
+   "level": 2,
+   "type": "choice",
+   "text": "Чей альбом «Властелин калек»?",
+   "options": [
+    "Pharaoh",
+    "Скриптонит",
+    "ЛСП",
+    "Saluki"
+   ],
+   "correct": 3,
+   "explain": "2019 год, его дебютный студийный альбом.",
+   "draft": false
+  },
+  {
+   "id": "h2-26",
+   "level": 2,
+   "type": "choice",
+   "text": "Чей альбом «Красота и уродство»?",
+   "options": [
+    "Скриптонит",
+    "Баста",
+    "Оксимирон",
+    "Face"
+   ],
+   "correct": 2,
+   "explain": "2021 год, после шести лет тишины.",
+   "draft": false
+  },
+  {
+   "id": "h2-27",
+   "level": 2,
+   "type": "choice",
+   "text": "С кем Friendly Thug 52 NGG записал трек «Лагерная»?",
+   "options": [
+    "С Кизару",
+    "С Saluki",
+    "С Big Baby Tape",
+    "С OG Buda"
+   ],
+   "correct": 1,
+   "explain": "Вышел в 2024 году.",
+   "draft": false
+  },
+  {
+   "id": "h2-28",
+   "level": 2,
+   "type": "choice",
+   "text": "Чей альбом «Born to Trap»?",
+   "options": [
+    "Кизару",
+    "Big Baby Tape",
+    "Pharaoh",
+    "Моргенштерн"
+   ],
+   "correct": 0,
+   "explain": "2019 год.",
+   "draft": false
+  },
+  {
+   "id": "h2-29",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Тимати?",
+   "options": [
+    "Тимур Родригез",
+    "Тимур Кудзаев",
+    "Тимур Савченко",
+    "Тимур Юнусов"
+   ],
+   "correct": 3,
+   "explain": "Тимур Ильдарович Юнусов.",
+   "draft": false
+  },
+  {
+   "id": "h2-30",
+   "level": 2,
+   "type": "choice",
+   "text": "Как настоящее имя Instasamka?",
+   "options": [
+    "Дарья Ракитина",
+    "Анна Асти",
+    "Дарья Зотеева",
+    "Мари Краймбрери"
+   ],
+   "correct": 2,
+   "explain": "Она из Москвы.",
+   "draft": false
+  },
+  {
+   "id": "h3-01",
+   "level": 3,
+   "type": "choice",
+   "text": "Как настоящее имя Friendly Thug 52 NGG?",
+   "options": [
+    "Григорий Ляхов",
+    "Александр Романов",
+    "Марк Серков",
+    "Арсений Несатый"
+   ],
+   "correct": 1,
+   "explain": "Родился в 2000 году в Петербурге.",
+   "draft": false
+  },
+  {
+   "id": "h3-02",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называется альбом Friendly Thug 52 NGG 2023 года?",
+   "options": [
+    "«Cristoforo Colombo»",
+    "«Cruiser Aurora»",
+    "«$aint $treet»",
+    "«Graf Monte-Cristo»"
+   ],
+   "correct": 0,
+   "explain": "Морская тема у него сквозная — после «Крейсера Аврора» шёл Колумб.",
+   "draft": false
+  },
+  {
+   "id": "h3-03",
+   "level": 3,
+   "type": "choice",
+   "text": "С кодом какой страны фанаты связывают число 52 у Friendly Thug?",
+   "options": [
+    "Бразилия",
+    "Испания",
+    "Аргентина",
+    "Мексика"
+   ],
+   "correct": 3,
+   "explain": "+52 — телефонный код Мексики, поэтому на концертах мексиканские флаги.",
+   "draft": false
+  },
+  {
+   "id": "h3-04",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называется альбом Friendly Thug 52 NGG 2022 года?",
+   "options": [
+    "«Cristoforo Colombo»",
+    "«JUNKIE KIS2»",
+    "«Cruiser Aurora»",
+    "«Холодные земли»"
+   ],
+   "correct": 2,
+   "explain": "Девять треков.",
+   "draft": false
+  },
+  {
+   "id": "h3-05",
+   "level": 3,
+   "type": "choice",
+   "text": "Как настоящее имя Madk1d?",
+   "options": [
+    "Александр Романов",
+    "Марк Серков",
+    "Арсений Несатый",
+    "Егор Ракитин"
+   ],
+   "correct": 1,
+   "explain": "Марк Робертович Серков, Томск.",
+   "draft": false
+  },
+  {
+   "id": "h3-06",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называется первый полноформатный альбом Madk1d?",
+   "options": [
+    "«Он сказал поехали!»",
+    "«sexyswag»",
+    "«мир, труд, май»",
+    "«ИЗВИНИТЕ ЗА ВНИМАНИЕ»"
+   ],
+   "correct": 0,
+   "explain": "2024 год. «мир, труд, май» — мини-альбом.",
+   "draft": false
+  },
+  {
+   "id": "h3-07",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называется альбом Madk1d 2025 года?",
+   "options": [
+    "«Он сказал поехали!»",
+    "«Толпы»",
+    "«Барыга»",
+    "«sexyswag»"
+   ],
+   "correct": 3,
+   "explain": "Вышел в марте 2025-го.",
+   "draft": false
+  },
+  {
+   "id": "h3-08",
+   "level": 3,
+   "type": "choice",
+   "text": "Как назывался самый первый релиз OG Buda?",
+   "options": [
+    "«Tourlife»",
+    "«Bandits»",
+    "«1000 Freestyle»",
+    "«Johnny D»"
+   ],
+   "correct": 2,
+   "explain": "2017 год.",
+   "draft": false
+  },
+  {
+   "id": "h3-09",
+   "level": 3,
+   "type": "choice",
+   "text": "Каким трибьютом OG Buda сильно расширил аудиторию в 2018 году?",
+   "options": [
+    "Кавер на Басту",
+    "«Tourlife (RIP X)» — в память о XXXTentacion",
+    "Ремикс на Скриптонита",
+    "Трек памяти Lil Peep"
+   ],
+   "correct": 1,
+   "explain": "Отсылка к «Moonlight» XXXTentacion.",
+   "draft": false
+  },
+  {
+   "id": "h3-10",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году OG Buda попал в список Forbes «30 до 30»?",
+   "options": [
+    "2022",
+    "2019",
+    "2020",
+    "2024"
+   ],
+   "correct": 0,
+   "explain": "В категории «Музыка».",
+   "draft": false
+  },
+  {
+   "id": "h3-11",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком сериале снялся OG Buda?",
+   "options": [
+    "«Слово пацана»",
+    "«Кухня»",
+    "«Универ»",
+    "«Сказки Пушкина. Для взрослых»"
+   ],
+   "correct": 3,
+   "explain": "Он сыграл Елисея.",
+   "draft": false
+  },
+  {
+   "id": "h3-12",
+   "level": 3,
+   "type": "choice",
+   "text": "Как настоящее имя Saluki?",
+   "options": [
+    "Глеб Голубин",
+    "Марк Серков",
+    "Арсений Несатый",
+    "Олег Нечипоренко"
+   ],
+   "correct": 2,
+   "explain": "Родился в Москве в 1997 году.",
+   "draft": false
+  },
+  {
+   "id": "h3-13",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году Saluki ушёл из Dead Dynasty?",
+   "options": [
+    "2016",
+    "2018",
+    "2020",
+    "2014"
+   ],
+   "correct": 1,
+   "explain": "Осенью 2018-го.",
+   "draft": false
+  },
+  {
+   "id": "h3-14",
+   "level": 3,
+   "type": "choice",
+   "text": "Для какого известного трека Saluki написал бит?",
+   "options": [
+    "«5 минут назад» Pharaoh и Boulevard Depo",
+    "«Розовое вино»",
+    "«Бургер»",
+    "«I Got Love»"
+   ],
+   "correct": 0,
+   "explain": "Осень 2016 года.",
+   "draft": false
+  },
+  {
+   "id": "h3-15",
+   "level": 3,
+   "type": "choice",
+   "text": "С каким рэпером Saluki выпустил альбом «Стыд или слава»?",
+   "options": [
+    "Со Скриптонитом",
+    "С Pharaoh",
+    "С Кизару",
+    "С 104"
+   ],
+   "correct": 3,
+   "explain": "2021 год.",
+   "draft": false
+  },
+  {
+   "id": "h3-16",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году вышла «Bandana I» Big Baby Tape и Кизару?",
+   "options": [
+    "2019",
+    "2020",
+    "2021",
+    "2023"
+   ],
+   "correct": 2,
+   "explain": "Один из самых прослушиваемых альбомов года.",
+   "draft": false
+  },
+  {
+   "id": "h3-17",
+   "level": 3,
+   "type": "choice",
+   "text": "Из каких двух частей состоит «Уроборос» Скриптонита?",
+   "options": [
+    "«Дом» и «Улица»",
+    "«Улица 36» и «Зеркала»",
+    "«Начало» и «Конец»",
+    "«Свет» и «Тьма»"
+   ],
+   "correct": 1,
+   "explain": "Двойной альбом 2017 года.",
+   "draft": false
+  },
+  {
+   "id": "h3-18",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году вышел «Дом с нормальными явлениями»?",
+   "options": [
+    "2015",
+    "2013",
+    "2017",
+    "2019"
+   ],
+   "correct": 0,
+   "explain": "Альбом сделал Скриптонита звездой.",
+   "draft": false
+  },
+  {
+   "id": "h3-19",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году родился Баста?",
+   "options": [
+    "1975",
+    "1985",
+    "1990",
+    "1980"
+   ],
+   "correct": 3,
+   "explain": "Василий Вакуленко, Ростов-на-Дону.",
+   "draft": false
+  },
+  {
+   "id": "h3-20",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году прошёл баттл Оксимирона и Гнойного?",
+   "options": [
+    "2015",
+    "2016",
+    "2017",
+    "2019"
+   ],
+   "correct": 2,
+   "explain": "Август 2017 года.",
+   "draft": false
+  },
+  {
+   "id": "h3-21",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году вышел «Горгород»?",
+   "options": [
+    "2011",
+    "2015",
+    "2013",
+    "2017"
+   ],
+   "correct": 1,
+   "explain": "Через четыре года после «Вечного жида».",
+   "draft": false
+  },
+  {
+   "id": "h3-22",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году вышел альбом ЛСП «Magic City»?",
+   "options": [
+    "2015",
+    "2013",
+    "2017",
+    "2019"
+   ],
+   "correct": 0,
+   "explain": "Через два года вышел «Tragic City».",
+   "draft": false
+  },
+  {
+   "id": "h3-23",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году вышел «Dragonborn» Big Baby Tape?",
+   "options": [
+    "2016",
+    "2020",
+    "2021",
+    "2018"
+   ],
+   "correct": 3,
+   "explain": "Ему тогда было 18.",
+   "draft": false
+  },
+  {
+   "id": "h3-24",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком городе Испании жил Кизару?",
+   "options": [
+    "Мадрид",
+    "Валенсия",
+    "Барселона",
+    "Севилья"
+   ],
+   "correct": 2,
+   "explain": "Многие его клипы снимались там.",
+   "draft": false
+  },
+  {
+   "id": "h3-25",
+   "level": 3,
+   "type": "choice",
+   "text": "Чей трек «Вокруг шум»?",
+   "options": [
+    "Баста",
+    "«Каста»",
+    "Centr",
+    "«Многоточие»"
+   ],
+   "correct": 1,
+   "explain": "Ростовская классика.",
+   "draft": false
+  },
+  {
+   "id": "h3-26",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называлась первая группа Басты?",
+   "options": [
+    "«Психолирик»",
+    "«Каста»",
+    "«Газгольдер»",
+    "«Centr»"
+   ],
+   "correct": 0,
+   "explain": "Конец 90-х, Ростов.",
+   "draft": false
+  },
+  {
+   "id": "h3-27",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называется альбом Мияги и Эндшпиля 2016 года?",
+   "options": [
+    "«Buster Keaton»",
+    "«Yamakasi»",
+    "«I Got Love»",
+    "«Hajime»"
+   ],
+   "correct": 3,
+   "explain": "«Hajime» по-японски — «начало».",
+   "draft": false
+  },
+  {
+   "id": "h3-28",
+   "level": 3,
+   "type": "choice",
+   "text": "Как называется альбом Face 2018 года?",
+   "options": [
+    "«Hate Love»",
+    "«Слим»",
+    "«Пути неисповедимы»",
+    "«No Love»"
+   ],
+   "correct": 2,
+   "explain": "После него Face резко сменил стиль.",
+   "draft": false
+  },
+  {
+   "id": "h3-29",
+   "level": 3,
+   "type": "choice",
+   "text": "В каком году вышел альбом Оксимирона «Красота и уродство»?",
+   "options": [
+    "2019",
+    "2021",
+    "2018",
+    "2023"
+   ],
+   "correct": 1,
+   "explain": "Шесть лет после «Горгорода».",
+   "draft": false
+  },
+  {
+   "id": "h3-30",
+   "level": 3,
+   "type": "choice",
+   "text": "Из какого объединения Madk1d?",
+   "options": [
+    "Squad Badmood",
+    "Melon Music",
+    "Dead Dynasty",
+    "Haunted Family"
+   ],
+   "correct": 0,
+   "explain": "От объединения остался в основном Discord-сервер.",
+   "draft": false
+  }
+ ]
+}
