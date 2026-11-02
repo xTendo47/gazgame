@@ -304,3 +304,18 @@
   color: #b8f0e6;
   background: rgb(6 40 46 / 0.8);
 }
+/* «Клякса Роршаха» водяным знаком на выписке */
+.ts-sheet[data-theme="clinic"] {
+  isolation: isolate;
+  overflow: hidden;
+}
+.ts-blot-sheet {
+  position: absolute;
+  right: -18px;
+  bottom: 70px;
+  z-index: -1;
+  width: 170px;
+  color: rgb(20 112 122 / 0.13);
+  transform: rotate(-10deg);
+  pointer-events: none;
+}

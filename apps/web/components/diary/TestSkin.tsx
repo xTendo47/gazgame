@@ -40,6 +40,7 @@ export function TestSkin({ theme, children }: { theme: TestTheme; children: Reac
               <Star /> WANTED <Star />
             </p>
           )}
+          {theme === "clinic" && <Blot className="ts-blot-sheet" />}
           {theme === "clinic" && (
             <p className="ts-banner" aria-hidden="true">
               <span>КЛИНИКА GAZ · ВЫПИСНОЙ ЭПИКРИЗ</span>
