@@ -11,6 +11,7 @@ import { updateGaz } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { takeCard } from "@gazgame/engine";
 import { BTN, BTN_GHOST, TaskCard } from "./TaskCard";
+import { Em } from "@/components/Em";
 
 export function GazDare({ task }: { task: GazTask }) {
   const router = useRouter();
@@ -25,7 +26,7 @@ export function GazDare({ task }: { task: GazTask }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-balance">Тебе бросили вызов в GAZ 🫵</h1>
+      <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-balance"><Em text="Тебе бросили вызов в GAZ 🫵" /></h1>
       <TaskCard
         task={task}
         source="dare"
@@ -36,7 +37,7 @@ export function GazDare({ task }: { task: GazTask }) {
               onClick={accept}
               className={cn(BTN, "col-span-full bg-orange py-3.5 font-display text-base text-bg")}
             >
-              Принимаю 🔥
+              <Em text="Принимаю 🔥" />
             </button>
             <Link href="/gaz" className={cn(BTN_GHOST, "col-span-full flex items-center justify-center")}>
               В другой раз
@@ -44,7 +45,7 @@ export function GazDare({ task }: { task: GazTask }) {
           </>
         }
       />
-      <p className="text-center text-xs text-muted">Это GAZ: игры, тесты и задания, чтобы не сидеть 🚀</p>
+      <p className="text-center text-xs text-muted"><Em text="Это GAZ: игры, тесты и задания, чтобы не сидеть 🚀" /></p>
     </div>
   );
 }

@@ -35,6 +35,8 @@ import { UpsellItems } from "./UpsellItems";
 import { UpsellText } from "./UpsellText";
 import { DotList } from "../DotList";
 import { Em } from "@/components/Em";
+import { GIcon } from "@/components/casino/GIcon";
+import { Glyph } from "@/components/casino/GIcon";
 
 /** Заголовок блока Premium после теста — одинаковый у всех тестов. */
 const UPSELL_TITLE = "Что ты получишь";
@@ -209,7 +211,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
               return (
                 <li key={item} className="flex gap-3 leading-relaxed">
                   <span aria-hidden="true" className={listEmoji ? "shrink-0" : "text-orange"}>
-                    {listEmoji ? <Em text={listEmoji} /> : "♥"}
+                    {listEmoji ? <Em text={listEmoji} /> : <GIcon name="heart" size="0.9em" />}
                   </span>
                   <span>
                     {label ? (
@@ -371,7 +373,7 @@ function BoardBlock({ board, blocks }: { board: NonNullable<TestResult["board"]>
         style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}
       >
         {board.emojis.map((e) => (
-          <span key={e}>{e}</span>
+          <span key={e}><Glyph emoji={e} size="1em" /></span>
         ))}
       </div>
       <ul className="flex flex-wrap gap-2" aria-label="Настроение музыки">

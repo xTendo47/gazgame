@@ -8,6 +8,7 @@ import type { CardGamesFile } from "@gazgame/content";
 import { filterCardGames } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { CardGameMeta } from "./CardGameMeta";
+import { Glyph } from "@/components/casino/GIcon";
 
 const KEY = "gazgame:cards-filter";
 const listeners = new Set<() => void>();
@@ -77,7 +78,7 @@ export function CardGamesList({ file }: { file: CardGamesFile }) {
               )}
             >
               <span aria-hidden="true" className="text-3xl leading-none">
-                {g.emoji}
+                <Glyph emoji={g.emoji} label={g.title} size="1em" />
               </span>
               <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <span className="flex flex-col">

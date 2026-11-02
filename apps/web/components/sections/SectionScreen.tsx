@@ -46,6 +46,7 @@ import { haptic } from "@/lib/haptics";
 import { usePremium } from "@/lib/premium";
 import { randomIndex } from "@/lib/random";
 import { stripEmoji } from "@/lib/text";
+import { Glyph } from "@/components/casino/GIcon";
 
 const noopSubscribe = () => () => {};
 
@@ -565,7 +566,7 @@ export function SectionScreen({
               )}
             >
               <span aria-hidden="true" className="text-[30px] leading-none">
-                {t.emoji}
+                <Glyph emoji={t.emoji} label={t.name} size="1em" />
               </span>
               {/* на узком телефоне шрифт чуть меньше, чтобы «Поверхность» и «Погружение» не рвались посреди слова */}
               <b
@@ -609,7 +610,7 @@ export function SectionScreen({
                 )}
               >
                 <span aria-hidden="true" className="text-lg leading-none">
-                  {k.emoji}
+                  <Glyph emoji={k.emoji} label={k.name} size="1em" />
                 </span>
                 {k.name}
               </button>
@@ -641,7 +642,7 @@ export function SectionScreen({
           ? groups.map((g) => (
               <div key={g.id} className="flex flex-col gap-2.5">
                 <h3 className="mt-2 text-xs font-extrabold tracking-[0.08em] text-muted uppercase">
-                  <span aria-hidden="true">{g.emoji}</span> {g.name}
+                  <span aria-hidden="true"><Glyph emoji={g.emoji} label={g.name} size="1em" /></span> {g.name}
                 </h3>
                 {g.items.map(({ item, index }) => renderItem(item, index))}
               </div>

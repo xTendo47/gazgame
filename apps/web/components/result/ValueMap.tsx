@@ -8,6 +8,7 @@ import { decodeOrder, ORDER_KEY } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { rankingFromQuery, sideScoreFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
+import { Glyph } from "@/components/casino/GIcon";
 
 export function ValueMap({ test, resultId }: { test: Test; resultId: string }) {
   const params = useSearchParams();
@@ -31,7 +32,7 @@ export function ValueMap({ test, resultId }: { test: Test; resultId: string }) {
               <div className="flex items-baseline justify-between gap-3">
                 <span className={cn("flex items-center gap-2", isTop ? "font-extrabold" : "font-semibold text-cream/70")}>
                   <span aria-hidden="true" className="text-xl">
-                    {result.emoji}
+                    <Glyph emoji={result.emoji} size="1em" />
                   </span>
                   {result.title}
                 </span>

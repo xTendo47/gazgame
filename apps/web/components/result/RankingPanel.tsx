@@ -12,6 +12,7 @@ import { cn } from "@gazgame/ui";
 import { rankingFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
 import { TieNote } from "./TieBanner";
+import { Glyph } from "@/components/casino/GIcon";
 
 export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId: string; blendId?: string }) {
   const ranking = rankingFromQuery(test, useSearchParams(), { resultId, blendId });
@@ -40,7 +41,7 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
                   <span>
                     {result.title}{" "}
                     <span aria-hidden="true" className="text-xl">
-                      {result.emoji}
+                      <Glyph emoji={result.emoji} size="1em" />
                     </span>
                   </span>
                 </span>

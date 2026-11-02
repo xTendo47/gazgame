@@ -8,6 +8,7 @@ import { Embers } from "@/components/ultimate/Embers";
 import { Trident } from "@/components/ultimate/Trident";
 import { UltimateWaitlist } from "@/components/ultimate/UltimateWaitlist";
 import { getCatalog } from "@/lib/catalog";
+import { Glyph } from "@/components/casino/GIcon";
 
 export const metadata: Metadata = { title: "Ultimate", description: "Стань тем, кем хочешь" };
 
@@ -43,7 +44,7 @@ export default function UltimatePage() {
           {texts.tiles.map((t) => (
             <div key={t.title} className="flex min-w-0 flex-col gap-1.5 rounded-[18px] border border-line bg-surface p-3">
               <span aria-hidden="true" className="text-[22px] leading-none">
-                {t.emoji}
+                <Glyph emoji={t.emoji} label={t.title} size="1em" />
               </span>
               <b className="font-display text-xs leading-tight font-bold">{t.title}</b>
               <span className="text-xs leading-snug text-muted">{t.text}</span>

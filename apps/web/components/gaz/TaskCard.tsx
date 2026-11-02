@@ -7,6 +7,8 @@ import type { ReactNode } from "react";
 import type { GazTask } from "@gazgame/content";
 import type { GazSource } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
+import { Em } from "@/components/Em";
+import { Glyph } from "@/components/casino/GIcon";
 
 export const SOURCE_LABEL: Record<GazSource, string> = {
   bored: "Мне скучно",
@@ -51,20 +53,20 @@ export function TaskCard({ task, source, actions, taking, className }: TaskCardP
       <div className="flex items-center justify-between gap-2">
         <span className="text-[10px] font-bold tracking-[0.14em] text-orange uppercase">{SOURCE_LABEL[source]}</span>
         <span aria-hidden="true" className="text-[44px] leading-none">
-          {task.emoji}
+          <Glyph emoji={task.emoji} label={task.text} size="1em" />
         </span>
       </div>
       <p className="font-display text-[17px] leading-[1.35] font-semibold text-pretty">{task.text}</p>
       <ul className="flex flex-wrap gap-1.5">
         {tags.map((t) => (
           <li key={t} className="rounded-full bg-cream/[0.06] px-[9px] py-1 text-xs font-bold text-muted">
-            {t}
+            <Em text={t} />
           </li>
         ))}
       </ul>
       {twist && (
         <p className="rounded-xl bg-orange/10 px-2.5 py-2 text-[13px]">
-          <b className="text-orange">Усложнение 🌶️</b> {twist}
+          <b className="text-orange"><Em text="Усложнение 🌶️" /></b> {twist}
         </p>
       )}
       {taking && (

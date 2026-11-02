@@ -7,6 +7,7 @@ import type { Test } from "@gazgame/content";
 import { LANG_KEY, languageOf } from "@gazgame/engine";
 import { sideScoreFromQuery } from "@/lib/result-query";
 import { Em } from "@/components/Em";
+import { Glyph } from "@/components/casino/GIcon";
 
 export function LanguagePanel({ test, resultId }: { test: Test; resultId: string }) {
   const index = sideScoreFromQuery(useSearchParams(), LANG_KEY);
@@ -18,7 +19,7 @@ export function LanguagePanel({ test, resultId }: { test: Test; resultId: string
     <>
       <section aria-label={test.languages.title} className="flex flex-col gap-2 rounded-card border border-line bg-surface p-5">
         <h2 className="flex items-center gap-2 font-display text-lg leading-tight font-bold">
-          <span aria-hidden="true">{language.emoji}</span>
+          <span aria-hidden="true"><Glyph emoji={language.emoji} size="1em" /></span>
           {test.languages.title}: {language.title}
         </h2>
         <p className="leading-relaxed text-cream/85">{language.text}</p>

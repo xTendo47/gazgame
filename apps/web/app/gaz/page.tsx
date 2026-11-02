@@ -23,7 +23,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const task = gaz && id ? findGazTask(gaz, id) : undefined;
 
   if (task) {
-    const title = "Тебе бросили вызов в GAZ 🫵";
+    const title = "Тебе бросили вызов в GAZ";
     const image = { url: `/share/gaz?dare=${task.id}`, ...SHARE_SIZE.preview, alt: title };
     return {
       title: { absolute: title },
@@ -36,9 +36,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const description = "Хватит листать. Вот что сделать прямо сейчас.";
   const home = { url: "/share/home", ...SHARE_SIZE.preview, alt: "GAZ Game" };
   return {
-    title: "GAZ 🚀",
+    title: "GAZ",
     description,
-    openGraph: { type: "website", siteName: "GAZ Game", locale: "ru_RU", title: "GAZ 🚀", description, images: [home] },
+    openGraph: { type: "website", siteName: "GAZ Game", locale: "ru_RU", title: "GAZ", description, images: [home] },
     twitter: { card: "summary_large_image", images: [home.url] },
   };
 }

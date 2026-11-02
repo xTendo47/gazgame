@@ -7,6 +7,7 @@ import type { Test } from "@gazgame/content";
 import { decodeOrder, ORDER_KEY } from "@gazgame/engine";
 import { rankingFromQuery, sideScoreFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
+import { Glyph } from "@/components/casino/GIcon";
 
 export function Palette({ test, resultId }: { test: Test; resultId: string }) {
   const params = useSearchParams();
@@ -29,7 +30,7 @@ export function Palette({ test, resultId }: { test: Test; resultId: string }) {
         style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})`, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)" }}
       >
         <div aria-hidden="true" className="text-5xl leading-none">
-          {main.result.emoji} {second.result.emoji}
+          <Glyph emoji={main.result.emoji} size="1em" /> <Glyph emoji={second.result.emoji} size="1em" />
         </div>
         <p className="rounded-full bg-bg/80 px-3.5 py-1 text-sm font-extrabold text-cream">
           {main.result.title} + {second.result.title}

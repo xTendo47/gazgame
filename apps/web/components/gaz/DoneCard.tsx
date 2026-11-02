@@ -8,6 +8,7 @@ import type { GazTask } from "@gazgame/content";
 import { cn } from "@gazgame/ui";
 import { siteUrl } from "@/lib/share-card";
 import { shareImage } from "@/lib/share";
+import { Em } from "@/components/Em";
 
 /** Огоньки по кругу: 14 штук, три цвета, разная дальность. */
 const SPARKS = Array.from({ length: 14 }, (_, i) => {
@@ -61,7 +62,7 @@ export function DoneCard({ task, gold }: { task: GazTask; gold: boolean }) {
         {task.emoji}
       </span>
       <b className="font-display text-lg font-extrabold">{gold ? "Золотая карта в Коллекции 🃏" : "Карта в Коллекции 🃏"}</b>
-      <small className="text-[15px] text-muted">Выложи в сторис: «Мы сделали задание GAZ 🔥»</small>
+      <small className="text-[15px] text-muted"><Em text="Выложи в сторис: «Мы сделали задание GAZ 🔥»" /></small>
       <button
         type="button"
         onClick={() => void share()}

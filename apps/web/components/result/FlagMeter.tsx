@@ -7,6 +7,7 @@ import { FLAG_KEY, flagMeterOf } from "@gazgame/engine";
 import { sideScoreFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
 import { Em } from "@/components/Em";
+import { Glyph } from "@/components/casino/GIcon";
 
 export function FlagMeter({ test }: { test: Test }) {
   const sum = sideScoreFromQuery(useSearchParams(), FLAG_KEY);
@@ -40,7 +41,7 @@ export function FlagMeter({ test }: { test: Test }) {
         </div>
       </div>
       <p className="font-display text-lg leading-tight font-bold">
-        {band.title} {band.emoji}
+        {band.title} <Glyph emoji={band.emoji} size="1em" />
       </p>
       <p className="leading-relaxed text-cream/85">{band.text}</p>
     </section>

@@ -13,6 +13,7 @@ import { prefersReducedMotion } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
 import { getProgress } from "@/lib/progress";
 import { Sheet } from "./Sheet";
+import { Em } from "@/components/Em";
 
 const ROLL_MS = 600;
 
@@ -51,7 +52,7 @@ export function RandomDice({
       >
         {children ?? (
           <span aria-hidden="true" className="dice-emoji leading-none">
-            🎲
+            <Em text="🎲" />
           </span>
         )}
       </button>
@@ -140,7 +141,7 @@ function DiceSheet({ items, config, onClose }: { items: DiceItem[]; config: Sect
         {rolling && (
           <div className="grid h-[76px] place-items-center rounded-[18px] border border-line bg-[#2A2531]">
             <span aria-hidden="true" className="dice-spin text-4xl leading-none">
-              🎲
+              <Em text="🎲" />
             </span>
           </div>
         )}

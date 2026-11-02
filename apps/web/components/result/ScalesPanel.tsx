@@ -11,6 +11,7 @@ import { cn } from "@gazgame/ui";
 import { scalesFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
 import { Em } from "@/components/Em";
+import { Glyph } from "@/components/casino/GIcon";
 
 const LEVEL_LABELS: Record<string, string> = { low: "низкий", mid: "средний", high: "высокий" };
 const LEVEL_BARS: Record<string, string> = { low: "bg-orange", mid: "bg-gradient-to-r from-orange to-lime", high: "bg-lime" };
@@ -34,7 +35,7 @@ export function ScalesPanel({ test, range }: { test: Test; range?: readonly [num
     <>
       {neighbour && test.borderline && (
         <p className="rounded-card border border-dashed border-line px-4 py-3 text-center text-[15px] font-semibold text-balance text-cream/90">
-          {neighbour.emoji} {test.borderline.replace("{title}", neighbour.title)}
+          <Glyph emoji={neighbour.emoji} size="1em" /> {test.borderline.replace("{title}", neighbour.title)}
         </p>
       )}
       <section aria-labelledby="scales-title" className="flex flex-col gap-4 rounded-card bg-surface p-5">
@@ -49,7 +50,7 @@ export function ScalesPanel({ test, range }: { test: Test; range?: readonly [num
       {panel?.tips && tips && (
         <section aria-labelledby="scales-tips-title" className="flex flex-col gap-3 rounded-card border-l-4 border-lime bg-surface p-5">
           <h2 id="scales-tips-title" className="font-display text-lg font-bold leading-tight">
-            {panel.tips.title} <span aria-hidden="true">{top.scale.emoji}</span>
+            {panel.tips.title} <span aria-hidden="true"><Glyph emoji={top.scale.emoji} size="1em" /></span>
           </h2>
           <ul className="flex flex-col gap-2">
             {tips.map((tip) => (
@@ -92,12 +93,12 @@ function ScaleRow({ item, view, slider }: { item: ScaleScore; view?: LevelView; 
       <div className="flex items-baseline justify-between gap-3">
         <span className="flex items-center gap-2 font-bold">
           <span aria-hidden="true" className="text-xl">
-            {scale.emoji}
+            <Glyph emoji={scale.emoji} size="1em" />
           </span>
           {scale.title}
         </span>
         <span className="shrink-0 text-sm font-bold text-muted">
-          {slider ? levelLabel : `${score}/${scale.max}${levelLabel ? ` · ${levelLabel}` : ""}`}
+          <Em text={slider ? String(levelLabel || "") : `${score}/${scale.max}${levelLabel ? ` · ${levelLabel}` : ""}`} />
         </span>
       </div>
       <div
@@ -136,7 +137,7 @@ function PeakCard({ label, item, accent }: { label: string; item: ScaleScore; ac
     <section className={cn("flex flex-col gap-1 rounded-card border-2 bg-surface p-4", accent)}>
       <h2 className="text-xs font-extrabold uppercase tracking-wide text-muted">{label}</h2>
       <div aria-hidden="true" className="text-3xl">
-        {item.scale.emoji}
+        <Glyph emoji={item.scale.emoji} size="1em" />
       </div>
       <p className="font-display text-base font-bold leading-tight">{item.scale.title}</p>
     </section>

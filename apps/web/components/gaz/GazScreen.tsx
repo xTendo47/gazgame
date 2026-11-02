@@ -49,6 +49,9 @@ import { BackLink } from "../BackLink";
 import { CollectionFlash } from "../collection/CollectionFlash";
 import { DoneCard } from "./DoneCard";
 import { BTN, BTN_GHOST, TaskCard, twistOf } from "./TaskCard";
+import { Em } from "@/components/Em";
+import { GIcon } from "@/components/casino/GIcon";
+import { Glyph } from "@/components/casino/GIcon";
 
 const WHO_CHIPS = [
   { value: "solo", label: "Соло 🙋" },
@@ -77,7 +80,7 @@ function Head({ id, title, hint }: { id: string; title: string; hint: string }) 
   return (
     <div className="flex items-baseline justify-between gap-2">
       <h2 id={id} className="font-display text-base leading-tight font-semibold text-balance">
-        {title}
+        <Em text={title} />
       </h2>
       <span className="text-right text-xs text-muted">{hint}</span>
     </div>
@@ -216,10 +219,10 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
       <header className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-3">
           <h1 className="flex items-center gap-2.5 font-display text-[34px] leading-none font-extrabold">
-            GAZ <span aria-hidden="true">🚀</span>
+            GAZ <GIcon name="rocket" size="0.9em" />
           </h1>
           <div className="rounded-full border border-line bg-surface px-3 py-1.5 text-[13px] font-bold whitespace-nowrap tabular-nums">
-            🔥 Сделано: <b className="text-orange">{data.done.length}</b>
+            <GIcon name="fire" /> Сделано: <b className="text-orange">{data.done.length}</b>
           </div>
         </div>
         <p className="text-muted">Хватит листать. Вот что сделать прямо сейчас.</p>
@@ -235,7 +238,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
             actions={
               <>
                 <button type="button" className={PRIMARY} onClick={() => done(activeTask, active.source, false)}>
-                  Сделано 🔥
+                  <Em text="Сделано 🔥" />
                 </button>
                 {twistOf(activeTask) && (
                   <button
@@ -243,7 +246,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
                     className={cn(BTN, "col-span-full border border-[#FFC83A]/60 bg-[#FFC83A]/10 text-[#FFC83A]")}
                     onClick={() => done(activeTask, active.source, true)}
                   >
-                    Сделано с усложнением 🌶️
+                    <Em text="Сделано с усложнением 🌶️" />
                   </button>
                 )}
               </>
@@ -258,7 +261,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
         className="gaz-press flex min-h-16 w-full items-center gap-3.5 rounded-3xl bg-orange px-5 py-[18px] text-left text-bg"
       >
         <span aria-hidden="true" className="text-[40px] leading-none">
-          😩
+          <Em text="😩" />
         </span>
         <span className="flex flex-col">
           <b className="font-display text-xl leading-[1.1] font-extrabold">Мне скучно</b>
@@ -282,7 +285,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
           disabled={left <= 0 || reel !== null}
           className="gaz-press min-h-14 rounded-2xl bg-lime p-3.5 font-display text-base font-extrabold text-bg disabled:bg-[#2A2531] disabled:text-muted"
         >
-          {left <= 0 ? "Хватит выбирать, Газ! 🔥" : "Крути! 🎯"}
+          <Em text={left <= 0 ? "Хватит выбирать, Газ! 🔥" : "Крути! 🎯"} />
         </button>
         <p className="-mt-1 text-center text-xs text-muted">
           {left <= 0
@@ -301,7 +304,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
             aria-label="Крутим рулетку"
             className="grid h-[120px] place-items-center rounded-[22px] border border-dashed border-line bg-[#2A2531] text-[64px]"
           >
-            <span aria-hidden="true">{reel}</span>
+            <span aria-hidden="true"><Glyph emoji={reel} size="1em" /></span>
           </div>
         ) : won ? (
           <DoneCard key={`${won.task.id}-${data.done.length}`} task={won.task} gold={won.gold} />
@@ -313,10 +316,10 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
             actions={
               <>
                 <button type="button" className={PRIMARY} onClick={() => take(tableTask, table.source)}>
-                  Беру! 🔥
+                  <Em text="Беру! 🔥" />
                 </button>
                 <button type="button" className={LIME_GHOST} onClick={() => void dare(tableTask)}>
-                  Слабо другу? 🫵
+                  <Em text="Слабо другу? 🫵" />
                 </button>
                 <button
                   type="button"
@@ -341,13 +344,13 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
         <section aria-labelledby="gaz-challenge" className={BLOCK}>
           <div className="flex items-baseline justify-between gap-2">
             <h2 id="gaz-challenge" className="font-display text-base leading-tight font-semibold">
-              Челлендж недели 🏁
+              <Em text="Челлендж недели 🏁" />
             </h2>
             <span className="text-xs text-muted">один на всех</span>
           </div>
           <div>
             <p className="font-display text-lg leading-tight font-semibold">
-              <span aria-hidden="true">{challenge.emoji} </span>
+              <span aria-hidden="true"><Glyph emoji={challenge.emoji} size="1em" /> </span>
               {challenge.title}
             </p>
             <p className="mt-1 text-[13px] text-muted">{challenge.text}</p>
@@ -367,7 +370,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
             ))}
           </ol>
           <button type="button" onClick={markDay} disabled={todayMarked} className={cn(BTN_GHOST, "disabled:opacity-100")}>
-            {todayMarked ? `День ${weekday} отмечен 🔥` : `Отметить день ${weekday} ✓`}
+            <Em text={todayMarked ? `День ${weekday} отмечен 🔥` : `Отметить день ${weekday} ✓`} />
           </button>
           <p className="-mt-1 text-center text-xs text-muted">5 из 7 дней: карта в Коллекцию. Все 7: золотая</p>
         </section>
@@ -384,7 +387,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
                 className="gaz-press flex min-h-[150px] w-[150px] flex-col gap-1.5 rounded-[20px] border border-[#62D2FF]/45 bg-surface p-3.5 text-left shadow-[0_0_16px_rgb(98_210_255/0.14)]"
               >
                 <span aria-hidden="true" className="text-3xl leading-none">
-                  {pack.emoji}
+                  <Glyph emoji={pack.emoji} size="1em" />
                 </span>
                 <b className="font-display text-[13px] leading-tight font-semibold">{pack.title}</b>
                 <small className="text-xs text-muted">{pack.text}</small>
@@ -395,7 +398,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
         </ul>
         {packMessage && (
           <p role="status" className="rounded-[14px] border border-line bg-[#2A2531] px-3 py-2.5 text-[13px]">
-            {packMessage}
+            <Em text={packMessage} />
           </p>
         )}
       </section>
@@ -415,7 +418,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
                   justDone && i === 0 && "gaz-pop border-orange",
                 )}
               >
-                <span aria-hidden="true">{task?.emoji ?? "🃏"}</span>
+                <span aria-hidden="true">{task ? <Glyph emoji={task.emoji} size="1em" /> : <Glyph emoji="🃏" size="1em" />}</span>
               </li>
             );
           })}
@@ -463,7 +466,7 @@ function ChipRow<T extends string>({
               value === o.value ? "border-lime bg-lime/[0.12] text-lime" : "border-line bg-[#2A2531]",
             )}
           >
-            {o.label}
+            <Em text={o.label} />
           </button>
         ))}
       </div>

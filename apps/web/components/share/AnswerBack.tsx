@@ -10,6 +10,7 @@ import { trackAnswerBack } from "@/lib/analytics";
 import { getProgress } from "@/lib/progress";
 import { useOpenShare } from "./ShareSheet";
 import { Em } from "@/components/Em";
+import { Glyph } from "@/components/casino/GIcon";
 
 const noopSubscribe = () => () => {};
 
@@ -28,7 +29,7 @@ export function AnswerBack({ test, mine }: { test: Test; mine: TestResult }) {
   return (
     <section aria-label="Ты и друг" className="flex flex-col gap-3 rounded-card bg-surface p-4">
       <p className="text-center text-lg font-bold">
-        Ты: {mine.title} {mine.emoji} <span className="text-muted">·</span> Друг: {friend.title} {friend.emoji}
+        Ты: {mine.title} <Glyph emoji={mine.emoji} size="1em" /> <span className="text-muted">·</span> Друг: {friend.title} <Glyph emoji={friend.emoji} size="1em" />
       </p>
       {/* Роли совпали с «Лучшей химией» (share.duo у любого из двух) */}
       {(mine.share?.duo === friend.id || friend.share?.duo === mine.id) && (

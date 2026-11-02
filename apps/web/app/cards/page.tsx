@@ -22,7 +22,6 @@ export default function CardGamesPage() {
       <PageHeader
         back={<BackLink href={`/${section?.id ?? ""}`}>{section?.title ?? "Меню"}</BackLink>}
         title={cards.title}
-        emoji={cards.emoji}
         subtitle={cards.subtitle}
       />
       <CardGamesList file={cards} />

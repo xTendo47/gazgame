@@ -9,7 +9,7 @@ export default defineConfig({
       name: "expand-emoji-keys",
       enforce: "pre",
       transform(code, id) {
-        if (!/packages[\/]content[\/]data[\/].*\.json$/.test(id)) return null;
+        if (!/packages\/content\/data\/.*\.json$/.test(id.replaceAll("\\", "/"))) return null;
         return { code: JSON.stringify(expandEmojiKeys(JSON.parse(code) as unknown)), map: null };
       },
     },

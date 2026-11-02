@@ -12,6 +12,7 @@ import { trackShareClick, trackShareKind, type ShareChannel } from "@/lib/analyt
 import { usePremium } from "@/lib/premium";
 import { copyText } from "@/lib/clipboard";
 import { mainPercent, shareImagePath, shareLink, siteUrl, topScale, type ShareKind, type ShareParams } from "@/lib/share-card";
+import { Em } from "@/components/Em";
 
 interface ShareTarget {
   test: Test;
@@ -49,7 +50,7 @@ export function ShareButton({ label }: { label: string }) {
   const open = useOpenShare();
   return (
     <Button variant="primary" onClick={() => open()}>
-      {label}
+      <Em text={label} />
     </Button>
   );
 }
@@ -287,7 +288,7 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
                 kind === o.value ? "bg-lime text-bg" : "text-muted",
               )}
             >
-              {o.label}
+              <Em text={o.label} />
             </button>
           ))}
         </div>
@@ -295,19 +296,19 @@ function ShareSheet({ test, resultId, blendId, answerTo, onClose }: ShareTarget 
         <div className="grid grid-cols-2 gap-3">
           {tiles.map((t) => (
             <Button key={t.label} variant="ghost" size="md" className="min-h-16 bg-surface-2 px-3" onClick={t.onClick}>
-              {t.label}
+              <Em text={t.label} />
             </Button>
           ))}
         </div>
 
         {!ctx.desktop && (
           <button type="button" onClick={save} className="min-h-11 self-center px-3 text-sm font-semibold text-muted hover:text-cream">
-            Сохранить картинку ⬇️
+            <Em text="Сохранить картинку ⬇️" />
           </button>
         )}
 
         <p role="status" className="min-h-5 text-center text-sm font-semibold text-lime">
-          {status}
+          <Em text={status} />
         </p>
       </motion.div>
 
