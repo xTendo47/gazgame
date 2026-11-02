@@ -5,7 +5,16 @@
 // Satori понимает только flexbox и часть CSS: у каждого блока с несколькими детьми — display: flex.
 import type { ReactNode } from "react";
 import { OG_BODY, OG_DISPLAY } from "@/lib/og-fonts";
+import { stripEmoji } from "@/lib/text";
 import { OgGlyph, OgText } from "./og-emoji";
+
+/** Все строки карточки без эмодзи (значки рисуются отдельно: поля emoji и emoji2 не трогаем). Так в картинке нет ни тофу, ни twemoji. */
+function scrub<T>(value: T, key = ""): T {
+  if (typeof value === "string") return (key === "emoji" || key === "emoji2" ? value : stripEmoji(value)) as T;
+  if (Array.isArray(value)) return value.map((v) => scrub(v, key)) as T;
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, scrub(v, k)])) as T;
+  return value;
+}
 import type { CardBar, CardStyle, ShareCard, ShareFormat } from "@/lib/share-card";
 
 const BG = "#141217";
@@ -551,7 +560,8 @@ function PremiumMark({ left, top, size }: { left: number; top: number; size: num
 
 // ---------- Карточка 9:16 и превью ссылки ----------
 
-export function ShareCardImage({ card, format }: { card: ShareCard; format: ShareFormat }) {
+export function ShareCardImage({ card: raw, format }: { card: ShareCard; format: ShareFormat }) {
+  const card = scrub(raw);
   if (format === "preview") return <Preview card={card} />;
   return card.kind === "swag" ? <SwagStory card={card} /> : <Story card={card} />;
 }
@@ -865,7 +875,8 @@ const taskTextSize = (text: string) => (text.length <= 60 ? 68 : text.length <= 
  * Карточка 9:16 «Сделано в GAZ 🔥»: огромный эмодзи, текст задания, «Сделано в GAZ 🔥» и ссылка на сайт.
  * Золотая (gold) — задание с усложнением: золотая рамка и плашка. Фон и зерно те же, что у карточек тестов.
  */
-export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; text: string; gold: boolean; shortLink: string }) {
+export function GazDoneCard({ emoji, text: rawText, gold, shortLink }: { emoji: string; text: string; gold: boolean; shortLink: string }) {
+  const text = stripEmoji(rawText);
   const W = 1080;
   const H = 1920;
   const color = gold ? GOLD : ORANGE;
@@ -947,8 +958,8 @@ export function GazDoneCard({ emoji, text, gold, shortLink }: { emoji: string; t
  * Цвет — как у половины в приложении: левая оранжевая, правая салатовая.
  */
 export function TodayBattleCard({
-  question,
-  pick,
+  question: rawQuestion,
+  pick: rawPick,
   lime,
   shortLink,
 }: {
@@ -957,6 +968,8 @@ export function TodayBattleCard({
   lime: boolean;
   shortLink: string;
 }) {
+  const question = stripEmoji(rawQuestion);
+  const pick = { emoji: rawPick.emoji, label: stripEmoji(rawPick.label) };
   const W = 1080;
   const H = 1920;
   const color = lime ? LIME : ORANGE;
@@ -1043,12 +1056,13 @@ const RARITY_COLOR = { common: "#8E869A", rare: ORANGE, gold: GOLD } as const;
  * Эмодзи, название и подпись те же, что на карте в приложении.
  */
 export function CollectionShareCard({
-  card,
+  card: rawCard,
   shortLink,
 }: {
   card: { emoji: string; emoji2?: string; title: string; caption: string; rarity: "common" | "rare" | "gold" };
   shortLink: string;
 }) {
+  const card = { ...rawCard, title: stripEmoji(rawCard.title), caption: stripEmoji(rawCard.caption) };
   const W = 1080;
   const H = 1920;
   const color = RARITY_COLOR[card.rarity];
@@ -1142,9 +1156,9 @@ function Glow({ color, width, height, x, y }: { color: string; width: number; he
 /** Обложка теста для превью ссылки (1200×630): эмодзи, название, «Тест · бесплатно», крючок. */
 export function TestCover({
   emoji,
-  title,
-  meta,
-  hook,
+  title: rawTitle,
+  meta: rawMeta,
+  hook: rawHook,
   color,
 }: {
   emoji: string;
@@ -1155,6 +1169,9 @@ export function TestCover({
   hook: string;
   color: string;
 }) {
+  const title = stripEmoji(rawTitle);
+  const meta = stripEmoji(rawMeta);
+  const hook = stripEmoji(rawHook);
   return (
     <div
       style={{
@@ -1211,7 +1228,7 @@ export function HomeCover({ emojis }: { emojis: string[] }) {
       </div>
       <div style={{ display: "flex", marginTop: 34, gap: 40, fontSize: 84 }}>
         {emojis.map((e) => (
-          <span key={e}>{e}</span>
+          <OgGlyph key={e} emoji={e} size={96} />
         ))}
       </div>
     </div>

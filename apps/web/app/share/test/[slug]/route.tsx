@@ -36,7 +36,7 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/share/test/[
         hook={test.description}
         color={first ? glowColor(test.id, first.id) : "#FF5A1F"}
       />,
-      { ...SHARE_SIZE.preview, emoji: "twemoji", fonts: await ogFonts(), headers: CACHE },
+      { ...SHARE_SIZE.preview, fonts: await ogFonts(), headers: CACHE },
     );
   }
 
@@ -61,7 +61,6 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/share/test/[
 
   return new ImageResponse(<ShareCardImage card={card} format={format} />, {
     ...SHARE_SIZE[format],
-    emoji: "twemoji",
     fonts: await ogFonts(),
     headers: CACHE,
   });

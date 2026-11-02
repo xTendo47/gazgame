@@ -8,7 +8,6 @@ import { SHARE_SIZE } from "@/lib/share-card";
 export async function GET() {
   return new ImageResponse(<HomeCover emojis={[SECTION_LABELS.pairs.emoji, SECTION_LABELS.company.emoji, SECTION_LABELS.solo.emoji]} />, {
     ...SHARE_SIZE.preview,
-    emoji: "twemoji",
     fonts: await ogFonts(),
     headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
   });

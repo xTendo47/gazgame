@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
   const shortLink = `${siteUrl(requestOrigin(request)).replace(/^https?:\/\//, "")}/today`;
   return new ImageResponse(<TodayBattleCard question={battle.question} pick={battle[v]} lime={v === "b"} shortLink={shortLink} />, {
     ...SHARE_SIZE.story,
-    emoji: "twemoji",
     fonts: await ogFonts(),
     headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
   });

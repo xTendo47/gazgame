@@ -27,14 +27,13 @@ export async function GET(request: NextRequest) {
   if (dareId) {
     return new ImageResponse(
       <TestCover emoji={task.emoji} title="Тебе бросили вызов в GAZ 🫵" meta="Слабо?" hook={task.text} color="#FF5A1F" />,
-      { ...SHARE_SIZE.preview, emoji: "twemoji", fonts: await ogFonts(), headers: CACHE },
+      { ...SHARE_SIZE.preview, fonts: await ogFonts(), headers: CACHE },
     );
   }
 
   const shortLink = `${siteUrl(requestOrigin(request)).replace(/^https?:\/\//, "")}/gaz`;
   return new ImageResponse(<GazDoneCard emoji={task.emoji} text={task.text} gold={q.get("g") === "1"} shortLink={shortLink} />, {
     ...SHARE_SIZE.story,
-    emoji: "twemoji",
     fonts: await ogFonts(),
     headers: CACHE,
   });

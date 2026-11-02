@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
   const shortLink = `${siteUrl(requestOrigin(request)).replace(/^https?:\/\//, "")}/collection`;
   return new ImageResponse(<CollectionShareCard card={card} shortLink={shortLink} />, {
     ...SHARE_SIZE.story,
-    emoji: "twemoji",
     fonts: await ogFonts(),
     headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
   });
