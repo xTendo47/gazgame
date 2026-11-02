@@ -1,9 +1,9 @@
 // Музыка GAZ: один трек bg.mp3 на всё приложение, по кругу.
 // Громкость — через Web Audio GainNode: на iPhone у audio.volume нет эффекта.
-// Сейчас тут только то, что нужно заставке (старт, время трека, громкость).
-// Плеер с виниловой кнопкой, паузой и ползунками «Музыка» / «Звуки» — Этап 3.
+// Громкость и пауза запоминаются на устройстве (audio-prefs). Трек сам стартует после первого касания (autoStartOnFirstTouch),
+// на паузу уходит, когда вкладка скрыта или телефон заблокирован, и сам продолжает при возврате.
+import { readAudioPrefs, writeAudioPrefs } from "./audio-prefs";
 const SRC = "/audio/bg.mp3";
-const DEFAULT_VOLUME = 0.7;
 
 interface WindowWithWebkitAudio extends Window {
   webkitAudioContext?: typeof AudioContext;
@@ -31,9 +31,17 @@ export function getMusic(): HTMLAudioElement | null {
   return audio;
 }
 
-/** Громкость 0..1. */
+/** Громкость музыки 0..1 (запоминается). */
 export function setMusicVolume(volume: number): void {
-  if (gain) gain.gain.value = Math.min(1, Math.max(0, volume));
+  const v = Math.min(1, Math.max(0, volume));
+  writeAudioPrefs({ music: v });
+  if (gain && ctx) gain.gain.setTargetAtTime(v, ctx.currentTime, 0.02);
+  notify();
+}
+
+/** Текущая громкость музыки 0..1. */
+export function getMusicVolume(): number {
+  return readAudioPrefs().music;
 }
 
 /**
@@ -51,13 +59,14 @@ export async function startMusic(): Promise<HTMLAudioElement | null> {
       if (Ctx) {
         ctx = new Ctx();
         gain = ctx.createGain();
-        gain.gain.value = DEFAULT_VOLUME;
+        gain.gain.value = readAudioPrefs().music;
         ctx.createMediaElementSource(audio).connect(gain).connect(ctx.destination);
       }
     }
     if (ctx?.state === "suspended") await ctx.resume();
     audio.currentTime = 0;
     await audio.play();
+    writeAudioPrefs({ paused: false });
     notify();
     return audio;
   } catch {
@@ -74,8 +83,54 @@ export async function toggleMusic(): Promise<void> {
   if (audio.paused) {
     if (ctx?.state === "suspended") await ctx.resume();
     await audio.play().catch(() => {});
+    writeAudioPrefs({ paused: false });
   } else {
     audio.pause();
+    writeAudioPrefs({ paused: true });
   }
+  autoPaused = false;
   notify();
+}
+
+// ---------- сама заиграла и сама уснула ----------
+
+/** Музыку усыпила вкладка в фоне (а не человек): при возврате продолжаем. */
+let autoPaused = false;
+let lifecycleOn = false;
+
+/**
+ * Первое касание → музыка играет (если её не поставили на паузу руками); вкладка скрыта → пауза, вернулись → продолжает.
+ * Вызывается один раз при старте приложения. Пока идёт заставка, музыку запускает она сама.
+ */
+export function initMusicLifecycle(): void {
+  if (lifecycleOn || typeof document === "undefined") return;
+  lifecycleOn = true;
+
+  const first = () => {
+    if (audio) return;
+    if (document.querySelector(".gz-intro")) return; // заставка запускает трек сама, с синхронизацией
+    if (readAudioPrefs().paused) return;
+    void startMusic();
+  };
+  for (const name of ["pointerup", "keydown", "touchend"]) document.addEventListener(name, first, { capture: true, passive: true, once: false });
+
+  const hide = () => {
+    if (audio && !audio.paused) {
+      audio.pause();
+      autoPaused = true;
+      notify();
+    }
+  };
+  const show = () => {
+    if (!autoPaused || !audio) return;
+    autoPaused = false;
+    void (async () => {
+      if (ctx?.state === "suspended") await ctx.resume().catch(() => {});
+      await audio?.play().catch(() => {});
+      notify();
+    })();
+  };
+  document.addEventListener("visibilitychange", () => (document.hidden ? hide() : show()));
+  window.addEventListener("pagehide", hide);
+  window.addEventListener("pageshow", show);
 }
