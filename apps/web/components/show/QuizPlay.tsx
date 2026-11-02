@@ -35,6 +35,8 @@ export interface QuizRoundConfig {
   title: string;
   mode: QuizMode;
   players: number;
+  /** Имена игроков (режим «Компания»); нет — «Игрок 1…». */
+  names?: string[];
   questions: QuizQuestion[];
   /** Лестница сумм супер-квиза (снизу вверх) и несгораемые ступени. */
   ladder?: string[];
@@ -71,7 +73,8 @@ export function QuizPlay({
 
   const q = currentQuestion(state);
   const player = currentPlayer(state);
-  const who = state.players > 1 ? `Игрок ${player + 1}` : null;
+  const nameOf = (i: number) => config.names?.[i] || `Игрок ${i + 1}`;
+  const who = state.players > 1 ? nameOf(player) : null;
 
   const say = useCallback((text: string) => {
     setToast(text);
@@ -151,7 +154,7 @@ export function QuizPlay({
               <ul className="sw-players">
                 {summary.scores.map((s, i) => (
                   <li key={i} data-win={summary.winners.includes(i) || undefined}>
-                    <span>Игрок {i + 1}</span>
+                    <span>{nameOf(i)}</span>
                     <b>{s}</b>
                   </li>
                 ))}
@@ -160,7 +163,7 @@ export function QuizPlay({
             {config.mode === "duo" && <p className="sw-res-line">Команда набрала {summary.total} из {summary.max}</p>}
             {config.mode === "party" && summary.winners.length > 0 && (
               <p className="sw-res-line">
-                {summary.winners.length === 1 ? "Побеждает" : "Побеждают"}: {summary.winners.map((w) => `игрок ${w + 1}`).join(", ")}
+                {summary.winners.length === 1 ? "Побеждает" : "Побеждают"}: {summary.winners.map((w) => nameOf(w)).join(", ")}
               </p>
             )}
             {config.ladder && <p className="sw-res-demo">Демо: {summary.max} вопросов из {config.ladder.length}. Полная лестница появится с настоящими вопросами</p>}
@@ -254,7 +257,7 @@ export function QuizPlay({
             <b>{state.picked === q.correct ? "Верно!" : state.picked === -1 ? "Время вышло" : "Мимо"}</b>
             {state.picked !== q.correct && <p>Верный ответ: {q.options[q.correct]}</p>}
             {q.explain && <p className="sw-explain-t">{q.explain}</p>}
-            {state.players > 1 && state.index + 1 < state.questions.length && <p className="sw-explain-pass">Передай телефон: следующий — игрок {((state.index + 1) % state.players) + 1}</p>}
+            {state.players > 1 && state.index + 1 < state.questions.length && <p className="sw-explain-pass">Передай телефон: следующий — {nameOf((state.index + 1) % state.players)}</p>}
             <button
               type="button"
               className="sw-btn"
