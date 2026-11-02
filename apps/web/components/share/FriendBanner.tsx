@@ -3,6 +3,7 @@
 // Плашка на странице теста, если пришли по ссылке друга (?from=share&r=…): «🔥 Тебе скинули: Холерик. Твоя очередь».
 // Итог друга запоминаем на устройстве — после своего итога покажем «Ты: … · Друг: …» и «Кинуть ответку 🔁».
 import { useEffect } from "react";
+import { Em } from "@/components/Em";
 import { getProgress } from "@/lib/progress";
 import { trackShareOpen } from "@/lib/analytics";
 
@@ -26,7 +27,7 @@ export function FriendBanner({
   return (
     <p className="diamond-glow flex items-center gap-3 rounded-card bg-surface px-4 py-3 font-semibold">
       <span aria-hidden="true" className="text-2xl leading-none">
-        {friend.emoji}
+        <Em text={friend.emoji} />
       </span>
       <span>
         Тебе скинули: <strong className="font-extrabold">{friend.title}</strong>. Твоя очередь

@@ -13,6 +13,7 @@ import { Button, ProgressBar } from "@gazgame/ui";
 import { announceCard } from "@/lib/collection";
 import { getProgress } from "@/lib/progress";
 import { needsScoresInQuery, scoreQuery } from "@/lib/result-query";
+import { Em } from "@/components/Em";
 
 const noSubscribe = () => () => {};
 
@@ -97,7 +98,7 @@ function Runner({ test, restore }: { test: Test; restore: boolean }) {
       <div className="flex flex-col gap-4">
         {test.intro && <p className="rounded-card border border-line bg-surface p-4 text-[15px]">{test.intro}</p>}
         <Button variant="primary" onClick={start}>
-          Газ! 🔥
+          <Em text="Газ! 🔥" />
         </Button>
       </div>
     );

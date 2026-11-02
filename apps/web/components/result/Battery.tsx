@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
 import { scalesFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
+import { Em } from "@/components/Em";
 
 export function Battery({ test, hours }: { test: Test; hours?: string }) {
   const breakdown = scalesFromQuery(test, useSearchParams());
@@ -15,7 +16,7 @@ export function Battery({ test, hours }: { test: Test; hours?: string }) {
   return (
     <section aria-labelledby="battery-title" className="flex flex-col gap-3 rounded-card bg-surface p-5">
       <h2 id="battery-title" className="font-display text-xl font-bold">
-        {test.battery.title} 🔋
+        <Em text={test.battery.title} />
       </h2>
       <div className="flex items-center">
         <div

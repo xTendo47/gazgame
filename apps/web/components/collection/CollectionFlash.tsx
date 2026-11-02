@@ -6,6 +6,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dismissFlash } from "@gazgame/engine";
 import { updateCollection, useCollectionData } from "@/lib/collection";
+import { GIcon } from "@/components/casino/GIcon";
 import { BigCardFace } from "./CardFace";
 
 const SPARKS = Array.from({ length: 16 }, (_, i) => {
@@ -37,7 +38,7 @@ export function CollectionFlash() {
   }
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Новая карта в Коллекции" className="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 p-6">
+    <div role="dialog" aria-modal="true" aria-label="Новая карта в Коллекции" className="ts-reset fixed inset-0 z-[60] flex items-center justify-center bg-black/75 p-6">
       <div className="today-pop relative flex w-full max-w-[340px] flex-col items-center gap-3">
         {SPARKS.map((s, i) => (
           <i
@@ -47,7 +48,9 @@ export function CollectionFlash() {
             style={{ "--dx": s.dx, "--dy": s.dy, background: s.color, boxShadow: `0 0 8px ${s.color}`, top: "35%" } as CSSProperties}
           />
         ))}
-        <b className="font-display text-xl font-extrabold">Новая карта в Коллекции 🃏</b>
+        <b className="font-display text-xl font-extrabold">
+          Новая карта в Коллекции <GIcon name="cards" />
+        </b>
         <BigCardFace card={card} />
         <button
           ref={button}

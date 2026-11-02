@@ -1,6 +1,6 @@
 "use client";
 
-// После своего итога, если тест прислал друг: «Ты: Холерик 🔥 · Друг: Сангвиник ☀️» и «Кинуть ответку 🔁».
+// После своего итога, если тест прислал друг: «Ты: Холерик 🔥 · Друг: Сангвиник ☀️» и «<Em text="Кинуть ответку 🔁" />».
 // Итог друга лежит на устройстве (его запомнила плашка «Тебе скинули» на странице теста).
 import { useSyncExternalStore } from "react";
 import type { Test, TestResult } from "@gazgame/content";
@@ -9,6 +9,7 @@ import { Button } from "@gazgame/ui";
 import { trackAnswerBack } from "@/lib/analytics";
 import { getProgress } from "@/lib/progress";
 import { useOpenShare } from "./ShareSheet";
+import { Em } from "@/components/Em";
 
 const noopSubscribe = () => () => {};
 
@@ -31,7 +32,7 @@ export function AnswerBack({ test, mine }: { test: Test; mine: TestResult }) {
       </p>
       {/* Роли совпали с «Лучшей химией» (share.duo у любого из двух) */}
       {(mine.share?.duo === friend.id || friend.share?.duo === mine.id) && (
-        <p className="text-center font-display text-base font-extrabold text-lime">Идеальный дуэт ⚡</p>
+        <p className="text-center font-display text-base font-extrabold text-lime"><Em text="Идеальный дуэт ⚡" /></p>
       )}
       <Button
         variant="accent"
@@ -40,7 +41,7 @@ export function AnswerBack({ test, mine }: { test: Test; mine: TestResult }) {
           openShare({ answerTo: friend });
         }}
       >
-        Кинуть ответку 🔁
+        <Em text="Кинуть ответку 🔁" />
       </Button>
     </section>
   );

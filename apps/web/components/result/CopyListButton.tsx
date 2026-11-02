@@ -31,7 +31,7 @@ export function CopyListButton({
         {label}
       </Button>
       <p role="status" className="text-center text-sm text-muted empty:hidden">
-        {status === "copied" && "Скопировано ✅ Осталось отправить"}
+        {status === "copied" && "Скопировано. Осталось отправить"}
         {status === "failed" && "Не получилось скопировать — выдели список выше и скопируй вручную."}
       </p>
     </div>

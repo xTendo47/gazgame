@@ -10,6 +10,7 @@ import { borderlineNeighbour, type ScaleScore } from "@gazgame/engine";
 import { cn } from "@gazgame/ui";
 import { scalesFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
+import { Em } from "@/components/Em";
 
 const LEVEL_LABELS: Record<string, string> = { low: "низкий", mid: "средний", high: "высокий" };
 const LEVEL_BARS: Record<string, string> = { low: "bg-orange", mid: "bg-gradient-to-r from-orange to-lime", high: "bg-lime" };
@@ -38,7 +39,7 @@ export function ScalesPanel({ test, range }: { test: Test; range?: readonly [num
       )}
       <section aria-labelledby="scales-title" className="flex flex-col gap-4 rounded-card bg-surface p-5">
         <h2 id="scales-title" className="font-display text-xl font-bold">
-          {panel?.title ?? "Твои шкалы 📊"}
+          {<Em text={panel?.title ?? "Твои шкалы"} />}
         </h2>
         {scales.map((s) => (
           <ScaleRow key={s.scale.id} item={s} view={s.level ? panel?.levels?.[s.level] : undefined} slider={panel?.slider} />
@@ -71,7 +72,7 @@ export function ScalesPanel({ test, range }: { test: Test; range?: readonly [num
       )}
       {blocks && profile.kind === "flat" && (
         <section className="rounded-card border border-line p-5">
-          <h2 className="mb-2 font-display text-lg font-bold">Ровный профиль ⚖️</h2>
+          <h2 className="mb-2 font-display text-lg font-bold">Ровный профиль</h2>
           <p className="leading-relaxed text-cream/85">{blocks.flatProfile}</p>
         </section>
       )}

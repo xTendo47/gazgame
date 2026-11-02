@@ -4,7 +4,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findResult, findTest } from "@gazgame/engine";
-import { Screen } from "@gazgame/ui";
+import { TestSkin } from "@/components/diary/TestSkin";
+import { testTheme } from "@/lib/test-theme";
 import { resultDescription, TestResultView } from "@/components/result/TestResultView";
 import { getCatalog, visibility } from "@/lib/catalog";
 
@@ -33,8 +34,8 @@ export default async function ResultPage({ params }: Props) {
   if (!data) notFound();
 
   return (
-    <Screen>
+    <TestSkin theme={testTheme(data.test.slug)}>
       <TestResultView test={data.test} result={data.result} />
-    </Screen>
+    </TestSkin>
   );
 }

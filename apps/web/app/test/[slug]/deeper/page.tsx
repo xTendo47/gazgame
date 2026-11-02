@@ -5,11 +5,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fillPlaceholders, findTest } from "@gazgame/engine";
-import { Badge, buttonVariants, Screen } from "@gazgame/ui";
+import { Badge, buttonVariants } from "@gazgame/ui";
 import { BackButton } from "@/components/BackButton";
 import { DotList } from "@/components/DotList";
 import { UpsellItems } from "@/components/result/UpsellItems";
 import { UpsellText } from "@/components/result/UpsellText";
+import { TestSkin } from "@/components/diary/TestSkin";
+import { testTheme } from "@/lib/test-theme";
+import { Em } from "@/components/Em";
 import { upsellItems } from "@/lib/upsell";
 import { getCatalog, visibility } from "@/lib/catalog";
 
@@ -40,15 +43,15 @@ export default async function TestDeeperPage({ params }: Props) {
   const textClass = "text-lg leading-relaxed";
 
   return (
-    <Screen className="justify-center">
+    <TestSkin theme={testTheme(test.slug)}>
       <section
         className="flex flex-col gap-4 rounded-card border-2 border-lime bg-surface p-6"
         style={{ backgroundImage: "radial-gradient(circle at 100% 0%, rgba(212,255,58,0.18), transparent 60%)" }}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <Badge tone="premium">💎 Premium</Badge>
+          <Badge tone="premium"><Em text="💎" /> Premium</Badge>
           <span className="text-sm font-bold text-muted">
-            {test.emoji} {test.title}
+            <Em text={test.emoji} /> {test.title}
           </span>
         </div>
         <h1 className="font-display text-3xl font-black leading-tight">{upsell.premium.headline ?? upsell.button}</h1>
@@ -68,6 +71,6 @@ export default async function TestDeeperPage({ params }: Props) {
       </section>
 
       <BackButton>← К результату</BackButton>
-    </Screen>
+    </TestSkin>
   );
 }

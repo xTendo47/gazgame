@@ -6,10 +6,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Test } from "@gazgame/content";
 import { findResult, findTest, parseSharedResult, sharedResultMeta } from "@gazgame/engine";
-import { Badge, PageHeader, Screen } from "@gazgame/ui";
+import { Badge, PageHeader } from "@gazgame/ui";
 import { BackLink } from "@/components/BackLink";
 import { RulesHelp } from "@/components/RulesSheet";
 import { FriendBanner } from "@/components/share/FriendBanner";
+import { TestSkin } from "@/components/diary/TestSkin";
+import { testTheme } from "@/lib/test-theme";
 import { TestRunner } from "@/components/TestRunner";
 import { getCatalog, visibility } from "@/lib/catalog";
 import { getSection } from "@/lib/sections";
@@ -71,11 +73,10 @@ export default async function TestPage({ params, searchParams }: Props) {
   const rules = layouts?.rules.test;
 
   return (
-    <Screen>
+    <TestSkin theme={testTheme(test.slug)}>
       <PageHeader
         back={<BackLink href={`/${section?.id ?? ""}`}>{section?.title ?? "Меню"}</BackLink>}
         title={test.title}
-        emoji={test.emoji}
         subtitle={test.description}
         badge={
           <span className="flex flex-wrap gap-2">
@@ -104,6 +105,6 @@ export default async function TestPage({ params, searchParams }: Props) {
         />
       )}
       <TestRunner test={test} />
-    </Screen>
+    </TestSkin>
   );
 }

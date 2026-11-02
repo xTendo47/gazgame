@@ -6,6 +6,7 @@ import type { Test } from "@gazgame/content";
 import { FLAG_KEY, flagMeterOf } from "@gazgame/engine";
 import { sideScoreFromQuery } from "@/lib/result-query";
 import { FillBar } from "./FillBar";
+import { Em } from "@/components/Em";
 
 export function FlagMeter({ test }: { test: Test }) {
   const sum = sideScoreFromQuery(useSearchParams(), FLAG_KEY);
@@ -16,11 +17,11 @@ export function FlagMeter({ test }: { test: Test }) {
   return (
     <section aria-labelledby="flag-meter-title" className="flex flex-col gap-3 rounded-card bg-surface p-5">
       <h2 id="flag-meter-title" className="font-display text-xl font-bold">
-        {test.flagMeter.title} 🚩💚
+        <Em text={test.flagMeter.title} />
       </h2>
       <div className="flex items-baseline justify-between gap-3 font-display text-lg font-extrabold">
-        <span>💚 {green}%</span>
-        <span>🚩 {red}%</span>
+        <span>{green}%</span>
+        <span><Em text="🚩" /> {red}%</span>
       </div>
       <div
         role="meter"

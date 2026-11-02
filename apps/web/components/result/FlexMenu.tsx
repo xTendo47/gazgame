@@ -60,7 +60,7 @@ export function FlexMenu({
             Скопировать ссылку
           </Button>
           <p role="status" className="px-3 pb-1 text-sm text-muted empty:hidden">
-            {copy.status === "copied" && "Ссылка скопирована ✅ Кидай друзьям"}
+            {copy.status === "copied" && "Ссылка скопирована. Кидай друзьям"}
             {copy.status === "failed" && (
               <>
                 Не получилось скопировать. Вот ссылка:{" "}

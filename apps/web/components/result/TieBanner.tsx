@@ -15,7 +15,7 @@ export function tieText(ranking: readonly RankedType[]): string {
 export function TieNote({ ranking }: { ranking: readonly RankedType[] }) {
   return (
     <p role="status" className="rounded-card border border-lime/60 bg-lime/10 px-4 py-2.5 text-center text-[15px] font-bold text-lime">
-      ⚖️ {tieText(ranking)}
+      {tieText(ranking)}
     </p>
   );
 }

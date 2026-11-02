@@ -4,6 +4,8 @@
 // второй эмодзи смешанного результата — чуть позже. Всё укладывается в 0,5 с.
 // Кому мешает движение: MotionConfig reducedMotion="user" гасит прыжки и сдвиги, остаётся мягкое проявление.
 import { MotionConfig, motion } from "motion/react";
+import { Glyph } from "@/components/casino/GIcon";
+import { Em } from "@/components/Em";
 
 /**
  * Размер заголовка по самому длинному слову: на узком телефоне (360px) слово должно влезать целиком,
@@ -72,7 +74,7 @@ export function ResultHero({
             : undefined
         }
       >
-        <div className="text-sm font-extrabold uppercase tracking-wide text-balance">{label}</div>
+        <div className="text-sm font-extrabold uppercase tracking-wide text-balance"><Em text={label} /></div>
         {/* Второй эмодзи стоит в своём месте справа от первого, а не поверх — на текст не налезает */}
         <div aria-hidden="true" className="flex items-end justify-center gap-1 text-7xl leading-none">
           <motion.span
@@ -81,7 +83,7 @@ export function ResultHero({
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 420, damping: 14, mass: 0.7 }}
           >
-            {emoji}
+            <Glyph emoji={emoji} label={title} size="1em" />
           </motion.span>
           {blendEmoji && (
             <motion.span
@@ -90,7 +92,7 @@ export function ResultHero({
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 420, damping: 15, delay: 0.25 }}
             >
-              {blendEmoji}
+              <Glyph emoji={blendEmoji} label={blendTitle} size="1em" />
             </motion.span>
           )}
         </div>
@@ -102,7 +104,7 @@ export function ResultHero({
         </motion.h1>
         {blendTitle && (
           <motion.p {...rise(0.16)} className="-mt-2 text-lg font-bold text-balance">
-            {blendTitle}
+            <Em text={blendTitle} />
           </motion.p>
         )}
         {subtitle && (

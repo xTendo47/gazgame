@@ -1,0 +1,306 @@
+/* Экраны теста в стиле кармашка «Дневника»: розыск (эталон 09), клиника (эталон 10), общий стиль Дневника (эталон 08).
+   Лист-страница перекрашивает токены цвета, поэтому карточки, кнопки и полосы внутри остаются прежними компонентами. */
+
+.ts-skin {
+  padding-top: max(18px, env(safe-area-inset-top));
+}
+.ts-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+.ts-backdrop[data-theme="wanted"] {
+  background:
+    radial-gradient(120% 80% at 50% 38%, transparent 40%, rgb(20 8 2 / 0.55)),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.16) 0 2px, transparent 2px 98px),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 9px),
+    linear-gradient(180deg, #7a4f30, #5a3720 60%, #46291a);
+}
+.ts-backdrop[data-theme="diary"] {
+  background:
+    radial-gradient(120% 80% at 50% 38%, transparent 40%, rgb(20 8 2 / 0.55)),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.12) 0 2px, transparent 2px 98px),
+    linear-gradient(180deg, #86593a, #5e3b22 60%, #4a2e1a);
+}
+.ts-backdrop[data-theme="clinic"] {
+  background:
+    linear-gradient(rgb(255 255 255 / 0.12) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgb(255 255 255 / 0.12) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(180deg, #7fd0d2, #5fb8bd);
+}
+.ts-holes {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 18%, #120802 0 4px, rgb(58 34 8 / 0.4) 5px 9px, transparent 10px),
+    radial-gradient(circle at 90% 62%, #120802 0 4px, rgb(58 34 8 / 0.4) 5px 9px, transparent 10px),
+    radial-gradient(circle at 8% 84%, #120802 0 3px, rgb(58 34 8 / 0.4) 4px 7px, transparent 8px);
+}
+.ts-blot {
+  position: absolute;
+  right: -30px;
+  bottom: 40px;
+  width: 190px;
+  color: rgb(15 58 64 / 0.25);
+  transform: rotate(-12deg);
+}
+
+/* ---------- лист ---------- */
+.ts-sheet {
+  --ts-sheet: #efe3c6;
+  min-height: calc(100dvh - 36px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 18px 16px 24px;
+  color: var(--color-cream);
+  background: var(--ts-sheet);
+  box-shadow: 0 14px 26px rgb(0 0 0 / 0.5);
+}
+.ts-sheet[data-theme="diary"] {
+  --color-bg: #3a2412;
+  --color-surface: #e7d8b6;
+  --color-surface-2: #dcc99e;
+  --color-line: #c8b387;
+  --color-cream: #3a2412;
+  --color-muted: #6e5538;
+  --color-orange: #8a3a2a;
+  --color-orange-deep: #6a2a1c;
+  --color-lime: #d4aa55;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Manrope Variable", system-ui, sans-serif;
+  border-radius: 2px 6px 6px 2px;
+  padding-left: 30px;
+  background:
+    linear-gradient(90deg, transparent 22px, rgb(214 90 90 / 0.4) 22px 23px, transparent 23px),
+    repeating-linear-gradient(180deg, transparent 0 31px, rgb(120 150 190 / 0.3) 31px 32px),
+    linear-gradient(180deg, #f6ecd4, #efe3c6);
+  box-shadow:
+    0 14px 26px rgb(0 0 0 / 0.5),
+    inset 6px 0 0 #2a1a10;
+}
+.ts-sheet[data-theme="wanted"] {
+  --ts-sheet: #ecd6a2;
+  --color-bg: #2a1a0c;
+  --color-surface: #e2c88e;
+  --color-surface-2: #d6b87a;
+  --color-line: #8a6a3a;
+  --color-cream: #2a1a0c;
+  --color-muted: #6a4a22;
+  --color-orange: #9c2a1c;
+  --color-orange-deep: #7a1f12;
+  --color-lime: #d9a23a;
+  --font-display: "Kelly Slab", "Roboto Slab", serif;
+  --font-body: "Roboto Slab", Georgia, serif;
+  padding-top: 8px;
+  background:
+    radial-gradient(40% 40% at 90% 12%, rgb(110 60 15 / 0.28), transparent 70%),
+    linear-gradient(180deg, #efdcaa, #d6b87a);
+  box-shadow:
+    inset 0 0 0 2px #2a1a0c,
+    inset 0 0 0 5px #ecd6a2,
+    inset 0 0 0 6px rgb(42 26 12 / 0.55),
+    0 14px 26px rgb(0 0 0 / 0.55);
+}
+.ts-sheet[data-theme="wanted"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, transparent 50%, #b08a4c 50%, #8a6a3a);
+  box-shadow: -3px -3px 6px rgb(0 0 0 / 0.25);
+}
+/* вспышка «Новая карта» живёт внутри листа, но выглядит как обычно */
+.ts-sheet .ts-reset {
+  --color-bg: #141217;
+  --color-surface: #221e27;
+  --color-surface-2: #2d2833;
+  --color-line: #3a3441;
+  --color-orange: #ff5a1f;
+  --color-lime: #d4ff3a;
+  --color-cream: #f3eee6;
+  --color-muted: #a79fb0;
+  --font-display: var(--font-unbounded), system-ui, sans-serif;
+  --font-body: var(--font-manrope), system-ui, sans-serif;
+  color: #f3eee6;
+}
+.ts-sheet .ts-reset .font-display {
+  font-weight: 800;
+}
+.ts-sheet[data-theme="clinic"] {
+  --ts-sheet: #f4fbfb;
+  --color-bg: #0f3a40;
+  --color-surface: #e2f3f3;
+  --color-surface-2: #cde8e8;
+  --color-line: #9ac6ca;
+  --color-cream: #123238;
+  --color-muted: #4a7378;
+  --color-orange: #14707a;
+  --color-orange-deep: #0e5058;
+  --color-lime: #8fdccf;
+  --font-display: "IBM Plex Mono", ui-monospace, monospace;
+  --font-body: "IBM Plex Mono", ui-monospace, monospace;
+  padding-top: 0;
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 27px, rgb(80 140 150 / 0.22) 27px 28px),
+    linear-gradient(180deg, #f9fefe, #eef8f8);
+  box-shadow:
+    inset 0 0 0 1px #9ac6ca,
+    0 14px 26px rgb(0 0 0 / 0.4);
+}
+
+/* шапка листа: плакат и выписка */
+.ts-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  font: 700 18px / 1 "Roboto Slab", serif;
+  letter-spacing: 0.14em;
+  color: #2a1a0c;
+}
+.ts-banner svg {
+  width: 16px;
+  height: 16px;
+  color: #2a1a0c;
+}
+.ts-sheet[data-theme="clinic"] .ts-banner {
+  justify-content: space-between;
+  margin: 0 -16px;
+  padding: 9px 14px;
+  font: 700 9.500px / 1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.1em;
+  color: #f4fbfb;
+  background: #14707a;
+  border-radius: 4px 4px 0 0;
+}
+
+/* кнопки и заголовки в стиле листа */
+.ts-sheet h1,
+.ts-sheet h2 {
+  text-wrap: balance;
+}
+.ts-sheet[data-theme="wanted"] h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.ts-sheet[data-theme="wanted"] button.bg-orange,
+.ts-sheet[data-theme="wanted"] a.bg-orange {
+  color: #fff4dc;
+  background: #9c2a1c;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 0 2px #fff4dc55,
+    0 3px 0 #3a0c06;
+  font-family: "Kelly Slab", "Roboto Slab", serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ts-sheet[data-theme="wanted"] button.bg-lime,
+.ts-sheet[data-theme="wanted"] a.bg-lime {
+  color: #2a1a0c;
+  background: linear-gradient(180deg, #f0c968, #d9a23a);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 0 2px #2a1a0c,
+    0 3px 0 #3a2208;
+}
+.ts-sheet[data-theme="clinic"] button.bg-orange,
+.ts-sheet[data-theme="clinic"] a.bg-orange {
+  color: #fff;
+  background: #14707a;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1.5px #0e5058,
+    0 3px 0 #0a3a40;
+}
+.ts-sheet[data-theme="clinic"] button.bg-lime,
+.ts-sheet[data-theme="clinic"] a.bg-lime {
+  color: #0e3a40;
+  background: #8fdccf;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1.5px #14707a,
+    0 3px 0 #0a3a40;
+}
+.ts-sheet[data-theme="diary"] button.bg-orange,
+.ts-sheet[data-theme="diary"] a.bg-orange {
+  color: #fff8e8;
+  background: #8a3a2a;
+  border-radius: 6px;
+  box-shadow: 0 3px 0 #4a1c10;
+}
+.ts-sheet[data-theme="diary"] button.bg-lime,
+.ts-sheet[data-theme="diary"] a.bg-lime {
+  color: #3a2412;
+  background: linear-gradient(180deg, #f3d98e, #d4aa55);
+  border-radius: 6px;
+  box-shadow: 0 3px 0 #7a5a20;
+}
+/* варианты ответа и «ghost»-кнопки: плашки бумаги с чернильной рамкой */
+.ts-sheet button.bg-surface,
+.ts-sheet a.bg-surface {
+  color: var(--color-cream);
+  border: 1.5px solid var(--color-cream);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.25);
+}
+.ts-sheet[data-theme="clinic"] button.bg-surface,
+.ts-sheet[data-theme="clinic"] a.bg-surface {
+  border-color: #14707a;
+  border-radius: 6px;
+}
+.ts-sheet .rounded-card {
+  border-radius: 6px;
+}
+.ts-sheet [class*="bg-surface"] {
+  color: var(--color-cream);
+}
+.ts-sheet .text-cream\/85,
+.ts-sheet .text-cream\/80 {
+  color: color-mix(in srgb, var(--color-cream) 88%, transparent);
+}
+/* свечение «алмаза» на бумаге лишнее: оставляем рамку, убираем голубую заливку */
+.ts-sheet .diamond-glow,
+.ts-sheet .diamond-glow-ring {
+  background-image: none;
+  border-color: var(--color-cream);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.25);
+  animation: none;
+}
+.ts-sheet[data-theme="clinic"] .rounded-card {
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ts-sheet * {
+    animation: none !important;
+  }
+}
+/* у Kelly Slab одно начертание: без «жирного» синтеза */
+.ts-sheet[data-theme="wanted"] .font-display,
+.ts-sheet[data-theme="wanted"] h1,
+.ts-sheet[data-theme="wanted"] h2,
+.ts-sheet[data-theme="wanted"] legend {
+  font-weight: 400;
+}
+/* главная карточка итога: красная/бирюзовая/коричневая плашка со светлым текстом */
+.ts-sheet section.bg-orange {
+  color: #fff4dc;
+}
+.ts-sheet section.bg-orange p.bg-bg {
+  color: #f6d98a;
+  background: rgb(20 8 2 / 0.78);
+}
+.ts-sheet[data-theme="clinic"] section.bg-orange {
+  color: #f4fbfb;
+}
+.ts-sheet[data-theme="clinic"] section.bg-orange p.bg-bg {
+  color: #b8f0e6;
+  background: rgb(6 40 46 / 0.8);
+}

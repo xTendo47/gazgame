@@ -24,7 +24,7 @@ export function RankingPanel({ test, resultId, blendId }: { test: Test; resultId
   return (
     <section aria-labelledby="ranking-title" className="flex flex-col gap-4 rounded-card bg-surface p-5">
       <h2 id="ranking-title" className="font-display text-xl font-bold">
-        Твой расклад 📊
+        Твой расклад
       </h2>
       {tie && <TieNote ranking={ranking} />}
       <ol id={listId} className="flex flex-col gap-3.5">

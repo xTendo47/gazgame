@@ -3,7 +3,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { blendPairs, findResult, findTest } from "@gazgame/engine";
-import { Screen } from "@gazgame/ui";
+import { TestSkin } from "@/components/diary/TestSkin";
+import { testTheme } from "@/lib/test-theme";
 import { resultDescription, resultTitle, TestResultView } from "@/components/result/TestResultView";
 import { getCatalog, visibility } from "@/lib/catalog";
 
@@ -36,8 +37,8 @@ export default async function BlendResultPage({ params }: Props) {
   if (!data) notFound();
 
   return (
-    <Screen>
+    <TestSkin theme={testTheme(data.test.slug)}>
       <TestResultView test={data.test} result={data.result} blend={data.blend} />
-    </Screen>
+    </TestSkin>
   );
 }

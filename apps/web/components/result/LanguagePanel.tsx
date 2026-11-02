@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { Test } from "@gazgame/content";
 import { LANG_KEY, languageOf } from "@gazgame/engine";
 import { sideScoreFromQuery } from "@/lib/result-query";
+import { Em } from "@/components/Em";
 
 export function LanguagePanel({ test, resultId }: { test: Test; resultId: string }) {
   const index = sideScoreFromQuery(useSearchParams(), LANG_KEY);
@@ -25,7 +26,7 @@ export function LanguagePanel({ test, resultId }: { test: Test; resultId: string
       {date && (
         <section aria-label={test.languages.datesTitle ?? "Идеальное свидание"} className="flex flex-col gap-2 rounded-card border-l-4 border-orange bg-surface p-5">
           <h2 className="flex items-center gap-2 font-display text-lg leading-tight font-bold">
-            <span aria-hidden="true">💘</span>
+            <span aria-hidden="true"><Em text="💘" /></span>
             {test.languages.datesTitle ?? "Идеальное свидание"}
           </h2>
           <p className="leading-relaxed text-cream/85">{date}</p>

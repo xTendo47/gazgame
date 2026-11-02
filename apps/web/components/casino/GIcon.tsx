@@ -617,3 +617,9 @@ export function Glyph({ emoji, label, size = "1.15em", className }: { emoji: str
     </svg>
   );
 }
+
+/** Имя значка для эмодзи из данных, если пара есть (без запасной «фишки с буквой»). */
+export function glyphName(emoji: string): GIconName | undefined {
+  const key = emoji.replace(CLEAN, "");
+  return BY_EMOJI[key] ?? BY_EMOJI[[...key][0] ?? ""];
+}

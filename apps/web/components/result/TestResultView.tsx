@@ -14,6 +14,7 @@ import { CollectionFlash } from "@/components/collection/CollectionFlash";
 import { DeeperButton } from "@/components/DeeperButton";
 import { RelatedBlock } from "@/components/RelatedBlock";
 import { getSection } from "@/lib/sections";
+import { stripEmoji } from "@/lib/text";
 import { CopyListButton } from "./CopyListButton";
 import { CompatLink } from "./CompatLink";
 import { AnswerBack } from "@/components/share/AnswerBack";
@@ -33,6 +34,7 @@ import { upsellItems } from "@/lib/upsell";
 import { UpsellItems } from "./UpsellItems";
 import { UpsellText } from "./UpsellText";
 import { DotList } from "../DotList";
+import { Em } from "@/components/Em";
 
 /** Заголовок блока Premium после теста — одинаковый у всех тестов. */
 const UPSELL_TITLE = "Что ты получишь";
@@ -177,7 +179,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       {result.strengths && result.strengths.length > 0 && (
         <section aria-labelledby="strengths-title" className="flex flex-col gap-3">
           <h2 id="strengths-title" className="font-display text-xl font-bold">
-            Твои сильные стороны 💪
+            <Em text="Твои сильные стороны 💪" />
           </h2>
           <ul className="flex flex-wrap gap-2">
             {result.strengths.map((s) => (
@@ -197,7 +199,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
         >
           <div className="flex flex-col gap-1">
             <h2 id="love-me-title" className="font-display text-xl font-bold">
-              {loveHeading} {listEmoji ?? "💌"}
+              <Em text={`${loveHeading} ${listEmoji ?? "💌"}`} />
             </h2>
             {test.resultBlocks?.howToLoveMeHint && <p className="text-[15px] text-muted">{test.resultBlocks.howToLoveMeHint}</p>}
           </div>
@@ -207,7 +209,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
               return (
                 <li key={item} className="flex gap-3 leading-relaxed">
                   <span aria-hidden="true" className={listEmoji ? "shrink-0" : "text-orange"}>
-                    {listEmoji ?? "♥"}
+                    {listEmoji ? <Em text={listEmoji} /> : "♥"}
                   </span>
                   <span>
                     {label ? (
@@ -243,7 +245,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       )}
 
       {result.watchOut && (
-        <InsightCard emoji="⚠️" title="На что обратить внимание" accent="border-orange">
+        <InsightCard emoji="⚠" title="На что обратить внимание" accent="border-orange">
           {result.watchOut}
         </InsightCard>
       )}
@@ -256,7 +258,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       {result.care && (
         <section className="flex gap-3 rounded-card bg-surface-2/60 p-5">
           <span aria-hidden="true" className="text-2xl leading-none">
-            🤍
+            <Em text="🤍" />
           </span>
           <p className="text-[15px] leading-relaxed text-cream/80">{result.care}</p>
         </section>
@@ -265,7 +267,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
       {result.heart && (
         <section className="flex items-center justify-center gap-3 rounded-card bg-surface-2/60 px-5 py-4 text-center">
           <span aria-hidden="true" className="shrink-0 text-xl leading-none">
-            ❤️
+            <Em text="❤️" />
           </span>
           <p className="text-[15px] leading-relaxed text-balance text-cream/80">{result.heart}</p>
         </section>
@@ -318,7 +320,7 @@ export function TestResultView({ test, result, blend }: { test: Test; result: Te
 
       <nav aria-label="Что дальше" className="mt-4 flex flex-col gap-3">
         <Link href={`/test/${test.slug}`} className={buttonVariants({ variant: "ghost" })}>
-          Пройти ещё раз 🔄
+          <Em text="Пройти ещё раз 🔄" />
         </Link>
         <BackToSection test={test} />
         <Link href="/" className={buttonVariants({ variant: "ghost", size: "md", className: "text-muted hover:text-cream" })}>
@@ -335,7 +337,7 @@ function BackToSection({ test }: { test: Test }) {
   if (!section) return null;
   return (
     <Link href={`/${section.id}`} className={buttonVariants({ variant: "outline" })}>
-      Вернуться в «{section.title}» {section.emoji}
+      Вернуться в «{stripEmoji(section.title)}»
     </Link>
   );
 }
@@ -344,7 +346,7 @@ function BackToSection({ test }: { test: Test }) {
 function RouteBlock({ title, route }: { title: string; route: NonNullable<TestResult["route"]> }) {
   return (
     <section aria-label={title} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
-      <h2 className="font-display text-lg leading-tight font-bold">🗺 {title}</h2>
+      <h2 className="font-display text-lg leading-tight font-bold"><Em text={`🗺 ${title}`} /></h2>
       <ol className="flex flex-col gap-3">
         {route.map((step) => (
           <li key={step.label} className="flex flex-col gap-0.5 border-l-2 border-orange pl-3">
@@ -362,7 +364,7 @@ function BoardBlock({ board, blocks }: { board: NonNullable<TestResult["board"]>
   const [from, to] = board.colors;
   return (
     <section aria-label={blocks?.board ?? "Твой вайб-борд"} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
-      <h2 className="font-display text-lg leading-tight font-bold">🎨 {blocks?.board ?? "Твой вайб-борд"}</h2>
+      <h2 className="font-display text-lg leading-tight font-bold"><Em text={`🎨 ${blocks?.board ?? "Твой вайб-борд"}`} /></h2>
       <div
         aria-hidden="true"
         className="flex items-center justify-center gap-4 rounded-2xl py-6 text-5xl"
@@ -375,15 +377,15 @@ function BoardBlock({ board, blocks }: { board: NonNullable<TestResult["board"]>
       <ul className="flex flex-wrap gap-2" aria-label="Настроение музыки">
         {board.moods.map((m) => (
           <li key={m} className="rounded-full bg-surface-2 px-3.5 py-1.5 text-[15px] font-bold">
-            🎧 {m}
+            {m}
           </li>
         ))}
       </ul>
       <p className="leading-snug">
-        <b className="font-extrabold">📍 {blocks?.boardPlace ?? "Локация"}:</b> <span className="text-cream/90">{board.place}</span>
+        <b className="font-extrabold">{blocks?.boardPlace ?? "Локация"}:</b> <span className="text-cream/90">{board.place}</span>
       </p>
       <p className="leading-snug">
-        <b className="font-extrabold">🔊 {blocks?.boardSound ?? "Звук"}:</b> <span className="text-cream/90">{board.sound}</span>
+        <b className="font-extrabold">{blocks?.boardSound ?? "Звук"}:</b> <span className="text-cream/90">{board.sound}</span>
       </p>
     </section>
   );
@@ -394,7 +396,7 @@ function CompatBlock({ compat, blocks }: { compat: NonNullable<TestResult["compa
   const title = blocks?.compat ?? "Совместимость";
   return (
     <section aria-label={title} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
-      <h2 className="font-display text-lg leading-tight font-bold">💞 {title}</h2>
+      <h2 className="font-display text-lg leading-tight font-bold"><Em text={`💞 ${title}`} /></h2>
       <p className="border-l-4 border-lime pl-3 leading-snug">
         <b className="font-extrabold">{blocks?.compatMatch ?? "Совпадаешь"}:</b> <span className="text-cream/90">{compat.match}</span>
       </p>
@@ -412,7 +414,7 @@ function Extras({ extras }: { extras: NonNullable<TestResult["extras"]> }) {
       {extras.map((e) => (
         <section key={e.title} aria-label={e.title} className="flex flex-col gap-2 rounded-card border border-line bg-surface p-5">
           <h2 className="flex items-center gap-2 font-display text-lg leading-tight font-bold">
-            {e.emoji && <span aria-hidden="true">{e.emoji}</span>}
+            {e.emoji && <span aria-hidden="true"><Em text={e.emoji} /></span>}
             {e.title}
           </h2>
           {e.big && <p className="font-display text-5xl leading-none font-black text-orange tabular-nums">{e.big}</p>}
@@ -458,7 +460,7 @@ function InsightCard({
   return (
     <section className={cn("rounded-card border-l-4 bg-surface p-5", accent)}>
       <h2 className="mb-2 flex items-center gap-2 font-display text-lg font-bold leading-tight">
-        {emoji && <span aria-hidden="true">{emoji}</span>}
+        {emoji && <span aria-hidden="true"><Em text={emoji} /></span>}
         {title}
       </h2>
       <p className="leading-relaxed text-cream/85">{children}</p>
