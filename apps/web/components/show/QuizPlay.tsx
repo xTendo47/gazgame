@@ -29,11 +29,11 @@ import { sfx } from "@/lib/sfx";
 import { SHOW_CAM_L, SHOW_CAM_R, SHOW_CAT_GENERAL, SHOW_CAT_KINO, SHOW_CAT_MUSIC, SHOW_CAT_RIDDLE, SHOW_CAT_SUPER } from "./show-art";
 import "./show.css";
 
-const THEME_ART: Record<string, string> = { kino: SHOW_CAT_KINO, music: SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, super: SHOW_CAT_SUPER };
+const THEME_ART: Record<string, string> = { kino: SHOW_CAT_KINO, "rap-ru": SHOW_CAT_MUSIC, general: SHOW_CAT_GENERAL, riddle: SHOW_CAT_RIDDLE, super: SHOW_CAT_SUPER };
 const LEVEL_COLORS = ["#ff4d4d", "#4de0ff", "#f2c94c"];
 
 export interface QuizRoundConfig {
-  /** Ключ темы (kino, music, general, riddle, super) — для фона. */
+  /** Ключ темы (kino, rap-ru, general, riddle, super) — для фона. */
   theme: string;
   title: string;
   mode: QuizMode;

@@ -619,13 +619,13 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
 
   it("настоящие файлы проходят проверку: четыре категории, супер-квиз и суд", () => {
     const quiz = loadCatalog().quiz ?? [];
-    expect(quiz.map((q) => q.id).sort()).toEqual(["court", "general", "kino", "music", "riddle", "super"]);
+    expect(quiz.map((q) => q.id).sort()).toEqual(["court", "general", "kino", "rap-ru", "riddle", "super"]);
   });
 
-  it("Кино, Общее и Загадки — настоящие банки (по 30 вопросов на уровень, без draft), Музыка пока демо (3, draft)", () => {
+  it("Кино, Общее и Загадки — настоящие банки (по 30 вопросов на уровень, без draft), Русский хип-хоп пока демо (3, draft)", () => {
     for (const q of loadCatalog().quiz ?? []) {
       if (q.kind !== "category") continue;
-      if (q.id !== "music") {
+      if (q.id !== "rap-ru") {
         expect(q.questions).toHaveLength(90);
         for (const level of [1, 2, 3]) expect(q.questions.filter((x) => x.level === level && x.draft !== true)).toHaveLength(30);
       } else {
@@ -655,10 +655,10 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
 });
 
 describe("Квиз $HOW: предупреждение о малом банке", () => {
-  it("предупреждения только по категории без настоящего банка (Музыка)", () => {
+  it("предупреждения только по категории без настоящего банка (Русский хип-хоп)", () => {
     const warnings = quizBankWarnings(loadCatalog().quiz);
     expect(warnings.length).toBe(3);
     expect(warnings.some((w) => /Кино|Общее|Загадки/.test(w))).toBe(false);
-    expect(warnings.every((w) => /Музыка/.test(w))).toBe(true);
+    expect(warnings.every((w) => /Русский хип-хоп/.test(w))).toBe(true);
   });
 });

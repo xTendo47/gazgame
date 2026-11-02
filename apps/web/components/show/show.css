@@ -428,7 +428,7 @@
   font-style: italic;
   color: var(--gold-l);
 }
-.sw-cat[data-c="music"] .sw-cat-t b {
+.sw-cat[data-c="rap-ru"] .sw-cat-t b {
   color: #ffb347;
   font-family: "Manrope Variable", sans-serif;
   font-weight: 800;
@@ -476,7 +476,7 @@
 .sw-q[data-th="kino"] {
   --th: #ff5a5a;
 }
-.sw-q[data-th="music"] {
+.sw-q[data-th="rap-ru"] {
   --th: #ff9a2e;
 }
 .sw-q[data-th="general"] {
