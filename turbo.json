@@ -1,6 +1,8 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
+  "cacheMaxSize": "2GB",
+  "cacheMaxAge": "1d",
   "tasks": {
     "transit": {
       "dependsOn": ["^transit"]
