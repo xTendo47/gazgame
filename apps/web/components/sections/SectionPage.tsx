@@ -33,6 +33,9 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
       t.items.map((item) => {
         const game = item.ref?.game ? catalog.games.find((g) => g.slug === item.ref?.game) : undefined;
         if (game) return `${game.players.min === game.players.max ? game.players.min : `${game.players.min}–${game.players.max}`} · ${game.durationMin} МИН`;
+        // «Дневник»: у теста — «тест · 4 мин» (выписка Психо), в «Романтике» — «ТЕСТ»
+        const test = section.id === "solo" && item.ref?.test ? catalog.tests.find((x) => x.slug === item.ref?.test) : undefined;
+        if (test) return `тест · ${test.durationMin} мин`;
         return item.ref?.test || item.ref?.lockedTest ? "ТЕСТ" : null;
       }),
     ]),

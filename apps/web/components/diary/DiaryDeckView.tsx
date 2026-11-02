@@ -19,6 +19,8 @@ export interface DiaryEntry {
   soon: boolean;
   /** Закрыто без Premium. */
   locked: boolean;
+  /** Подпись «тест · 4 мин». */
+  meta?: string | null;
 }
 
 export function DiaryDeckView({
