@@ -619,10 +619,10 @@ describe("Квиз $HOW (data/quiz/*.json)", () => {
 
   it("настоящие файлы проходят проверку: четыре категории, супер-квиз и суд", () => {
     const quiz = loadCatalog().quiz ?? [];
-    expect(quiz.map((q) => q.id).sort()).toEqual(["court", "general", "kino", "rap-ru", "riddle", "super"]);
+    expect(quiz.map((q) => q.id).sort()).toEqual(["court", "general", "kino", "rap-ru", "riddle", "super", "swag"]);
   });
 
-  it("Кино, Общее и Загадки — настоящие банки (по 30 вопросов на уровень, без draft), Русский хип-хоп пока демо (3, draft)", () => {
+  it("Кино, Общее, Загадки и Swag — настоящие банки (по 30 вопросов на уровень, без draft), Русский хип-хоп пока демо (3, draft)", () => {
     for (const q of loadCatalog().quiz ?? []) {
       if (q.kind !== "category") continue;
       if (q.id !== "rap-ru") {

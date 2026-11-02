@@ -1,0 +1,1361 @@
+{
+  "$schema": "../schema/quiz.schema.json",
+  "_note": "Настоящие вопросы основателя (90: 3 уровня по 30), перенесены из _design/quiz без изменений текста.",
+  "id": "swag",
+  "kind": "category",
+  "title": "Западный swag",
+  "subtitle": "Eminem, Drake и другие",
+  "draft": false,
+  "questions": [
+    {
+      "id": "w1-01",
+      "level": 1,
+      "type": "choice",
+      "text": "Как настоящее имя Eminem?",
+      "options": [
+        "Кёртис Джексон",
+        "Маршалл Мэтерс",
+        "Шон Картер",
+        "Обри Грэм"
+      ],
+      "correct": 1,
+      "explain": "Кёртис Джексон — это 50 Cent, Шон Картер — Jay-Z, Обри Грэм — Drake.",
+      "draft": false
+    },
+    {
+      "id": "w1-02",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города Eminem?",
+      "options": [
+        "Детройт",
+        "Чикаго",
+        "Атланта",
+        "Нью-Йорк"
+      ],
+      "correct": 0,
+      "explain": "Детройт и его 8 миля.",
+      "draft": false
+    },
+    {
+      "id": "w1-03",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто из этих рэперов канадец?",
+      "options": [
+        "Travis Scott",
+        "Kendrick Lamar",
+        "Future",
+        "Drake"
+      ],
+      "correct": 3,
+      "explain": "Drake из Торонто.",
+      "draft": false
+    },
+    {
+      "id": "w1-04",
+      "level": 1,
+      "type": "choice",
+      "text": "Как теперь официально зовут Kanye West?",
+      "options": [
+        "Yeezy",
+        "Kanye",
+        "Ye",
+        "Mr. West"
+      ],
+      "correct": 2,
+      "explain": "Он сменил имя в 2021 году.",
+      "draft": false
+    },
+    {
+      "id": "w1-05",
+      "level": 1,
+      "type": "choice",
+      "text": "Какой фильм снят по мотивам жизни Eminem?",
+      "options": [
+        "«Голос улиц»",
+        "«8 миля»",
+        "«Богатей или сдохни»",
+        "«Сделка с дьяволом»"
+      ],
+      "correct": 1,
+      "explain": "Eminem сыграл в нём главную роль.",
+      "draft": false
+    },
+    {
+      "id": "w1-06",
+      "level": 1,
+      "type": "choice",
+      "text": "Чей трек «Lose Yourself»?",
+      "options": [
+        "Eminem",
+        "50 Cent",
+        "Dr. Dre",
+        "Jay-Z"
+      ],
+      "correct": 0,
+      "explain": "Саундтрек к «8 миле».",
+      "draft": false
+    },
+    {
+      "id": "w1-07",
+      "level": 1,
+      "type": "choice",
+      "text": "Чей альбом «Astroworld»?",
+      "options": [
+        "Drake",
+        "Kanye West",
+        "Future",
+        "Travis Scott"
+      ],
+      "correct": 3,
+      "explain": "Назван в честь закрытого парка аттракционов в Хьюстоне.",
+      "draft": false
+    },
+    {
+      "id": "w1-08",
+      "level": 1,
+      "type": "choice",
+      "text": "Чей дебютный альбом «Get Rich or Die Tryin'»?",
+      "options": [
+        "Eminem",
+        "Snoop Dogg",
+        "50 Cent",
+        "The Game"
+      ],
+      "correct": 2,
+      "explain": "Вышел в 2003 году на лейбле Eminem и Dr. Dre.",
+      "draft": false
+    },
+    {
+      "id": "w1-09",
+      "level": 1,
+      "type": "choice",
+      "text": "Какой рэпер и продюсер основал бренд наушников Beats?",
+      "options": [
+        "Jay-Z",
+        "Dr. Dre",
+        "Snoop Dogg",
+        "Pharrell"
+      ],
+      "correct": 1,
+      "explain": "Отсюда и Beats by Dre.",
+      "draft": false
+    },
+    {
+      "id": "w1-10",
+      "level": 1,
+      "type": "choice",
+      "text": "С кем Drake записал «Sicko Mode»?",
+      "options": [
+        "Travis Scott",
+        "Kendrick Lamar",
+        "Future",
+        "Lil Wayne"
+      ],
+      "correct": 0,
+      "explain": "Трек с альбома «Astroworld».",
+      "draft": false
+    },
+    {
+      "id": "w1-11",
+      "level": 1,
+      "type": "choice",
+      "text": "Какой рэпер был женат на Ким Кардашьян?",
+      "options": [
+        "Drake",
+        "Travis Scott",
+        "Jay-Z",
+        "Ye"
+      ],
+      "correct": 3,
+      "explain": "Они развелись в 2022 году.",
+      "draft": false
+    },
+    {
+      "id": "w1-12",
+      "level": 1,
+      "type": "choice",
+      "text": "Вражда Tupac и Notorious B.I.G. — это война каких побережий?",
+      "options": [
+        "Северного и Южного",
+        "Атлантического и Мексиканского",
+        "Восточного и Западного",
+        "Калифорнии и Флориды"
+      ],
+      "correct": 2,
+      "explain": "Нью-Йорк против Лос-Анджелеса.",
+      "draft": false
+    },
+    {
+      "id": "w1-13",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто жена Jay-Z?",
+      "options": [
+        "Рианна",
+        "Бейонсе",
+        "Ники Минаж",
+        "Карди Би"
+      ],
+      "correct": 1,
+      "explain": "Они вместе с 2000-х.",
+      "draft": false
+    },
+    {
+      "id": "w1-14",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города Drake?",
+      "options": [
+        "Торонто",
+        "Ванкувер",
+        "Монреаль",
+        "Детройт"
+      ],
+      "correct": 0,
+      "explain": "Он часто называет его The 6.",
+      "draft": false
+    },
+    {
+      "id": "w1-15",
+      "level": 1,
+      "type": "choice",
+      "text": "Как называется лейбл и бренд Drake?",
+      "options": [
+        "Young Money",
+        "Cactus Jack",
+        "Opium",
+        "OVO"
+      ],
+      "correct": 3,
+      "explain": "October's Very Own, символ — сова.",
+      "draft": false
+    },
+    {
+      "id": "w1-16",
+      "level": 1,
+      "type": "choice",
+      "text": "Как зовут альтер-эго Eminem?",
+      "options": [
+        "Marshall",
+        "Stan",
+        "Slim Shady",
+        "Rap God"
+      ],
+      "correct": 2,
+      "explain": "Злой и дерзкий двойник с «The Slim Shady LP».",
+      "draft": false
+    },
+    {
+      "id": "w1-17",
+      "level": 1,
+      "type": "choice",
+      "text": "Из какого города Kendrick Lamar?",
+      "options": [
+        "Детройт",
+        "Комптон",
+        "Атланта",
+        "Бруклин"
+      ],
+      "correct": 1,
+      "explain": "Тот же Комптон, что в «Голосе улиц».",
+      "draft": false
+    },
+    {
+      "id": "w1-18",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто был хедлайнером шоу в перерыве Супербоула в 2025 году?",
+      "options": [
+        "Kendrick Lamar",
+        "Drake",
+        "Travis Scott",
+        "Eminem"
+      ],
+      "correct": 0,
+      "explain": "Шоу с песней «Not Like Us».",
+      "draft": false
+    },
+    {
+      "id": "w1-19",
+      "level": 1,
+      "type": "choice",
+      "text": "Каким треком Kendrick Lamar ответил Drake в их войне 2024 года?",
+      "options": [
+        "«HUMBLE.»",
+        "«Alright»",
+        "«DNA.»",
+        "«Not Like Us»"
+      ],
+      "correct": 3,
+      "explain": "Трек стал главным хитом того лета.",
+      "draft": false
+    },
+    {
+      "id": "w1-20",
+      "level": 1,
+      "type": "choice",
+      "text": "У какого рэпера бренд кроссовок Yeezy?",
+      "options": [
+        "Travis Scott",
+        "Pharrell",
+        "Ye",
+        "Drake"
+      ],
+      "correct": 2,
+      "explain": "Его делали вместе с Adidas.",
+      "draft": false
+    },
+    {
+      "id": "w1-21",
+      "level": 1,
+      "type": "choice",
+      "text": "В какой игре Travis Scott устроил виртуальный концерт в 2020 году?",
+      "options": [
+        "Minecraft",
+        "Fortnite",
+        "Roblox",
+        "GTA Online"
+      ],
+      "correct": 1,
+      "explain": "Его посмотрели больше 12 миллионов игроков в прямом эфире.",
+      "draft": false
+    },
+    {
+      "id": "w1-22",
+      "level": 1,
+      "type": "choice",
+      "text": "Чей лейбл G-Unit?",
+      "options": [
+        "50 Cent",
+        "Snoop Dogg",
+        "Dr. Dre",
+        "Lil Wayne"
+      ],
+      "correct": 0,
+      "explain": "G-Unit — и группа, и лейбл.",
+      "draft": false
+    },
+    {
+      "id": "w1-23",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто из этих рэперов участник Migos?",
+      "options": [
+        "Future",
+        "Gunna",
+        "Young Thug",
+        "Offset"
+      ],
+      "correct": 3,
+      "explain": "В группе были Quavo, Offset и Takeoff.",
+      "draft": false
+    },
+    {
+      "id": "w1-24",
+      "level": 1,
+      "type": "choice",
+      "text": "Сколько участников было в Migos?",
+      "options": [
+        "2",
+        "4",
+        "3",
+        "5"
+      ],
+      "correct": 2,
+      "explain": "Quavo, Offset и Takeoff.",
+      "draft": false
+    },
+    {
+      "id": "w1-25",
+      "level": 1,
+      "type": "choice",
+      "text": "Чей хит «Old Town Road»?",
+      "options": [
+        "Post Malone",
+        "Lil Nas X",
+        "Lil Uzi Vert",
+        "Jack Harlow"
+      ],
+      "correct": 1,
+      "explain": "Кантри-рэп, который побил рекорд по неделям на вершине Billboard.",
+      "draft": false
+    },
+    {
+      "id": "w1-26",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто отец детей Кайли Дженнер?",
+      "options": [
+        "Travis Scott",
+        "Drake",
+        "Tyga",
+        "Ye"
+      ],
+      "correct": 0,
+      "explain": "Сторми и Эйр.",
+      "draft": false
+    },
+    {
+      "id": "w1-27",
+      "level": 1,
+      "type": "choice",
+      "text": "На обложке какого альбома Ye нарисован медведь-талисман?",
+      "options": [
+        "«Donda»",
+        "«Yeezus»",
+        "«808s & Heartbreak»",
+        "«Graduation»"
+      ],
+      "correct": 3,
+      "explain": "Dropout Bear появлялся на первых трёх альбомах.",
+      "draft": false
+    },
+    {
+      "id": "w1-28",
+      "level": 1,
+      "type": "choice",
+      "text": "Какое животное спрятано в имени Snoop Dogg?",
+      "options": [
+        "Кот",
+        "Волк",
+        "Собака",
+        "Лев"
+      ],
+      "correct": 2,
+      "explain": "Dogg — собака.",
+      "draft": false
+    },
+    {
+      "id": "w1-29",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто из этих рэперш спела «Super Bass»?",
+      "options": [
+        "Карди Би",
+        "Ники Минаж",
+        "Doja Cat",
+        "Megan Thee Stallion"
+      ],
+      "correct": 1,
+      "explain": "Хит 2011 года.",
+      "draft": false
+    },
+    {
+      "id": "w1-30",
+      "level": 1,
+      "type": "choice",
+      "text": "Кто из этих рэперов из Атланты?",
+      "options": [
+        "Playboi Carti",
+        "Drake",
+        "Eminem",
+        "Kendrick Lamar"
+      ],
+      "correct": 0,
+      "explain": "Атланту называют столицей трэпа.",
+      "draft": false
+    },
+    {
+      "id": "w2-01",
+      "level": 2,
+      "type": "choice",
+      "text": "На чей лейбл Lil Wayne подписал Drake?",
+      "options": [
+        "Cash Money",
+        "OVO",
+        "Roc Nation",
+        "Young Money"
+      ],
+      "correct": 3,
+      "explain": "Young Money — лейбл самого Wayne.",
+      "draft": false
+    },
+    {
+      "id": "w2-02",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется первый студийный альбом Playboi Carti?",
+      "options": [
+        "«Whole Lotta Red»",
+        "«Music»",
+        "«Die Lit»",
+        "«Playboi Carti»"
+      ],
+      "correct": 2,
+      "explain": "2018 год. «Playboi Carti» 2017-го — микстейп.",
+      "draft": false
+    },
+    {
+      "id": "w2-03",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Playboi Carti 2020 года с красной обложкой?",
+      "options": [
+        "«Die Lit»",
+        "«Whole Lotta Red»",
+        "«Red Dawn»",
+        "«Vamp»"
+      ],
+      "correct": 1,
+      "explain": "Фанаты ждали его больше двух лет.",
+      "draft": false
+    },
+    {
+      "id": "w2-04",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой альбом Ye назван в честь его мамы?",
+      "options": [
+        "«Donda»",
+        "«Jesus Is King»",
+        "«Ye»",
+        "«Kids See Ghosts»"
+      ],
+      "correct": 0,
+      "explain": "Донда Уэст умерла в 2007 году.",
+      "draft": false
+    },
+    {
+      "id": "w2-05",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой альбом Eminem 2000 года стал рекордсменом по продажам за первую неделю?",
+      "options": [
+        "«The Slim Shady LP»",
+        "«The Eminem Show»",
+        "«Encore»",
+        "«The Marshall Mathers LP»"
+      ],
+      "correct": 3,
+      "explain": "Почти 1,8 миллиона копий за неделю.",
+      "draft": false
+    },
+    {
+      "id": "w2-06",
+      "level": 2,
+      "type": "choice",
+      "text": "Из какого города Snoop Dogg?",
+      "options": [
+        "Комптон",
+        "Окленд",
+        "Лонг-Бич",
+        "Сан-Франциско"
+      ],
+      "correct": 2,
+      "explain": "Лонг-Бич в Калифорнии.",
+      "draft": false
+    },
+    {
+      "id": "w2-07",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется дебютный студийный альбом Drake?",
+      "options": [
+        "«Take Care»",
+        "«Thank Me Later»",
+        "«So Far Gone»",
+        "«Views»"
+      ],
+      "correct": 1,
+      "explain": "2010 год. «So Far Gone» — микстейп.",
+      "draft": false
+    },
+    {
+      "id": "w2-08",
+      "level": 2,
+      "type": "choice",
+      "text": "Кто основал лейбл Aftermath?",
+      "options": [
+        "Dr. Dre",
+        "Eminem",
+        "Jay-Z",
+        "Suge Knight"
+      ],
+      "correct": 0,
+      "explain": "На нём вышли Eminem, 50 Cent и Kendrick Lamar.",
+      "draft": false
+    },
+    {
+      "id": "w2-09",
+      "level": 2,
+      "type": "choice",
+      "text": "Какую премию, кроме «Грэмми», получила «Lose Yourself»?",
+      "options": [
+        "«Золотой глобус»",
+        "Пулитцеровскую",
+        "«Эмми»",
+        "«Оскар»"
+      ],
+      "correct": 3,
+      "explain": "Первая рэп-песня с «Оскаром».",
+      "draft": false
+    },
+    {
+      "id": "w2-10",
+      "level": 2,
+      "type": "choice",
+      "text": "Из какой группы вышел Tyler, the Creator?",
+      "options": [
+        "N.W.A",
+        "D12",
+        "Odd Future",
+        "Migos"
+      ],
+      "correct": 2,
+      "explain": "Там же начинали Frank Ocean и Earl Sweatshirt.",
+      "draft": false
+    },
+    {
+      "id": "w2-11",
+      "level": 2,
+      "type": "choice",
+      "text": "В какой группе были Dr. Dre, Ice Cube и Eazy-E?",
+      "options": [
+        "Wu-Tang Clan",
+        "N.W.A",
+        "G-Unit",
+        "Public Enemy"
+      ],
+      "correct": 1,
+      "explain": "Группа из Комптона.",
+      "draft": false
+    },
+    {
+      "id": "w2-12",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется фильм про группу N.W.A?",
+      "options": [
+        "«Голос улиц»",
+        "«8 миля»",
+        "«Хастл»",
+        "«Богатей или сдохни»"
+      ],
+      "correct": 0,
+      "explain": "В оригинале — «Straight Outta Compton».",
+      "draft": false
+    },
+    {
+      "id": "w2-13",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется альбом Travis Scott 2023 года?",
+      "options": [
+        "«Astroworld»",
+        "«Rodeo»",
+        "«Birds in the Trap»",
+        "«Utopia»"
+      ],
+      "correct": 3,
+      "explain": "Пять лет после «Astroworld».",
+      "draft": false
+    },
+    {
+      "id": "w2-14",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется лейбл Travis Scott?",
+      "options": [
+        "OVO",
+        "Opium",
+        "Cactus Jack",
+        "GOOD Music"
+      ],
+      "correct": 2,
+      "explain": "Под этим именем выходили и коллаборации с McDonald's и Nike.",
+      "draft": false
+    },
+    {
+      "id": "w2-15",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой рэпер стоит за лейблом Roc-A-Fella?",
+      "options": [
+        "Diddy",
+        "Jay-Z",
+        "Nas",
+        "Ye"
+      ],
+      "correct": 1,
+      "explain": "Сначала там подписали и молодого Kanye.",
+      "draft": false
+    },
+    {
+      "id": "w2-16",
+      "level": 2,
+      "type": "choice",
+      "text": "С каким продюсером Future выпустил «We Don't Trust You» в 2024 году?",
+      "options": [
+        "Metro Boomin",
+        "Mike Will Made-It",
+        "Southside",
+        "Pi'erre Bourne"
+      ],
+      "correct": 0,
+      "explain": "С этого альбома началась война Kendrick и Drake.",
+      "draft": false
+    },
+    {
+      "id": "w2-17",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой альбом Drake с Drake, сидящим на телебашне Торонто, на обложке?",
+      "options": [
+        "«Scorpion»",
+        "«Take Care»",
+        "«Certified Lover Boy»",
+        "«Views»"
+      ],
+      "correct": 3,
+      "explain": "2016 год, тот самый мем.",
+      "draft": false
+    },
+    {
+      "id": "w2-18",
+      "level": 2,
+      "type": "choice",
+      "text": "Чей альбом «good kid, m.A.A.d city»?",
+      "options": [
+        "J. Cole",
+        "Travis Scott",
+        "Kendrick Lamar",
+        "Tyler, the Creator"
+      ],
+      "correct": 2,
+      "explain": "2012 год.",
+      "draft": false
+    },
+    {
+      "id": "w2-19",
+      "level": 2,
+      "type": "choice",
+      "text": "С какой певицей Eminem записал «Stan»?",
+      "options": [
+        "Рианна",
+        "Dido",
+        "Бейонсе",
+        "Ники Минаж"
+      ],
+      "correct": 1,
+      "explain": "Её припев взят из песни «Thank You».",
+      "draft": false
+    },
+    {
+      "id": "w2-20",
+      "level": 2,
+      "type": "choice",
+      "text": "Как зовут дочь Eminem, о которой он много читал?",
+      "options": [
+        "Хейли",
+        "Эмили",
+        "Меган",
+        "Кейт"
+      ],
+      "correct": 0,
+      "explain": "Например, в «Mockingbird».",
+      "draft": false
+    },
+    {
+      "id": "w2-21",
+      "level": 2,
+      "type": "choice",
+      "text": "С каким брендом Ye разорвал партнёрство в 2022 году?",
+      "options": [
+        "Nike",
+        "Puma",
+        "Gap",
+        "Adidas"
+      ],
+      "correct": 3,
+      "explain": "Yeezy делали с Adidas почти десять лет.",
+      "draft": false
+    },
+    {
+      "id": "w2-22",
+      "level": 2,
+      "type": "choice",
+      "text": "Как настоящее имя Drake?",
+      "options": [
+        "Маршалл Мэтерс",
+        "Кендрик Дакворт",
+        "Обри Грэм",
+        "Джордан Картер"
+      ],
+      "correct": 2,
+      "explain": "Обри Дрейк Грэм.",
+      "draft": false
+    },
+    {
+      "id": "w2-23",
+      "level": 2,
+      "type": "choice",
+      "text": "В каком сериале Drake снимался подростком?",
+      "options": [
+        "«Холм одного дерева»",
+        "«Деграсси»",
+        "«Сплетница»",
+        "«Хор»"
+      ],
+      "correct": 1,
+      "explain": "Он играл баскетболиста Джимми.",
+      "draft": false
+    },
+    {
+      "id": "w2-24",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется лейбл Playboi Carti?",
+      "options": [
+        "Opium",
+        "Cactus Jack",
+        "Young Money",
+        "OVO"
+      ],
+      "correct": 0,
+      "explain": "Там же Ken Carson и Destroy Lonely.",
+      "draft": false
+    },
+    {
+      "id": "w2-25",
+      "level": 2,
+      "type": "choice",
+      "text": "Как настоящее имя Jay-Z?",
+      "options": [
+        "Кёртис Джексон",
+        "Кельвин Бродус",
+        "Дуэйн Картер",
+        "Шон Картер"
+      ],
+      "correct": 3,
+      "explain": "Кельвин Бродус — Snoop Dogg, Дуэйн Картер — Lil Wayne.",
+      "draft": false
+    },
+    {
+      "id": "w2-26",
+      "level": 2,
+      "type": "choice",
+      "text": "Как настоящее имя 50 Cent?",
+      "options": [
+        "Шон Картер",
+        "Андре Янг",
+        "Кёртис Джексон",
+        "Майкл Тайлер"
+      ],
+      "correct": 2,
+      "explain": "Андре Янг — это Dr. Dre.",
+      "draft": false
+    },
+    {
+      "id": "w2-27",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой рэпер, автор «SAD!», погиб в 2018 году?",
+      "options": [
+        "Juice WRLD",
+        "XXXTentacion",
+        "Lil Peep",
+        "Pop Smoke"
+      ],
+      "correct": 1,
+      "explain": "Lil Peep умер в 2017-м, Juice WRLD — в 2019-м, Pop Smoke — в 2020-м.",
+      "draft": false
+    },
+    {
+      "id": "w2-28",
+      "level": 2,
+      "type": "choice",
+      "text": "Чей хит «Lucid Dreams»?",
+      "options": [
+        "Juice WRLD",
+        "XXXTentacion",
+        "Lil Uzi Vert",
+        "Post Malone"
+      ],
+      "correct": 0,
+      "explain": "Главный хит его дебютного альбома.",
+      "draft": false
+    },
+    {
+      "id": "w2-29",
+      "level": 2,
+      "type": "choice",
+      "text": "Какой трек Kendrick стал гимном уличных протестов в США в 2015 году?",
+      "options": [
+        "«HUMBLE.»",
+        "«King Kunta»",
+        "«Money Trees»",
+        "«Alright»"
+      ],
+      "correct": 3,
+      "explain": "С альбома «To Pimp a Butterfly».",
+      "draft": false
+    },
+    {
+      "id": "w2-30",
+      "level": 2,
+      "type": "choice",
+      "text": "Как называется компания Jay-Z, которая ведёт артистов и спорт?",
+      "options": [
+        "Roc-A-Fella",
+        "Def Jam",
+        "Roc Nation",
+        "Bad Boy"
+      ],
+      "correct": 2,
+      "explain": "Основана в 2008 году.",
+      "draft": false
+    },
+    {
+      "id": "w3-01",
+      "level": 3,
+      "type": "choice",
+      "text": "За какой альбом Kendrick Lamar получил Пулитцеровскую премию?",
+      "options": [
+        "«To Pimp a Butterfly»",
+        "«DAMN.»",
+        "«good kid, m.A.A.d city»",
+        "«Mr. Morale & the Big Steppers»"
+      ],
+      "correct": 1,
+      "explain": "2018 год — первый такой случай не для классики и джаза.",
+      "draft": false
+    },
+    {
+      "id": "w3-02",
+      "level": 3,
+      "type": "choice",
+      "text": "Из какого района Нью-Йорка Wu-Tang Clan?",
+      "options": [
+        "Статен-Айленд",
+        "Бруклин",
+        "Бронкс",
+        "Квинс"
+      ],
+      "correct": 0,
+      "explain": "Они называли его Шаолинем.",
+      "draft": false
+    },
+    {
+      "id": "w3-03",
+      "level": 3,
+      "type": "choice",
+      "text": "Какой альбом Wu-Tang Clan существует в единственном экземпляре?",
+      "options": [
+        "«Enter the Wu-Tang»",
+        "«Wu-Tang Forever»",
+        "«8 Diagrams»",
+        "«Once Upon a Time in Shaolin»"
+      ],
+      "correct": 3,
+      "explain": "Его продали на аукционе за миллионы долларов.",
+      "draft": false
+    },
+    {
+      "id": "w3-04",
+      "level": 3,
+      "type": "choice",
+      "text": "В каком году погиб Tupac?",
+      "options": [
+        "1994",
+        "1997",
+        "1996",
+        "1999"
+      ],
+      "correct": 2,
+      "explain": "Через полгода после этого погиб и Notorious B.I.G.",
+      "draft": false
+    },
+    {
+      "id": "w3-05",
+      "level": 3,
+      "type": "choice",
+      "text": "В каком году погиб Notorious B.I.G.?",
+      "options": [
+        "1996",
+        "1997",
+        "1995",
+        "2000"
+      ],
+      "correct": 1,
+      "explain": "Март 1997 года, Лос-Анджелес.",
+      "draft": false
+    },
+    {
+      "id": "w3-06",
+      "level": 3,
+      "type": "choice",
+      "text": "За что «Rap God» Eminem попала в Книгу рекордов Гиннесса?",
+      "options": [
+        "Больше всего слов в хит-сингле",
+        "Самая длинная песня",
+        "Самый быстрый рэп в мире",
+        "Больше всего прослушиваний за сутки"
+      ],
+      "correct": 0,
+      "explain": "Больше 1500 слов за шесть минут.",
+      "draft": false
+    },
+    {
+      "id": "w3-07",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется микстейп, после которого Drake стал звездой?",
+      "options": [
+        "«Room for Improvement»",
+        "«Comeback Season»",
+        "«If You're Reading This It's Too Late»",
+        "«So Far Gone»"
+      ],
+      "correct": 3,
+      "explain": "2009 год, трек «Best I Ever Had».",
+      "draft": false
+    },
+    {
+      "id": "w3-08",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется дебютный альбом Kanye West?",
+      "options": [
+        "«Late Registration»",
+        "«Graduation»",
+        "«The College Dropout»",
+        "«808s & Heartbreak»"
+      ],
+      "correct": 2,
+      "explain": "2004 год, отсюда и медведь-недоучка.",
+      "draft": false
+    },
+    {
+      "id": "w3-09",
+      "level": 3,
+      "type": "choice",
+      "text": "На каком альбоме Ye есть трек «Power»?",
+      "options": [
+        "«Yeezus»",
+        "«My Beautiful Dark Twisted Fantasy»",
+        "«The Life of Pablo»",
+        "«Graduation»"
+      ],
+      "correct": 1,
+      "explain": "2010 год, многие считают его лучшим альбомом Ye.",
+      "draft": false
+    },
+    {
+      "id": "w3-10",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется совместный альбом Kanye West и Jay-Z?",
+      "options": [
+        "«Watch the Throne»",
+        "«Kids See Ghosts»",
+        "«Vultures»",
+        "«Magna Carta»"
+      ],
+      "correct": 0,
+      "explain": "2011 год, записывали в том числе в Париже.",
+      "draft": false
+    },
+    {
+      "id": "w3-11",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется самый первый альбом Eminem, вышедший в 1996 году?",
+      "options": [
+        "«The Slim Shady LP»",
+        "«Relapse»",
+        "«Revival»",
+        "«Infinite»"
+      ],
+      "correct": 3,
+      "explain": "Его почти никто не купил.",
+      "draft": false
+    },
+    {
+      "id": "w3-12",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называлась группа Eminem из Детройта?",
+      "options": [
+        "G-Unit",
+        "Bad Meets Evil",
+        "D12",
+        "Slaughterhouse"
+      ],
+      "correct": 2,
+      "explain": "Bad Meets Evil — дуэт Eminem и Royce da 5'9\".",
+      "draft": false
+    },
+    {
+      "id": "w3-13",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется альбом Playboi Carti 2025 года?",
+      "options": [
+        "«Narcissist»",
+        "«Music»",
+        "«Opium»",
+        "«King Vamp»"
+      ],
+      "correct": 1,
+      "explain": "Его ждали больше четырёх лет.",
+      "draft": false
+    },
+    {
+      "id": "w3-14",
+      "level": 3,
+      "type": "choice",
+      "text": "На каком лейбле начинал Kendrick Lamar?",
+      "options": [
+        "Top Dawg Entertainment",
+        "Aftermath",
+        "Def Jam",
+        "Interscope"
+      ],
+      "correct": 0,
+      "explain": "TDE, вместе со SZA и ScHoolboy Q.",
+      "draft": false
+    },
+    {
+      "id": "w3-15",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется совместный альбом Drake и 21 Savage?",
+      "options": [
+        "«What a Time to Be Alive»",
+        "«Savage Mode»",
+        "«Honestly, Nevermind»",
+        "«Her Loss»"
+      ],
+      "correct": 3,
+      "explain": "2022 год.",
+      "draft": false
+    },
+    {
+      "id": "w3-16",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется совместный микстейп Drake и Future 2015 года?",
+      "options": [
+        "«Her Loss»",
+        "«We Don't Trust You»",
+        "«What a Time to Be Alive»",
+        "«Without Warning»"
+      ],
+      "correct": 2,
+      "explain": "Записали за неделю в Атланте.",
+      "draft": false
+    },
+    {
+      "id": "w3-17",
+      "level": 3,
+      "type": "choice",
+      "text": "Кто продюсировал «Mask Off» Future?",
+      "options": [
+        "Mike Will Made-It",
+        "Metro Boomin",
+        "Southside",
+        "Zaytoven"
+      ],
+      "correct": 1,
+      "explain": "Знаменитая флейта взята из старого мюзикла.",
+      "draft": false
+    },
+    {
+      "id": "w3-18",
+      "level": 3,
+      "type": "choice",
+      "text": "Как называется лейбл Kanye West?",
+      "options": [
+        "GOOD Music",
+        "Roc Nation",
+        "Cactus Jack",
+        "Young Money"
+      ],
+      "correct": 0,
+      "explain": "Там подписывались Kid Cudi, Pusha T и Big Sean.",
+      "draft": false
+    },
+    {
+      "id": "w3-19",
+      "level": 3,
+      "type": "choice",
+      "text": "Какой рэпер баллотировался в президенты США в 2020 году?",
+      "options": [
+        "Jay-Z",
+        "Snoop Dogg",
+        "Eminem",
+        "Ye"
+      ],
+      "correct": 3,
+      "explain": "Набрал около 60 тысяч голосов.",
+      "draft": false
+    },
+    {
+      "id": "w3-20",
+      "level": 3,
+      "type": "choice",
+      "text": "На каком лейбле был Tupac в последний год жизни?",
+      "options": [
+        "Bad Boy",
+        "Aftermath",
+        "Death Row",
+        "Interscope"
+      ],
+      "correct": 2,
+      "explain": "Его вытащил из тюрьмы Шуг Найт.",
+      "draft": false
+    },
+    {
+      "id": "w3-21",
+      "level": 3,
+      "type": "choice",
+      "text": "Кто основал Death Row Records?",
+      "options": [
+        "Diddy",
+        "Шуг Найт и Dr. Dre",
+        "Jay-Z",
+        "Eazy-E"
+      ],
+      "correct": 1,
+      "explain": "Позже Dr. Dre ушёл и основал Aftermath.",
+      "draft": false
+    },
+    {
+      "id": "w3-22",
+      "level": 3,
+      "type": "choice",
+      "text": "Кто основал Bad Boy Records?",
+      "options": [
+        "Diddy",
+        "Шуг Найт",
+        "Jay-Z",
+        "Nas"
+      ],
+      "correct": 0,
+      "explain": "Notorious B.I.G. был его главной звездой.",
+      "draft": false
+    },
+    {
+      "id": "w3-23",
+      "level": 3,
+      "type": "choice",
+      "text": "В каком году вышел «Tha Carter III» Lil Wayne?",
+      "options": [
+        "2005",
+        "2010",
+        "2012",
+        "2008"
+      ],
+      "correct": 3,
+      "explain": "Миллион копий за первую неделю.",
+      "draft": false
+    },
+    {
+      "id": "w3-24",
+      "level": 3,
+      "type": "choice",
+      "text": "В каком году вышел альбом Kendrick «Mr. Morale & the Big Steppers»?",
+      "options": [
+        "2020",
+        "2019",
+        "2022",
+        "2024"
+      ],
+      "correct": 2,
+      "explain": "Через пять лет после «DAMN.».",
+      "draft": false
+    },
+    {
+      "id": "w3-25",
+      "level": 3,
+      "type": "choice",
+      "text": "Как настоящее имя Travis Scott?",
+      "options": [
+        "Кендрик Дакворт",
+        "Жак Уэбстер",
+        "Обри Грэм",
+        "Шон Картер"
+      ],
+      "correct": 1,
+      "explain": "Жак Берман Уэбстер II.",
+      "draft": false
+    },
+    {
+      "id": "w3-26",
+      "level": 3,
+      "type": "choice",
+      "text": "Как настоящее имя Playboi Carti?",
+      "options": [
+        "Джордан Картер",
+        "Шон Картер",
+        "Дуэйн Картер",
+        "Кёртис Джексон"
+      ],
+      "correct": 0,
+      "explain": "Три Картера в вариантах — и только один Carti.",
+      "draft": false
+    },
+    {
+      "id": "w3-27",
+      "level": 3,
+      "type": "choice",
+      "text": "Какой хип-хоп альбом первым получил «Грэмми» за альбом года?",
+      "options": [
+        "«Speakerboxxx/The Love Below»",
+        "«The Marshall Mathers LP»",
+        "«DAMN.»",
+        "«The Miseducation of Lauryn Hill»"
+      ],
+      "correct": 3,
+      "explain": "1999 год. OutKast стали вторыми в 2004-м.",
+      "draft": false
+    },
+    {
+      "id": "w3-28",
+      "level": 3,
+      "type": "choice",
+      "text": "В какой стране родился 21 Savage?",
+      "options": [
+        "США",
+        "Канада",
+        "Великобритания",
+        "Ямайка"
+      ],
+      "correct": 2,
+      "explain": "Он переехал в Атланту ребёнком.",
+      "draft": false
+    },
+    {
+      "id": "w3-29",
+      "level": 3,
+      "type": "choice",
+      "text": "Какой город называют столицей трэпа?",
+      "options": [
+        "Хьюстон",
+        "Атланта",
+        "Мемфис",
+        "Майами"
+      ],
+      "correct": 1,
+      "explain": "Отсюда Future, Migos, Gucci Mane и Carti.",
+      "draft": false
+    },
+    {
+      "id": "w3-30",
+      "level": 3,
+      "type": "choice",
+      "text": "Из какого района Нью-Йорка Jay-Z?",
+      "options": [
+        "Бруклин",
+        "Бронкс",
+        "Гарлем",
+        "Статен-Айленд"
+      ],
+      "correct": 0,
+      "explain": "Он вырос в жилом комплексе Marcy Houses.",
+      "draft": false
+    }
+  ]
+}

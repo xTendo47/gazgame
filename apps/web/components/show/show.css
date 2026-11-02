@@ -428,7 +428,8 @@
   font-style: italic;
   color: var(--gold-l);
 }
-.sw-cat[data-c="rap-ru"] .sw-cat-t b {
+.sw-cat[data-c="rap-ru"] .sw-cat-t b,
+.sw-cat[data-c="swag"] .sw-cat-t b {
   color: #ffb347;
   font-family: "Manrope Variable", sans-serif;
   font-weight: 800;
@@ -478,6 +479,14 @@
 }
 .sw-q[data-th="rap-ru"] {
   --th: #ff9a2e;
+}
+.sw-q[data-th="swag"] {
+  --th: #4de0ff;
+}
+/* «Западный swag» рисуется той же пластинкой, но в холодных тонах */
+.sw-cat[data-c="swag"] .sw-cat-art,
+.sw-q[data-th="swag"] .sw-deco-art {
+  filter: hue-rotate(170deg) saturate(1.15);
 }
 .sw-q[data-th="general"] {
   --th: #d4b062;
