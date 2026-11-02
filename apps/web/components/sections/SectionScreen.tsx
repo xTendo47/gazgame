@@ -28,6 +28,7 @@ import { CasinoDeckView } from "@/components/casino/CasinoDeckView";
 import { CasinoScene } from "@/components/casino/CasinoScene";
 import { DiaryDeckView } from "@/components/diary/DiaryDeckView";
 import { DiaryScene } from "@/components/diary/DiaryScene";
+import { CosmosDeckView } from "@/components/diary/CosmosDeckView";
 import { ClinicDeckView } from "@/components/diary/ClinicDeckView";
 import { WantedDeckView } from "@/components/diary/WantedDeckView";
 import { LoveDeckView } from "@/components/love/LoveDeckView";
@@ -354,7 +355,7 @@ export function SectionScreen({
 
   // «Тусовка», колода открыта: казино-карты вместо списка. Что делает тап по карточке — те же tap/countSoon/lockedTap выше
   if (diary && !showDecks) {
-    const DeckView = tab.id === "who" ? WantedDeckView : tab.id === "psy" ? ClinicDeckView : DiaryDeckView;
+    const DeckView = tab.id === "who" ? WantedDeckView : tab.id === "psy" ? ClinicDeckView : tab.id === "deep" ? CosmosDeckView : DiaryDeckView;
     const items = tab.items.map((item, index) => {
       const target = targets[tab.id]?.[index] ?? ({ kind: "soon" } as SectionTarget);
       return { item, index, target };
