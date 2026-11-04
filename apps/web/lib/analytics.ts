@@ -126,12 +126,12 @@ export function trackGazDone(event: { id: string; source: GazSourceProp; gold: b
   send("gaz_done", { ...event });
 }
 
-/** «Слабо другу? 🫵»: задание отправляют другу ссылкой. id — id задания. */
+/** «Слабо другу? 👆»: задание отправляют другу ссылкой. id — id задания. */
 export function trackGazDare(event: { id: string }) {
   send("gaz_dare", { ...event });
 }
 
-/** «Принимаю 🔥» на экране «Вызов 🫵» — друг открыл ссылку и принял. id — id задания. */
+/** «Принимаю 🔥» на экране «Вызов 👆» — друг открыл ссылку и принял. id — id задания. */
 export function trackGazDareAccept(event: { id: string }) {
   send("gaz_dare_accept", { ...event });
 }
@@ -158,7 +158,7 @@ export function trackTodayBattleVote(event: { id: string; choice: "a" | "b" }) {
   send("today_battle_vote", { ...event });
 }
 
-/** «Спросить друзей 🫵» после голоса в батле: поделились карточкой. id — id батла. */
+/** «Спросить друзей 👆» после голоса в батле: поделились карточкой. id — id батла. */
 export function trackTodayBattleShare(event: { id: string }) {
   send("today_battle_share", { ...event });
 }

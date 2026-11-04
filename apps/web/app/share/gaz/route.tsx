@@ -1,5 +1,5 @@
 // Картинки раздела GAZ 🚀: /share/gaz?id=<задание>&g=1 — сторис «Сделано в GAZ 🔥» (1080×1350, g=1 — золотая);
-// /share/gaz?dare=<задание> — превью ссылки вызова 🫵 (1200×630). Тот же движок (next/og), что у карточек тестов.
+// /share/gaz?dare=<задание> — превью ссылки вызова 👆 (1200×630). Тот же движок (next/og), что у карточек тестов.
 import type { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";
 import { findGazTask } from "@gazgame/engine";
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   if (dareId) {
     return new ImageResponse(
-      <TestCover emoji={task.emoji} title="Тебе бросили вызов в GAZ 🫵" meta="Слабо?" hook={task.text} color="#FF5A1F" />,
+      <TestCover emoji={task.emoji} title="Тебе бросили вызов в GAZ 👆" meta="Слабо?" hook={task.text} color="#FF5A1F" />,
       { ...SHARE_SIZE.preview, fonts: await ogFonts(), headers: CACHE },
     );
   }

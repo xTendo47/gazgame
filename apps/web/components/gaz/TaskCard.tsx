@@ -13,11 +13,11 @@ import { Glyph } from "@/components/casino/GIcon";
 export const SOURCE_LABEL: Record<GazSource, string> = {
   bored: "Мне скучно",
   roulette: "Газ-рулетка",
-  dare: "Вызов 🫵",
+  dare: "Вызов 👆",
   daily: "Задание дня",
 };
 
-const WHO = { solo: "🙋 соло", duo: "💞 вдвоём", crew: "🪩 компания" } as const;
+const WHO = { solo: "🙋 соло", duo: "💞 вдвоём", crew: "🕺 компания" } as const;
 const TIME = { "15": "⏱ 15 минут", eve: "⏱ вечер", wk: "⏱ выходные" } as const;
 const WHERE = { home: "🏠 дома", out: "🌆 на улице" } as const;
 

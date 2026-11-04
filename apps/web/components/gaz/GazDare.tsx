@@ -1,6 +1,6 @@
 "use client";
 
-// Экран «Вызов 🫵»: друг открыл ссылку /gaz?dare=<id>. Карта с меткой «Вызов 🫵», «Принимаю 🔥» (задание становится
+// Экран «Вызов 👆»: друг открыл ссылку /gaz?dare=<id>. Карта с меткой «Вызов 👆», «Принимаю 🔥» (задание становится
 // «в процессе» в разделе GAZ) и «В другой раз» (просто в раздел GAZ). Без сервера отправитель не узнает, принят ли вызов.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export function GazDare({ task }: { task: GazTask }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-balance"><Em text="Тебе бросили вызов в GAZ 🫵" /></h1>
+      <h1 className="font-display text-[28px] leading-[1.1] font-extrabold text-balance"><Em text="Тебе бросили вызов в GAZ 👆" /></h1>
       <TaskCard
         task={task}
         source="dare"

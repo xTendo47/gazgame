@@ -66,35 +66,35 @@
           "emoji": "🫂",
           "name": "Для своих",
           "tag": "2–3 человека",
-          "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "know", "emoji": "🫶", "name": "Узнать друг друга" }, { "id": "guess", "emoji": "🧩", "name": "Угадайки" }],
+          "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "know", "emoji": "💖", "name": "Узнать друг друга" }, { "id": "guess", "emoji": "🧩", "name": "Угадайки" }],
           "items": [
               { "emoji": "🎯", "title": "Правда или действие", "text": "Крути! Отвечай или делай", "kind": "warm", "soon": true, "levels": [{ "label": "Лайт" },{ "label": "Жёстко 💎", "premium": true }], "players": "2–3 игрока" },
-              { "emoji": "🫣", "title": "Я никогда не…", "text": "Загибай палец, если было", "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" },{ "label": "С перчинкой" },{ "label": "Без тормозов 💎", "premium": true }], "kind": "warm" },
-              { "emoji": "🫨", "title": "Дилеммы", "text": "Что выберешь? Спорим до хрипоты", "kind": "warm", "soon": true, "players": "2+ игрока" },
-              { "emoji": "🤜", "title": "Насколько ты знаешь друга", "text": "Вдвоём: один отвечает, второй угадывает", "kind": "know", "ref": { "game": "know-friend" }, "levels": [{ "label": "База" }, { "label": "Глубже" }, { "label": "Без секретов 💎", "premium": true }] },
-              { "emoji": "👯", "title": "Совпадём? Друзья", "text": "Это или то: насколько вы похожи", "kind": "know", "ref": { "game": "match-friends" }, "levels": [{ "label": "Лайт" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }] },
-              { "emoji": "🫥", "title": "Данетки", "text": "Мрачные загадки, ответ только да или нет", "kind": "guess", "soon": true, "players": "2+ игрока" },
-              { "emoji": "🪪", "title": "Кто я?", "text": "Телефон ко лбу, друзья объясняют", "kind": "guess", "soon": true, "players": "3+ игрока" },
+              { "emoji": "🙈", "title": "Я никогда не…", "text": "Загибай палец, если было", "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" },{ "label": "С перчинкой" },{ "label": "Без тормозов 💎", "premium": true }], "kind": "warm" },
+              { "emoji": "🫂", "title": "Насколько ты знаешь друга", "text": "Вдвоём: один отвечает, второй угадывает", "kind": "know", "ref": { "game": "know-friend" }, "levels": [{ "label": "База" }, { "label": "Глубже" }, { "label": "Без секретов 💎", "premium": true }] },
+              { "emoji": "🤞", "title": "Совпадём? Друзья", "text": "Это или то: насколько вы похожи", "kind": "know", "ref": { "game": "match-friends" }, "levels": [{ "label": "Лайт" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }] },
               { "emoji": "⏱️", "title": "5 секунд", "text": "Назови три за пять секунд", "kind": "warm", "ref": { "game": "five-seconds" }, "levels": [{ "label": "Разминка" }, { "label": "Мозговой штурм" }, { "label": "Без тормозов 💎", "premium": true }], "new": true },
-              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }], "new": true },
-              { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe" }, "levels": [{ "label": "Бытовое" }, { "label": "Отношения" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }], "new": true }
+              { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe" }, "levels": [{ "label": "Бытовое" }, { "label": "Отношения" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }], "new": true },
+              { "emoji": "😵", "title": "Дилеммы", "text": "Что выберешь? Спорим до хрипоты", "kind": "warm", "soon": true, "players": "2+ игрока" },
+              { "emoji": "😶", "title": "Данетки", "text": "Мрачные загадки, ответ только да или нет", "kind": "guess", "soon": true, "players": "2+ игрока" },
+              { "emoji": "🆔", "title": "Кто я?", "text": "Телефон ко лбу, друзья объясняют", "kind": "guess", "soon": true, "players": "3+ игрока" },
+              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }], "new": true }
           ]
         },
         {
           "id": "band",
-          "emoji": "🪩",
+          "emoji": "🕺",
           "name": "Банда в сборе",
           "tag": "от 4",
           "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "roles", "emoji": "🕵️", "name": "С ролями" }, { "id": "points", "emoji": "🏆", "name": "На очки" }],
           "items": [
-              { "emoji": "🫵", "title": "Кто из нас?", "text": "Голосуем пальцем, кто тут главный хаос", "kind": "warm", "ref": { "game": "who-of-us" }, "levels": [{ "label": "С огоньком" },{ "label": "Кто скорее…" },{ "label": "Без тормозов 💎", "premium": true }] },
-              { "emoji": "🫣", "title": "Я никогда не…", "text": "Загибай палец, если было", "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" },{ "label": "С перчинкой" },{ "label": "Без тормозов 💎", "premium": true }], "kind": "warm" },
+              { "emoji": "👆", "title": "Кто из нас?", "text": "Голосуем пальцем, кто тут главный хаос", "kind": "warm", "ref": { "game": "who-of-us" }, "levels": [{ "label": "С огоньком" },{ "label": "Кто скорее…" },{ "label": "Без тормозов 💎", "premium": true }] },
               { "emoji": "🕵️", "title": "Шпион", "text": "Все знают место, кроме одного", "kind": "roles", "ref": { "game": "spy" }, "levels": [{ "label": "Места" },{ "label": "Профессии" },{ "label": "Страны" },{ "label": "Кино 💎", "premium": true }] },
               { "emoji": "🔪", "title": "Мафия", "text": "Город засыпает. От 5 человек", "kind": "roles", "ref": { "game": "mafia" }, "levels": [{ "label": "Классика" },{ "label": "Темы и роли 💎", "premium": true }] },
               { "emoji": "🪧", "title": "Объясни", "text": "Наш Alias: словами или жестами", "kind": "points", "ref": { "game": "explain" }, "levels": [{ "label": "Лёгкий" },{ "label": "Средний" },{ "label": "Тяжёлый 💎", "premium": true }] },
+              { "emoji": "🙈", "title": "Я никогда не…", "text": "Загибай палец, если было", "ref": { "game": "never-have-i-ever" }, "levels": [{ "label": "Разминка" },{ "label": "С перчинкой" },{ "label": "Без тормозов 💎", "premium": true }], "kind": "warm" },
+              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }], "new": true },
               { "emoji": "🃏", "title": "Карточные игры", "text": "Правила под рукой", "kind": "points", "ref": { "cards": true } },
               { "emoji": "⏱️", "title": "5 секунд", "text": "Назови три за пять секунд", "kind": "warm", "ref": { "game": "five-seconds" }, "levels": [{ "label": "Разминка" }, { "label": "Мозговой штурм" }, { "label": "Без тормозов 💎", "premium": true }], "new": true },
-              { "emoji": "🧩", "title": "Угадай по эмодзи", "text": "Фильмы, сказки и мемы смайликами", "kind": "warm", "ref": { "game": "emoji-guess" }, "levels": [{ "label": "Фильмы" }, { "label": "Сказки и книги" }, { "label": "Пословицы" }, { "label": "Мемы" }, { "label": "Хардкор 💎", "premium": true }], "new": true },
               { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe" }, "levels": [{ "label": "Бытовое" }, { "label": "Отношения" }, { "label": "Дружба" }, { "label": "Без фильтра 💎", "premium": true }], "new": true }
           ]
         },
@@ -105,11 +105,11 @@
           "premium": true,
           "tag": "Premium",
           "items": [
-              { "emoji": "🫵", "title": "Кто из нас? Без тормозов", "text": "Вопросы, после которых все смотрят на одного", "premium": true, "ref": { "game": "who-of-us" } },
-              { "emoji": "🫣", "title": "Я никогда не… Без тормозов", "text": "Самая честная колода", "premium": true, "ref": { "game": "never-have-i-ever" } },
+              { "emoji": "👆", "title": "Кто из нас? Без тормозов", "text": "Вопросы, после которых все смотрят на одного", "premium": true, "ref": { "game": "who-of-us" } },
+              { "emoji": "🙈", "title": "Я никогда не… Без тормозов", "text": "Самая честная колода", "premium": true, "ref": { "game": "never-have-i-ever" } },
+              { "emoji": "🪧", "title": "Объясни: Тяжёлый", "text": "Ностальгия, дежавю, испанский стыд", "premium": true, "ref": { "game": "explain" } },
               { "emoji": "⏱️", "title": "5 секунд: Без тормозов", "text": "Неловкие вопросы про всех, кто сидит рядом", "premium": true, "ref": { "game": "five-seconds" } },
               { "emoji": "🧩", "title": "Угадай по эмодзи: Хардкор", "text": "Ребусы, над которыми думают всей компанией", "premium": true, "ref": { "game": "emoji-guess" } },
-              { "emoji": "🪧", "title": "Объясни: Тяжёлый", "text": "Ностальгия, дежавю, испанский стыд", "premium": true, "ref": { "game": "explain" } },
               { "emoji": "🎬", "title": "Шпион: Кино, Сериалы, Знаменитости", "text": "Три набора для тех, кто смотрит всё", "premium": true, "ref": { "game": "spy" } },
               { "emoji": "🎙️", "title": "Мафия с ботом-ведущим", "text": "Телефон сам ведёт ночь", "premium": true, "soon": true, "players": "5+ игроков" }
           ]
@@ -129,7 +129,7 @@
           "kinds": [{ "id": "chars", "emoji": "🎭", "name": "Персонажи" }, { "id": "work", "emoji": "💼", "name": "Дело и сила" }, { "id": "vibe", "emoji": "✨", "name": "Вайб" }, { "id": "city", "emoji": "🏙️", "name": "Город" }],
           "items": [
             { "emoji": "🎬", "title": "Какой ты персонаж", "text": "Кино, сериалы и мемы", "kind": "chars", "ref": { "test": "character" } },
-            { "emoji": "🪩", "title": "Кто ты в компании", "text": "Какая у тебя роль среди друзей", "kind": "chars", "ref": { "test": "company-role" } },
+            { "emoji": "🕺", "title": "Кто ты в компании", "text": "Какая у тебя роль среди друзей", "kind": "chars", "ref": { "test": "company-role" } },
             { "emoji": "🔋", "title": "Интроверт или экстраверт", "text": "Сколько тебя хватает на людей", "kind": "chars", "ref": { "test": "intro-extro" } },
             { "emoji": "🎨", "title": "Какой ты цвет", "text": "Не любимый цвет, а твой", "kind": "chars", "ref": { "test": "color" } },
             { "emoji": "🎂", "title": "Сколько тебе лет на самом деле?", "text": "По паспорту одно, а по душе?", "kind": "chars", "ref": { "test": "age" } },
@@ -148,14 +148,14 @@
           "emoji": "🧠",
           "name": "Психо",
           "tag": "настоящая психология",
-          "kinds": [{ "id": "char", "emoji": "🧩", "name": "Характер" }, { "id": "love", "emoji": "💞", "name": "Любовь" }, { "id": "state", "emoji": "🫧", "name": "Состояние" }],
+          "kinds": [{ "id": "char", "emoji": "🧩", "name": "Характер" }, { "id": "love", "emoji": "💞", "name": "Любовь" }, { "id": "state", "emoji": "💭", "name": "Состояние" }],
           "items": [
             { "emoji": "🌋", "title": "Темперамент", "text": "Холерик, сангвиник, флегматик или меланхолик", "kind": "char", "ref": { "test": "temperament" } },
             { "emoji": "🧠", "title": "Тип мышления", "text": "Как ты решаешь задачи", "kind": "char", "ref": { "test": "thinking-type" } },
             { "emoji": "🪞", "title": "Анализ самооценки", "text": "Без правильных ответов", "kind": "char", "ref": { "test": "self-esteem" } },
-            { "emoji": "🫶", "title": "Языки любви", "text": "Как тебя любить", "kind": "love", "ref": { "test": "love-languages" } },
+            { "emoji": "💖", "title": "Языки любви", "text": "Как тебя любить", "kind": "love", "ref": { "test": "love-languages" } },
             { "emoji": "🌡️", "title": "Как ты сейчас?", "text": "Чекап состояния, можно проходить хоть каждую неделю", "kind": "state", "soon": true, "levels": [{ "label": "Всегда бесплатно", "free": true }] },
-            { "emoji": "🫨", "title": "Тревожность", "text": "Черта характера, не диагноз", "kind": "state", "soon": true }
+            { "emoji": "😰", "title": "Тревожность", "text": "Черта характера, не диагноз", "kind": "state", "soon": true }
           ]
         },
         {
@@ -193,20 +193,20 @@
             { "emoji": "✋", "title": "Я никогда не… вдвоём", "text": "Про отношения, бывших и первые свидания", "kind": "warm", "ref": { "game": "never-have-i-duo" }, "levels": [{ "label": "Про нас" }, { "label": "Признания" }, { "label": "Каверзно 💎", "premium": true }] },
             { "emoji": "🫂", "title": "Насколько ты меня знаешь", "text": "Ты отвечаешь, партнёр угадывает, потом меняетесь", "kind": "know", "ref": { "game": "know-each-other" }, "levels": [{ "label": "Поверхность" }, { "label": "Глубина" }, { "label": "Бездна 💎", "premium": true }] },
             { "emoji": "💞", "title": "Совпадём?", "text": "Это или то: насколько вы похожи", "kind": "know", "ref": { "game": "match-us" }, "levels": [{ "label": "Лайт" }, { "label": "Серьёзнее" }, { "label": "Глубоко 💎", "premium": true }] },
-            { "emoji": "🫙", "title": "Капсула времени", "text": "Письмо друг другу, откроется через месяц", "kind": "eve", "soon": true },
+            { "emoji": "⏳", "title": "Капсула времени", "text": "Письмо друг другу, откроется через месяц", "kind": "eve", "soon": true },
             { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe", "query": "deck=love&mode=duo" }, "levels": [{ "label": "Отношения" }, { "label": "Бытовое" }, { "label": "Без фильтра 💎", "premium": true }] },
             { "emoji": "🪁", "title": "Наш список 100 дел", "text": "Что сделать вдвоём, отмечайте галочками", "kind": "eve", "soon": true }
           ]
         },
         {
           "id": "close",
-          "emoji": "🫶",
+          "emoji": "💖",
           "name": "Близость",
           "tag": "тесты и разговоры",
           "kinds": [{ "id": "love", "emoji": "🧲", "name": "Ты в любви" }, { "id": "talk", "emoji": "🗝️", "name": "Разговоры" }, { "id": "check", "emoji": "🚦", "name": "Чек пары" }],
           "items": [
             { "emoji": "🧲", "title": "Тип привязанности", "text": "Как ты любишь и чего боишься", "kind": "love", "ref": { "test": "attachment-style" }, "levels": [{ "label": "Сравниться 💎", "premium": true, "compare": true }] },
-            { "emoji": "🫶", "title": "Языки любви", "text": "Как тебя любить", "kind": "love", "ref": { "test": "love-languages" }, "levels": [{ "label": "Сравниться 💎", "premium": true, "compare": true }] },
+            { "emoji": "💖", "title": "Языки любви", "text": "Как тебя любить", "kind": "love", "ref": { "test": "love-languages" }, "levels": [{ "label": "Сравниться 💎", "premium": true, "compare": true }] },
             { "emoji": "💚", "title": "Насколько ты ревнуешь", "text": "Лайки, бывшие, сторис: где кольнёт", "kind": "love", "ref": { "test": "jealousy" } },
             { "emoji": "🌹", "title": "Сколько в тебе романтики", "text": "Свечи и признания или «а зачем»?", "kind": "love", "ref": { "test": "romance-level" } },
             { "emoji": "🚩", "title": "Красный флаг, зелёный флаг", "text": "Твой главный флаг в отношениях", "kind": "love", "ref": { "test": "flags" } },
@@ -225,10 +225,10 @@
           "note": "Процент и одна строка бесплатно, чтобы второму захотелось пройти тест. Полный разбор вашей пары в Premium.",
           "items": [
             { "emoji": "🧲", "title": "Привязанность пары", "text": "Как вы любите вместе: 10 сочетаний", "premium": true, "ref": { "test": "attachment-style" } },
-            { "emoji": "🫶", "title": "Языки любви вдвоём", "text": "Чем вы друг друга заряжаете и где промахиваетесь", "premium": true, "soon": true },
+            { "emoji": "💖", "title": "Языки любви вдвоём", "text": "Чем вы друг друга заряжаете и где промахиваетесь", "premium": true, "soon": true },
             { "emoji": "🌋", "title": "Темперамент пары", "text": "Кто тут огонь, а кто вода", "premium": true, "soon": true },
             { "emoji": "💞", "title": "Ценности пары", "text": "Деньги, дети, где жить и сколько свободы", "ref": { "test": "couple-values" }, "levels": [{ "label": "Своя карта", "free": true }, { "label": "Сравнение 💎", "premium": true, "compare": true }] },
-            { "emoji": "🪪", "title": "Паспорт пары", "text": "Все разборы в одной карте для Коллекции", "premium": true, "soon": true }
+            { "emoji": "🆔", "title": "Паспорт пары", "text": "Все разборы в одной карте для Коллекции", "premium": true, "soon": true }
           ]
         }
       ]

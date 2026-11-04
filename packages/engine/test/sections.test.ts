@@ -113,7 +113,7 @@ describe("разделы в одном формате (sections.json)", () => {
     const roles = sectionGroups(band, "roles")!;
     expect(roles.map((g) => g.id)).toEqual(["roles"]);
     expect(roles[0]?.items.map((x) => x.item.title)).toEqual(["Шпион", "Мафия"]);
-    expect(roles[0]?.items.map((x) => x.index)).toEqual([2, 3]); // по номеру считается, куда ведёт тап
+    expect(roles[0]?.items.map((x) => x.index)).toEqual([1, 2]); // по номеру считается, куда ведёт тап
     expect(sectionGroups(band, "нет-такой")!).toHaveLength(3);
     expect(toggleKind(null, "roles")).toBe("roles");
     expect(toggleKind("roles", "points")).toBe("points");

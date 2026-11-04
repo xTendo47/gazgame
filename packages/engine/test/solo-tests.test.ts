@@ -77,14 +77,14 @@ describe("«Интроверт или экстраверт? 🔋»: шкала �
     }
   });
 
-  it("крайние ответы: все «тихие» → 🐚, все «громкие» → 🪩", () => {
+  it("крайние ответы: все «тихие» → 🐚, все «громкие» → 🕺", () => {
     expect(scoreTest(intro, intro.questions.map(() => 0)).resultId).toBe("shell");
     expect(scoreTest(intro, intro.questions.map(() => 3)).resultId).toBe("disco");
     expect(scoreTest(intro, intro.questions.map(() => 1)).resultId).toBe("quiet"); // 12
     expect(scoreTest(intro, intro.questions.map(() => 2)).resultId).toBe("sun"); // 24
   });
 
-  it("случайные ответы: 🐚 1.4% · 🌙 24.7% · 🦎 47.7% · ☀️ 24.9% · 🪩 1.3% (как в спеке)", () => {
+  it("случайные ответы: 🐚 1.4% · 🌙 24.7% · 🦎 47.7% · ☀️ 24.9% · 🕺 1.3% (как в спеке)", () => {
     const s = randomShares(intro, 3, (a) => scoreTest(intro, a).resultId);
     near(s.shell, 1.4, 0.5, "shell");
     near(s.quiet, 24.7, 1.2, "quiet");

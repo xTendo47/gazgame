@@ -56,7 +56,7 @@ import { Glyph } from "@/components/casino/GIcon";
 const WHO_CHIPS = [
   { value: "solo", label: "Соло 🙋" },
   { value: "duo", label: "Вдвоём 💞" },
-  { value: "crew", label: "Компания 🪩" },
+  { value: "crew", label: "Компания 🕺" },
 ] as const;
 const TIME_CHIPS = [
   { value: "15", label: "15 минут" },
@@ -187,7 +187,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
   async function dare(task: GazTask) {
     trackGazDare({ id: task.id });
     const link = `${siteUrl(window.location.origin)}/gaz?dare=${task.id}`;
-    const text = `Тебе бросили вызов в GAZ 🫵 «${task.text}». Слабо?`;
+    const text = `Тебе бросили вызов в GAZ 👆 «${task.text}». Слабо?`;
     if (!isDesktop() && navigator.share) {
       navigator.share({ text: `${text} ${link}` }).catch(() => {});
       return;
@@ -319,7 +319,7 @@ export function GazScreen({ gaz, today, serverMs }: { gaz: GazFile; today: Today
                   <Em text="Беру! 🔥" />
                 </button>
                 <button type="button" className={LIME_GHOST} onClick={() => void dare(tableTask)}>
-                  <Em text="Слабо другу? 🫵" />
+                  <Em text="Слабо другу? 👆" />
                 </button>
                 <button
                   type="button"

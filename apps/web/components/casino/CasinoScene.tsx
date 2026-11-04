@@ -13,7 +13,6 @@ import {
 } from "react";
 import Link from "next/link";
 import { backTagClass } from "@gazgame/ui";
-import { PARTY_SCENE } from "@/components/table/tile-art";
 import { prefersReducedMotion } from "@/lib/gaz";
 import { clearOpeningSection, peekOpeningSection } from "@/lib/section-open";
 import { sfx } from "@/lib/sfx";
@@ -35,12 +34,6 @@ export const PLATE: Record<string, string> = {
   own: "от 2 игроков",
   band: "от 4 игроков",
 };
-
-/** Рулетка из рисунка макета: берём только круг колеса (остальное из сцены обрезаем). */
-export const WHEEL_SVG = PARTY_SCENE.replace(
-  'viewBox="0 0 160 160"',
-  'viewBox="27 21 106 106"',
-).replace(/♥/g, "");
 
 /** Значки колод — рисунки макета (ico64): две карты с червами, шляпа, корона. */
 function DeckIcon({ id }: { id: string }): ReactNode {
@@ -136,79 +129,6 @@ export function PadlockIcon() {
         strokeWidth="2.200"
         strokeLinecap="round"
       />
-    </svg>
-  );
-}
-
-/** Название «Тусовка» дугой, золотой градиент с переливом (SMIL; без анимации, если включено «Уменьшить движение»). */
-/** light — название колоды: тоньше и светлее, чем большая вывеска раздела. */
-export function GoldTitle({ text, still, size = 84, light = false }: { text: string; still: boolean; size?: number; light?: boolean }) {
-  const weight = light ? 700 : 900;
-  return (
-    <svg
-      className="cs-title"
-      viewBox="0 0 390 150"
-      role="img"
-      aria-label={text}
-    >
-      <defs>
-        <linearGradient
-          id="cs-gold-title"
-          gradientUnits="userSpaceOnUse"
-          x1="0"
-          y1="0"
-          x2="390"
-          y2="0"
-        >
-          <stop offset="0" stopColor={light ? "#c9a24e" : "#8a6420"} />
-          <stop offset=".22" stopColor={light ? "#fff6d0" : "#f6e3a1"} />
-          <stop offset=".45" stopColor={light ? "#e6c978" : "#b8913f"} />
-          <stop offset=".62" stopColor="#fff1c4" />
-          <stop offset=".82" stopColor={light ? "#d6b560" : "#9c7426"} />
-          <stop offset="1" stopColor={light ? "#fff6d0" : "#f6e3a1"} />
-          {!still && (
-            <animateTransform
-              attributeName="gradientTransform"
-              type="translate"
-              from="-390 0"
-              to="390 0"
-              dur="5s"
-              repeatCount="indefinite"
-            />
-          )}
-        </linearGradient>
-        <path id="cs-title-arc" d="M14 126Q195 -22 376 100" fill="none" />
-      </defs>
-      <text
-        fontFamily="Playfair Display, serif"
-        fontStyle="italic"
-        fontWeight={weight}
-        fontSize={size}
-        textAnchor="middle"
-        stroke="#2a1c06"
-        strokeWidth={light ? 1.600 : 2.400}
-        fill="#000"
-        opacity=".5"
-        transform="translate(0 4)"
-      >
-        <textPath href="#cs-title-arc" startOffset="50%">
-          {text}
-        </textPath>
-      </text>
-      <text
-        fontFamily="Playfair Display, serif"
-        fontStyle="italic"
-        fontWeight={weight}
-        fontSize={size}
-        textAnchor="middle"
-        fill="url(#cs-gold-title)"
-        stroke="#5e4210"
-        strokeWidth={light ? ".5" : ".8"}
-      >
-        <textPath href="#cs-title-arc" startOffset="50%">
-          {text}
-        </textPath>
-      </text>
     </svg>
   );
 }

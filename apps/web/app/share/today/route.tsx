@@ -1,4 +1,4 @@
-// Картинка батла дня для «Спросить друзей 🫵»: /share/today?b=<id батла>&v=a|b — 1080×1350.
+// Картинка батла дня для «Спросить друзей 👆»: /share/today?b=<id батла>&v=a|b — 1080×1350.
 // Тот же движок (next/og), что у карточек тестов и раздела GAZ.
 import type { NextRequest } from "next/server";
 import { ImageResponse } from "next/og";

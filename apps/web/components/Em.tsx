@@ -31,7 +31,7 @@ const EXTRA: Record<string, GIconName> = {
   "⚔": "swords",
   "💭": "bubble",
   "🙋": "hand",
-  "🫵": "hand",
+  "👆": "hand",
   "⏱": "clock",
   "🚀": "rocket",
   "⚙": "gear",

@@ -288,7 +288,7 @@ function Battle({
             disabled={!image}
             className={cn(BTN, "border border-lime/50 bg-lime/10 text-lime disabled:opacity-60")}
           >
-            {image ? <Em text="Спросить друзей 🫵" /> : "Рисуем картинку…"}
+            {image ? <Em text="Спросить друзей 👆" /> : "Рисуем картинку…"}
           </button>
           <p role="status" className="min-h-4 text-center text-xs text-muted">
             {status || "Карточка батла уйдёт в сторис или в чат"}

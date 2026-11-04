@@ -8,7 +8,7 @@ export type GazWho = GazRouletteTask["who"];
 export type GazTime = GazRouletteTask["time"];
 export type GazWhere = GazRouletteTask["where"];
 
-/** Откуда карта: «Мне скучно», рулетка, ссылка друга («Вызов 🫵») или «Задание дня» в «Сегодня». */
+/** Откуда карта: «Мне скучно», рулетка, ссылка друга («Вызов 👆») или «Задание дня» в «Сегодня». */
 export type GazSource = "bored" | "roulette" | "dare" | "daily";
 
 /** Сколько раз можно крутить рулетку на одно задание. */
