@@ -10,7 +10,7 @@
 }
 .ld-page .lv-title.ld-title {
   margin: 14px 0 0 6px;
-  font-size: clamp(48px, 15vw, 66px);
+  font-size: clamp(44px, 13vw, 58px);
   font-weight: 400;
   background: linear-gradient(180deg, #ffd0e2, #ff9cc2 62%, #ee6f9f);
   -webkit-background-clip: text;
@@ -20,6 +20,9 @@
   padding-bottom: calc(40px + env(safe-area-inset-bottom));
 }
 
+.ld-grid > li {
+  aspect-ratio: 0.68;
+}
 .ld-grid {
   position: relative;
   z-index: 3;
@@ -37,9 +40,9 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  aspect-ratio: 0.72;
+  height: 100%;
   padding: 0 10px;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 6px;
   color: #fff;
   text-align: center;
@@ -53,41 +56,25 @@
     inset 0 0 0 10px #2a0818,
     inset 0 0 0 11px rgb(214 176 97 / 0.3),
     0 12px 20px rgb(0 0 0 / 0.55);
-  transform: rotate(calc((var(--k) % 2 * 2 - 1) * -1.4deg));
+  transform: rotate(var(--tilt, 0deg));
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s;
 }
 .ld-card:active {
-  transform: rotate(calc((var(--k) % 2 * 2 - 1) * -1.4deg)) translateY(3px) scale(0.985);
+  transform: rotate(var(--tilt, 0deg)) translateY(3px) scale(0.985);
 }
 .ld-card[data-soon] {
   filter: saturate(0.8);
 }
 
-/* узор по фону: кольца, счётные палочки, цепочки колец */
+/* узор по фону: у каждой игры свой (см. PATTERN в LoveDeckView), общий слой — маска, чтобы узор не лез под текст */
 .ld-pat {
   position: absolute;
   inset: 11px;
   pointer-events: none;
-  opacity: 0.55;
-}
-.ld-card[data-pat="0"] .ld-pat {
-  background: repeating-radial-gradient(circle at 50% 38%, transparent 0 14px, rgb(214 176 97 / 0.35) 15px 16px);
-}
-.ld-card[data-pat="1"] .ld-pat {
-  background:
-    repeating-linear-gradient(90deg, transparent 0 9px, rgb(214 176 97 / 0.4) 9px 10px, transparent 10px 12px, rgb(214 176 97 / 0.4) 12px 13px),
-    linear-gradient(transparent 30%, #1f0614 70%);
-  mask: linear-gradient(#000 0 20%, transparent 60%, #000 85%);
-  -webkit-mask: linear-gradient(#000 0 20%, transparent 60%, #000 85%);
-}
-.ld-card[data-pat="2"] .ld-pat,
-.ld-card[data-pat="3"] .ld-pat {
-  background:
-    radial-gradient(circle at 25% 25%, transparent 0 5px, rgb(214 176 97 / 0.5) 5.5px 6.5px, transparent 7px) 0 0 / 24px 24px,
-    radial-gradient(circle at 75% 75%, transparent 0 5px, rgb(214 176 97 / 0.5) 5.5px 6.5px, transparent 7px) 0 0 / 24px 24px;
-  mask: linear-gradient(#000, transparent 35%, transparent 70%, #000);
-  -webkit-mask: linear-gradient(#000, transparent 35%, transparent 70%, #000);
+  opacity: 0.7;
+  mask: linear-gradient(#000 0 34%, transparent 62%, transparent 76%, #000);
+  -webkit-mask: linear-gradient(#000 0 34%, transparent 62%, transparent 76%, #000);
 }
 
 /* орнамент по углам («крылышки» из макета) */
@@ -140,7 +127,8 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1;
   color: #fff;
   background: radial-gradient(circle at 35% 28%, #ffa3c6, #e0508e 45%, #8e1a4c 88%);
   box-shadow: inset 0 -2px 3px rgb(0 0 0 / 0.3), inset 0 1px 1px rgb(255 255 255 / 0.5), 0 2px 4px rgb(0 0 0 / 0.5);
@@ -155,11 +143,11 @@
   z-index: 2;
   display: grid;
   place-items: center;
-  width: 46%;
+  width: 48%;
   aspect-ratio: 1;
-  margin-top: 16%;
+  margin-top: 22%;
   border-radius: 50%;
-  font-size: clamp(40px, 13vw, 54px);
+  container-type: inline-size;
   color: #ffd6e4;
   background: radial-gradient(circle at 50% 40%, #2a0a1d, #120410 80%);
   box-shadow:
@@ -167,6 +155,15 @@
     0 0 0 5px #2a0818,
     0 0 0 6.5px rgb(214 176 97 / 0.85),
     0 6px 10px rgb(0 0 0 / 0.5);
+}
+/* эмодзи игры в медальоне: ~62% его ширины, по центру */
+.ld-emoji {
+  display: block;
+  font-size: 62cqw;
+  line-height: 1;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.4));
 }
 .ld-bead {
   position: absolute;
@@ -184,7 +181,7 @@
   position: relative;
   z-index: 2;
   margin-top: auto;
-  font: 700 clamp(13px, 4vw, 16px) / 1.1 var(--font-playfair);
+  font: 700 12.5px / 1.08 var(--font-playfair);
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: #fff;
@@ -215,29 +212,52 @@
   border-radius: 50%;
   background: #cfcfd6;
 }
-.ld-soon {
+/* закрытая игра: золотой замок висит на карте, к нему привязана бирка «скоро» (эталон 07) */
+.ld-hang {
   position: absolute;
-  right: -2px;
-  top: 14px;
+  left: 50%;
+  top: -17px;
   z-index: 4;
-  padding: 3px 8px;
-  font: 800 9px / 1 var(--font-body);
-  letter-spacing: 0.14em;
-  color: #fff;
-  background: #c2336c;
-  transform: rotate(9deg);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: -13px;
+  transform-origin: 50% 0;
+  animation: ld-swing 4s ease-in-out infinite;
+  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.55));
+  pointer-events: none;
 }
-.ld-lock {
-  position: absolute;
-  right: 12px;
-  top: -2px;
-  z-index: 4;
-  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.5));
+.ld-hang svg {
+  display: block;
+}
+.ld-hang em {
+  margin-top: 2px;
+  padding: 2px 7px 3px;
+  border-radius: 2px;
+  background: #f3e6c8;
+  box-shadow: 0 0 0 1px rgb(120 80 30 / 0.5), 0 2px 3px rgb(0 0 0 / 0.4);
+  font: 800 8px / 1 var(--font-body);
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a1d4a;
+  transform: rotate(-4deg);
+}
+@keyframes ld-swing {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ld-card {
     transition: none;
+  }
+  .ld-hang {
+    animation: none;
   }
 }

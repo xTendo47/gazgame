@@ -1,16 +1,17 @@
 "use client";
 
 // Экран раздела «Романтика» (образец — _design/etalon/06_romantika.png): винный фон с лучами, кружево, фото-полароиды, роза,
-// лента, пузырь-сердце, конверт с тремя колодами (Игры, Близость, Совместимость), а внизу жемчуг, шкатулка с кольцом,
-// открытка, духи и билеты в кино. Анимации — только transform и opacity, при «уменьшить движение» их нет.
+// лента, пузырь-сердце, конверт с тремя колодами (Игры, Близость, Совместимость), а внизу шкатулка с кольцом,
+// записка и билеты в кино (жемчуга и духов нет). Анимации — только transform и opacity, при «уменьшить движение» их нет.
 import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { backTagClass } from "@gazgame/ui";
 import { prefersReducedMotion } from "@/lib/gaz";
 import { clearOpeningSection, peekOpeningSection } from "@/lib/section-open";
 import { sfx } from "@/lib/sfx";
-import { BOX, FLOUR, LACE, PEARL, PERF, ROSE } from "./love-art";
+import { BOX, FLOUR, LACE, ROSE } from "./love-art";
 import "./love.css";
+import "./love-main.css";
 
 export interface LoveDeck {
   id: string;
@@ -96,13 +97,34 @@ export function GoldLock() {
   );
 }
 
-/** Лепестки, рассыпанные по сцене. */
+/** Макетный экран: 358×695 (эталон 06). Масштаб — по ширине окна (не больше ×1,25); на высоком экране середина (конверт с колодами) сдвигается вниз на половину лишнего, низ остаётся у нижнего края. */
+const STAGE_W = 358;
+const STAGE_H = 695;
+/** Самая низкая сцена, которую ещё можно сжать: ниже масштаб падает и по бокам остаются пустые поля. */
+const MIN_STAGE_H = 640;
+const MAX_SCALE = 1.25;
+
+function fitStage(pageEl: HTMLElement, stageEl: HTMLElement): void {
+  const vw = pageEl.clientWidth;
+  const vh = window.innerHeight;
+  const s = Math.min(vw / STAGE_W, vh / MIN_STAGE_H, MAX_SCALE);
+  const sh = vh / s;
+  stageEl.style.setProperty("--s", String(s));
+  stageEl.style.setProperty("--sh", String(sh));
+  stageEl.style.setProperty("--dy", String(Math.max(0, (sh - STAGE_H) / 2)));
+  stageEl.dataset.ready = "true";
+}
+
+/** Лепестки, рассыпанные по сцене: слева, сверху, у конверта и внизу (как в эталоне). */
 const PETALS: [number, number, number, number][] = [
-  [20, 214, 30, 0],
-  [348, 396, -40, 1],
-  [46, 372, 70, 2],
-  [330, 610, 10, 0],
-  [208, 574, -20, 1],
+  [14, 112, 30, 0],
+  [10, 296, 70, 2],
+];
+/** Нижние лепестки (координаты от верха нижней группы, y = 500 макетного экрана). */
+const PETALS_BOTTOM: [number, number, number, number][] = [
+  [196, 30, -20, 1],
+  [250, 98, 10, 0],
+  [238, 160, -60, 1],
 ];
 
 export function LoveScene({
@@ -121,7 +143,17 @@ export function LoveScene({
   backHref?: string;
 }) {
   const root = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
   const deckRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useLayoutEffect(() => {
+    const fit = () => {
+      if (root.current && stage.current) fitStage(root.current, stage.current);
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
 
   useLayoutEffect(() => {
     if (peekOpeningSection() !== "love" || prefersReducedMotion()) {
@@ -164,42 +196,40 @@ export function LoveScene({
   return (
     <div className="lv-page" ref={root} style={vars}>
       <div className="lv-beams" aria-hidden="true" />
-      <div className="lv-scroll">
-        <div className="lv-inner">
-          <Link href={backHref} className={backTagClass()} onClick={() => sfx.page()}>
-            ← В коробку
-          </Link>
-
-          <div className="lv-decor" aria-hidden="true">
-            <i className="lv-lace" style={{ left: -30, top: 56, transform: "rotate(-9deg)" }} />
-            <i className="lv-lace" style={{ left: 40, top: 40, transform: "rotate(-9deg)" }} />
-            <i className="lv-lace" style={{ left: 120, top: 64, transform: "rotate(-9deg)" }} />
-            <div className="lv-pol p2" style={{ right: 38, top: 100, transform: "rotate(-7deg)" }}>
-              <i />
-              <b>тот вечер</b>
-            </div>
-            <div className="lv-pol p1" style={{ right: -10, top: 128, transform: "rotate(9deg)" }}>
-              <i />
-              <b>мы ♡</b>
-            </div>
-            <i className="lv-rose" style={{ left: -22, top: 232, transform: "rotate(-8deg)" }} />
-            <svg className="lv-ribbon" viewBox="0 0 60 150" style={{ left: 12, top: 258 }}>
-              <path d="M44 4C10 22 6 52 26 74c18 20 12 52-12 72" fill="none" stroke="#d6305f" strokeWidth="9" strokeLinecap="round" />
-              <path d="M44 4C10 22 6 52 26 74c18 20 12 52-12 72" fill="none" stroke="#ff8fb0" strokeWidth="2.200" strokeLinecap="round" opacity=".7" transform="translate(-1.500 -1)" />
-            </svg>
-            <span className="lv-bubble" style={{ right: 30, top: 236 }}>
-              <svg viewBox="0 0 24 24">
-                <path d="M12 19.500S4.500 15 4.500 9.800A3.800 3.800 0 0 1 12 8a3.800 3.800 0 0 1 7.500 1.800C19.500 15 12 19.500 12 19.500z" fill="#fff" fillOpacity=".92" />
-              </svg>
-            </span>
-            {PETALS.map(([x, y, r, k], i) => (
-              <i key={i} className={`lv-petal k${k}`} style={{ left: x, top: y, transform: `rotate(${r}deg)` }} />
-            ))}
+      <div className="lm-stage" ref={stage}>
+        <div className="lm-decor" aria-hidden="true">
+          <i className="lv-lace" style={{ left: -14, top: 82, transform: "rotate(-9deg)" }} />
+          <i className="lv-lace" style={{ left: -10, top: 112, transform: "rotate(-9deg)" }} />
+          <div className="lv-pol p2" style={{ left: 243, top: 96, transform: "rotate(-7deg)" }}>
+            <i />
+            <b>тот вечер</b>
           </div>
+          <div className="lv-pol p1" style={{ left: 290, top: 122, transform: "rotate(9deg)" }}>
+            <i />
+            <b>мы ♡</b>
+          </div>
+          <i className="lv-rose" style={{ left: -22, top: 205, transform: "rotate(-4deg)" }} />
+          <svg className="lv-ribbon" viewBox="0 0 60 150" style={{ left: 8, top: 232 }}>
+            <path d="M44 4C10 22 6 52 26 74c18 20 12 52-12 72" fill="none" stroke="#d6305f" strokeWidth="9" strokeLinecap="round" />
+            <path d="M44 4C10 22 6 52 26 74c18 20 12 52-12 72" fill="none" stroke="#ff8fb0" strokeWidth="2.200" strokeLinecap="round" opacity=".7" transform="translate(-1.500 -1)" />
+          </svg>
+          <span className="lv-bubble" style={{ left: 293, top: 215 }}>
+            <svg viewBox="0 0 24 24">
+              <path d="M12 19.500S4.500 15 4.500 9.800A3.800 3.800 0 0 1 12 8a3.800 3.800 0 0 1 7.500 1.800C19.500 15 12 19.500 12 19.500z" fill="#fff" fillOpacity=".92" />
+            </svg>
+          </span>
+          {PETALS.map(([x, y, r, k], i) => (
+            <i key={i} className={`lv-petal k${k}`} style={{ left: x, top: y, transform: `rotate(${r}deg)` }} />
+          ))}
+        </div>
 
-          <h1 className="lv-title">{title}</h1>
-          <p className="lv-sub">вдвоём</p>
+        <Link href={backHref} className={`${backTagClass()} lm-back`} onClick={() => sfx.page()}>
+          ← В коробку
+        </Link>
+        <h1 className="lm-title">{title}</h1>
+        <p className="lm-sub">вдвоём</p>
 
+        <div className="lm-mid">
           <div className="lv-stage">
             <span className="lv-env-back" aria-hidden="true" />
             <div className="lv-decks" role="group" aria-label="Колоды">
@@ -239,22 +269,23 @@ export function LoveScene({
             </div>
             <span className="lv-env-front" aria-hidden="true" />
           </div>
+        </div>
 
-          <div className="lv-bottom" aria-hidden="true">
-            <span className="lv-pearl" dangerouslySetInnerHTML={{ __html: PEARL }} />
-            <span className="lv-box" dangerouslySetInnerHTML={{ __html: BOX }} />
-            <span className="lv-card">
-              <b>ОТ МЕНЯ · ТЕБЕ</b>
-              с тобой даже тишина тёплая
-            </span>
-            <span className="lv-perf" dangerouslySetInnerHTML={{ __html: PERF }} />
-            <span className="lv-tix">
-              <b>КИНО · ЗАЛ 3</b>
-              РЯД 7 · МЕСТА 8–9
-              <br />
-              2 БИЛЕТА ♡
-            </span>
-          </div>
+        <div className="lm-bottom" aria-hidden="true">
+          <span className="lv-box" style={{ left: 20, top: 95 }} dangerouslySetInnerHTML={{ __html: BOX }} />
+          <span className="lv-card" style={{ left: 118, top: 75 }}>
+            <b>ОТ МЕНЯ · ТЕБЕ</b>
+            с тобой даже тишина тёплая
+          </span>
+          <span className="lv-tix" style={{ left: 232, top: 100 }}>
+            <b>КИНО · ЗАЛ 3</b>
+            РЯД 7 · МЕСТА 8–9
+            <br />
+            2 БИЛЕТА ♡
+          </span>
+          {PETALS_BOTTOM.map(([x, y, r, k], i) => (
+            <i key={i} className={`lv-petal k${k}`} style={{ left: x, top: y, transform: `rotate(${r}deg)` }} />
+          ))}
         </div>
       </div>
     </div>

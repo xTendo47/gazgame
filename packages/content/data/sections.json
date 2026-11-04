@@ -189,13 +189,13 @@
           "tag": "вдвоём",
           "kinds": [{ "id": "warm", "emoji": "⚡", "name": "На разогрев" }, { "id": "know", "emoji": "🧠", "name": "Знаешь меня?" }, { "id": "eve", "emoji": "💌", "name": "Вдвоём вечером" }],
           "items": [
-            { "emoji": "🎯", "title": "Правда или действие", "text": "Флирт и немного смелости", "kind": "warm", "soon": true, "levels": [{ "label": "Флирт" }, { "label": "Смелее 💎", "premium": true }] },
+            { "emoji": "🎯", "title": "Правда или действие", "text": "Флирт и немного смелости", "kind": "warm", "soon": true, "levels": [{ "label": "Флирт" }, { "label": "Смелее 💎", "premium": true }], "minutes": 20 },
             { "emoji": "✋", "title": "Я никогда не… вдвоём", "text": "Про отношения, бывших и первые свидания", "kind": "warm", "ref": { "game": "never-have-i-duo" }, "levels": [{ "label": "Про нас" }, { "label": "Признания" }, { "label": "Каверзно 💎", "premium": true }] },
             { "emoji": "🫂", "title": "Насколько ты меня знаешь", "text": "Ты отвечаешь, партнёр угадывает, потом меняетесь", "kind": "know", "ref": { "game": "know-each-other" }, "levels": [{ "label": "Поверхность" }, { "label": "Глубина" }, { "label": "Бездна 💎", "premium": true }] },
             { "emoji": "💞", "title": "Совпадём?", "text": "Это или то: насколько вы похожи", "kind": "know", "ref": { "game": "match-us" }, "levels": [{ "label": "Лайт" }, { "label": "Серьёзнее" }, { "label": "Глубоко 💎", "premium": true }] },
-            { "emoji": "⏳", "title": "Капсула времени", "text": "Письмо друг другу, откроется через месяц", "kind": "eve", "soon": true },
+            { "emoji": "⏳", "title": "Капсула времени", "text": "Письмо друг другу, откроется через месяц", "kind": "eve", "soon": true, "minutes": 10 },
             { "emoji": "🤔", "title": "Норм или стрём", "text": "Ситуация на экране: норм или стрём?", "kind": "warm", "ref": { "game": "norm-or-cringe", "query": "deck=love&mode=duo" }, "levels": [{ "label": "Отношения" }, { "label": "Бытовое" }, { "label": "Без фильтра 💎", "premium": true }] },
-            { "emoji": "🪁", "title": "Наш список 100 дел", "text": "Что сделать вдвоём, отмечайте галочками", "kind": "eve", "soon": true }
+            { "emoji": "🪁", "title": "Наш список 100 дел", "text": "Что сделать вдвоём, отмечайте галочками", "kind": "eve", "soon": true, "minutes": 15 }
           ]
         },
         {
@@ -213,7 +213,7 @@
             { "emoji": "💌", "title": "Что тебе нужно в любви", "text": "Не как ты любишь, а что нужно в ответ", "kind": "love", "ref": { "test": "love-needs" } },
             { "emoji": "💔", "title": "Как ты переживаешь расставания", "text": "Грустный плейлист, glow-up или сталкер-режим?", "kind": "love", "ref": { "test": "breakup" } },
             { "emoji": "🗝️", "title": "36 вопросов", "text": "Знаменитые вопросы, после которых становятся ближе", "kind": "talk", "ref": { "game": "36-questions" }, "levels": [{ "label": "Знакомство" }, { "label": "Глубже" }, { "label": "Совсем близко" }] },
-            { "emoji": "🚦", "title": "Здоровые ли у вас отношения?", "text": "Честный чек без диагнозов", "kind": "check", "soon": true, "levels": [{ "label": "Всегда бесплатно", "free": true }] }
+            { "emoji": "🚦", "title": "Здоровые ли у вас отношения?", "text": "Честный чек без диагнозов", "kind": "check", "soon": true, "levels": [{ "label": "Всегда бесплатно", "free": true }], "minutes": 5 }
           ]
         },
         {
@@ -225,10 +225,10 @@
           "note": "Процент и одна строка бесплатно, чтобы второму захотелось пройти тест. Полный разбор вашей пары в Premium.",
           "items": [
             { "emoji": "🧲", "title": "Привязанность пары", "text": "Как вы любите вместе: 10 сочетаний", "premium": true, "ref": { "test": "attachment-style" } },
-            { "emoji": "💖", "title": "Языки любви вдвоём", "text": "Чем вы друг друга заряжаете и где промахиваетесь", "premium": true, "soon": true },
-            { "emoji": "🌋", "title": "Темперамент пары", "text": "Кто тут огонь, а кто вода", "premium": true, "soon": true },
+            { "emoji": "💖", "title": "Языки любви вдвоём", "text": "Чем вы друг друга заряжаете и где промахиваетесь", "premium": true, "soon": true, "minutes": 10 },
+            { "emoji": "🌋", "title": "Темперамент пары", "text": "Кто тут огонь, а кто вода", "premium": true, "soon": true, "minutes": 10 },
             { "emoji": "💞", "title": "Ценности пары", "text": "Деньги, дети, где жить и сколько свободы", "ref": { "test": "couple-values" }, "levels": [{ "label": "Своя карта", "free": true }, { "label": "Сравнение 💎", "premium": true, "compare": true }] },
-            { "emoji": "🆔", "title": "Паспорт пары", "text": "Все разборы в одной карте для Коллекции", "premium": true, "soon": true }
+            { "emoji": "🆔", "title": "Паспорт пары", "text": "Все разборы в одной карте для Коллекции", "premium": true, "soon": true, "minutes": 5 }
           ]
         }
       ]

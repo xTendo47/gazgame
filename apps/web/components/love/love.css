@@ -161,16 +161,17 @@
 
 /* ---------- конверт и колоды ---------- */
 .lv-stage {
-  position: relative;
-  z-index: 4;
-  height: 290px;
-  margin-top: 118px;
+  position: absolute;
+  left: 0;
+  top: 277px;
+  width: 100%;
+  height: 250px;
 }
 .lv-env-back {
   position: absolute;
-  left: 14px;
-  right: 14px;
-  top: 112px;
+  left: 27px;
+  right: 28px;
+  top: 33px;
   bottom: 0;
   border-radius: 6px 6px 8px 8px;
   background: linear-gradient(180deg, #e8c4d0, #f4dde4);
@@ -182,16 +183,16 @@
   right: 0;
   top: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 96px 92px 97px;
   gap: 8px;
-  padding: 0 18px;
+  padding: 0 0 0 28px;
 }
 .lv-deck {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 250px;
+  height: 196px;
   padding: 0 6px;
   border-radius: 6px;
   color: #fff;
@@ -202,12 +203,12 @@
     inset 0 0 0 5px #2a0818,
     inset 0 0 0 6.5px rgb(243 163 196 / 0.7),
     0 10px 18px rgb(0 0 0 / 0.55);
-  transform: rotate(calc((var(--i) - 1) * 2.4deg)) translateY(calc(var(--i) * 4px - 4px));
+  transform: rotate(calc((var(--i) - 1) * 3.4deg)) translateY(calc(var(--i) * 4px - 4px));
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s;
 }
 .lv-deck:active {
-  transform: rotate(calc((var(--i) - 1) * 2.4deg)) translateY(calc(var(--i) * 4px - 10px));
+  transform: rotate(calc((var(--i) - 1) * 3.4deg)) translateY(calc(var(--i) * 4px - 10px));
 }
 .lv-deck[data-kind="black"] {
   background: linear-gradient(180deg, #1c1812, #0d0b09);
@@ -218,10 +219,10 @@
     0 10px 18px rgb(0 0 0 / 0.6);
 }
 .lv-deck-plate {
-  margin: 12px -6px 0;
+  margin: 11px -6px 0;
   align-self: stretch;
   padding: 5px 0 4px;
-  font: 800 9.5px / 1 var(--font-body);
+  font: 800 8.5px / 1 var(--font-body);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #ffe3ec;
@@ -233,9 +234,9 @@
   border-color: rgb(201 161 78 / 0.4);
 }
 .lv-deck-art {
-  margin-top: 26px;
-  width: 62px;
-  height: 46px;
+  margin-top: 14px;
+  width: 46px;
+  height: 34px;
 }
 .lv-deck-art svg {
   display: block;
@@ -243,8 +244,8 @@
   height: 100%;
 }
 .lv-deck-name {
-  margin-top: 16px;
-  font: 700 15px / 1.12 var(--font-playfair);
+  margin-top: 14px;
+  font: 700 12.5px / 1.12 var(--font-playfair);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #fff4f8;
@@ -279,60 +280,25 @@
 }
 .lv-env-front {
   position: absolute;
-  left: 14px;
-  right: 14px;
-  top: 168px;
+  left: 27px;
+  right: 28px;
+  top: 140px;
   bottom: 0;
   border-radius: 4px 4px 10px 10px;
   background: linear-gradient(180deg, #fbeef1, #f4dfe5 55%, #ecd0d9);
-  clip-path: polygon(0 0, 50% 54px, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 50% 50px, 100% 0, 100% 100%, 0 100%);
   filter: drop-shadow(0 -2px 3px rgb(90 10 45 / 0.35));
 }
 
 /* ---------- мелочи внизу ---------- */
-.lv-bottom {
-  position: relative;
-  height: 214px;
-  margin-top: 6px;
-}
-.lv-bottom > span {
-  position: absolute;
-}
-.lv-pearl {
-  left: 10px;
-  top: -6px;
-  width: 230px;
-  height: 74px;
-  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.5));
-  transform: rotate(-2deg);
-}
-.lv-pearl svg,
-.lv-box svg,
-.lv-perf svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
 .lv-box {
-  left: 6px;
-  bottom: 18px;
   width: 86px;
   height: 74px;
   transform: rotate(-8deg);
   filter: drop-shadow(0 10px 10px rgb(0 0 0 / 0.55));
 }
-.lv-perf {
-  right: 14px;
-  bottom: 74px;
-  width: 52px;
-  height: 78px;
-  transform: rotate(10deg);
-  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.55));
-}
 .lv-card {
-  left: 100px;
-  bottom: 28px;
-  width: 132px;
+  width: 122px;
   padding: 11px 10px 10px;
   border-radius: 3px;
   background: linear-gradient(160deg, #2a0918, #170510);
@@ -351,8 +317,6 @@
   color: #d9a08a;
 }
 .lv-tix {
-  right: -8px;
-  bottom: 14px;
   width: 134px;
   height: 50px;
   padding: 8px 10px 0 16px;
