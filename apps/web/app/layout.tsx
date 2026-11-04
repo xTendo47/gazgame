@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { AudioBoot } from "@/components/AudioBoot";
+import { IntroSplash } from "@/components/intro/IntroSplash";
 import { DevContentReload } from "@/components/DevContentReload";
 import { TelegramProvider } from "@/components/TelegramProvider";
 import { serverSiteUrl } from "@/lib/site";
@@ -51,6 +52,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* Звук: музыка после первого касания, пауза при уходе вкладки в фон, тихий щелчок на кнопках */}
         <AudioBoot />
         {children}
+        <IntroSplash />
+
         {/* Разработка: правка JSON в packages/content сразу видна на странице */}
         {process.env.NODE_ENV === "development" && <DevContentReload />}
         {/* Аналитика — только в продакшене: при разработке ничего не грузим и не отправляем */}

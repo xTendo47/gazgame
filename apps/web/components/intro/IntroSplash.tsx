@@ -3,15 +3,15 @@
 // Заставка первого запуска: чёрный экран → «СТАРТ» → трек с начала → искры летят к центру, G, A, Z влетают,
 // «game» печатается, полоса, световые штрихи, вспышка и переход в меню ровно на 5-й секунде трека.
 // Тайминги анимации — в intro.css (шкала времени от старта трека, как в макете); здесь только запуск и дроп.
-// Показывается один раз (флаг в ProgressStore). Время дропа берём из audio.currentTime;
+// Показывается при каждом новом заходе (открыли, обновили, запустили PWA), но не при переходах внутри приложения. Время дропа берём из audio.currentTime;
 // если звук не завёлся (запрет браузера) — идём по таймеру.
 import { useRef, useState, useSyncExternalStore } from "react";
 import { GIcon } from "@/components/casino/GIcon";
-import { getProgress } from "@/lib/progress";
 import { startMusic } from "@/lib/music";
 import "./intro.css";
 
-const HINT_ID = "intro";
+/** Заставку уже показали в этом заходе. Живёт в памяти страницы: обновили или открыли заново — снова false; переходы внутри приложения не сбрасывают. */
+let shownThisVisit = false;
 /** Секунда трека, на которой наступает дроп: вспышка и уход заставки. */
 const DROP = 5.0;
 const LETTERS = ["G", "A", "Z"];
@@ -39,7 +39,7 @@ async function playIntro(el: HTMLElement, onDrop: () => void) {
 
 export function IntroSplash() {
   // На сервере и до гидратации считаем «уже видели»: меню не мигает под заставкой у тех, кто её уже смотрел
-  const seen = useSyncExternalStore(noSubscribe, () => getProgress().isHintSeen(HINT_ID), () => true);
+  const seen = useSyncExternalStore(noSubscribe, () => shownThisVisit, () => true);
   const [gone, setGone] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const started = useRef(false);
@@ -51,7 +51,7 @@ export function IntroSplash() {
     if (!el || started.current) return;
     started.current = true;
     void playIntro(el, () => {
-      getProgress().markHintSeen(HINT_ID);
+      shownThisVisit = true;
       // Вспышка и уход занимают ~1 секунду, потом убираем заставку из разметки
       setTimeout(() => setGone(true), 1100);
     });

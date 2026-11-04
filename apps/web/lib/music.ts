@@ -1,6 +1,6 @@
 // Музыка GAZ: один трек bg.mp3 на всё приложение, по кругу.
 // Громкость — через Web Audio GainNode: на iPhone у audio.volume нет эффекта.
-// Громкость и пауза запоминаются на устройстве (audio-prefs). Трек сам стартует после первого касания (autoStartOnFirstTouch),
+// Громкость и пауза запоминаются на устройстве (audio-prefs). Трек стартует только кнопкой на заставке (startMusic),
 // на паузу уходит, когда вкладка скрыта или телефон заблокирован, и сам продолжает при возврате.
 import { readAudioPrefs, writeAudioPrefs } from "./audio-prefs";
 const SRC = "/audio/bg.mp3";
@@ -105,14 +105,6 @@ let lifecycleOn = false;
 export function initMusicLifecycle(): void {
   if (lifecycleOn || typeof document === "undefined") return;
   lifecycleOn = true;
-
-  const first = () => {
-    if (audio) return;
-    if (document.querySelector(".gz-intro")) return; // заставка запускает трек сама, с синхронизацией
-    if (readAudioPrefs().paused) return;
-    void startMusic();
-  };
-  for (const name of ["pointerup", "keydown", "touchend"]) document.addEventListener(name, first, { capture: true, passive: true, once: false });
 
   const hide = () => {
     if (audio && !audio.paused) {

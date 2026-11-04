@@ -19,8 +19,7 @@ import { BOX_SKINS, nextBoxSkin, setBoxSkin, useBoxSkin } from "@/lib/box-skin";
 import { setBoxFlight } from "@/lib/box-flight";
 import { prefersReducedMotion, useNow } from "@/lib/gaz";
 import { haptic } from "@/lib/haptics";
-import { isMusicPlaying, startMusic, subscribeMusic } from "@/lib/music";
-import { readAudioPrefs } from "@/lib/audio-prefs";
+import { isMusicPlaying, subscribeMusic } from "@/lib/music";
 import { MusicPanel } from "./MusicPanel";
 import { sfx } from "@/lib/sfx";
 import { profileInitial, useProfileName } from "@/lib/profile-name";
@@ -204,8 +203,6 @@ export function StartTable({ tests, games, diceItems, diceConfig, boredIds }: St
             aria-expanded={musicOpen}
             onClick={() => {
               trackHomeClick({ target: "music" });
-              // первое нажатие запускает трек (если его не ставили на паузу руками), дальше — панель с паузой и громкостью
-              if (!musicOpen && !isMusicPlaying() && !readAudioPrefs().paused) void startMusic();
               setMusicOpen((o) => !o);
             }}
           >

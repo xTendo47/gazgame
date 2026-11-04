@@ -3,7 +3,6 @@
 import { isVisible, itemPath, type DiceItem } from "@gazgame/engine";
 import { type ContinueTestSummary } from "@/components/home/ContinueCard";
 import { FirstHints } from "@/components/home/FirstHints";
-import { IntroSplash } from "@/components/intro/IntroSplash";
 import { StartTable } from "@/components/table/StartTable";
 import { getCatalog, visibility } from "@/lib/catalog";
 
@@ -32,7 +31,6 @@ export default function Home() {
     <>
       <StartTable tests={tests} games={games} diceItems={diceItems} diceConfig={layouts?.dice} boredIds={catalog.gaz?.bored.map((t) => t.id) ?? []} />
       <FirstHints />
-      <IntroSplash />
     </>
   );
 }
