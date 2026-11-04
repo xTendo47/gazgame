@@ -14,21 +14,21 @@
     0 6px 14px rgb(0 0 0 / 0.5);
 }
 
-/* лоток: оранжевая рамка, внутри тёмное дерево и выемка сверху */
+/* лоток: рамка цвета коробки (--box-color скина), внутри тёмное дерево и выемка сверху */
 .gt-tray {
   position: relative;
   z-index: 5;
   padding: 14px 12px;
-  border: 6px solid #ee5a1b;
+  border: 6px solid var(--box-color);
   border-radius: 13px;
   background:
     var(--gz-noise),
     repeating-linear-gradient(90deg, rgb(0 0 0 / 0.22) 0 2px, transparent 2px 26px),
     linear-gradient(180deg, #5a3a22, #3f2514);
   box-shadow:
-    inset 0 0 0 2px #b8400f,
+    inset 0 0 0 2px color-mix(in srgb, var(--box-color) 72%, #000),
     inset 0 6px 14px rgb(0 0 0 / 0.55),
-    0 3px 0 #a8380b,
+    0 3px 0 color-mix(in srgb, var(--box-color) 66%, #000),
     0 10px 16px rgb(0 0 0 / 0.55);
 }
 .gt-tray-notch {
@@ -112,7 +112,7 @@
   margin: -22px 0 0 -22px;
   border-radius: 50%;
   text-align: center;
-  background: radial-gradient(circle at 35% 30%, #ff9466, #ec5419 55%, #b8400f);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--box-color) 70%, #fff), var(--box-color) 55%, color-mix(in srgb, var(--box-color) 72%, #000));
   color: #fff1de;
   font: 800 9px/44px var(--font-display);
   letter-spacing: 0.08em;

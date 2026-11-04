@@ -510,39 +510,46 @@
 }
 
 /* ---------- крышка коробки на «Чем займёмся?» ---------- */
-.gt-box.gt-lid {
+/* обёртка крышки: её двигает OpenBox (только transform), размер и место задаёт по лотку; пока не измерено — не видна */
+.gt-lidwrap {
   position: absolute;
   z-index: 6;
-  margin: 0;
-  min-height: 0;
-  aspect-ratio: auto;
-  /* размер и место задаёт OpenBox по лотку; пока не измерено — не видна, чтобы не мигала */
   visibility: hidden;
   pointer-events: none;
   transform-origin: 50% 50%;
   will-change: transform;
 }
-.gt-box.gt-lid[data-ready="true"] {
+.gt-lidwrap[data-ready="true"] {
   visibility: visible;
 }
-/* вкладыш «Правила»: бумажка в нижнем левом углу крышки, единственное, что нажимается */
+.gt-box.gt-lid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+/* памятка «Правила»: бумажный листок под нижним краем крышки, выдвинут наполовину; единственное, что нажимается */
 .gt-lid-insert {
   position: absolute;
-  left: 22%;
-  bottom: 13%;
-  z-index: 3;
-  width: 36%;
+  left: 20%;
+  top: 100%;
+  z-index: 0;
+  width: 38%;
   padding: 7px 8px 6px;
   text-align: left;
   pointer-events: auto;
-  transform: rotate(-9deg);
+  transform: translateY(-46%) rotate(-5deg);
+  transform-origin: 50% 0;
   color: #1d2a6a;
   background:
     repeating-linear-gradient(180deg, transparent 0 9px, rgb(80 120 180 / 0.35) 9px 9.6px) 0 20px / 100% 100% no-repeat,
     linear-gradient(180deg, #fffdf5, #f1e8d0);
   box-shadow:
     0 2px 0 #d9ceb0,
-    0 6px 10px rgb(0 0 0 / 0.45);
+    0 8px 12px rgb(0 0 0 / 0.5);
   -webkit-tap-highlight-color: transparent;
 }
 .gt-lid-insert::before {
@@ -553,7 +560,7 @@
   top: 0;
   width: 14px;
   height: 14px;
-  background: linear-gradient(225deg, #ff7a1a 50%, transparent 50.5%);
+  background: linear-gradient(225deg, var(--bx1) 50%, transparent 50.5%);
 }
 .gt-lid-insert b {
   display: block;
