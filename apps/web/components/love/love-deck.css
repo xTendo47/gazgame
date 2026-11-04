@@ -10,11 +10,8 @@
 }
 .ld-page .lv-title.ld-title {
   margin: 14px 0 0 6px;
-  font-size: clamp(44px, 13vw, 58px);
+  font-size: clamp(40px, 12.4vw, 54px);
   font-weight: 400;
-  background: linear-gradient(180deg, #ffd0e2, #ff9cc2 62%, #ee6f9f);
-  -webkit-background-clip: text;
-  background-clip: text;
 }
 .ld-page .lv-inner {
   padding-bottom: calc(40px + env(safe-area-inset-bottom));

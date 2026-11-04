@@ -101,7 +101,7 @@ export function GoldLock() {
 const STAGE_W = 358;
 const STAGE_H = 695;
 /** Самая низкая сцена, которую ещё можно сжать: ниже масштаб падает и по бокам остаются пустые поля. */
-const MIN_STAGE_H = 640;
+const MIN_STAGE_H = 695;
 const MAX_SCALE = 1.25;
 
 function fitStage(pageEl: HTMLElement, stageEl: HTMLElement): void {

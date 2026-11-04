@@ -40,17 +40,16 @@
   top: 66px;
   z-index: 3;
   margin: 0;
-  font-family: var(--font-playfair);
+  font-family: "Lobster", cursive;
   font-weight: 400;
-  font-size: 66px;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
   color: transparent;
-  background: linear-gradient(180deg, #ffc2da, #ff7fb0 62%, #e9568f);
+  background: linear-gradient(100deg, #ffb0cf, #fff0f5 30%, #ff6fae 55%, #ffd9e6 75%, #e0508e);
   -webkit-background-clip: text;
   background-clip: text;
-  filter: drop-shadow(0 3px 0 rgb(90 10 45 / 0.7)) drop-shadow(0 8px 10px rgb(0 0 0 / 0.35));
+  filter: drop-shadow(0 0 10px rgb(255 111 174 / 0.65)) drop-shadow(0 2px 0 #4a0a24) drop-shadow(0 4px 3px rgb(0 0 0 / 0.35));
+  font-size: 64px;
+  line-height: 1.05;
+  white-space: nowrap;
 }
 .lm-sub {
   left: 17px;
