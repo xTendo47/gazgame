@@ -6,6 +6,7 @@ import { useSyncExternalStore, type CSSProperties } from "react";
 import { BackTag } from "@gazgame/ui";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import { prefersReducedMotion } from "@/lib/gaz";
 import { FLOUR, LACE, ROSE } from "./love-art";
 import { GoldLock, HeartBead } from "./LoveScene";
@@ -99,8 +100,9 @@ export function LoveDeckView({
   onBack: () => void;
   onPick: (index: number) => void;
   /** Есть что открыть «Наугад» (хотя бы одна доступная игра). */
-  onRandom: (() => void) | null;
+  onRandom: ((chosen?: number) => void) | null;
 }) {
+  const [animRef, anim] = useCardAnim("love");
   // «Уменьшить движение» узнаём после показа (на сервере экрана нет), чтобы разметка совпала
   const still = useSyncExternalStore(
     noSubscribe,
@@ -111,7 +113,7 @@ export function LoveDeckView({
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <div className="lv-page ld-page" data-deck={deckId} data-still={still || undefined} style={vars}>
+    <div className="lv-page ld-page" data-deck={deckId} data-still={still || undefined} style={vars} ref={animRef}>
       <div className="lv-beams" aria-hidden="true" />
       <div className="lv-scroll">
         <div className="lv-inner">
@@ -124,7 +126,7 @@ export function LoveDeckView({
             >
               ← К колодам
             </BackTag>
-            {onRandom && <RandomButton onClick={onRandom} />}
+            {onRandom && <RandomButton onClick={() => anim.roll((i) => onRandom(i))} />}
           </div>
 
           <div className="lv-decor" aria-hidden="true">
@@ -142,14 +144,13 @@ export function LoveDeckView({
                 <button
                   type="button"
                   className="ld-card"
+                  data-card=""
+                  data-card-index={c.index}
                   data-soon={c.soon || undefined}
                   data-locked={c.locked || undefined}
                   style={{ "--k": i, "--tilt": `${TILT[i % TILT.length]}deg` } as CSSProperties}
                   aria-label={`${c.title}${c.meta ? `, ${c.meta.toLowerCase()}` : ""}${c.soon ? ", скоро" : ""}${c.locked && !c.soon ? ", закрыто: нужен Premium" : ""}`}
-                  onClick={() => {
-                    sfx.flip();
-                    onPick(c.index);
-                  }}
+                  onClick={(e) => anim.open(e.currentTarget, () => onPick(c.index))}
                 >
                   <span className="ld-pat" aria-hidden="true" style={PATTERN[c.title] ?? DEFAULT_PATTERN} />
                   <span className="ld-flour ld-f1" aria-hidden="true" />

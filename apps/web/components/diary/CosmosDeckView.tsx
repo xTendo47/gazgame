@@ -8,6 +8,7 @@ import { BackTag } from "@gazgame/ui";
 import { Glyph } from "@/components/casino/GIcon";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import type { DiaryEntry } from "./DiaryDeckView";
 import "@/components/casino/casino-deck.css";
 import "./diary.css";
@@ -71,10 +72,11 @@ export function CosmosDeckView({
   entries: DiaryEntry[];
   onBack: () => void;
   onPick: (index: number) => void;
-  onRandom: (() => void) | null;
+  onRandom: ((chosen?: number) => void) | null;
 }) {
+  const [animRef, anim] = useCardAnim("solo");
   return (
-    <div className="dr-page cm-page">
+    <div className="dr-page cm-page" ref={animRef}>
       <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
         <defs>
           <linearGradient id="cm-gold" x1="0" y1="0" x2="1" y2="1">
@@ -98,7 +100,7 @@ export function CosmosDeckView({
             >
               ← К колодам
             </BackTag>
-            {onRandom && <RandomButton onClick={onRandom} />}
+            {onRandom && <RandomButton onClick={() => anim.roll((i) => onRandom(i))} />}
           </div>
           <h1 className="cm-title">{title}</h1>
           <ul className="cm-grid">
@@ -111,12 +113,11 @@ export function CosmosDeckView({
                   <button
                     type="button"
                     className="cm-card"
+                    data-card=""
+                    data-card-index={e.index}
                     data-soon={e.soon || undefined}
                     aria-label={`${e.title}${e.soon ? ", скоро" : ""}${e.locked ? ", закрыто: нужен Premium" : ""}`}
-                    onClick={() => {
-                      sfx.flip();
-                      onPick(e.index);
-                    }}
+                    onClick={(ev) => anim.open(ev.currentTarget, () => onPick(e.index))}
                   >
                     <Hook />
                     <Padlock />

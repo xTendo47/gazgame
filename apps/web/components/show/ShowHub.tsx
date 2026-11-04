@@ -10,6 +10,7 @@ import { QUIZ_PARTY_MAX, QUIZ_PARTY_MIN, dailyAnswered, pluralDays, showStreak, 
 import { backTagClass } from "@gazgame/ui";
 import { GIcon } from "@/components/casino/GIcon";
 import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import {
   SHOW_BILL,
   SHOW_BULBS_SIGN,
@@ -90,6 +91,8 @@ export function ShowHub({
   /** Режим «Насколько хорошо ты знаешь исполнителя?»: список артистов; нет артистов — карточки нет. */
   onArtists?: () => void;
 }) {
+  // карточки категорий раздаются и поднимаются так же, как карты в других разделах
+  const [animRef, anim] = useCardAnim("show");
   // порядок карточек как в эталоне: Кино, Русский хип-хоп, Общее, Западный swag (Загадки — отдельной широкой карточкой)
   const ORDER = ["kino", "ruhiphop", "general", "swag"];
   const main = ORDER.flatMap((id) => categories.filter((c) => c.id === id));
@@ -102,7 +105,7 @@ export function ShowHub({
   ];
 
   return (
-    <div className="sw-page sw-hub">
+    <div className="sw-page sw-hub" ref={animRef}>
       <div className="sw-studio" aria-hidden="true">
         <span className="sw-rays" />
         <Art html={SHOW_CAM_L} className="sw-cam sw-cam-l" />
@@ -198,10 +201,8 @@ export function ShowHub({
               type="button"
               className={c.id === "court" ? "sw-cat sw-wide" : "sw-cat"}
               data-c={c.id}
-              onClick={() => {
-                sfx.page();
-                c.go();
-              }}
+              data-card=""
+              onClick={(e) => anim.open(e.currentTarget, c.go)}
             >
               <Art html={ART[c.id] ?? ""} className="sw-cat-art" />
               <span className="sw-cat-t">
@@ -215,10 +216,8 @@ export function ShowHub({
               type="button"
               className="sw-cat sw-wide"
               data-c="riddle"
-              onClick={() => {
-                sfx.page();
-                onCategory("riddle");
-              }}
+              data-card=""
+              onClick={(e) => anim.open(e.currentTarget, () => onCategory("riddle"))}
             >
               <Art html={ART.riddle ?? ""} className="sw-cat-art" />
               <span className="sw-cat-t">
@@ -234,10 +233,8 @@ export function ShowHub({
             type="button"
             className="sw-cat sw-wide"
             data-c="artist"
-            onClick={() => {
-              sfx.page();
-              onArtists();
-            }}
+            data-card=""
+            onClick={(e) => anim.open(e.currentTarget, onArtists)}
           >
             <Art html={ART.artist ?? ""} className="sw-cat-art" />
             <span className="sw-cat-t">

@@ -6,6 +6,7 @@ import { BackTag } from "@gazgame/ui";
 import { Glyph } from "@/components/casino/GIcon";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import "@/components/casino/casino-deck.css";
 import "./diary.css";
 import "./diary-deck.css";
@@ -35,10 +36,11 @@ export function DiaryDeckView({
   entries: DiaryEntry[];
   onBack: () => void;
   onPick: (index: number) => void;
-  onRandom: (() => void) | null;
+  onRandom: ((chosen?: number) => void) | null;
 }) {
+  const [animRef, anim] = useCardAnim("solo");
   return (
-    <div className="dr-page dd-page">
+    <div className="dr-page dd-page" ref={animRef}>
       <div className="dr-scroll">
         <div className="dr-inner">
           <div className="dd-top">
@@ -50,7 +52,7 @@ export function DiaryDeckView({
             >
               ← К книге
             </BackTag>
-            {onRandom && <RandomButton onClick={onRandom} />}
+            {onRandom && <RandomButton onClick={() => anim.roll((i) => onRandom(i))} />}
           </div>
           <h1 className="dd-title">{title}</h1>
           <ul className="dd-sheet">
@@ -59,13 +61,12 @@ export function DiaryDeckView({
                 <button
                   type="button"
                   className="dd-row"
+                  data-card=""
+                  data-card-index={e.index}
                   data-soon={e.soon || undefined}
                   data-locked={e.locked || undefined}
                   aria-label={`${e.title}${e.soon ? ", скоро" : ""}${e.locked ? ", закрыто: нужен Premium" : ""}`}
-                  onClick={() => {
-                    sfx.flip();
-                    onPick(e.index);
-                  }}
+                  onClick={(ev) => anim.open(ev.currentTarget, () => onPick(e.index))}
                 >
                   <span className="dd-ico" aria-hidden="true">
                     <Glyph emoji={e.emoji} label={e.title} />

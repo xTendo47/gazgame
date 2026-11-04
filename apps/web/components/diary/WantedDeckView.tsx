@@ -9,6 +9,7 @@ import { BackTag } from "@gazgame/ui";
 import { DiaryIcon } from "./DiaryIcons";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
 import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import type { DiaryEntry } from "./DiaryDeckView";
 import "@/components/casino/casino-deck.css";
 import "./diary.css";
@@ -150,10 +151,11 @@ export function WantedDeckView({
   entries: DiaryEntry[];
   onBack: () => void;
   onPick: (index: number) => void;
-  onRandom: (() => void) | null;
+  onRandom: ((chosen?: number) => void) | null;
 }) {
+  const [animRef, anim] = useCardAnim("solo");
   return (
-    <div className="dr-page wd-page">
+    <div className="dr-page wd-page" ref={animRef}>
       <div className="dr-scroll">
         <div className="dr-inner wd-inner">
           <Rope />
@@ -167,7 +169,7 @@ export function WantedDeckView({
             >
               ← К колодам
             </BackTag>
-            {onRandom && <RandomButton onClick={onRandom} />}
+            {onRandom && <RandomButton onClick={() => anim.roll((i) => onRandom(i))} />}
           </div>
           <h1 className="wd-title">{title}</h1>
           <ul className="wd-grid">
@@ -179,13 +181,12 @@ export function WantedDeckView({
                   <button
                     type="button"
                     className="wd-poster"
+                    data-card=""
+                    data-card-index={e.index}
                     data-soon={e.soon || undefined}
                     data-locked={e.locked || undefined}
                     aria-label={`${e.title}${e.soon ? ", скоро" : ""}${e.locked ? ", закрыто: нужен Premium" : ""}`}
-                    onClick={() => {
-                      sfx.flip();
-                      onPick(e.index);
-                    }}
+                    onClick={(ev) => anim.open(ev.currentTarget, () => onPick(e.index))}
                   >
                     <Pin />
                     {v.holes.map(([x, y], i) => (

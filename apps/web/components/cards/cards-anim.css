@@ -1,0 +1,83 @@
+/* Анимации карт (lib/card-anim.ts). Образец — макет v6.4: пачка рубашек тасуется (rifSplit, rifDrop) и улетает (rifAway).
+   Только transform и opacity; при «Уменьшить движение» пачка не показывается. */
+
+.ca-riffle {
+  --back: repeating-linear-gradient(45deg, rgb(242 220 154 / 0.3) 0 1px, transparent 1px 7px), radial-gradient(80% 60% at 50% 45%, #8a1820, #5a0c12 70%, #3a060a);
+  --edge: #f3ecdf;
+  --tx: 0px;
+  --ty: 0px;
+  position: fixed;
+  left: 50%;
+  width: 84px;
+  height: 118px;
+  margin: -59px 0 0 -42px;
+  z-index: 60;
+  pointer-events: none;
+  animation: ca-away 0.3s 0.82s cubic-bezier(0.5, 0, 0.7, 0.4) forwards;
+}
+.ca-riffle[data-variant="love"] {
+  --back: repeating-linear-gradient(45deg, rgb(255 190 215 / 0.28) 0 1px, transparent 1px 7px), radial-gradient(80% 60% at 50% 45%, #7a1f52, #3d0e2d 70%, #240716);
+  --edge: #fbe9ee;
+}
+.ca-riffle[data-variant="solo"] {
+  --back: repeating-linear-gradient(45deg, rgb(255 255 255 / 0.12) 0 1px, transparent 1px 7px), radial-gradient(80% 60% at 50% 45%, #5a3fa8, #2a1c66 70%, #170f3d);
+  --edge: #e9e3ff;
+}
+.ca-riffle[data-variant="show"] {
+  --back: repeating-linear-gradient(45deg, rgb(255 210 120 / 0.22) 0 1px, transparent 1px 7px), radial-gradient(80% 60% at 50% 45%, #1d3a8a, #0e1f55 70%, #07112f);
+  --edge: #f6e3a1;
+}
+.ca-riffle i {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--edge);
+  border-radius: 4px;
+  background: var(--back);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  transform: translateY(calc(var(--k) * -0.8px));
+  animation:
+    ca-split 0.26s 0.02s ease-out forwards,
+    ca-drop 0.14s var(--dd) cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+.ca-riffle::after {
+  content: "";
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -16px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.55);
+  filter: blur(7px);
+  z-index: -1;
+}
+@keyframes ca-split {
+  to {
+    transform: translate(calc(var(--side) * 44px), calc(var(--k) * -0.8px - 6px)) rotate(calc(var(--side) * 13deg));
+  }
+}
+@keyframes ca-drop {
+  from {
+    transform: translate(calc(var(--side) * 44px), calc(var(--k) * -0.8px - 6px)) rotate(calc(var(--side) * 13deg));
+  }
+  to {
+    transform: translate(0, calc(var(--k) * -0.9px)) rotate(calc(var(--side) * 0.6deg));
+  }
+}
+@keyframes ca-away {
+  to {
+    transform: translate(var(--tx), var(--ty)) scale(0.36) rotate(6deg);
+    opacity: 0;
+  }
+}
+
+/* карта, которая едет по экрану, не должна обрезаться соседями */
+[data-card] {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ca-riffle {
+    display: none;
+  }
+}

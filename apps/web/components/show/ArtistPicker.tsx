@@ -5,14 +5,15 @@
 import type { QuizArtist } from "@gazgame/content";
 import { ARTIST_PER_LEVEL, type QuizMode } from "@gazgame/engine";
 import { backTagClass } from "@gazgame/ui";
-import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import "./show.css";
 
 const MODE_NAMES: Record<QuizMode, string> = { solo: "Соло", duo: "Вдвоём", party: "Компания" };
 
 export function ArtistPicker({ artists, mode, onBack, onPick }: { artists: QuizArtist[]; mode: QuizMode; onBack: () => void; onPick: (slug: string) => void }) {
+  const [animRef, anim] = useCardAnim("show");
   return (
-    <div className="sw-page sw-q" data-th="artist">
+    <div className="sw-page sw-q" data-th="artist" ref={animRef}>
       <div className="sw-inner">
         <button type="button" className={backTagClass()} onClick={onBack}>
           ← В студию
@@ -27,11 +28,9 @@ export function ArtistPicker({ artists, mode, onBack, onPick }: { artists: QuizA
               <button
                 type="button"
                 className="sw-artist"
+                data-card=""
                 data-demo={a.draft || undefined}
-                onClick={() => {
-                  sfx.page();
-                  onPick(a.slug);
-                }}
+                onClick={(e) => anim.open(e.currentTarget, () => onPick(a.slug))}
               >
                 <b>{a.name}</b>
                 <small>15 вопросов</small>

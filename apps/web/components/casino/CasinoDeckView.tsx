@@ -8,6 +8,7 @@
 import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { BackTag } from "@gazgame/ui";
 import { sfx } from "@/lib/sfx";
+import { useCardAnim } from "@/lib/card-anim";
 import { Suit } from "./CasinoArt";
 import { GameIcon } from "./CasinoIcons";
 import { ArcTitle, PadlockIcon, PLATE } from "./CasinoScene";
@@ -127,7 +128,7 @@ function Die({ turn }: { turn: string }) {
 export function RandomButton({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" className="cd-rand" onClick={onClick} aria-label="Наугад: случайная игра этой колоды">
-      <span className="cd-pair" aria-hidden="true">
+      <span className="cd-pair" data-dice aria-hidden="true">
         <span className="cd-pd" style={{ left: 36, top: 2 }}>
           <Die turn="rotateX(-32deg) rotateY(28deg) rotateZ(10deg)" />
         </span>
@@ -196,7 +197,7 @@ export function CasinoDeckView({
   onBack: () => void;
   onPick: (index: number) => void;
   /** Есть что открыть «Наугад» (хотя бы одна доступная игра). */
-  onRandom: (() => void) | null;
+  onRandom: ((chosen?: number) => void) | null;
 }) {
   const root = useRef<HTMLDivElement>(null);
   // Экран рисуется в «макетной» ширине 358 px и целиком увеличивается под телефон (zoom): пропорции карт не меняются
@@ -209,6 +210,8 @@ export function CasinoDeckView({
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);
   }, []);
+  // раздача, «наугад» и подъём карты: общая реализация для всех разделов (после масштаба, чтобы он уже был задан)
+  const [, anim] = useCardAnim("party", root);
   return (
     <div className="tm-page cd-page" data-deck={deckId} ref={root}>
       <div className="tm-table" aria-hidden="true" dangerouslySetInnerHTML={{ __html: TABLE_ART }} />
@@ -224,7 +227,7 @@ export function CasinoDeckView({
               ← К колодам
             </BackTag>
           </div>
-          {onRandom && <RandomButton onClick={onRandom} />}
+          {onRandom && <RandomButton onClick={() => anim.roll((i) => onRandom(i))} />}
 
           {deckId === "band" && <GoldSplash />}
           {deckId === "band" && <OfficialStamp />}
@@ -261,6 +264,8 @@ export function CasinoDeckView({
                   <button
                     type="button"
                     className="cd-card"
+                    data-card=""
+                    data-card-index={c.index}
                     data-theme={theme}
                     data-soon={c.soon || undefined}
                     data-locked={c.locked || undefined}
@@ -273,10 +278,7 @@ export function CasinoDeckView({
                       } as CSSProperties
                     }
                     aria-label={`${c.title}${c.players ? `, ${c.players.toLowerCase()}` : ""}${c.soon ? ", скоро" : c.fresh ? ", новинка" : ""}${c.locked ? ", закрыто: нужен Premium" : ""}`}
-                    onClick={() => {
-                      sfx.flip();
-                      onPick(c.index);
-                    }}
+                    onClick={(e) => anim.open(e.currentTarget, () => onPick(c.index))}
                   >
                     <span className="cd-pat" aria-hidden="true" />
                     <span className="cd-gloss" aria-hidden="true" />

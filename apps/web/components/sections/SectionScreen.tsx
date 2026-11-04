@@ -300,8 +300,9 @@ export function SectionScreen({
   const sheetTest = lockedTests.find((t) => t.slug === sheet);
 
   /** «Наугад»: случайная из доступных карточек колоды (не «скоро» и не закрытая Premium). */
-  function randomTap(list: { item: SectionItem; target: SectionTarget }[]) {
-    const pick = list[randomIndex(list.length)];
+  function randomTap(list: { item: SectionItem; target: SectionTarget; index: number }[], chosen?: number) {
+    // карту уже выбрала анимация «наугад» (chosen — номер карточки); без неё берём случайную
+    const pick = list.find((x) => x.index === chosen) ?? list[randomIndex(list.length)];
     if (pick) tap(pick.item, pick.target);
   }
 
@@ -383,7 +384,7 @@ export function SectionScreen({
             if (tab.id === "deep" && found.item.premium && !premium) return lockedTap(found.target, found.item.title);
             tap(found.item, found.target);
           }}
-          onRandom={playable.length > 0 ? () => randomTap(playable) : null}
+          onRandom={playable.length > 0 ? (chosen) => randomTap(playable, chosen) : null}
         />
         {overlays}
       </>
@@ -419,7 +420,7 @@ export function SectionScreen({
             const found = items[index];
             if (found) tap(found.item, found.target);
           }}
-          onRandom={playable.length > 0 ? () => randomTap(playable) : null}
+          onRandom={playable.length > 0 ? (chosen) => randomTap(playable, chosen) : null}
         />
         {overlays}
       </>
@@ -458,7 +459,7 @@ export function SectionScreen({
             const found = items[index];
             if (found) tap(found.item, found.target);
           }}
-          onRandom={playable.length > 0 ? () => randomTap(playable) : null}
+          onRandom={playable.length > 0 ? (chosen) => randomTap(playable, chosen) : null}
         />
         {overlays}
       </>
