@@ -8,7 +8,7 @@
   "status": "draft",
   "title": "Правда или действие",
   "description": "Классика для двоих: отвечай честно или выполняй задание.",
-  "emoji": "target",
+  "emoji": "🎯",
   "sections": ["pairs"],
   "tier": "free",
   "ageRating": "all",
@@ -22,14 +22,14 @@
     "Отказ? Придумай себе штраф."
   ],
   "cardTypes": [
-    { "id": "truth", "title": "Правда", "emoji": "chat2" },
-    { "id": "dare", "title": "Действие", "emoji": "bolt" }
+    { "id": "truth", "title": "Правда", "emoji": "🗣️" },
+    { "id": "dare", "title": "Действие", "emoji": "⚡" }
   ],
   "decks": [
     {
       "id": "fun",
       "title": "Весело",
-      "emoji": "mask4",
+      "emoji": "😜",
       "description": "Лёгкие вопросы и смешные задания",
       "tier": "free",
       "cards": [
@@ -46,7 +46,7 @@
     {
       "id": "deep",
       "title": "Глубоко",
-      "emoji": "wave",
+      "emoji": "🌊",
       "description": "Вопросы, после которых вы станете ближе",
       "tier": "premium",
       "cards": [

@@ -1,6 +1,6 @@
 {
   "$schema": "../schema/game.schema.json",
-  "_note": "Механика guess-partner, как know-each-other. {name} — имя того, про кого раунд (угадывающий видит text). Отвечающий про себя видит selfText и selfOptions (если selfOptions нет — те же options). Порядок selfOptions = порядок options. Про друзей: База, Глубже (бесплатно), Без секретов :diamond:.",
+  "_note": "Механика guess-partner, как know-each-other. {name} — имя того, про кого раунд (угадывающий видит text). Отвечающий про себя видит selfText и selfOptions (если selfOptions нет — те же options). Порядок selfOptions = порядок options. Про друзей: База, Глубже (бесплатно), Без секретов 💎.",
   "id": "know-friend",
   "slug": "know-friend",
   "kind": "game",
@@ -8,7 +8,7 @@
   "status": "draft",
   "title": "Насколько ты знаешь друга",
   "description": "Один отвечает про себя, второй угадывает. Кто кого знает лучше?",
-  "emoji": "hand3",
+  "emoji": "🤜",
   "sections": [
     "company"
   ],
@@ -32,17 +32,17 @@
     "Один тайком отвечает про себя. Второй не подглядывает!",
     "Передаёте телефон, и второй угадывает ответы.",
     "Потом меняетесь. Вопросы те же, так честнее.",
-    "Ответы не показываем, только проценты. Обсуждайте сами :wink:"
+    "Ответы не показываем, только проценты. Обсуждайте сами 😉"
   ],
   "decks": [
     {
       "id": "base",
       "title": "База",
-      "emoji": "wave",
+      "emoji": "🌊",
       "description": "Привычки и мелочи",
       "tier": "free",
       "questionsPerGame": 8,
-      "upsellText": "Это было легко. Дальше Глубже :wave2:",
+      "upsellText": "Это было легко. Дальше Глубже 🤿",
       "cards": [
         {
           "text": "Чем {name} занимается в 3 часа ночи?",
@@ -254,10 +254,10 @@
           "text": "Какой смайлик {name} шлёт чаще всего?",
           "selfText": "Какой смайлик ты шлёшь чаще всего?",
           "options": [
-            ":laugh:",
-            ":heart5:",
-            ":thumbUp:",
-            ":skull:"
+            "😂",
+            "❤️",
+            "👍",
+            "💀"
           ]
         },
         {
@@ -297,11 +297,11 @@
     {
       "id": "deeper",
       "title": "Глубже",
-      "emoji": "wave2",
+      "emoji": "🤿",
       "description": "Страхи, мечты, характер",
       "tier": "free",
       "questionsPerGame": 10,
-      "upsellText": "Совсем близко? Без секретов :diamond:",
+      "upsellText": "Совсем близко? Без секретов 💎",
       "cards": [
         {
           "text": "Чего {name} боится больше всего?",
@@ -556,13 +556,13 @@
     {
       "id": "no-secrets",
       "title": "Без секретов",
-      "emoji": "diamond",
+      "emoji": "💎",
       "description": "То, что знают только самые близкие",
       "tier": "premium",
       "questionsPerGame": 12,
       "locked": {
         "reason": "subscription",
-        "text": "По подписке :diamond:"
+        "text": "По подписке 💎"
       },
       "cards": [
         {
@@ -768,31 +768,31 @@
     {
       "minPercent": 81,
       "title": "Читаете мысли",
-      "emoji": "sparkle",
+      "emoji": "🔮",
       "text": "Вы знаете друг друга подозрительно хорошо. Проверьте себя в «Без секретов»."
     },
     {
       "minPercent": 61,
       "title": "Лучшие друзья",
-      "emoji": "twoHearts2",
+      "emoji": "👯",
       "text": "Почти всё угадано. Такая дружба на вес золота."
     },
     {
       "minPercent": 41,
       "title": "Хорошие друзья",
-      "emoji": "link",
+      "emoji": "🤝",
       "text": "Основное знаете, а глубже ещё есть что открыть."
     },
     {
       "minPercent": 21,
       "title": "Есть что узнать",
-      "emoji": "question",
+      "emoji": "🤨",
       "text": "Похоже, вы больше тусите, чем разговариваете. Самое время это исправить."
     },
     {
       "minPercent": 0,
       "title": "Кто ты вообще?",
-      "emoji": "ghost2",
+      "emoji": "👽",
       "text": "Вы как будто только познакомились. Сыграйте ещё раз, станет лучше."
     }
   ]

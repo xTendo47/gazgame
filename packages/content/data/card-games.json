@@ -3,7 +3,7 @@
   "id": "card-games",
   "slug": "cards",
   "title": "Карточные игры",
-  "emoji": "cards",
+  "emoji": "🃏",
   "sections": [
     "company"
   ],
@@ -42,20 +42,20 @@
     "52": "52 карты: от двойки до туза"
   },
   "labels": {
-    "players": ":family2:",
-    "minutes": ":timer2:",
+    "players": "👥",
+    "minutes": "⏱",
     "deck": "колода",
     "goal": "Цель",
     "deal": "Раздача",
     "moves": "Как ходить",
     "disputes": "Частые споры",
     "back": "Назад к играм",
-    "empty": "Для такой компании игр нет. Попробуй другое число :sparkle6:"
+    "empty": "Для такой компании игр нет. Попробуй другое число 🙂"
   },
   "games": [
     {
       "id": "durak",
-      "emoji": "clown",
+      "emoji": "🤡",
       "title": "Дурак подкидной",
       "players": {
         "min": 2,
@@ -81,7 +81,7 @@
     },
     {
       "id": "durak-perevodnoy",
-      "emoji": "refresh",
+      "emoji": "🔄",
       "title": "Дурак переводной",
       "players": {
         "min": 2,
@@ -104,7 +104,7 @@
     },
     {
       "id": "war",
-      "emoji": "swords",
+      "emoji": "⚔️",
       "title": "Война",
       "aka": "она же «Пьяница»",
       "players": {
@@ -128,7 +128,7 @@
     },
     {
       "id": "believe",
-      "emoji": "liar",
+      "emoji": "🤥",
       "title": "Верю не верю",
       "players": {
         "min": 2,
@@ -152,7 +152,7 @@
     },
     {
       "id": "101",
-      "emoji": "hundred",
+      "emoji": "💯",
       "title": "101",
       "players": {
         "min": 2,
@@ -194,7 +194,7 @@
     },
     {
       "id": "poker",
-      "emoji": "spade",
+      "emoji": "♠️",
       "title": "Покер",
       "aka": "Техасский холдем, упрощённо",
       "players": {
@@ -237,7 +237,7 @@
     },
     {
       "id": "old-maid",
-      "emoji": "queen",
+      "emoji": "👸",
       "title": "Пиковая дама",
       "players": {
         "min": 3,
@@ -261,7 +261,7 @@
     },
     {
       "id": "klondike",
-      "emoji": "puzzle",
+      "emoji": "🧩",
       "title": "Косынка",
       "players": {
         "min": 1,

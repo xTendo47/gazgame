@@ -1,16 +1,16 @@
 {
   "$schema": "./schema/today.schema.json",
-  "_note": "«Сегодня :fire:»: battles и questions идут по кругу (индекс дня = дни от 13.10.2026 по МСК, % длина). Задание дня берётся из колоды «Мне скучно» в gaz.json: b[(индекс×7)%длина]. ladder — награды за серию: card — карта в Коллекцию, freeze — +1 заморозка, premium — пока только показываем. Тексты — черновики основателя.",
+  "_note": "«Сегодня 🔥»: battles и questions идут по кругу (индекс дня = дни от 13.10.2026 по МСК, % длина). Задание дня берётся из колоды «Мне скучно» в gaz.json: b[(индекс×7)%длина]. ladder — награды за серию: card — карта в Коллекцию, freeze — +1 заморозка, premium — пока только показываем. Тексты — черновики основателя.",
   "battles": [
     {
       "id": "bt01",
       "question": "Море или горы?",
       "a": {
-        "emoji": "wave",
+        "emoji": "🌊",
         "label": "Море"
       },
       "b": {
-        "emoji": "mountain2",
+        "emoji": "🏔️",
         "label": "Горы"
       }
     },
@@ -18,11 +18,11 @@
       "id": "bt02",
       "question": "Позвонить или написать?",
       "a": {
-        "emoji": "phoneCall",
+        "emoji": "📞",
         "label": "Позвонить"
       },
       "b": {
-        "emoji": "chat",
+        "emoji": "💬",
         "label": "Написать"
       }
     },
@@ -30,11 +30,11 @@
       "id": "bt03",
       "question": "Сова или жаворонок?",
       "a": {
-        "emoji": "owl",
+        "emoji": "🦉",
         "label": "Сова"
       },
       "b": {
-        "emoji": "bird2",
+        "emoji": "🐓",
         "label": "Жаворонок"
       }
     },
@@ -42,11 +42,11 @@
       "id": "bt04",
       "question": "Узнать будущее или стереть одно воспоминание?",
       "a": {
-        "emoji": "sparkle",
+        "emoji": "🔮",
         "label": "Будущее"
       },
       "b": {
-        "emoji": "basket2",
+        "emoji": "🧽",
         "label": "Стереть"
       }
     },
@@ -54,11 +54,11 @@
       "id": "bt05",
       "question": "Вечное лето или вечная зима?",
       "a": {
-        "emoji": "sun",
+        "emoji": "☀️",
         "label": "Лето"
       },
       "b": {
-        "emoji": "snowflake",
+        "emoji": "❄️",
         "label": "Зима"
       }
     },
@@ -66,11 +66,11 @@
       "id": "bt06",
       "question": "Шаурма или пицца?",
       "a": {
-        "emoji": "shawarma",
+        "emoji": "🌯",
         "label": "Шаурма"
       },
       "b": {
-        "emoji": "pizza",
+        "emoji": "🍕",
         "label": "Пицца"
       }
     },
@@ -78,11 +78,11 @@
       "id": "bt07",
       "question": "Друг, который всегда опаздывает, или который всегда отменяет?",
       "a": {
-        "emoji": "alarm",
+        "emoji": "⏰",
         "label": "Опаздывает"
       },
       "b": {
-        "emoji": "noNo",
+        "emoji": "🙅",
         "label": "Отменяет"
       }
     },
@@ -90,11 +90,11 @@
       "id": "bt08",
       "question": "Путешествовать соло или только компанией?",
       "a": {
-        "emoji": "backpack",
+        "emoji": "🎒",
         "label": "Соло"
       },
       "b": {
-        "emoji": "twoHearts2",
+        "emoji": "👯",
         "label": "Компанией"
       }
     },
@@ -102,11 +102,11 @@
       "id": "bt09",
       "question": "Миллион сейчас или десять через десять лет?",
       "a": {
-        "emoji": "moneyFly",
+        "emoji": "💸",
         "label": "Сейчас"
       },
       "b": {
-        "emoji": "hourglass",
+        "emoji": "⏳",
         "label": "Через 10 лет"
       }
     },
@@ -114,11 +114,11 @@
       "id": "bt10",
       "question": "Кино дома или в кинотеатре?",
       "a": {
-        "emoji": "couch",
+        "emoji": "🛋️",
         "label": "Дома"
       },
       "b": {
-        "emoji": "popcorn",
+        "emoji": "🍿",
         "label": "В кино"
       }
     },
@@ -126,11 +126,11 @@
       "id": "bt11",
       "question": "Уметь летать или стать невидимкой?",
       "a": {
-        "emoji": "feather",
+        "emoji": "🪽",
         "label": "Летать"
       },
       "b": {
-        "emoji": "ghost",
+        "emoji": "👻",
         "label": "Невидимка"
       }
     },
@@ -138,11 +138,11 @@
       "id": "bt12",
       "question": "Мегаполис или домик у моря?",
       "a": {
-        "emoji": "city",
+        "emoji": "🏙️",
         "label": "Мегаполис"
       },
       "b": {
-        "emoji": "cottage",
+        "emoji": "🏡",
         "label": "Домик у моря"
       }
     },
@@ -150,11 +150,11 @@
       "id": "bt13",
       "question": "Голосовые или только текст?",
       "a": {
-        "emoji": "mic2",
+        "emoji": "🎙️",
         "label": "Голосовые"
       },
       "b": {
-        "emoji": "keyboard",
+        "emoji": "⌨️",
         "label": "Текст"
       }
     },
@@ -162,11 +162,11 @@
       "id": "bt14",
       "question": "Кошки или собаки?",
       "a": {
-        "emoji": "cat",
+        "emoji": "🐈",
         "label": "Кошки"
       },
       "b": {
-        "emoji": "dog",
+        "emoji": "🐕",
         "label": "Собаки"
       }
     },
@@ -174,11 +174,11 @@
       "id": "bt15",
       "question": "Читать мысли или слышать всё, что говорят за спиной?",
       "a": {
-        "emoji": "brain",
+        "emoji": "🧠",
         "label": "Мысли"
       },
       "b": {
-        "emoji": "ear",
+        "emoji": "👂",
         "label": "За спиной"
       }
     },
@@ -186,11 +186,11 @@
       "id": "bt16",
       "question": "Сладкое или солёное?",
       "a": {
-        "emoji": "donut",
+        "emoji": "🍩",
         "label": "Сладкое"
       },
       "b": {
-        "emoji": "pretzel",
+        "emoji": "🥨",
         "label": "Солёное"
       }
     },
@@ -198,11 +198,11 @@
       "id": "bt17",
       "question": "Отпуск по плану или сорваться в последний момент?",
       "a": {
-        "emoji": "calendar",
+        "emoji": "🗓️",
         "label": "По плану"
       },
       "b": {
-        "emoji": "backpack",
+        "emoji": "🎒",
         "label": "Сорваться"
       }
     },
@@ -210,11 +210,11 @@
       "id": "bt18",
       "question": "Пять близких друзей или сто приятелей?",
       "a": {
-        "emoji": "hug",
+        "emoji": "🫂",
         "label": "Пять близких"
       },
       "b": {
-        "emoji": "sparkle4",
+        "emoji": "🎉",
         "label": "Сто приятелей"
       }
     },
@@ -222,11 +222,11 @@
       "id": "bt19",
       "question": "Вернуться в 2016 или прыгнуть в 2036?",
       "a": {
-        "emoji": "rewind",
+        "emoji": "⏪",
         "label": "2016"
       },
       "b": {
-        "emoji": "forward",
+        "emoji": "⏩",
         "label": "2036"
       }
     },
@@ -234,11 +234,11 @@
       "id": "bt20",
       "question": "Работа мечты за копейки или скучная за миллионы?",
       "a": {
-        "emoji": "rainbow",
+        "emoji": "🌈",
         "label": "Мечта"
       },
       "b": {
-        "emoji": "moneyBag",
+        "emoji": "💰",
         "label": "Миллионы"
       }
     },
@@ -246,11 +246,11 @@
       "id": "bt21",
       "question": "Утро без кофе или вечер без телефона?",
       "a": {
-        "emoji": "cup",
+        "emoji": "☕",
         "label": "Без кофе"
       },
       "b": {
-        "emoji": "noPhone",
+        "emoji": "📵",
         "label": "Без телефона"
       }
     },
@@ -258,11 +258,11 @@
       "id": "bt22",
       "question": "Тусовка до утра или выспаться?",
       "a": {
-        "emoji": "sparkle3",
+        "emoji": "🪩",
         "label": "Тусовка"
       },
       "b": {
-        "emoji": "sleepy",
+        "emoji": "😴",
         "label": "Выспаться"
       }
     },
@@ -270,11 +270,11 @@
       "id": "bt23",
       "question": "Душ утром или вечером?",
       "a": {
-        "emoji": "shower",
+        "emoji": "🚿",
         "label": "Утром"
       },
       "b": {
-        "emoji": "moon",
+        "emoji": "🌙",
         "label": "Вечером"
       }
     },
@@ -282,11 +282,11 @@
       "id": "bt24",
       "question": "Аниме или сериалы?",
       "a": {
-        "emoji": "fishcake",
+        "emoji": "🍥",
         "label": "Аниме"
       },
       "b": {
-        "emoji": "tv",
+        "emoji": "📺",
         "label": "Сериалы"
       }
     },
@@ -294,11 +294,11 @@
       "id": "bt25",
       "question": "Никогда не стоять в пробках или никогда не ждать доставку?",
       "a": {
-        "emoji": "car",
+        "emoji": "🚗",
         "label": "Без пробок"
       },
       "b": {
-        "emoji": "scooter",
+        "emoji": "🛵",
         "label": "Без ожидания"
       }
     },
@@ -306,11 +306,11 @@
       "id": "bt26",
       "question": "Всю жизнь одна песня или всю жизнь тишина?",
       "a": {
-        "emoji": "music4",
+        "emoji": "🎵",
         "label": "Одна песня"
       },
       "b": {
-        "emoji": "lips",
+        "emoji": "🤫",
         "label": "Тишина"
       }
     },
@@ -318,11 +318,11 @@
       "id": "bt27",
       "question": "Умнее всех в комнате или смешнее всех?",
       "a": {
-        "emoji": "brain",
+        "emoji": "🧠",
         "label": "Умнее"
       },
       "b": {
-        "emoji": "laugh",
+        "emoji": "😂",
         "label": "Смешнее"
       }
     },
@@ -330,11 +330,11 @@
       "id": "bt28",
       "question": "Тренировка утром или вечером?",
       "a": {
-        "emoji": "sunrise",
+        "emoji": "🌅",
         "label": "Утром"
       },
       "b": {
-        "emoji": "nightCity",
+        "emoji": "🌃",
         "label": "Вечером"
       }
     },
@@ -342,11 +342,11 @@
       "id": "bt29",
       "question": "Жизнь без музыки или без сериалов?",
       "a": {
-        "emoji": "music",
+        "emoji": "🎧",
         "label": "Без музыки"
       },
       "b": {
-        "emoji": "tv",
+        "emoji": "📺",
         "label": "Без сериалов"
       }
     },
@@ -354,11 +354,11 @@
       "id": "bt30",
       "question": "Телепорт или машина времени?",
       "a": {
-        "emoji": "spiral",
+        "emoji": "🌀",
         "label": "Телепорт"
       },
       "b": {
-        "emoji": "hourglass",
+        "emoji": "⏳",
         "label": "Машина времени"
       }
     }
@@ -488,7 +488,7 @@
   "ladder": [
     {
       "days": 3,
-      "emoji": "fire",
+      "emoji": "🔥",
       "text": "Карта «Разогрев»",
       "card": {
         "id": "streak-3",
@@ -498,7 +498,7 @@
     },
     {
       "days": 7,
-      "emoji": "comet",
+      "emoji": "☄️",
       "text": "Карта «Неделя огня» и заморозка",
       "card": {
         "id": "streak-7",
@@ -509,13 +509,13 @@
     },
     {
       "days": 30,
-      "emoji": "diamond",
+      "emoji": "💎",
       "text": "Premium на неделю",
       "premium": true
     },
     {
       "days": 100,
-      "emoji": "hundred",
+      "emoji": "💯",
       "text": "Premium на 3 месяца и карта «Сотка»",
       "premium": true
     }

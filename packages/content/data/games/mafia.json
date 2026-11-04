@@ -8,7 +8,7 @@
   "status": "draft",
   "title": "Мафия",
   "description": "Город засыпает. Просыпается тот, у кого телефон.",
-  "emoji": "knife",
+  "emoji": "🔪",
   "sections": [
     "company"
   ],
@@ -41,7 +41,7 @@
   "roles": [
     {
       "id": "mafia",
-      "emoji": "knife",
+      "emoji": "🔪",
       "title": "Мафия",
       "side": "mafia",
       "min": 1,
@@ -49,14 +49,14 @@
     },
     {
       "id": "partygirl",
-      "emoji": "sparkle3",
+      "emoji": "🪩",
       "title": "Тусовщица",
       "side": "city",
       "text": "Каждую ночь утаскиваешь кого-то тусить до утра. Наутро он без голоса: весь день молчит и не может даже оправдаться, если за него голосуют. Голосовать рукой может."
     },
     {
       "id": "detective",
-      "emoji": "spy",
+      "emoji": "🕵️",
       "title": "Комиссар",
       "side": "city",
       "max": 1,
@@ -64,7 +64,7 @@
     },
     {
       "id": "doctor",
-      "emoji": "bolt3",
+      "emoji": "💉",
       "title": "Доктор",
       "side": "city",
       "max": 1,
@@ -72,7 +72,7 @@
     },
     {
       "id": "civilian",
-      "emoji": "home",
+      "emoji": "🏠",
       "title": "Мирный житель",
       "side": "city",
       "auto": true,
@@ -80,11 +80,11 @@
     },
     {
       "id": "host",
-      "emoji": "mic2",
+      "emoji": "🎙️",
       "title": "Ведущий",
       "side": "host",
       "max": 1,
-      "text": "Ты ведёшь игру и не играешь. Нажми «Я ведущий :eyes2:», чтобы увидеть все роли, и веди ночь по шпаргалке."
+      "text": "Ты ведёшь игру и не играешь. Нажми «Я ведущий 👁️», чтобы увидеть все роли, и веди ночь по шпаргалке."
     }
   ],
   "defaults": [
@@ -151,32 +151,32 @@
   ],
   "lockedExtras": [
     {
-      "emoji": "knife2",
+      "emoji": "🪓",
       "title": "Маньяк",
       "kind": "role"
     },
     {
-      "emoji": "book3",
+      "emoji": "📰",
       "title": "Журналист",
       "kind": "role"
     },
     {
-      "emoji": "ghost3",
+      "emoji": "🐉",
       "title": "Тема «Якудза»",
       "kind": "theme"
     },
     {
-      "emoji": "rocket",
+      "emoji": "🚀",
       "title": "Тема «Космос»",
       "kind": "theme"
     },
     {
-      "emoji": "sparkle3",
+      "emoji": "🪩",
       "title": "Тема «Тусовка»",
       "kind": "theme"
     }
   ],
-  "lockedText": "По подписке :diamond:",
+  "lockedText": "По подписке 💎",
   "nightScript": [
     "Город засыпает.",
     "Мафия, проснитесь и выберите жертву.",
@@ -196,15 +196,15 @@
   },
   "texts": {
     "start": "Город засыпает. Просыпается тот, у кого телефон.",
-    "deal": "Игрок {n} из {total}. Нажми, чтобы увидеть роль :hide:",
-    "pass": "Передай следующему :next:",
-    "dealt": "Все роли розданы. Город засыпает… :moon:",
-    "hostButton": "Я ведущий :eyes2:",
+    "deal": "Игрок {n} из {total}. Нажми, чтобы увидеть роль 🙈",
+    "pass": "Передай следующему 👉",
+    "dealt": "Все роли розданы. Город засыпает… 🌙",
+    "hostButton": "Я ведущий 👁️",
     "hostConfirm": "Покажи экран только ведущему",
-    "cityWins": "Город спасён :city:",
-    "mafiaWins": "Мафия победила :knife:",
-    "flexCity": "Город спасён :city:",
-    "flexMafia": "Сегодня у нас победила мафия :knife:",
+    "cityWins": "Город спасён 🏙️",
+    "mafiaWins": "Мафия победила 🔪",
+    "flexCity": "Город спасён 🏙️",
+    "flexMafia": "Сегодня у нас победила мафия 🔪",
     "cardBack": "GAZ GAME"
   }
 }

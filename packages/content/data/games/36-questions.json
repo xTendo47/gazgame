@@ -8,7 +8,7 @@
   "status": "draft",
   "title": "36 вопросов",
   "description": "Знаменитые вопросы, после которых становятся ближе",
-  "emoji": "key",
+  "emoji": "🗝️",
   "sections": [
     "pairs"
   ],
@@ -45,19 +45,19 @@
     "together": "Отвечаете вместе",
     "pass": "Пас",
     "next": "Дальше →",
-    "timer": "Таймер на 4 минуты :timer:",
+    "timer": "Таймер на 4 минуты ⏱️",
     "pause": "Пауза",
     "resume": "Продолжить"
   },
   "levelDone": {
-    "emoji": "key",
+    "emoji": "🗝️",
     "title": "Уровень пройден",
     "text": "Перерыв или дальше?",
     "next": "Дальше: {level} →",
     "later": "Продолжим в другой раз"
   },
   "finale": {
-    "emoji": "eyes",
+    "emoji": "👀",
     "title": "4 минуты глаза в глаза",
     "note": "Молча. Можно улыбаться",
     "seconds": 240,
@@ -66,17 +66,17 @@
     "resume": "Продолжить",
     "skip": "Пропустить",
     "after": {
-      "emoji": "chat",
+      "emoji": "💬",
       "title": "Как вы?",
       "text": "Скажите друг другу одно слово"
     },
-    "flexText": "Мы прошли 36 вопросов :key: Попробуйте тоже"
+    "flexText": "Мы прошли 36 вопросов 🗝️ Попробуйте тоже"
   },
   "decks": [
     {
       "id": "meet",
       "title": "Знакомство",
-      "emoji": "cup",
+      "emoji": "☕",
       "description": "Лёгкие вопросы, чтобы разговориться",
       "tier": "free",
       "cards": [
@@ -123,7 +123,7 @@
     {
       "id": "deeper",
       "title": "Глубже",
-      "emoji": "wave",
+      "emoji": "🌊",
       "description": "Мечты, воспоминания, семья",
       "tier": "free",
       "cards": [
@@ -169,7 +169,7 @@
     {
       "id": "close",
       "title": "Совсем близко",
-      "emoji": "sparkle5",
+      "emoji": "🕯️",
       "description": "То, что обычно не говорят вслух",
       "tier": "free",
       "cards": [
