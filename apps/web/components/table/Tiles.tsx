@@ -76,30 +76,31 @@ export function LoveTile({ href, label }: { href: string; label: string }) {
           </radialGradient>
         </defs>
         {/* конверт */}
-        <rect x="9" y="30" width="128" height="124" rx="2.5" fill="url(#gt-lv-paper)" stroke="rgb(176 82 125 / .45)" strokeWidth=".8" />
-        <path d="M9 154 73 98 137 154" fill="none" stroke="rgb(176 82 125 / .35)" strokeWidth=".8" />
-        <path d="M9 30h128L73 92z" fill="url(#gt-lv-flap)" stroke="rgb(176 82 125 / .5)" strokeWidth=".9" />
-        <path d="M9 30h128" stroke="#fff" strokeWidth="1.4" strokeDasharray="3 2.4" opacity=".9" />
+        <rect x="9" y="22" width="128" height="134" rx="2.5" fill="url(#gt-lv-paper)" stroke="rgb(176 82 125 / .45)" strokeWidth=".8" />
+        <path d="M9 156 73 98 137 156" fill="none" stroke="rgb(176 82 125 / .35)" strokeWidth=".8" />
+        <path d="M9 22h128L73 88z" fill="url(#gt-lv-flap)" stroke="rgb(176 82 125 / .5)" strokeWidth=".9" />
+        <path d="M9 22h128" stroke="#fff" strokeWidth="1.4" strokeDasharray="3 2.4" opacity=".9" />
         {/* восковая печать с сердцем */}
         <g className="gt-heart-pulse">
           <circle cx="73" cy="90" r="15.5" fill="url(#gt-lv-seal)" stroke="#8f1450" strokeWidth=".8" />
           <path d="M73 98.5c-6-3.8-8.6-6.8-8.6-10 0-2.5 1.9-4.2 4.1-4.2 1.9 0 3.6 1.1 4.5 3 .9-1.9 2.6-3 4.5-3 2.2 0 4.1 1.7 4.1 4.2 0 3.2-2.6 6.2-8.6 10z" fill="#fff" opacity=".92" />
           <ellipse cx="66.5" cy="83" rx="4.5" ry="2.2" fill="#fff" opacity=".35" transform="rotate(-25 66.5 83)" />
         </g>
-        {/* роза на ветке */}
-        <g transform="translate(-16 -4) scale(1.38) translate(4 8)">
-          <path d="M6 44C22 36 38 26 60 14" fill="none" stroke="#3f6a2e" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M20 38l-3-6 7 3zM34 29l-2-7 7 4z" fill="#3f6a2e" />
-          <ellipse cx="26" cy="33" rx="6.5" ry="3" fill="#4f8038" transform="rotate(-35 26 33)" />
-          <ellipse cx="42" cy="24" rx="6.5" ry="3" fill="#4f8038" transform="rotate(-30 42 24)" />
-          <circle cx="62" cy="13" r="10" fill="url(#gt-lv-rose)" stroke="#4a081c" strokeWidth=".6" />
-          <path d="M57 12c3-4 9-3 10 1M58 16c3 3 8 2 9-1M62 9c2 1 3 3 2 5" fill="none" stroke="#e8708a" strokeWidth=".9" strokeLinecap="round" opacity=".8" />
+        {/* роза на короткой веточке слева сверху (как в эталоне 03) */}
+        <g>
+          <path d="M3.5 68C20 54 38 42 57 29" fill="none" stroke="#3f6a2e" strokeWidth="1.5" strokeLinecap="round" />
+          <ellipse cx="27" cy="48" rx="5.6" ry="2.4" fill="#4f8038" transform="rotate(-38 27 48)" />
+          <ellipse cx="42" cy="38" rx="5.6" ry="2.4" fill="#4f8038" transform="rotate(-34 42 38)" />
+          <circle cx="18.5" cy="57.5" r="4.2" fill="url(#gt-lv-rose)" stroke="#4a081c" strokeWidth=".5" />
+          <circle cx="58" cy="26.5" r="7.4" fill="url(#gt-lv-rose)" stroke="#4a081c" strokeWidth=".5" />
+          <path d="M54.5 25.5c2-2.6 6-2 6.8.8M55 29c2 1.8 5.2 1.3 6-.7" fill="none" stroke="#e8708a" strokeWidth=".7" strokeLinecap="round" opacity=".8" />
         </g>
-        {/* марка с сердцем */}
-        <g transform="translate(122 34) scale(1.24) translate(-120 -34) rotate(8 120 34)">
+        {/* марка с двумя сердцами справа сверху */}
+        <g transform="translate(113 55) rotate(8) translate(-119.5 -32)">
           <rect x="105" y="14" width="29" height="36" rx="1.5" fill="#fff" stroke="#e8b3c8" strokeWidth=".8" strokeDasharray="1.6 1.2" />
           <rect x="108.5" y="17.5" width="22" height="29" fill="#ffc2d8" />
-          <path d="M119.5 39c-5.500-3.300-7.500-5.800-7.500-8.500 0-2.100 1.600-3.600 3.500-3.600 1.600 0 3 .9 4 2.500 1-1.600 2.400-2.500 4-2.500 1.900 0 3.500 1.500 3.500 3.600 0 2.700-2 5.200-7.500 8.500z" fill="#d6337f" />
+          <path d="M117 38c-4.5-2.8-6.2-4.8-6.2-7 0-1.8 1.3-3 2.9-3 1.3 0 2.5.8 3.3 2.1.8-1.3 2-2.1 3.3-2.1 1.6 0 2.9 1.2 2.9 3 0 2.2-1.7 4.2-6.2 7z" fill="#e0407f" />
+          <path d="M124.5 33c-3-1.9-4.1-3.2-4.1-4.7 0-1.2.9-2 1.9-2 .9 0 1.7.5 2.2 1.4.5-.9 1.3-1.4 2.2-1.4 1 0 1.9.8 1.9 2 0 1.5-1.1 2.8-4.1 4.7z" fill="#ff8fb8" />
         </g>
       </svg>
       <span className="gt-love-title">Романтика</span>

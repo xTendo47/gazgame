@@ -531,54 +531,54 @@
   min-height: 0;
   aspect-ratio: auto;
 }
-/* памятка «Правила»: бумажный листок под нижним краем крышки, выдвинут наполовину; единственное, что нажимается */
+/* памятка «Правила»: листок на крышке справа внизу (как в эталоне 03), единственное, что нажимается */
 .gt-lid-insert {
   position: absolute;
-  left: 20%;
-  top: 100%;
-  z-index: 0;
-  width: 38%;
-  padding: 7px 8px 6px;
+  left: 18.5%;
+  bottom: 3%;
+  z-index: 3;
+  width: 21%;
+  padding: 6px 6px 5px;
   text-align: left;
   pointer-events: auto;
-  transform: translateY(-46%) rotate(-5deg);
-  transform-origin: 50% 0;
+  transform: rotate(-9deg);
+  transform-origin: 50% 100%;
   color: #1d2a6a;
   background:
-    repeating-linear-gradient(180deg, transparent 0 9px, rgb(80 120 180 / 0.35) 9px 9.6px) 0 20px / 100% 100% no-repeat,
+    repeating-linear-gradient(180deg, transparent 0 8px, rgb(80 120 180 / 0.35) 8px 8.6px) 0 18px / 100% 100% no-repeat,
     linear-gradient(180deg, #fffdf5, #f1e8d0);
   box-shadow:
-    0 2px 0 #d9ceb0,
-    0 8px 12px rgb(0 0 0 / 0.5);
+    0 1px 0 #d9ceb0,
+    0 5px 8px rgb(0 0 0 / 0.45);
   -webkit-tap-highlight-color: transparent;
 }
 .gt-lid-insert::before {
-  /* угол вкладыша загнут */
+  /* угол листка загнут */
   content: "";
   position: absolute;
   right: 0;
   top: 0;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   background: linear-gradient(225deg, var(--bx1) 50%, transparent 50.5%);
 }
 .gt-lid-insert b {
   display: block;
-  font: 900 10.5px/1 var(--font-body);
-  letter-spacing: 0.1em;
+  font: 900 6.6px/1 var(--font-body);
+  letter-spacing: 0.08em;
   color: #c8321c;
 }
 .gt-lid-insert i {
   display: block;
   margin-top: 3px;
-  font: 700 8.2px/1.25 var(--font-body);
+  font: 700 6.2px/1.25 var(--font-body);
   font-style: normal;
   color: #2a2018;
 }
 .gt-lid-insert em {
   display: block;
-  margin-top: 4px;
-  font: 400 12.5px/1 var(--font-marck);
+  margin-top: 3px;
+  font: 400 9.5px/1 var(--font-marck);
   font-style: normal;
   color: #2447b8;
 }

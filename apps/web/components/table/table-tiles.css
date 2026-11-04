@@ -79,11 +79,11 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(114 * var(--u));
+  top: calc(106 * var(--u));
   z-index: 3;
   transform: rotate(-2deg);
   text-align: center;
-  font: italic 900 calc(19 * var(--u)) / 1 var(--font-playfair);
+  font: italic 900 calc(17 * var(--u)) / 1 var(--font-playfair);
   letter-spacing: 0.01em;
   color: #b3235b;
   text-shadow: 0 calc(1 * var(--u)) 0 rgb(255 255 255 / 0.7);
@@ -92,12 +92,12 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(140 * var(--u));
+  top: calc(127 * var(--u));
   z-index: 3;
   transform: rotate(-2deg);
   text-align: center;
-  font: 400 calc(12 * var(--u)) / 1 var(--font-script);
-  letter-spacing: 0.22em;
+  font: 400 calc(11 * var(--u)) / 1 var(--font-playfair);
+  letter-spacing: 0.14em;
   color: #b0527d;
 }
 .gt-heart-pulse {
@@ -121,10 +121,10 @@
 /* ---------- Дневник: обложка, компас, золотой свет из страниц ---------- */
 .gt-book {
   position: absolute;
-  left: calc(10 * var(--u));
-  top: calc(8 * var(--u));
-  width: calc(122 * var(--u));
-  height: calc(150 * var(--u));
+  left: calc(4 * var(--u));
+  top: calc(5 * var(--u));
+  width: calc(136 * var(--u));
+  height: calc(158 * var(--u));
 }
 .gt-book-pages {
   position: absolute;
@@ -150,8 +150,8 @@
 .gt-book-corner {
   position: absolute;
   z-index: 2;
-  width: calc(30 * var(--u));
-  height: calc(30 * var(--u));
+  width: calc(22 * var(--u));
+  height: calc(22 * var(--u));
   background: linear-gradient(135deg, #fff1c4, #d9b45a 50%, #7a5a1a);
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.6));
 }
@@ -177,8 +177,8 @@
 }
 .gt-book-title {
   position: absolute;
-  left: calc(14 * var(--u));
-  right: calc(34 * var(--u));
+  left: calc(12 * var(--u));
+  right: calc(30 * var(--u));
   top: calc(15 * var(--u));
   text-align: center;
   font: 900 calc(14 * var(--u)) / 1 var(--font-playfair);
@@ -199,33 +199,33 @@
 }
 .gt-book-compass {
   position: absolute;
-  left: calc(14 * var(--u));
+  left: calc(34 * var(--u));
   top: calc(40 * var(--u));
-  width: calc(76 * var(--u));
-  height: calc(76 * var(--u));
+  width: calc(60 * var(--u));
+  height: calc(60 * var(--u));
   transform-origin: 50% 50%;
   animation: gt-compass-turn 11s ease-in-out infinite;
   filter: drop-shadow(0 calc(2 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.6));
 }
 .gt-book-kanji {
   position: absolute;
-  left: 0;
-  right: calc(24 * var(--u));
+  left: calc(6 * var(--u));
+  right: calc(34 * var(--u));
   bottom: calc(20 * var(--u));
   text-align: center;
   font: 700 calc(13 * var(--u)) / 1 "Noto Serif JP", "Yu Mincho", "MS Mincho", serif;
-  letter-spacing: 0.3em;
-  padding-left: 0.3em;
+  letter-spacing: 0.34em;
+  padding-left: 0.34em;
   color: #d9b45a;
   text-shadow: 0 1px 0 rgb(0 0 0 / 0.6);
 }
 /* ремешок и пряжка */
 .gt-book-strap {
   position: absolute;
-  right: calc(8 * var(--u));
-  top: calc(-3 * var(--u));
-  bottom: calc(-3 * var(--u));
-  width: calc(21 * var(--u));
+  right: calc(14 * var(--u));
+  top: calc(-2 * var(--u));
+  bottom: calc(-2 * var(--u));
+  width: calc(16 * var(--u));
   background:
     repeating-linear-gradient(0deg, rgb(0 0 0 / 0.35) 0 1px, transparent 1px calc(3 * var(--u))),
     linear-gradient(90deg, #4a3a2a, #8a7254 40%, #5a4632);
@@ -249,9 +249,9 @@
 }
 .gt-book-ribbon {
   position: absolute;
-  left: calc(52 * var(--u));
-  bottom: calc(-12 * var(--u));
-  width: calc(10 * var(--u));
+  left: calc(50 * var(--u));
+  bottom: calc(-13 * var(--u));
+  width: calc(11 * var(--u));
   height: calc(26 * var(--u));
   background: linear-gradient(90deg, #8f1d1d, #c0392b 50%, #8f1d1d);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
@@ -309,7 +309,7 @@
 .gt-show-tv {
   position: absolute;
   left: calc(22 * var(--u));
-  top: calc(12 * var(--u));
+  top: calc(20 * var(--u));
   width: calc(102 * var(--u));
   height: calc(122 * var(--u));
 }
@@ -347,7 +347,7 @@
 .gt-air {
   position: absolute;
   left: 50%;
-  bottom: calc(7 * var(--u));
+  bottom: calc(22 * var(--u));
   z-index: 3;
   transform: translateX(-50%);
   display: flex;
@@ -365,8 +365,8 @@
 .gt-air-lamp {
   position: relative;
   flex: none;
-  width: calc(14 * var(--u));
-  height: calc(14 * var(--u));
+  width: calc(12.5 * var(--u));
+  height: calc(12.5 * var(--u));
   border-radius: 50%;
   background: radial-gradient(circle at 40% 35%, #ff8a8a, #d41a1a 55%, #6a0606);
   box-shadow:
@@ -393,12 +393,12 @@
   text-align: left;
 }
 .gt-air-tx small {
-  font: 800 calc(6 * var(--u)) var(--font-body);
+  font: 800 calc(5.4 * var(--u)) var(--font-body);
   letter-spacing: 0.32em;
   color: #c9a14e;
 }
 .gt-air-tx b {
-  font: 800 calc(11.5 * var(--u)) var(--font-display);
+  font: 800 calc(10.4 * var(--u)) var(--font-display);
   letter-spacing: 0.12em;
   color: #fff;
   text-shadow: 0 0 6px rgb(255 80 80 / 0.5);

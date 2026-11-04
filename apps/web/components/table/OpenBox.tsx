@@ -31,7 +31,24 @@ const section = (id: "party" | "love" | "solo") => HOME_SECTIONS.find((s) => s.i
 const SUGGEST = MINI_BUTTONS.find((m) => m.id === "suggest");
 
 /** Где крышка остаётся после открытия: доля ширины и высоты лотка от его центра и наклон (LK[3] макета). */
-const REST = { dx: 0.63, dy: -0.6, turn: 13, ratio: 211 / 300 };
+/** Крышка: ширина как у лотка, центр — в точке сцены (x, y) в правом верхнем углу, наклон 12° (замеры по эталону 03). */
+const REST = { x: 401, y: 50, turn: 12, ratio: 211 / 300, width: 1 };
+
+/** Размер «макетного» экрана (эталон 03: 358×695). Сцена целиком масштабируется под экран, но не больше чем в 1,25 раза. */
+const STAGE_W = 358;
+const STAGE_H = 695;
+const MAX_SCALE = 1.25;
+
+/** Подгоняет сцену под экран: масштаб по меньшей стороне, высота сцены растёт, если экран выше макета. Возвращает масштаб. */
+function fitStage(rootEl: HTMLElement, stageEl: HTMLElement): number {
+  const vw = rootEl.clientWidth;
+  const vh = window.innerHeight;
+  const s = Math.min(vw / STAGE_W, vh / STAGE_H, MAX_SCALE);
+  stageEl.style.setProperty("--s", String(s));
+  stageEl.style.setProperty("--sh", String(vh / s));
+  stageEl.dataset.ready = "true";
+  return s;
+}
 
 type TissueState = "off" | "on" | "rustle" | "go";
 
@@ -54,6 +71,24 @@ function TapGlyph() {
       />
     </svg>
   );
+}
+
+/** Подгоняет сцену под экран и ставит крышку на место (в координатах сцены). Зовётся при открытии и при повороте экрана. */
+function placeLid(rootEl: HTMLElement, stageEl: HTMLElement, trayEl: HTMLElement, lidEl: HTMLElement) {
+  const s = fitStage(rootEl, stageEl);
+  const sr = stageEl.getBoundingClientRect();
+  const tr = trayEl.getBoundingClientRect();
+  const W = tr.width / s;
+  const H = tr.height / s;
+  const left = (tr.left - sr.left) / s;
+  const top = (tr.top - sr.top) / s;
+  const Wl = W * REST.width;
+  const Hl = Wl * REST.ratio;
+  const rest = pose(REST.x - (left + W / 2), REST.y - (top + H / 2), 0, REST.turn, 1);
+  const hover = pose(0, -0.05 * H, 14, 0, 1.04);
+  Object.assign(lidEl.style, { left: `${left + (W - Wl) / 2}px`, top: `${top + (H - Hl) / 2}px`, width: `${Wl}px`, height: `${Hl}px`, transform: rest });
+  lidEl.dataset.ready = "true";
+  return { s, sr, W, H, left, top, Wl, rest, hover, geo: { cx: left + W / 2, cy: top + H / 2, s, Wl, rest, hover, sx: sr.left, sy: sr.top } };
 }
 
 type Phase = "opening" | "open" | "closing";
@@ -79,10 +114,10 @@ const SPREAD: Keyframe[] = [
   { opacity: 0, transform: "scale(0.92)" },
   { opacity: 1, transform: "scale(1)" },
 ];
-/** Памятка: спрятана под нижним краем крышки → выдвинута (тот же вид, что в CSS). */
+/** Памятка: спрятана за нижним краем крышки (её обрезает край) → выдвинута на своё место (тот же вид, что в CSS). */
 const MEMO: Keyframe[] = [
-  { transform: "translateY(-100%) rotate(0deg)" },
-  { transform: "translateY(-46%) rotate(-5deg)" },
+  { transform: "translateY(135%) rotate(-9deg)" },
+  { transform: "translateY(0%) rotate(-9deg)" },
 ];
 
 export function OpenBox() {
@@ -100,7 +135,8 @@ export function OpenBox() {
   const timers = useRef<number[]>([]);
   /** Закрыто → открывается → открыто → закрывается. Пока идёт анимация, повторные нажатия игнорируются. */
   const phase = useRef<Phase>("open");
-  const geo = useRef<{ tx: number; ty: number; W: number; H: number; rest: string; hover: string; shape: (k: number) => Record<string, string> } | null>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const geo = useRef<{ cx: number; cy: number; s: number; Wl: number; rest: string; hover: string; sx: number; sy: number } | null>(null);
 
   const setPhase = (p: Phase) => {
     phase.current = p;
@@ -124,23 +160,12 @@ export function OpenBox() {
     const lidEl = lid.current;
     if (!rootEl || !trayEl || !lidEl) return;
 
-    // Крышка по размеру равна лотку по ширине и лежит центром на лотке; размер не меняется, двигается только transform
-    const rr = rootEl.getBoundingClientRect();
-    const tr = trayEl.getBoundingClientRect();
-    const W = tr.width;
-    const H = tr.height;
-    const left = tr.left - rr.left;
-    const top = tr.top - rr.top;
-    const rest = pose(REST.dx * W, REST.dy * H, 0, REST.turn, 1);
-    const hover = pose(0, -0.05 * H, 14, 0, 1.04);
-    const Hr = W * REST.ratio;
-    const shape = (k: number) => {
-      const h = H + (Hr - H) * k;
-      return { left: `${left}px`, top: `${top + (H - h) / 2}px`, width: `${W}px`, height: `${h}px` };
-    };
-    Object.assign(lidEl.style, { ...shape(1), transform: rest });
-    lidEl.dataset.ready = "true";
-    geo.current = { tx: left + W / 2, ty: top + H / 2, W, H, rest, hover, shape };
+    // Вся сцена рисуется в «макетном» экране STAGE_W×STAGE_H и целиком масштабируется под телефон (fitStage), поэтому
+    // все размеры ниже считаем в координатах сцены: экранные пиксели делим на масштаб s. Размер крышки не меняется, двигается только transform.
+    const stageEl = stage.current;
+    if (!stageEl) return;
+    const { s, sr, W, H, left, top, Wl, rest, hover, geo: g } = placeLid(rootEl, stageEl, trayEl, lidEl);
+    geo.current = g;
     setPhase("open");
 
     const flight = peekBoxFlight();
@@ -158,7 +183,7 @@ export function OpenBox() {
     };
 
     // 0–450: крышка слетает со стола на коробку, приподнимается и открывается (уходит в угол). Размер не меняется
-    const fromTable = pose(flight.cx - rr.left - (left + W / 2), flight.cy - rr.top - (top + H / 2), 0, flight.rot, flight.w / W);
+    const fromTable = pose((flight.cx - sr.left) / s - (left + W / 2), (flight.cy - sr.top) / s - (top + H / 2), 0, flight.rot, flight.w / s / Wl);
     play(lidEl, [{ transform: fromTable }, { transform: hover, offset: 0.45 }, { transform: rest }], OPEN_SPANS.lid, LID_EASE);
     // 350–750: основание раскрывается, вместе с ним проявляется заголовок
     play(trayEl, SPREAD, OPEN_SPANS.base, EASE_OUT);
@@ -191,6 +216,20 @@ export function OpenBox() {
     };
   }, [tissueAway]);
 
+  // Повернули телефон или изменили окно: подгоняем сцену заново (только когда ничего не анимируется)
+  useLayoutEffect(() => {
+    const onResize = () => {
+      const r = root.current;
+      const st = stage.current;
+      const tr = tray.current;
+      const ld = lid.current;
+      if (phase.current !== "open" || !r || !st || !tr || !ld) return;
+      geo.current = placeLid(r, st, tr, ld).geo;
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   /** «На стол»: тот же порядок назад и чуть быстрее — памятка и содержимое уезжают, основание сжимается, крышка закрывается и летит на стол. */
   function closeBox(e: MouseEvent<HTMLAnchorElement>) {
     const lidEl = lid.current;
@@ -202,7 +241,6 @@ export function OpenBox() {
     if (phase.current !== "open") return; // уже открывается или закрывается — не обрываем
     setPhase("closing");
     setTissue("off");
-    const rr = rootEl.getBoundingClientRect();
     const target = lastBoxFlight();
     const anims: Animation[] = [];
     const play = (el: Element | null, frames: Keyframe[], span: Span, easing: string) => {
@@ -212,7 +250,7 @@ export function OpenBox() {
     };
 
     const toTable = target
-      ? pose(target.cx - rr.left - g.tx, target.cy - rr.top - g.ty, 0, target.rot, target.w / g.W)
+      ? pose((target.cx - g.sx) / g.s - g.cx, (target.cy - g.sy) / g.s - g.cy, 0, target.rot, target.w / g.s / g.Wl)
       : pose(0, 0, 0, 0, 1);
     // 0–: памятка уезжает под крышку первой, за ней содержимое — с последнего к первому
     play(memo.current, MEMO, OPEN_SPANS.memo, EASE_IN);
@@ -240,9 +278,10 @@ export function OpenBox() {
   const solo = section("solo");
   return (
     <div className="gt-table gt-open" data-box={skin} ref={root}>
+      <div className="gt-camdim" aria-hidden="true" ref={dim} />
+      <div className="gt-stage" ref={stage}>
       {/* Предметы на столе (SVG макета), под содержимым */}
       <div className="gt-decor" aria-hidden="true" style={{ position: "absolute" }} dangerouslySetInnerHTML={{ __html: OPEN_DECOR }} />
-      <div className="gt-camdim" aria-hidden="true" ref={dim} />
 
       <div className="gt-inner">
         <header>
@@ -299,29 +338,30 @@ export function OpenBox() {
         </nav>
       </div>
 
-      {/* Крышка коробки лежит в углу. Памятка «Правила» — отдельный листок под её нижним краем: выдвигается из коробки */}
+      {/* Крышка коробки лежит в углу. Памятка «Правила» лежит на ней и выезжает из-под нижнего края (край крышки её обрезает) */}
       <div className="gt-lidwrap" ref={lid}>
-        <button
-          type="button"
-          className="gt-lid-insert"
-          ref={memo}
-          onClick={() => {
-            sfx.page();
-            setRules(true);
-          }}
-          aria-label="Правила за 10 секунд"
-          aria-haspopup="dialog"
-        >
-          <b>ПРАВИЛА</b>
-          <i>Внутри: 30+ игр, 4 раздела, 2 кубика.</i>
-          <i>Открой то, что ближе.</i>
-          <em>
-            тапни <TapGlyph />
-          </em>
-        </button>
         <div className="gt-box gt-lid" data-skin={skin}>
           <BoxFace skin={skin} />
+          <button
+            type="button"
+            className="gt-lid-insert"
+            ref={memo}
+            onClick={() => {
+              sfx.page();
+              setRules(true);
+            }}
+            aria-label="Правила за 10 секунд"
+            aria-haspopup="dialog"
+          >
+            <b>ПРАВИЛА</b>
+            <i>Внутри: 30+ игр, 4 раздела, 2 кубика.</i>
+            <i>Открой то, что ближе.</i>
+            <em>
+              тапни <TapGlyph />
+            </em>
+          </button>
         </div>
+      </div>
       </div>
       {rules && <BoxRulesSheet onClose={() => setRules(false)} />}
     </div>
