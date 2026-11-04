@@ -1,63 +1,185 @@
-/* Экран колоды «Тусовки»: казино-карты. Образец — _design/etalon/05_tusovka_dlya_svoih.png и экраны колод макета. */
+/* Экран колоды «Тусовки»: казино-карты. Образец — _design/etalon/05_tusovka_dlya_svoih.png и экраны колод макета.
+   Экран рисуется в «макетной» ширине 358 px и целиком увеличивается под телефон (zoom: --z задаёт CasinoDeckView).
+   Анимации — только transform/opacity; при «Уменьшить движение» всё стоит. */
 
-.cd-page .cs-inner {
-  padding-bottom: calc(260px + env(safe-area-inset-bottom));
-}
-.cd-top {
+.cd-inner {
   position: relative;
+  zoom: var(--z, 1);
+  width: 358px;
+  margin: 0 auto;
+  padding: 214px 5px 300px;
+  box-sizing: border-box;
+}
+.cd-back {
+  position: absolute;
+  left: 29px;
+  top: 16px;
+  z-index: 4;
+}
+/* название колоды дугой, золотой курсив; шара под ним нет */
+.cd-inner > .tm-title {
+  position: absolute;
+  left: 0;
+  top: 88px;
+  width: 358px;
+}
+.cd-plate {
+  position: absolute;
+  left: 50%;
+  top: 173px;
   z-index: 3;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  transform: translateX(-50%);
+  padding: 6px 16px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font: italic 900 17px / 1 var(--font-playfair);
+  color: #f6dc8e;
+  text-shadow:
+    0 0 7px rgb(255 214 120 / 0.45),
+    0 1px 0 #3a2808,
+    0 2px 2px rgb(0 0 0 / 0.8);
+  background: linear-gradient(#0a2a1c, #03130c);
+  box-shadow:
+    inset 0 0 0 1px #2a1c06,
+    inset 0 0 0 3px #d4b062,
+    inset 0 0 0 4px #2a1c06,
+    0 0 12px rgb(242 220 154 / 0.25),
+    0 4px 8px rgb(0 0 0 / 0.6);
 }
-.cd-page .cs-title {
-  margin-top: -6px;
-  transform: none;
-}
-.cd-ball {
+.cd-page .tm-table {
   position: absolute;
-  left: 33%;
-  top: 168px;
-  width: 30px;
-  height: 30px;
-  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 0.5));
-  pointer-events: none;
-}
-.cd-page .cs-plate {
-  margin-top: 4px;
 }
 
-/* ---------- «Наугад» ---------- */
+/* ---------- «Наугад»: два объёмных кубика с тенью, подпись под ними (макет: cube3) ---------- */
 .cd-rand {
-  position: relative;
+  position: absolute;
+  left: 214px;
+  top: 16px;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  width: 104px;
-  min-height: 48px;
-  margin-top: -4px;
+  gap: 0;
+  width: 78px;
   -webkit-tap-highlight-color: transparent;
 }
-.cd-rand svg {
+.cd-pair {
+  position: relative;
   display: block;
-  width: 104px;
-  height: 82px;
-  filter: drop-shadow(0 4px 4px rgb(0 0 0 / 0.5));
+  width: 72px;
+  height: 56px;
+  perspective: 320px;
 }
-.cd-rand span {
-  margin-top: -14px;
-  padding: 3px 12px 2px;
+.cd-pd {
+  position: absolute;
+}
+.cd-pd::after {
+  /* тень кубика на сукне: мягкая, вправо и вниз, как у всех предметов */
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -6px;
+  bottom: -9px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.55);
+  filter: blur(4px);
+  z-index: -1;
+}
+.cd-cube {
+  --s: 28px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: var(--s);
+  height: var(--s);
+  transform-style: preserve-3d;
+}
+.cd-fc {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  padding: 15%;
+  border-radius: 21%;
+  backface-visibility: hidden;
+  background: radial-gradient(circle at 30% 25%, #fffdf8, #f3ebdc 55%, #ddd0bb);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.05),
+    inset 0 -3px 6px rgb(120 100 70 / 0.25),
+    inset 0 3px 4px rgb(255 255 255 / 0.85);
+}
+.cd-fc i {
+  width: 74%;
+  aspect-ratio: 1;
+  margin: auto;
+  border-radius: 50%;
+}
+.cd-fc i.p {
+  background: radial-gradient(circle at 42% 36%, #4a3838, #140c0c 70%);
+  box-shadow:
+    inset 0 1px 1.5px rgb(0 0 0 / 0.9),
+    0 0.6px 0 rgb(255 255 255 / 0.75);
+}
+.cd-f1 i.p {
+  width: 92%;
+  background: radial-gradient(circle at 42% 36%, #ff9a66, #d23c0a 70%);
+}
+.cd-f1 {
+  transform: translateZ(calc(var(--s) / 2));
+}
+.cd-f6 {
+  transform: rotateY(180deg) translateZ(calc(var(--s) / 2));
+}
+.cd-f3 {
+  transform: rotateY(90deg) translateZ(calc(var(--s) / 2));
+  filter: brightness(0.86);
+}
+.cd-f4 {
+  transform: rotateY(-90deg) translateZ(calc(var(--s) / 2));
+  filter: brightness(0.86);
+}
+.cd-f2 {
+  transform: rotateX(90deg) translateZ(calc(var(--s) / 2));
+  filter: brightness(0.93);
+}
+.cd-f5 {
+  transform: rotateX(-90deg) translateZ(calc(var(--s) / 2));
+  filter: brightness(0.8);
+}
+.cd-core {
+  position: absolute;
+  inset: 7%;
+  border-radius: 8%;
+  background: #e3d8c5;
+}
+.cd-core1 {
+  transform: rotateY(90deg);
+}
+.cd-core2 {
+  transform: rotateX(90deg);
+}
+.cd-rand-lbl {
+  position: relative;
+  z-index: 3;
+  margin-top: -2px;
+  padding: 3px 11px 2px;
   border-top: 3px solid #e0561a;
   border-radius: 4px;
   background: #faf6ea;
   font: 800 12px / 1.1 var(--font-body);
   color: #2a1a10;
   box-shadow: 0 3px 4px rgb(0 0 0 / 0.4);
+  transform: rotate(-3deg);
 }
-.cd-rand:active svg {
-  transform: translateY(2px) rotate(-3deg);
+.cd-rand:active .cd-pair {
+  transform: translateY(2px) scale(0.96);
 }
 
 /* ---------- «Банда в сборе»: брызги и печать ---------- */
@@ -65,19 +187,19 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 40px;
+  top: 50px;
   width: 100%;
-  height: 130px;
+  height: 120px;
   pointer-events: none;
   filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.4));
 }
 .cd-stamp {
   position: absolute;
   left: 8px;
-  top: 44px;
+  top: 52px;
   z-index: 2;
-  width: 78px;
-  height: 78px;
+  width: 70px;
+  height: 70px;
   transform: rotate(-14deg);
   filter: drop-shadow(0 4px 4px rgb(0 0 0 / 0.5));
   pointer-events: none;
@@ -89,18 +211,19 @@
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 22px 14px;
-  margin: 22px 0 0;
+  gap: 16px 7px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
+
 .cd-card {
   --c1: #7a1620;
   --c2: #3e0a10;
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 5 / 7;
+  aspect-ratio: 52 / 70;
   overflow: visible;
   border-radius: 9px;
   border: 4px solid #f1e6c8;
@@ -109,8 +232,9 @@
   text-align: center;
   box-shadow:
     0 2px 0 #cbbd98,
-    0 12px 16px rgb(0 0 0 / 0.5);
-  transform: rotate(calc((var(--k) - 1.5) * 0.9deg));
+    0 3px 4px rgb(0 0 0 / 0.4),
+    0 14px 18px rgb(0 0 0 / 0.5);
+  transform: rotate(var(--tilt, 0deg));
   transition: transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
   animation: cd-deal 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
   animation-delay: calc(var(--k) * 60ms);
@@ -135,49 +259,37 @@
   overflow: hidden;
   pointer-events: none;
 }
+/* блик по диагонали, как на глянцевой карте */
+.cd-gloss {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 5px;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 255 255 / 0.11) 48%, transparent 58%);
+}
 /* темы: цвет и узор */
-.cd-card[data-theme="0"] {
-  --c1: #7a1620;
-  --c2: #3e0a10;
+.cd-card[data-theme="9"] .cd-pat {
+  background: var(--pat, none);
 }
 .cd-card[data-theme="0"] .cd-pat {
   background:
     repeating-linear-gradient(45deg, rgb(255 226 150 / 0.2) 0 1px, transparent 1px 18px),
     repeating-linear-gradient(-45deg, rgb(255 226 150 / 0.2) 0 1px, transparent 1px 18px);
 }
-.cd-card[data-theme="1"] {
-  --c1: #1f6a44;
-  --c2: #0d3a24;
-}
 .cd-card[data-theme="1"] .cd-pat {
   background:
     radial-gradient(circle, rgb(255 255 255 / 0.2) 0 1.5px, transparent 2px) 0 0 / 11px 11px,
     repeating-radial-gradient(circle at 50% 42%, transparent 0 22px, rgb(255 226 150 / 0.18) 22px 23px);
 }
-.cd-card[data-theme="2"] {
-  --c1: #2748a8;
-  --c2: #12236a;
-}
 .cd-card[data-theme="2"] .cd-pat {
   background: repeating-linear-gradient(172deg, rgb(255 255 255 / 0.16) 0 1.5px, transparent 1.5px 10px);
-}
-.cd-card[data-theme="3"] {
-  --c1: #6a2c9a;
-  --c2: #2e1050;
 }
 .cd-card[data-theme="3"] .cd-pat {
   background: conic-gradient(rgb(255 255 255 / 0.1) 25%, transparent 0 50%, rgb(255 255 255 / 0.1) 0 75%, transparent 0) 0 0 / 24px 24px;
 }
-.cd-card[data-theme="4"] {
-  --c1: #c2601c;
-  --c2: #6e2c0a;
-}
 .cd-card[data-theme="4"] .cd-pat {
   background: repeating-linear-gradient(90deg, rgb(255 236 180 / 0.2) 0 2px, transparent 2px 14px);
-}
-.cd-card[data-theme="5"] {
-  --c1: #207484;
-  --c2: #0e3a45;
 }
 .cd-card[data-theme="5"] .cd-pat {
   background: repeating-radial-gradient(circle at 50% 100%, transparent 0 16px, rgb(255 255 255 / 0.16) 16px 17px);
@@ -229,7 +341,7 @@
   z-index: 2;
   display: grid;
   place-items: center;
-  width: 56%;
+  width: 53%;
   aspect-ratio: 0.84;
   transform: translateX(-50%);
   border-radius: 50%;
@@ -239,27 +351,35 @@
     0 0 0 4.5px #2a1a10,
     inset 0 3px 8px rgb(0 0 0 / 0.22);
 }
-.cd-cameo svg {
-  width: 66%;
-  height: auto;
-  filter: drop-shadow(0 2px 1px rgb(0 0 0 / 0.25));
+.cd-cameo {
+  container-type: inline-size;
+}
+/* эмодзи игры в овале: около 62% его ширины, по центру (эталон 05) */
+.cd-emoji {
+  display: block;
+  font-size: 58cqw;
+  line-height: 1;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.25));
 }
 /* крупное объёмное название */
 .cd-name {
   position: absolute;
-  left: 7%;
-  right: 7%;
-  top: 65%;
+  left: 6%;
+  right: 6%;
+  bottom: 19%;
   z-index: 2;
-  font: 900 clamp(12.5px, 3.8vw, 16px) / 1.08 var(--font-playfair);
+  font: 900 14px / 1.06 var(--font-playfair);
   text-transform: uppercase;
   color: #ecd9a0;
   text-shadow:
-    0 1px 0 #000,
-    0 2px 0 #000,
-    0 3px 0 rgb(0 0 0 / 0.7),
-    0 5px 6px rgb(0 0 0 / 0.55);
+    0 1px 0 rgb(0 0 0 / 0.9),
+    0 2px 3px rgb(0 0 0 / 0.55);
   overflow-wrap: anywhere;
+}
+.cd-name[data-long] {
+  font-size: 13px;
 }
 .cd-card[data-theme="6"] .cd-name {
   background: linear-gradient(180deg, #fff1c4, #d9b45a 55%, #8a6420);
@@ -276,26 +396,29 @@
   bottom: 9%;
   z-index: 2;
   padding: 5px 3px 4px;
-  font: 800 9.5px / 1 var(--font-body);
+  font: 800 10.5px / 1 var(--font-body);
   letter-spacing: 0.08em;
-  color: #2a1a10;
+  color: #1a1210;
   background: linear-gradient(180deg, #fdf8e8, #e9dcba);
   clip-path: polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%, 5% 50%);
 }
-.cd-soon {
+/* штамп статуса («НОВИНКА», «СКОРО»): тёмно-красная печать наискосок, как оттиск на бумажной полоске (макет: .newst) */
+.cd-seal {
   position: absolute;
-  right: -4px;
-  top: 14%;
+  right: 6px;
+  top: 44px;
   z-index: 4;
-  padding: 2px 7px 1px;
-  border: 2px solid #d41b0b;
+  padding: 3px 6px 2px;
+  border: 2px solid rgb(158 27 27 / 0.9);
   border-radius: 3px;
-  background: rgb(255 255 255 / 0.9);
-  font: 900 9px / 1.1 var(--font-body);
-  letter-spacing: 0.12em;
-  color: #d41b0b;
+  background: rgb(246 236 214 / 0.93);
+  box-shadow:
+    inset 0 0 0 1px rgb(158 27 27 / 0.35),
+    0 2px 3px rgb(0 0 0 / 0.35);
+  font: 800 8px / 1.1 var(--font-body);
+  letter-spacing: 0.14em;
+  color: rgb(158 27 27 / 0.95);
   transform: rotate(14deg);
-  opacity: 0.92;
 }
 .cd-card[data-soon] {
   filter: saturate(0.8) brightness(0.95);
@@ -330,7 +453,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cd-card,
-  .cd-padlock {
+  .cd-padlock,
+  .cd-rand {
     animation: none;
     transition: none;
   }

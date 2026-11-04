@@ -1625,6 +1625,10 @@ export const sectionItemSchema = z.strictObject({
   levels: z.array(z.strictObject({ label: text, premium: z.boolean().optional(), free: z.boolean().optional(), compare: z.boolean().optional() })).optional(),
   /** «скоро» салатовой плашкой: тап — «Скоро! Тап засчитан 🔥», считаем. */
   soon: z.boolean().optional(),
+  /** Штамп «НОВИНКА» на карте колоды «Тусовки» (у готовой игры). */
+  new: z.boolean().optional(),
+  /** Подпись числа игроков на карте, если у игры нет файла (пока «скоро»): «2–3 игрока». У готовой игры число берётся из её файла. */
+  players: text.optional(),
   /** Premium-карточка (голубая рамка): тап как замки 💎. */
   premium: z.boolean().optional(),
   /** Группа внутри плитки (id из kinds вкладки): список разбит на группы с заголовками, мини-кнопка оставляет одну. */

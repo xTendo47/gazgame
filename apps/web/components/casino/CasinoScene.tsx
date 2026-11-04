@@ -225,7 +225,7 @@ const GOLD_STOPS = (
 );
 
 /** «Тусовка» дугой, рукописным курсивом Playfair Display (Italic 900) в золоте, как «GAZ game CASINO» (макет: arc64). */
-function MainTitle({ text }: { text: string }) {
+export function ArcTitle({ text, size = 75 }: { text: string; size?: number }) {
   return (
     <svg className="tm-title" viewBox="0 0 390 96" role="img" aria-label={text}>
       <defs>
@@ -234,12 +234,12 @@ function MainTitle({ text }: { text: string }) {
         </linearGradient>
         <path id="tm-title-arc" d="M24 90Q195 6 366 90" fill="none" />
       </defs>
-      <text fontFamily="Playfair Display, Georgia, serif" fontWeight={900} fontStyle="italic" fontSize="75" letterSpacing="1" fill="rgb(0 0 0 / .45)" transform="translate(0 2)" aria-hidden="true">
+      <text fontFamily="Playfair Display, Georgia, serif" fontWeight={900} fontStyle="italic" fontSize={size} letterSpacing="1" fill="rgb(0 0 0 / .45)" transform="translate(0 2)" aria-hidden="true">
         <textPath href="#tm-title-arc" startOffset="50%" textAnchor="middle">
           {text}
         </textPath>
       </text>
-      <text fontFamily="Playfair Display, Georgia, serif" fontWeight={900} fontStyle="italic" fontSize="75" letterSpacing="1" fill="url(#tm-title-gold)" stroke="#5e4210" strokeWidth=".8" paintOrder="stroke">
+      <text fontFamily="Playfair Display, Georgia, serif" fontWeight={900} fontStyle="italic" fontSize={size} letterSpacing="1" fill="url(#tm-title-gold)" stroke="#5e4210" strokeWidth=".8" paintOrder="stroke">
         <textPath href="#tm-title-arc" startOffset="50%" textAnchor="middle">
           {text}
         </textPath>
@@ -460,7 +460,7 @@ export function CasinoScene({
           ← В коробку
         </Link>
         <div className="tm-head">
-          <MainTitle text={title} />
+          <ArcTitle text={title} />
           <Sign />
           <p className="tm-plate">
             <Suit kind="spade" size={10} color="#f2dc9a" />

@@ -5,14 +5,15 @@
 // крупное название и ленточка с числом игроков; «скоро» — красный штамп, Premium — висячий замок.
 // «Банда в сборе»: золотые брызги и красная печать «ОФИЦИАЛЬНО». «Без тормозов»: чёрные карты с золотыми кругами.
 // Логика (что открывает карточка) — в SectionScreen: сюда приходит только готовый список и обработчики.
-import { useSyncExternalStore, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { BackTag } from "@gazgame/ui";
-import { prefersReducedMotion } from "@/lib/gaz";
 import { sfx } from "@/lib/sfx";
-import { BilliardBall, CasinoTable, Suit } from "./CasinoArt";
+import { Suit } from "./CasinoArt";
 import { GameIcon } from "./CasinoIcons";
-import { GoldTitle, PadlockIcon, PLATE, WHEEL_SVG } from "./CasinoScene";
+import { ArcTitle, PadlockIcon, PLATE } from "./CasinoScene";
+import { TABLE_ART } from "./casino-table-art";
 import "./casino.css";
+import "./casino-main.css";
 import "./casino-deck.css";
 
 export interface DeckCard {
@@ -27,9 +28,10 @@ export interface DeckCard {
   soon: boolean;
   /** Закрыто без Premium: на карте замок. */
   locked: boolean;
+  /** Готовая игра с пометкой «новинка»: на карте штамп «НОВИНКА». */
+  fresh?: boolean;
 }
 
-const noSubscribe = () => () => {};
 const RANKS = ["A", "K", "Q", "J", "10", "9", "8", "7", "6", "5"];
 const SUITS = ["spade", "heart", "club", "diamond"] as const;
 
@@ -100,39 +102,84 @@ function GoldSplash() {
   );
 }
 
-/** Кубики и колода: кнопка «Наугад» (в эталоне — в правом верхнем углу). */
+/** Точки на гранях кубика: номера клеток сетки 3×3 (у единицы — одна, красно-оранжевая). */
+const DIE_PIPS = [[4], [0, 8], [0, 4, 8], [0, 2, 6, 8], [0, 2, 4, 6, 8], [0, 2, 3, 5, 6, 8]];
+
+/** Объёмный кубик макета (cube3): шесть граней с точками и сердцевина, чтобы в щелях не было просвета. */
+function Die({ turn }: { turn: string }) {
+  return (
+    <span className="cd-cube" style={{ transform: turn }}>
+      <span className="cd-core" />
+      <span className="cd-core cd-core1" />
+      <span className="cd-core cd-core2" />
+      {DIE_PIPS.map((pips, f) => (
+        <span key={f} className={`cd-fc cd-f${f + 1}`}>
+          {Array.from({ length: 9 }, (_, i) => (
+            <i key={i} className={pips.includes(i) ? "p" : undefined} />
+          ))}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/** Два объёмных кубика с тенью на сукне и подпись «наугад» (в эталоне 05 — справа вверху; стопки карт рядом нет). */
 export function RandomButton({ onClick }: { onClick: () => void }) {
-  const pips = (cx: number, cy: number, s: number) =>
-    [
-      [-s, -s],
-      [s, -s],
-      [-s, s],
-      [s, s],
-    ].map(([dx, dy], i) => <circle key={i} cx={cx + (dx ?? 0)} cy={cy + (dy ?? 0)} r={s * 0.34} fill="#222" />);
   return (
     <button type="button" className="cd-rand" onClick={onClick} aria-label="Наугад: случайная игра этой колоды">
-      <svg viewBox="0 0 84 66" aria-hidden="true">
-        <g transform="rotate(-10 24 30)">
-          <rect x="4" y="12" width="32" height="32" rx="6" fill="#faf6ea" stroke="#bdb292" strokeWidth="1.5" />
-          {pips(20, 28, 7.5)}
-          <circle cx="20" cy="28" r="2.6" fill="#e0561a" />
-        </g>
-        <g transform="rotate(12 44 20)">
-          <rect x="30" y="2" width="30" height="30" rx="6" fill="#faf6ea" stroke="#bdb292" strokeWidth="1.5" />
-          {pips(45, 17, 7)}
-          <circle cx="45" cy="17" r="2.4" fill="#e0561a" />
-        </g>
-        <g transform="translate(58 12)">
-          <rect x="0" y="6" width="22" height="30" rx="3" fill="#e9dfc6" />
-          <rect x="1" y="3" width="22" height="30" rx="3" fill="#f3ead2" />
-          <rect x="2" y="0" width="22" height="30" rx="3" fill="#fbf6e8" stroke="#b3201a" strokeWidth="1.4" />
-          <rect x="6" y="4" width="14" height="22" rx="1.5" fill="none" stroke="#b3201a" strokeWidth=".8" />
-        </g>
-      </svg>
-      <span>наугад</span>
+      <span className="cd-pair" aria-hidden="true">
+        <span className="cd-pd" style={{ left: 36, top: 2 }}>
+          <Die turn="rotateX(-32deg) rotateY(28deg) rotateZ(10deg)" />
+        </span>
+        <span className="cd-pd" style={{ left: 6, top: 22 }}>
+          <Die turn="rotateX(-26deg) rotateY(-40deg) rotateZ(-14deg)" />
+        </span>
+      </span>
+      <span className="cd-rand-lbl">наугад</span>
     </button>
   );
 }
+
+/** Оформление карты по названию игры (макет v6.4: массив P): два цвета, узор и подпись над овалом. theme 0–3 — узоры из CSS (ромбы, горошек, волны, шашки), у остальных узор берётся из pat. */
+interface CardLook {
+  c1: string;
+  c2: string;
+  label: string;
+  theme?: number;
+  pat?: string;
+}
+const CARD_LOOK: Record<string, CardLook> = {
+  "Правда или действие": { c1: "#8e1418", c2: "#2a0406", label: "ПРАВДА · ДЕЙСТВИЕ", theme: 0 },
+  "Я никогда не…": { c1: "#0e5a3a", c2: "#03241a", label: "ЧЕСТНО", theme: 1 },
+  "Насколько ты знаешь друга": { c1: "#1d3a8a", c2: "#0a1640", label: "ДРУЗЬЯ", theme: 2 },
+  "Совпадём? Друзья": { c1: "#5a1f8a", c2: "#200838", label: "СОВПАДЁМ", theme: 3 },
+  "5 секунд": { c1: "#c25a12", c2: "#4a1a04", label: "ТАЙМЕР", pat: "repeating-conic-gradient(from 0deg at 50% 38%, rgb(255 240 200 / 0.16) 0 4deg, transparent 4deg 15deg)" },
+  "Норм или стрём": { c1: "#0f6e78", c2: "#062a30", label: "НОРМ · СТРЁМ", pat: "linear-gradient(90deg, rgb(255 111 174 / 0.28) 0 50%, transparent 50%)" },
+  "Дилеммы": { c1: "#1a1a1c", c2: "#050506", label: "ЭТО ИЛИ ТО", pat: "linear-gradient(90deg, rgb(255 255 255 / 0.12) 0 50%, transparent 50%)" },
+  "Данетки": { c1: "#2a2a3a", c2: "#08080e", label: "НОКТЮРН", pat: "radial-gradient(60% 40% at 50% 38%, rgb(200 200 255 / 0.2), transparent 70%)" },
+  "Кто из нас?": { c1: "#a8201e", c2: "#3a0608", label: "ПАЛЕЦ ВВЕРХ", pat: "repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.25) 0 6px, transparent 6px 12px)" },
+  "Шпион": { c1: "#141418", c2: "#000", label: "ТОП-СЕКРЕТ", pat: "radial-gradient(40% 30% at 50% 36%, rgb(255 250 220 / 0.28), transparent 70%)" },
+  "Мафия": { c1: "#2a0606", c2: "#000", label: "ГОРОД СПИТ", pat: "radial-gradient(circle at 30% 70%, rgb(158 27 27 / 0.5) 0 8px, transparent 9px), radial-gradient(circle at 74% 24%, rgb(158 27 27 / 0.4) 0 5px, transparent 6px)" },
+  "Объясни": { c1: "#8a6420", c2: "#3a2808", label: "СЛОВАМИ", pat: "repeating-linear-gradient(90deg, rgb(255 240 200 / 0.12) 0 2px, transparent 2px 8px)" },
+  "Угадай по эмодзи": { c1: "#5a1440", c2: "#1e0414", label: "ЭМОДЗИ", pat: "radial-gradient(circle, rgb(255 111 174 / 0.3) 1.4px, transparent 2px) 0 0 / 12px 12px" },
+  "Карточные игры": { c1: "#7a1210", c2: "#14050a", label: "КЛАССИКА", pat: "linear-gradient(135deg, rgb(0 0 0 / 0.4) 25%, transparent 25% 50%, rgb(0 0 0 / 0.4) 50% 75%, transparent 75%) 0 0 / 16px 16px" },
+  "Две правды и ложь": { c1: "#4a4e58", c2: "#16181c", label: "ДВЕ ПРАВДЫ", pat: "repeating-linear-gradient(45deg, rgb(255 255 255 / 0.08) 0 1px, transparent 1px 6px)" },
+  "Кто я?": { c1: "#7a3a10", c2: "#2a1204", label: "УГАДАЙ СЕБЯ", pat: "repeating-linear-gradient(0deg, rgb(255 240 200 / 0.12) 0 2px, transparent 2px 9px)" },
+};
+const FALLBACK_LOOK: CardLook = { c1: "#4a4e58", c2: "#16181c", label: "ИГРА" };
+
+/** Находим оформление: по названию; у платных вариантов («Кто из нас? Без тормозов», «Шпион: Кино…») — по названию основной игры. */
+function lookFor(title: string): CardLook {
+  const exact = CARD_LOOK[title];
+  if (exact) return exact;
+  const base = title.split(/:| Без тормозов| с ботом/)[0]?.trim() ?? title;
+  return CARD_LOOK[base] ?? FALLBACK_LOOK;
+}
+
+/** Наклон каждой карты на столе, градусы: чуть в разные стороны (эталон 05). */
+const TILT = [-2.1, 1.4, -1.2, 1.7, -1.6, 1.1, -1.9, 1.5, -0.9, 1.2];
+const DESIGN_W = 358;
+const MAX_ZOOM = 1.25;
 
 export function CasinoDeckView({
   deckId,
@@ -151,18 +198,23 @@ export function CasinoDeckView({
   /** Есть что открыть «Наугад» (хотя бы одна доступная игра). */
   onRandom: (() => void) | null;
 }) {
-  const still = useSyncExternalStore(
-    noSubscribe,
-    () => prefersReducedMotion(),
-    () => false,
-  );
+  const root = useRef<HTMLDivElement>(null);
+  // Экран рисуется в «макетной» ширине 358 px и целиком увеличивается под телефон (zoom): пропорции карт не меняются
+  useLayoutEffect(() => {
+    const fit = () => {
+      const el = root.current;
+      if (el) el.style.setProperty("--z", String(Math.min(el.clientWidth / DESIGN_W, MAX_ZOOM)));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, []);
   return (
-    <div className="cs-page cd-page" data-deck={deckId}>
-      <span className="cs-rim cs-rim-l" aria-hidden="true" />
-      <span className="cs-rim cs-rim-r" aria-hidden="true" />
+    <div className="tm-page cd-page" data-deck={deckId} ref={root}>
+      <div className="tm-table" aria-hidden="true" dangerouslySetInnerHTML={{ __html: TABLE_ART }} />
       <div className="cs-scroll">
-        <div className="cs-inner">
-          <div className="cd-top">
+        <div className="cd-inner">
+          <div className="cd-back">
             <BackTag
               onClick={() => {
                 sfx.page();
@@ -171,17 +223,16 @@ export function CasinoDeckView({
             >
               ← К колодам
             </BackTag>
-            {onRandom && <RandomButton onClick={onRandom} />}
           </div>
+          {onRandom && <RandomButton onClick={onRandom} />}
 
           {deckId === "band" && <GoldSplash />}
           {deckId === "band" && <OfficialStamp />}
-          <GoldTitle text={title} still={still} size={title.length > 10 ? 46 : 62} light />
-          <BilliardBall n="1" color="#e6b830" className="cd-ball" />
-          <p className="cs-plate">
-            <Suit kind="spade" size={11} color="#f2dc9a" />
+          <ArcTitle text={title} size={title.length > 12 ? 38 : title.length > 9 ? 42 : 48} />
+          <p className="cd-plate">
+            <Suit kind="spade" size={10} color="#f2dc9a" />
             <span>{PLATE[deckId] ?? "от 2 игроков"}</span>
-            <Suit kind="diamond" size={11} color="#f2dc9a" />
+            <Suit kind="diamond" size={10} color="#f2dc9a" />
           </p>
 
           <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
@@ -195,7 +246,8 @@ export function CasinoDeckView({
           </svg>
           <ul className="cd-grid">
             {cards.map((c, i) => {
-              const theme = deckId === "prem" ? 6 : i % 7;
+              const black = deckId === "prem";
+              const look = lookFor(c.title);
               const red = SUITS[i % 4] === "heart" || SUITS[i % 4] === "diamond";
               const corner = (
                 <>
@@ -203,6 +255,7 @@ export function CasinoDeckView({
                   <Suit kind={SUITS[i % 4] ?? "spade"} size={11} color={red ? "#ff9bb0" : "currentColor"} />
                 </>
               );
+              const theme = black ? 6 : (look.theme ?? 9);
               return (
                 <li key={`${c.title}-${c.index}`}>
                   <button
@@ -211,14 +264,22 @@ export function CasinoDeckView({
                     data-theme={theme}
                     data-soon={c.soon || undefined}
                     data-locked={c.locked || undefined}
-                    style={{ "--k": i } as CSSProperties}
-                    aria-label={`${c.title}${c.players ? `, ${c.players.toLowerCase()}` : ""}${c.soon ? ", скоро" : ""}${c.locked ? ", закрыто: нужен Premium" : ""}`}
+                    style={
+                      {
+                        "--k": i,
+                        "--tilt": `${TILT[i % TILT.length]}deg`,
+                        ...(black ? {} : { "--c1": look.c1, "--c2": look.c2 }),
+                        ...(look.pat && !black ? { "--pat": look.pat } : {}),
+                      } as CSSProperties
+                    }
+                    aria-label={`${c.title}${c.players ? `, ${c.players.toLowerCase()}` : ""}${c.soon ? ", скоро" : c.fresh ? ", новинка" : ""}${c.locked ? ", закрыто: нужен Premium" : ""}`}
                     onClick={() => {
                       sfx.flip();
                       onPick(c.index);
                     }}
                   >
                     <span className="cd-pat" aria-hidden="true" />
+                    <span className="cd-gloss" aria-hidden="true" />
                     {[1, 2, 3, 4].map((n) => (
                       <span key={n} className={`cd-wing cd-w${n}`} aria-hidden="true">
                         <Wing />
@@ -230,15 +291,17 @@ export function CasinoDeckView({
                     <span className="cd-corner cd-br" aria-hidden="true">
                       {corner}
                     </span>
-                    {c.kind && <span className="cd-kind">{c.kind}</span>}
+                    <span className="cd-kind">{look.label}</span>
                     <span className="cd-cameo" aria-hidden="true">
                       <GameIcon emoji={c.emoji} />
                     </span>
-                    <b className="cd-name">{c.title}</b>
-                    {c.players && !c.soon && <span className="cd-ribbon">{c.players}</span>}
-                    {c.soon && (
-                      <span className="cd-soon" aria-hidden="true">
-                        СКОРО
+                    <b className="cd-name" data-long={c.title.length > 20 || undefined}>
+                      {c.title}
+                    </b>
+                    {c.players && <span className="cd-ribbon">{c.players}</span>}
+                    {(c.soon || c.fresh) && (
+                      <span className="cd-seal" aria-hidden="true">
+                        {c.soon ? "СКОРО" : "НОВИНКА"}
                       </span>
                     )}
                     {c.locked && (
@@ -252,11 +315,6 @@ export function CasinoDeckView({
             })}
           </ul>
         </div>
-      </div>
-
-      <div className="cs-bottom" aria-hidden="true">
-        <CasinoTable />
-        <div className="cs-wheel" dangerouslySetInnerHTML={{ __html: WHEEL_SVG }} />
       </div>
     </div>
   );

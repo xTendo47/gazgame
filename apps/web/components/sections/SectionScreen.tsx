@@ -450,6 +450,7 @@ export function SectionScreen({
               ?.name.toUpperCase(),
             players: players[tab.id]?.[index] ?? null,
             soon: target.kind === "soon",
+            fresh: !!item.new && target.kind !== "soon",
             locked: !!item.premium && !premium,
           }))}
           onBack={() => setCasinoView("decks")}

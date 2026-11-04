@@ -21,7 +21,8 @@ export function SectionPage({ sectionId, openLocked }: { sectionId: Section; ope
       t.items.map((item) => {
         const game = item.ref?.game ? catalog.games.find((g) => g.slug === item.ref?.game) : undefined;
         if (game) return playersLabel(game.players);
-        return item.ref?.cards ? playersLabel({ min: 2, max: 20 }) : null;
+        if (item.ref?.cards) return playersLabel({ min: 2, max: 20 });
+        return item.players ? item.players.toUpperCase() : null;
       }),
     ]),
   );
