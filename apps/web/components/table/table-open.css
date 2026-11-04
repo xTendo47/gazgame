@@ -2,7 +2,7 @@
    Рамка лотка — CSS; картинки плиток — public/table/*.webp (вырезаны из макета). */
 
 /* Экран целиком — это «макетная» сцена 358 px шириной (эталон 03), которую OpenBox масштабирует под телефон (--s) и растягивает
-   по высоте (--sh), если экран выше макета. Пропорции предметов не меняются. Анимация масштаба не нужна: это обычный transform. */
+   по высоте (--top), если экран выше макета. Пропорции предметов не меняются. Анимация масштаба не нужна: это обычный transform. */
 .gt-open {
   height: 100dvh;
   min-height: 0;
@@ -11,10 +11,10 @@
 }
 .gt-open .gt-stage {
   position: absolute;
-  top: 0;
+  top: calc(var(--top, 0) * 1px);
   left: 50%;
   width: 358px;
-  height: calc(var(--sh, 695) * 1px);
+  height: 695px;
   margin-left: -179px;
   padding: 14px 17px 20px;
   box-sizing: border-box;
@@ -26,6 +26,15 @@
   visibility: visible;
 }
 /* предметы на столе лежат по макетной сцене 358×695 от верха; высокий экран просто добавляет стол снизу */
+/* крышка классического скина затенена до ржавого, как в эталоне 03 */
+.gt-open[data-box="classic"] .gt-lid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: rgb(90 28 0 / 0.42);
+}
 .gt-open .gt-decor {
   width: 100%;
   left: 0;
@@ -46,7 +55,7 @@
 }
 .gt-open-title {
   margin: 0 0 4px;
-  font: 800 20px / 1.05 var(--font-display);
+  font: 600 20px / 1.05 var(--font-display);
   color: #fff;
   text-shadow:
     0 3px 0 rgb(0 0 0 / 0.55),

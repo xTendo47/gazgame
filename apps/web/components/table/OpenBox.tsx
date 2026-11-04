@@ -39,13 +39,14 @@ const STAGE_W = 358;
 const STAGE_H = 695;
 const MAX_SCALE = 1.25;
 
-/** Подгоняет сцену под экран: масштаб по меньшей стороне, высота сцены растёт, если экран выше макета. Возвращает масштаб. */
+/** Подгоняет сцену под экран: масштаб по меньшей стороне, сцена по центру. Возвращает масштаб. */
 function fitStage(rootEl: HTMLElement, stageEl: HTMLElement): number {
   const vw = rootEl.clientWidth;
   const vh = window.innerHeight;
   const s = Math.min(vw / STAGE_W, vh / STAGE_H, MAX_SCALE);
   stageEl.style.setProperty("--s", String(s));
-  stageEl.style.setProperty("--sh", String(vh / s));
+  // сцена стоит по центру экрана по высоте: на высоком телефоне лишний стол делится поровну сверху и снизу, без пустой полосы между лотком и нижним рядом
+  stageEl.style.setProperty("--top", String((vh - STAGE_H * s) / 2));
   stageEl.dataset.ready = "true";
   return s;
 }
