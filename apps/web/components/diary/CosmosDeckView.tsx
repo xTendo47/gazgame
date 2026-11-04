@@ -3,7 +3,7 @@
 // Кармашек «Глубже» (эталон 11_glubzhe.png): космос с планетами, светящееся название, карточки на крючке с золотым замком и
 // ярлычком («скоро» или «Premium»), в центре рисунок теста в кольце с «орбитой», внизу тетрадь в клетку с записями и созвездием.
 // Логика (что открывает карточка) — в SectionScreen. Всё SVG и CSS, без картинок и эмодзи.
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
 import { BackTag } from "@gazgame/ui";
 import { Glyph } from "@/components/casino/GIcon";
 import { RandomButton } from "@/components/casino/CasinoDeckView";
@@ -14,85 +14,8 @@ import "./diary.css";
 import "./diary-deck.css";
 import "./cosmos.css";
 
-const V = "#a98bff";
-const VL = "#d8c8ff";
-const CY = "#62d2ff";
-const GD = "#f0c75a";
-const PK = "#ff6fae";
-const GR = "#8be0a0";
-const NV = "#1a1240";
-
-/** Значки тестов «Глубже»: 2–3 цвета космической палитры. */
-const ART: Record<string, ReactNode> = {
-  // Сравнись с другом: двое
-  "👯": (
-    <>
-      <circle cx="16" cy="11" r="6" fill={GD} />
-      <circle cx="32" cy="11" r="6" fill={PK} />
-      <path d="M6 42l3-18c1-5 5-7 7-7s6 2 7 7l2 18zM25 42l2-18c1-5 5-7 7-7s6 2 7 7l3 18z" fill={VL} stroke={NV} strokeWidth="1.400" strokeLinejoin="round" />
-      <path d="M12 27h8M30 27h8" stroke={V} strokeWidth="2.400" strokeLinecap="round" />
-    </>
-  ),
-  // Пазл личности
-  "🧩": (
-    <>
-      <path d="M6 14h12a5 5 0 1 1 10 0h14v12a5 5 0 1 0 0 10v10H28a5 5 0 1 1-10 0H6V36a5 5 0 1 0 0-10z" fill={GR} stroke={NV} strokeWidth="1.600" strokeLinejoin="round" />
-      <path d="M12 20c3-3 7-3 10 0" fill="none" stroke="#fff" strokeOpacity=".6" strokeWidth="2.400" strokeLinecap="round" />
-    </>
-  ),
-  // Ты месяц назад: бумеранг
-  "🪃": (
-    <>
-      <path d="M6 10c20-4 36 6 36 28-4-12-14-18-26-16 4 6 4 12 0 20-6-10-10-22-10-32z" fill={GD} stroke={NV} strokeWidth="1.600" strokeLinejoin="round" />
-      <path d="M12 15c10-1 18 3 24 10" fill="none" stroke={CY} strokeWidth="2.600" strokeLinecap="round" />
-    </>
-  ),
-  // Полные разборы: ДНК
-  "🧬": (
-    <>
-      <path d="M14 4c0 14 20 16 20 40M34 4c0 14-20 16-20 40" fill="none" stroke={V} strokeWidth="4" strokeLinecap="round" />
-      <path d="M17 12h14M15 20h18M15 28h18M17 36h14" stroke={CY} strokeWidth="3" strokeLinecap="round" />
-      <circle cx="14" cy="5" r="2.600" fill={PK} />
-      <circle cx="34" cy="43" r="2.600" fill={PK} />
-    </>
-  ),
-  // Тёмная триада: чёртик
-  "😈": (
-    <>
-      <path d="M9 6c0 8 3 11 8 12M39 6c0 8-3 11-8 12" fill={PK} stroke={NV} strokeWidth="1.400" />
-      <circle cx="24" cy="27" r="16" fill={V} stroke={NV} strokeWidth="1.600" />
-      <path d="M14 23l8 3M34 23l-8 3" stroke={NV} strokeWidth="3" strokeLinecap="round" />
-      <path d="M15 32c5 7 13 7 18 0z" fill={NV} />
-      <path d="M19 32v3M24 32v4M29 32v3" stroke="#fff" strokeWidth="1.800" />
-    </>
-  ),
-  // Архетип по Юнгу: хрустальный шар со звездой
-  "🔮": (
-    <>
-      <path d="M10 44c0-6 5-8 14-8s14 2 14 8z" fill={GD} />
-      <circle cx="24" cy="21" r="16" fill={V} stroke={NV} strokeWidth="1.600" />
-      <path d="M13 19c1-6 6-10 11-10" fill="none" stroke={VL} strokeWidth="3" strokeLinecap="round" />
-      <path d="M26 15l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill={GD} />
-    </>
-  ),
-  // Уровень тревоги: спираль
-  "🌀": (
-    <>
-      <circle cx="24" cy="24" r="20" fill={NV} stroke={V} strokeWidth="1.600" />
-      <path d="M24 24c0-3 4-3 4 0s-6 4-8 0 4-10 12-8 8 12 2 18-18 4-20-8" fill="none" stroke={CY} strokeWidth="3" strokeLinecap="round" />
-      <circle cx="24" cy="24" r="2" fill={GD} />
-    </>
-  ),
-};
-
 function CosmosIcon({ emoji, label }: { emoji: string; label: string }) {
-  const art = ART[emoji.replace(/[\u{FE0F}\u{200D}]/gu, "")];
-  if (!art) return <Glyph emoji={emoji} label={label} size="3.6em" />;
-  return (
-    <svg viewBox="0 0 48 48" width="3.6em" height="3.6em" aria-hidden="true" focusable="false" style={{ display: "block" }}>
-      {art}
-    </svg>
-  );
+  return <Glyph emoji={emoji} label={label} size="3.6em" />;
 }
 
 /** Подписи и «число игроков» карточек по месту в списке (как в макете: «2 · РАЗБОР», «ПОРТРЕТ»). */

@@ -823,23 +823,24 @@ const BY_EMOJI: Record<string, GIconName> = {
 
 const CLEAN = /[️‍\u{1F3FB}-\u{1F3FF}]/gu;
 
-/** Значок для эмодзи из данных. Если пары нет — золотая фишка с первой буквой подписи (или пиками). */
-export function Glyph({ emoji, label, size = "1.15em", className }: { emoji: string; label?: string; size?: number | string; className?: string }) {
-  const key = emoji.replace(CLEAN, "");
-  const name = BY_EMOJI[key] ?? BY_EMOJI[[...key][0] ?? ""];
-  if (name) return <GIcon name={name} size={size} className={className} />;
-  const letter = label?.trim().charAt(0).toUpperCase();
+/** Эмодзи из данных на карточках игр, колод и тестов — настоящее эмодзи, как в эталонах (SVG-значки GIcon — только для кнопок и элементов интерфейса). */
+export function Glyph({ emoji, size = "1.15em", className }: { emoji: string; label?: string; size?: number | string; className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true" focusable="false" className={className} style={{ display: "inline-block", verticalAlign: "-0.16em", flexShrink: 0 }}>
-      <circle cx="12" cy="12" r="9.500" fill="none" stroke="currentColor" strokeWidth="1.800" />
-      {letter ? (
-        <text x="12" y="16.400" textAnchor="middle" fontSize="12" fontWeight="900" fill="currentColor" fontFamily="Georgia, serif">
-          {letter}
-        </text>
-      ) : (
-        <path d="M12 6.500c-1.500 2.500-4 3.500-4 5.500 0 1.200 1 2 2 2 .7 0 1.300-.3 1.600-.8-.1 1-.4 1.700-1.100 2.300h3c-.7-.6-1-1.300-1.100-2.300.3.500.9.800 1.600.8 1 0 2-.8 2-2 0-2-2.500-3-4-5.500z" fill="currentColor" />
-      )}
-    </svg>
+    <span
+      className={className}
+      aria-hidden="true"
+      style={{
+        display: "inline-block",
+        flexShrink: 0,
+        fontSize: typeof size === "number" ? `${size}px` : size,
+        lineHeight: 1,
+        verticalAlign: "-0.1em",
+        fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
+        fontVariantEmoji: "emoji",
+      }}
+    >
+      {emoji}
+    </span>
   );
 }
 
